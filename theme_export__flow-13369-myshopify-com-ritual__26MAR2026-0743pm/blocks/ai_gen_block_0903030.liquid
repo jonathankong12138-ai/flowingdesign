@@ -1,0 +1,268 @@
+{% doc %}
+  @prompt
+    创建一个容器，可放文本框，可调整对齐方式，可调整内边距，可调整是否铺满父级容器，可调整背景颜色、透明度、背景模糊程度，需要有初次显示和刷新页面的动画（向上缩短至特定高度，可自行调整）
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-animated-container-{{ ai_gen_id }} {
+    display: block;
+    width: {% if block.settings.fill_parent %}100%{% else %}{{ block.settings.desktop_width_percent }}%{% endif %};
+    max-width: 100%;
+    padding: {{ block.settings.padding_top }}px {{ block.settings.padding_right }}px {{ block.settings.padding_bottom }}px {{ block.settings.padding_left }}px;
+    background-color: {{ block.settings.background_color | color_modify: 'alpha', block.settings.background_opacity }};
+    backdrop-filter: blur({{ block.settings.background_blur }}px);
+    -webkit-backdrop-filter: blur({{ block.settings.background_blur }}px);
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .ai-animated-container-{{ ai_gen_id }}.ai-animated {
+    animation: ai-container-slide-up-{{ ai_gen_id }} {{ block.settings.animation_duration }}s ease-out forwards;
+  }
+
+  .ai-animated-container-content-{{ ai_gen_id }} {
+    text-align: {{ block.settings.text_alignment }};
+    color: {{ block.settings.text_color }};
+  }
+
+  @keyframes ai-container-slide-up-{{ ai_gen_id }} {
+    0% {
+      opacity: 0;
+      max-height: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      max-height: {{ block.settings.final_height }}px;
+      transform: translateY(0);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-animated-container-{{ ai_gen_id }} {
+      width: 100%;
+      padding: {{ block.settings.padding_top | times: 0.7 }}px {{ block.settings.padding_right | times: 0.7 }}px {{ block.settings.padding_bottom | times: 0.7 }}px {{ block.settings.padding_left | times: 0.7 }}px;
+    }
+  }
+{% endstyle %}
+
+<animated-container-{{ ai_gen_id }}
+  class="ai-animated-container-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-animated-container-content-{{ ai_gen_id }}">
+    {% if block.settings.content != blank %}
+      {{ block.settings.content }}
+    {% else %}
+      <p>在此添加您的内容</p>
+    {% endif %}
+  </div>
+</animated-container-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AnimatedContainer{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.hasAnimated = false;
+      }
+
+      connectedCallback() {
+        this.triggerAnimation();
+        
+        window.addEventListener('pageshow', (event) => {
+          if (event.persisted || performance.getEntriesByType('navigation')[0].type === 'back_forward') {
+            this.resetAndAnimate();
+          }
+        });
+      }
+
+      triggerAnimation() {
+        requestAnimationFrame(() => {
+          this.classList.add('ai-animated');
+          this.hasAnimated = true;
+        });
+      }
+
+      resetAndAnimate() {
+        this.classList.remove('ai-animated');
+        this.style.opacity = '0';
+        
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            this.triggerAnimation();
+          });
+        });
+      }
+    }
+
+    customElements.define('animated-container-{{ ai_gen_id }}', AnimatedContainer{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "动画容器",
+  "settings": [
+    {
+      "type": "header",
+      "content": "内容"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "文本内容",
+      "default": "<p>这是一个可自定义的动画容器</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "文本对齐",
+      "options": [
+        {
+          "value": "left",
+          "label": "左对齐"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        },
+        {
+          "value": "right",
+          "label": "右对齐"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本颜色",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "布局"
+    },
+    {
+      "type": "checkbox",
+      "id": "fill_parent",
+      "label": "铺满父级容器",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "桌面宽度",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "内边距"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "上内边距",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "下内边距",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "左内边距",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "右内边距",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "背景"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "背景颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "background_opacity",
+      "label": "背景透明度",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "background_blur",
+      "label": "背景模糊",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "动画设置"
+    },
+    {
+      "type": "range",
+      "id": "final_height",
+      "label": "最终高度",
+      "min": 100,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "animation_duration",
+      "label": "动画时长",
+      "min": 0.5,
+      "max": 3,
+      "step": 0.5,
+      "unit": "s",
+      "default": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "动画容器"
+    }
+  ]
+}
+{% endschema %}

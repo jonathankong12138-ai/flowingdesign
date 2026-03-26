@@ -1,0 +1,333 @@
+{%- comment -%}
+  Glacier Dune 动态背景 (去壳纯净全屏版 + 色彩控制修复版 + 速度自定版)
+  1. 彻底移除了 {% render 'section' %} 及其带来的隐藏内边距和布局限制。
+  2. 强制使用 100vh 接管整屏高度。
+  3. 新增：后台可自定义【慢速滑动加速强度】和【基础流动速度】。
+{%- endcomment -%}
+
+{%- liquid
+  assign section_id = section.id | replace: '-', '_'
+  assign mask_opacity = section.settings.mask_opacity | divided_by: 100.0
+  assign mask_color_rgba = section.settings.mask_color | color_modify: 'alpha', mask_opacity
+-%}
+
+{%- if section.settings.background_media == 'glacier_dune' -%}
+  <style>
+    .glacier-wrapper-{{ section.id }} {
+      position: relative !important;
+      overflow: hidden !important;
+      width: 100% !important; 
+      height: 100vh !important; 
+      height: 100dvh !important; 
+      background: transparent !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .glacier-canvas-{{ section.id }} {
+      position: absolute; top: 0;
+      left: 0; width: 100%; height: 100%;
+      z-index: -3; pointer-events: none; transition: opacity 1s ease-in-out;
+    }
+    .glacier-media-layer-{{ section.id }} {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -2; opacity: 0; pointer-events: none;
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glacier-media-layer-{{ section.id }}.active { opacity: 1 !important;
+    }
+    .glacier-media-layer-{{ section.id }} img, 
+    .glacier-media-layer-{{ section.id }} video {
+      width: 100%;
+      height: 100%; object-fit: cover;
+    }
+    .glacier-mask-{{ section.id }} {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100vh; 
+      background-color: {{ mask_color_rgba }};
+      backdrop-filter: blur({{ section.settings.mask_blur }}px);
+      -webkit-backdrop-filter: blur({{ section.settings.mask_blur }}px);
+      z-index: -1; pointer-events: none;
+      {% if section.settings.enable_mask_animation %}
+        animation: shrinkUp-{{ section.id }} {{ section.settings.animation_duration }}s {{ section.settings.animation_curve }} {{ section.settings.animation_delay }}s forwards;
+      {% else %}
+        height: {{ section.settings.mask_final_height }}px;
+      {% endif %}
+    }
+    @keyframes shrinkUp-{{ section.id }} {
+      0% { height: 100vh;
+      }
+      100% { height: {{ section.settings.mask_final_height }}px;
+      }
+    }
+    .is-media-mode-{{ section.id }} .glacier-canvas-{{ section.id }} { opacity: 0 !important;
+    }
+    .is-media-mode-{{ section.id }} .glacier-media-layer-{{ section.id }} { opacity: 1 !important;
+    }
+
+    .glacier-content-{{ section.id }} { 
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important; right: 0 !important; bottom: 0 !important;
+      z-index: 2; 
+      display: flex !important;
+      flex-direction: column !important;
+      pointer-events: none;
+    }
+    
+    .glacier-content-{{ section.id }} > * {
+      flex: 1 1 100% !important;
+      width: 100% !important;
+      height: 100% !important;
+      pointer-events: none;
+    }
+  </style>
+
+  <div id="media-layer-{{ section.id }}" class="glacier-media-layer-{{ section.id }}">
+    <div id="media-content-{{ section.id }}" style="width:100%; height:100%;"></div>
+  </div>
+  <canvas id="canvas-{{ section.id }}" class="glacier-canvas-{{ section.id }}"></canvas>
+  <div class="glacier-mask-{{ section.id }}"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+  <script id="vs-{{ section.id }}" type="x-shader/x-vertex">
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  </script>
+  <script id="fs-{{ section.id }}" type="x-shader/x-fragment">
+    uniform float uTime; uniform vec2 uResolution;
+    uniform float uScroll; uniform float uRandomSeed;
+    uniform float uContrast;
+    uniform float uBrightness;
+    uniform float uHueShift;
+    uniform float uSaturation;
+    varying vec2 vUv;
+    mat2 rotate2d(float angle){ return mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+    }
+    vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0);
+    }
+    float snoise(vec2 v){
+        const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+        vec2 i = floor(v + dot(v, C.yy)); vec2 x0 = v - i + dot(i, C.xx);
+        vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+        vec4 x12 = x0.xyxy + C.xxzz;
+        x12.xy -= i1; i = mod(i, 289.0);
+        vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+        m = m*m; m = m*m;
+        vec3 x = 2.0 * fract(p * C.www) - 1.0; vec3 h = abs(x) - 0.5;
+        vec3 ox = floor(x + 0.5); vec3 a0 = x - ox;
+        m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+        vec3 g;
+        g.x = a0.x * x0.x + h.x * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+        return 130.0 * dot(m, g);
+    }
+    float getHeight(vec2 uv, float time, float scroll, float seed) {
+        vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
+        vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.5);
+        float flowTime = time + scroll * 8.0;
+        vec2 rotUV = rotate2d(-0.5) * baseUV;
+        vec2 distortion = vec2(0.0);
+        distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
+        distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
+        float detail = snoise(rotUV * 1.5 + distortion + flowTime * 0.1) * 0.1;
+        float wave = sin(rotUV.y * 1.2 + distortion.x * 2.2 + flowTime);
+        return pow(wave * 0.5 + 0.5, 0.8) + detail;
+    }
+    vec3 rgb2hsl(vec3 c){
+        float maxC = max(c.r, max(c.g, c.b));
+        float minC = min(c.r, min(c.g, c.b));
+        float h, s, l = (maxC + minC) / 2.0;
+        if(maxC == minC){ h = s = 0.0; }
+        else{
+            float d = maxC - minC;
+            s = l > 0.5 ? d / (2.0 - maxC - minC) : d / (maxC + minC);
+            if(maxC == c.r) h = (c.g - c.b) / d + (c.g < c.b ? 6.0 : 0.0);
+            else if(maxC == c.g) h = (c.b - c.r) / d + 2.0;
+            else h = (c.r - c.g) / d + 4.0;
+            h /= 6.0;
+        }
+        return vec3(h, s, l);
+    }
+    float hue2rgb(float p, float q, float t){
+        if(t < 0.0) t += 1.0;
+        if(t > 1.0) t -= 1.0;
+        if(t < 1.0/6.0) return p + (q - p) * 6.0 * t;
+        if(t < 1.0/2.0) return q;
+        if(t < 2.0/3.0) return p + (q - p) * (2.0/3.0 - t) * 6.0;
+        return p;
+    }
+    vec3 hsl2rgb(vec3 c){
+        vec3 rgb;
+        if(c.y == 0.0){ rgb = vec3(c.z); }
+        else{
+            float q = c.z < 0.5 ?
+            c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y;
+            float p = 2.0 * c.z - q;
+            rgb.r = hue2rgb(p, q, c.x + 1.0/3.0);
+            rgb.g = hue2rgb(p, q, c.x);
+            rgb.b = hue2rgb(p, q, c.x - 1.0/3.0);
+        }
+        return rgb;
+    }
+    void main() {
+        vec2 uv = vUv;
+        uv.x *= uResolution.x / uResolution.y;
+        float time = uTime * 0.254; float h = getHeight(uv, time, uScroll, uRandomSeed);
+        float hx = getHeight(uv + vec2(0.005, 0.0), time, uScroll, uRandomSeed);
+        float hy = getHeight(uv + vec2(0.0, 0.005), time, uScroll, uRandomSeed);
+        vec3 normal = normalize(vec3(h - hx, h - hy, 0.008));
+        float light = dot(normal, normalize(vec3(-0.6, 0.5, 0.4))) * 0.5 + 0.5;
+        vec3 colDeep = vec3(0.25, 0.23, 0.20);
+        vec3 colMid = vec3(0.58, 0.55, 0.50); vec3 colSoft = vec3(0.88, 0.85, 0.80); vec3 colHigh = vec3(0.98, 0.97, 0.95);
+        vec3 color = mix(mix(mix(colDeep, colMid, smoothstep(0.1, 0.65, light)), colSoft, smoothstep(0.45, 0.9, light)), colHigh, smoothstep(0.88, 1.0, light));
+        color = (color - 0.5) * uContrast + 0.5 + uBrightness;
+        color = clamp(color, 0.0, 1.0);
+        vec3 hsl = rgb2hsl(color);
+        hsl.x = mod(hsl.x + uHueShift, 1.0);
+        hsl.y = clamp(hsl.y * uSaturation, 0.0, 1.0);
+        color = hsl2rgb(hsl);
+        gl_FragColor = vec4(color, 1.0);
+    }
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const sectionId = "{{ section.id }}";
+      const wrapper = document.querySelector('.glacier-wrapper-' + sectionId);
+      const mediaLayer = document.getElementById('media-layer-' + sectionId);
+      const mediaContent = document.getElementById('media-content-' + sectionId);
+
+      document.body.addEventListener('click', function(e) {
+        const trigger = e.target.closest('.js-trigger-bg');
+        if (!trigger || !wrapper.contains(trigger)) return;
+        const url = trigger.getAttribute('data-bg-url');
+    
+        const type = trigger.getAttribute('data-bg-type');
+        if (!url || type === "none") {
+          wrapper.classList.remove('is-media-mode-' + sectionId);
+          mediaLayer.classList.remove('active');
+          return;
+        }
+        if (mediaLayer.classList.contains('active') && mediaContent.getAttribute('data-active-url') === url) {
+           wrapper.classList.remove('is-media-mode-' + sectionId);
+           mediaLayer.classList.remove('active');
+           mediaContent.setAttribute('data-active-url', '');
+           return;
+        }
+        let html = (type === 'video') ?
+        `<video src="${url}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>` : `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" />`;
+        mediaContent.innerHTML = html;
+        mediaContent.setAttribute('data-active-url', url);
+        wrapper.classList.add('is-media-mode-' + sectionId);
+        mediaLayer.classList.add('active');
+      });
+
+      setTimeout(function() {
+        const canvas = document.getElementById('canvas-' + sectionId);
+        if (!canvas) return;
+        const scene = new THREE.Scene();
+        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: true });
+        const shaderMaterial = new THREE.ShaderMaterial({
+            vertexShader: document.getElementById('vs-' + sectionId).textContent,
+            fragmentShader: document.getElementById('fs-' + sectionId).textContent,
+            uniforms: {
+                uTime: { value: 0 },
+                uResolution: { value: new THREE.Vector2() },
+                uScroll: { value: 0 },
+                uRandomSeed: { value: Math.random() * 100 },
+                uContrast: { value: {{ section.settings.fluid_contrast }} },
+                uBrightness: { value: {{ section.settings.fluid_brightness }} },
+                uHueShift: { value: {{ section.settings.fluid_hue }} / 360.0 },
+                uSaturation: { value: {{ section.settings.fluid_saturation }} }
+            }
+        });
+        scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), shaderMaterial));
+        const resize = () => {
+            const w = wrapper.clientWidth, h = wrapper.clientHeight || 600;
+            renderer.setSize(w, h);
+            shaderMaterial.uniforms.uResolution.value.set(w, h);
+        };
+        window.addEventListener('resize', resize);
+        resize();
+        
+        // --- 读取 Schema 中设置的速度参数 ---
+        const configSlowBoost = {{ section.settings.slow_mouse_boost | default: 10.0 }};
+        const configBaseSpeed = {{ section.settings.base_fluid_speed | default: 2.5 }};
+
+        const clock = new THREE.Clock();
+        let customTime = 0;
+        let targetSpeedOffset = 0; let currentSpeedOffset = 0;
+        let lastMouseX = 0; let lastMouseY = 0; let lastMouseTime = performance.now();
+        
+        window.addEventListener('mousemove', (e) => {
+            const now = performance.now(); const dt = now - lastMouseTime;
+            if (dt > 0) {
+                const dx = e.clientX - lastMouseX; const dy = e.clientY - lastMouseY;
+                const speed = Math.sqrt(dx * dx + dy * dy) / dt; 
+                
+                // 使用后台配置的 configSlowBoost 进行加速
+                if (speed > 0.01) { targetSpeedOffset = (configSlowBoost / (1.0 + speed * 5.0)) - 1.5; } else { targetSpeedOffset = 0; }
+            }
+            lastMouseX = e.clientX; lastMouseY = e.clientY; lastMouseTime = now;
+        });
+        
+        const animate = () => {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta(); const elapsedTime = clock.getElapsedTime();
+            if (performance.now() - lastMouseTime > 150) { targetSpeedOffset *= 0.92;
+            }
+            currentSpeedOffset += (targetSpeedOffset - currentSpeedOffset) * 0.05;
+            
+            // 使用后台配置的 configBaseSpeed 作为基础速度
+            const baseSpeed = configBaseSpeed; const rhythm = Math.sin(elapsedTime * 1.8) * 0.9;
+            customTime += delta * (baseSpeed + rhythm + currentSpeedOffset);
+            shaderMaterial.uniforms.uTime.value = customTime;
+            renderer.render(scene, camera);
+        };
+        animate();
+      }, 150);
+    });
+  </script>
+{%- endif -%}
+
+<div class="glacier-wrapper-{{ section.id }}">
+  <div class="glacier-content-{{ section.id }}">
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "連動背景 Section",
+  "blocks": [{ "type": "@theme" }, { "type": "text" }],
+  "settings": [
+    { "type": "paragraph", "content": "注：为实现全屏响应式布局，外层限制已解除。" },
+    
+    { "type": "header", "content": "流体速度与交互设置" },
+    { "type": "range", "id": "slow_mouse_boost", "label": "慢速滑动加速强度", "min": 5, "max": 50, "step": 1, "default": 10, "info": "数值越大，鼠标轻微移动时流体爆发的速度越快" },
+    { "type": "range", "id": "base_fluid_speed", "label": "基础流动速度", "min": 0.5, "max": 10.0, "step": 0.5, "default": 2.5, "info": "不移动鼠标时，液体自身的流速" },
+
+    { "type": "header", "content": "液体流动色彩调解 (WebGL)" },
+    { "type": "range", "id": "fluid_brightness", "label": "明度", "min": -0.5, "max": 0.5, "step": 0.1, "default": 0.0 },
+    { "type": "range", "id": "fluid_contrast", "label": "对比度", "min": 0.5, "max": 2.0, "step": 0.1, "default": 1.0 },
+    { "type": "range", "id": "fluid_hue", "label": "色相旋转", "min": 0, "max": 360, "step": 4, "unit": "deg", "default": 0 },
+    { "type": "range", "id": "fluid_saturation", "label": "饱和度", "min": 0.0, "max": 2.0, "step": 0.1, "default": 1.0 },
+    
+    { "type": "header", "content": "進入動畫遮罩" },
+    { "type": "checkbox", "id": "enable_mask_animation", "label": "開啟收縮動畫", "default": true },
+    { "type": "color", "id": "mask_color", "label": "遮罩顏色", "default": "#FFFFFF" },
+    { "type": "range", "id": "mask_opacity", "label": "遮罩不透明度", "min": 0, "max": 100, "step": 5, "default": 90 },
+    { "type": "range", "id": "mask_blur", "label": "模糊強度", "min": 0, "max": 50, "step": 2, "default": 20 },
+    { "type": "range", "id": "mask_final_height", "label": "最終高度", "min": 0, "max": 1000, "step": 20, "unit": "px", "default": 600 },
+    { "type": "range", "id": "animation_duration", "label": "動畫時長", "default": 1.8, "min": 0.5, "max": 5.0, "step": 0.1 },
+    { "type": "range", "id": "animation_delay", "label": "延遲播放", "default": 0.3, "min": 0, "max": 5.0, "step": 0.1 },
+    { "type": "select", "id": "animation_curve", "label": "減速曲線", "default": "cubic-bezier(0.23, 1, 0.32, 1)", "options": [{"value":"ease-out","label":"標準"},{"value":"cubic-bezier(0.23, 1, 0.32, 1)","label":"極速平滑"}] },
+    
+    { "type": "select", "id": "background_media", "label": "背景類型", "default": "glacier_dune", "options": [{"value":"none","label":"無"},{"value":"glacier_dune","label":"Glacier Dune (AI)"}] }
+  ],
+  "presets": [{ "name": "連動背景 Section" }]
+}
+{% endschema %}

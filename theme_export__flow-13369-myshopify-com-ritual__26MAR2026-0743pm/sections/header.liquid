@@ -1,0 +1,274 @@
+{%- style -%}
+  :root {
+    --luma-header-height: {{ section.settings.header_height }}px;
+    --luma-transition-speed: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .luma-header-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--luma-header-height);
+    z-index: 1000;
+    pointer-events: none; 
+  }
+
+  /* 隐藏背景层，确保差值模式直接作用于底层页面内容 */
+  .luma-glass-bg {
+    display: none;
+  }
+
+  /* --- 内容层：居左对齐 --- */
+  .luma-header-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: flex-start; /* 从 space-between 改为 flex-start 居左 */
+    gap: 40px; /* Logo与右侧菜单的整体间距 */
+    align-items: center;
+    height: 100%;
+    padding: 0 4%;
+    pointer-events: auto;
+  }
+
+  /* =========================================
+     全局差值模式 (Difference Mode)
+     强制为白色，利用差值实现智能变黑/变白
+     ========================================= */
+  .luma-logo,
+  .luma-nav__link,
+  .luma-lang__toggle,
+  .luma-mobile-toggle {
+    color: #ffffff;
+    mix-blend-mode: difference; 
+  }
+
+  .luma-logo svg,
+  .luma-logo svg path {
+    fill: #ffffff;
+  }
+
+  .luma-logo img {
+    filter: none;
+  }
+
+  /* === 内部排版样式 === */
+  .luma-logo { display: flex; align-items: center; text-decoration: none; color: inherit; }
+  .luma-logo img, .luma-logo svg { height: auto; width: {{ section.settings.logo_width }}px; transition: fill var(--luma-transition-speed), filter var(--luma-transition-speed); }
+  .luma-logo-text { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+
+  /* 右侧功能区 */
+  .luma-right { display: flex; align-items: center; gap: 40px; }
+  .luma-nav { display: flex; gap: 32px; align-items: center; }
+  
+  .luma-nav__link {
+    text-decoration: none;
+    color: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+  }
+  .luma-right:hover .luma-nav__link { opacity: 0.3; }
+  .luma-right .luma-nav__link:hover { opacity: 1; }
+
+  .luma-lang { position: relative; display: flex; align-items: center; }
+  .luma-lang__toggle {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+  }
+  .luma-right:hover .luma-lang__toggle { opacity: 0.3; }
+  .luma-lang__toggle:hover { opacity: 1; }
+  .luma-lang__toggle svg { width: 10px; height: 10px; fill: currentColor; transition: transform 0.3s ease; }
+  .luma-lang.is-open .luma-lang__toggle svg { transform: rotate(180deg); }
+
+  /* 下拉菜单 (恢复为常规模式，以防下拉框内文字因为差值变得不可读) */
+  .luma-lang__dropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0; /* 下拉菜单向左对齐 */
+    border-radius: 8px;
+    padding: 6px;
+    min-width: 90px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all var(--luma-transition-speed);
+    background: #111111;
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.1);
+    mix-blend-mode: normal; /* 强制取消差值 */
+  }
+  .luma-lang.is-open .luma-lang__dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+  
+  .luma-lang__item {
+    list-style: none;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+    text-transform: capitalize; 
+  }
+  .luma-lang__item:hover { background: rgba(255, 255, 255, 0.15); }
+  .luma-lang__item.is-active { opacity: 0.5; pointer-events: none; }
+
+  /* 移动端 */
+  .luma-mobile-toggle { display: none; background: transparent; border: none; color: inherit; padding: 4px; }
+  .luma-mobile-toggle svg { width: 24px; height: 24px; stroke: currentColor; }
+  @media screen and (max-width: 768px) {
+    .luma-nav, .luma-lang { display: none; }
+    .luma-mobile-toggle { 
+      display: block; 
+      margin-left: auto; /* 移动端汉堡菜单依然靠右显示更符合直觉 */
+    }
+    .luma-header-content {
+      gap: 0; /* 移动端清除固定间距 */
+    }
+  }
+{%- endstyle -%}
+
+<div class="luma-header-wrapper" id="LumaHeader">
+  <div class="luma-glass-bg"></div>
+
+  <div class="luma-header-content">
+    
+    <a href="{{ routes.root_url }}" class="luma-logo">
+      {%- if section.settings.logo_svg != blank -%}
+        {{ section.settings.logo_svg }}
+      {%- elsif section.settings.logo != blank -%}
+        <img src="{{ section.settings.logo | image_url: width: 400 }}" alt="{{ shop.name }}">
+      {%- else -%}
+        <span class="luma-logo-text">{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+
+    <div class="luma-right">
+      <nav class="luma-nav">
+        <a href="/collections/all" class="luma-nav__link">Works</a>
+        <a href="/pages/about" class="luma-nav__link">About Us</a>
+      </nav>
+
+      <div class="luma-lang" id="LumaLangSelector">
+        <button class="luma-lang__toggle">
+          {%- if localization.language.iso_code -%}
+            {{ localization.language.iso_code | capitalize }}
+          {%- else -%}
+            En
+          {%- endif -%}
+          <svg viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        
+        <div class="luma-lang__dropdown">
+          {%- form 'localization', id: 'LumaLocalizationForm' -%}
+            <input type="hidden" name="language_code" id="LumaLangInput" value="{{ localization.language.iso_code | default: 'en' }}">
+            <ul style="margin:0; padding:0;">
+              {%- if localization.available_languages.size > 0 -%}
+                {%- for language in localization.available_languages -%}
+                  <li class="luma-lang__item {% if language.iso_code == localization.language.iso_code %}is-active{% endif %}" 
+                      data-value="{{ language.iso_code }}">
+                    {{ language.iso_code | capitalize }}
+                  </li>
+                {%- endfor -%}
+              {%- else -%}
+                <li class="luma-lang__item is-active" data-value="en">En</li>
+                <li class="luma-lang__item" data-value="zh">Zh</li>
+              {%- endif -%}
+            </ul>
+          {%- endform -%}
+        </div>
+      </div>
+
+      <button class="luma-mobile-toggle">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6h18M3 18h18" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // 仅保留了语言切换的基础交互，移除了所有背景检测和主题切换逻辑
+  document.addEventListener("DOMContentLoaded", () => {
+    const langSelector = document.getElementById('LumaLangSelector');
+    if(langSelector) {
+      const langToggle = langSelector.querySelector('.luma-lang__toggle');
+      const langItems = langSelector.querySelectorAll('.luma-lang__item');
+      const langInput = document.getElementById('LumaLangInput');
+      const langForm = document.getElementById('LumaLocalizationForm');
+
+      langToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        langSelector.classList.toggle('is-open');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!langSelector.contains(e.target)) langSelector.classList.remove('is-open');
+      });
+
+      langItems.forEach(item => {
+        item.addEventListener('click', () => {
+          if (item.classList.contains('is-active')) return;
+          if (langInput && langForm) {
+            langInput.value = item.getAttribute('data-value');
+            langForm.submit();
+          }
+        });
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Luma Dynamic Header",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "range",
+      "id": "header_height",
+      "label": "导航栏高度",
+      "min": 50,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 70
+    },
+    {
+      "type": "html",
+      "id": "logo_svg",
+      "label": "SVG 代码 (推荐)",
+      "info": "在这里粘贴纯正的 SVG 代码，将获得最完美的差值变色效果。请确保原始 SVG 的颜色为白色 (#FFFFFF)。"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo 图片 (备选)"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo 宽度",
+      "min": 50,
+      "max": 250,
+      "step": 5,
+      "unit": "px",
+      "default": 110
+    }
+  ]
+}
+{% endschema %}

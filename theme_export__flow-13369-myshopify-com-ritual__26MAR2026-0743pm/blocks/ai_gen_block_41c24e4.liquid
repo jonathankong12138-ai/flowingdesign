@@ -1,0 +1,364 @@
+{%- comment -%}
+  更新：
+  1. 适配逻辑调整：手机端和桌面端在宽度不足时均采用文字自然换行，不再使用 JS 强行缩放。
+  2. 手机端字体：先执行后台设置的缩放比例，不足时再换行。
+  3. 结构零改变：维持平铺循环结构，保持阶梯布局。
+  4. 视觉保留：保留 Blend Mode 穿透、右侧无空白、抗抖动占位符。
+{%- endcomment -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+{%- liquid
+  assign block_id = block.id | replace: '_', '' | downcase
+  assign opacity_decimal = block.settings.background_opacity | divided_by: 100.0
+  assign bg_color_rgba = block.settings.background_color | color_modify: 'alpha', opacity_decimal
+  assign mobile_scale = block.settings.mobile_font_scale | divided_by: 100.0
+-%}
+
+{%- style -%}
+  /* 允许 blend-mode 穿透到背景层 */
+  .glacier-content-{{ section.id }} {
+    z-index: auto !important;
+    isolation: auto !important;
+  }
+
+  /* 干掉 Shopify 干扰 */
+  #shopify-section-{{ section.id }} .shopify-block {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .ai-text-wrapper-{{ block_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    position: relative;
+    isolation: auto !important;
+    {% if block.settings.horizontal_justify == 'flex-start' %}
+      margin: 0 auto 0 0 !important;
+    {% elsif block.settings.horizontal_justify == 'flex-end' %}
+      margin: 0 0 0 auto !important;
+    {% else %}
+      margin: 0 auto !important; 
+    {% endif %}
+    padding: 0 !important;
+    font-family: 'Urbanist', sans-serif;
+  }
+
+  .ai-text-container-{{ block_id }} {
+    display: flex;
+    flex-direction: {{ block.settings.desktop_layout }};
+    flex-wrap: wrap; /* 允许换行 */
+    gap: {{ block.settings.gap }}px;
+    width: {% if block.settings.container_width_mode == 'fit' %}fit-content{% else %}100%{% endif %};
+    isolation: auto !important;
+    {% if block.settings.desktop_layout == 'column' %}
+      align-items: {{ block.settings.horizontal_justify | replace: 'space-between', 'flex-start' }};
+      justify-content: {{ block.settings.vertical_align }};
+    {% else %}
+      align-items: {{ block.settings.vertical_align }};
+      justify-content: {{ block.settings.horizontal_justify }};
+    {% endif %}
+  }
+
+  .ai-column-{{ block_id }} {
+    min-width: 0;
+    padding: {{ block.settings.box_padding }}px;
+    background-color: {{ bg_color_rgba }};
+    border-radius: {{ block.settings.border_radius }}px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    cursor: pointer;
+    flex: 0 0 auto;
+    isolation: auto !important;
+    max-width: 100%; /* 防止单个文本块溢出 */
+  }
+
+  .ai-item-wrapper-{{ block_id }} {
+    display: grid;
+    width: fit-content; /* 确保紧凑 */
+    max-width: 100%;
+    align-items: center;
+    justify-items: start;
+    isolation: auto !important;
+    white-space: normal !important; /* 允许文字换行 */
+    word-break: break-word;
+  }
+
+  {%- for i in (1..4) -%}
+    {%- assign s_size = 'size_' | append: i -%}
+    {%- assign s_weight = 'weight_' | append: i -%}
+    {%- assign s_lh = 'lh_' | append: i -%}
+    {%- assign s_align = 'align_' | append: i -%}
+    {%- assign s_color = 'color_' | append: i -%}
+    {%- assign s_opacity = 'opacity_' | append: i -%}
+    {%- assign s_blend = 'blend_mode_' | append: i -%}
+    
+    {%- assign s_enable_hover = 'enable_hover_' | append: i -%}
+    {%- assign s_hover_color = 'hover_color_' | append: i -%}
+    {%- assign s_hover_opacity = 'hover_opacity_' | append: i -%}
+    {%- assign s_hover_weight = 'hover_weight_' | append: i -%}
+    
+    {%- assign s_enable_active = 'enable_active_' | append: i -%}
+    {%- assign s_active_color = 'active_color_' | append: i -%}
+    {%- assign s_active_opacity = 'active_opacity_' | append: i -%}
+    {%- assign s_active_weight = 'active_weight_' | append: i -%}
+    
+    .ai-item-{{ i }}-{{ block_id }} {
+      font-size: {{ block.settings[s_size] }}px;
+      font-weight: {{ block.settings[s_weight] }};
+      line-height: {{ block.settings[s_lh] }};
+      text-align: {{ block.settings[s_align] }};
+      color: {{ block.settings[s_color] }};
+      opacity: {{ block.settings[s_opacity] | divided_by: 100.0 }};
+      mix-blend-mode: {{ block.settings[s_blend] }} !important;
+      letter-spacing: -0.02em;
+      margin: 0 !important; padding: 0 !important;
+      transition: color 0.4s ease, opacity 0.4s ease, font-weight 0.4s ease;
+      grid-area: 1 / 1;
+    }
+
+    .ai-item-{{ i }}-{{ block_id }}-placeholder {
+      font-size: {{ block.settings[s_size] }}px;
+      font-weight: {{ block.settings[s_weight] }}; 
+      line-height: {{ block.settings[s_lh] }};
+      text-align: {{ block.settings[s_align] }};
+      letter-spacing: -0.02em;
+      margin: 0 !important; padding: 0 !important;
+      word-wrap: break-word; overflow-wrap: break-word;
+      visibility: hidden; pointer-events: none; grid-area: 1 / 1;
+    }
+
+    {%- if block.settings[s_enable_hover] -%}
+    .ai-column-{{ i }}-{{ block_id }}:hover .ai-item-{{ i }}-{{ block_id }} {
+      color: {{ block.settings[s_hover_color] }};
+      opacity: {{ block.settings[s_hover_opacity] | divided_by: 100.0 }};
+      font-weight: {{ block.settings[s_hover_weight] }};
+    }
+    {%- endif -%}
+
+    {%- if block.settings[s_enable_active] -%}
+    .ai-column-{{ i }}-{{ block_id }}.is-active .ai-item-{{ i }}-{{ block_id }} {
+      color: {{ block.settings[s_active_color] }};
+      opacity: {{ block.settings[s_active_opacity] | divided_by: 100.0 }};
+      font-weight: {{ block.settings[s_active_weight] }};
+    }
+    {%- endif -%}
+  {%- endfor -%}
+
+  @media screen and (max-width: 767px) {
+    .ai-text-container-{{ block_id }} {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: wrap !important;
+      align-content: flex-start !important;
+      {% if block.settings.horizontal_justify == 'flex-start' %}
+        justify-content: flex-start !important;
+        margin: 0 auto 0 0 !important;
+      {% elsif block.settings.horizontal_justify == 'flex-end' %}
+        justify-content: flex-end !important;
+        margin: 0 0 0 auto !important;
+      {% else %}
+        justify-content: center !important;
+        margin: 0 auto !important;
+      {% endif %}
+      column-gap: {{ block.settings.mobile_gap_x }}px !important; 
+      row-gap: {{ block.settings.mobile_gap_y }}px !important; 
+      width: 100% !important;
+    }
+    
+    .ai-column-{{ block_id }} {
+      width: auto !important; 
+      flex: 0 0 auto !important;
+      padding: {{ block.settings.box_padding | times: 0.5 }}px !important;
+      margin: 0 !important;
+      max-width: calc(100% - 10px); /* 预留微小间隙防止换行死锁 */
+    }
+
+    .mobile-line-break-{{ block_id }} {
+      flex-basis: 100% !important;
+      width: 0 !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: block !important;
+    }
+
+    .ai-item-wrapper-{{ block_id }} {
+      white-space: normal !important; 
+      word-break: break-word;
+    }
+
+    {%- for i in (1..4) -%}
+      {%- assign s_size = 'size_' | append: i -%}
+      .ai-item-{{ i }}-{{ block_id }},
+      .ai-item-{{ i }}-{{ block_id }}-placeholder {
+        font-size: {{ block.settings[s_size] | times: mobile_scale | at_least: 12 }}px;
+      }
+    {%- endfor -%}
+  }
+{%- endstyle -%}
+
+<div class="ai-text-wrapper-{{ block_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-text-container-{{ block_id }}">
+    {%- for i in (1..block.settings.visible_columns) -%}
+      {%- liquid
+        assign s_text = 'text_' | append: i
+        assign s_img = 'img_' | append: i
+        assign s_vid = 'vid_' | append: i
+        assign media_url = ""
+        assign media_type = "none"
+        
+        if block.settings[s_vid] != blank
+          assign media_url = block.settings[s_vid].sources[1].url
+          assign media_type = "video"
+        elsif block.settings[s_img] != blank
+          assign media_url = block.settings[s_img] | image_url: width: 2000
+          assign media_type = "image"
+        endif
+      -%}
+      
+      <div class="ai-column-{{ block_id }} ai-column-{{ i }}-{{ block_id }} js-trigger-bg" 
+           data-bg-url="{{ media_url }}" 
+           data-bg-type="{{ media_type }}">
+        <div class="ai-item-wrapper-{{ block_id }}">
+          <div class="ai-item-{{ i }}-{{ block_id }}-placeholder">
+            {{ block.settings[s_text] | newline_to_br }}
+          </div>
+          <div class="ai-item-{{ i }}-{{ block_id }}">
+            {{ block.settings[s_text] | newline_to_br }}
+          </div>
+        </div>
+      </div>
+
+      {%- assign check_break = i | modulo: 2 -%}
+      {%- if check_break == 0 and i < block.settings.visible_columns -%}
+        <div class="mobile-line-break-{{ block_id }} hide-desktop"></div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const wrapper = document.querySelector('.ai-text-wrapper-{{ block_id }}');
+    if (!wrapper) return;
+    
+    wrapper.addEventListener('click', function(e) {
+      const trigger = e.target.closest('.js-trigger-bg');
+      if (!trigger) return;
+      const isActive = trigger.classList.contains('is-active');
+      document.querySelectorAll('.js-trigger-bg').forEach(el => el.classList.remove('is-active'));
+      if (!isActive) trigger.classList.add('is-active');
+    });
+    
+    // 逻辑：现在的适配逻辑完全由 CSS 媒体查询和 Flex-wrap 处理。
+    // 如果您需要动态监控高度，可以在此处添加 ResizeObserver，
+    // 但目前自然的 CSS 换行已能满足“屏幕不足时换行”的要求。
+  });
+</script>
+
+{% schema %}
+{
+  "name": "互動多欄文本",
+  "settings": [
+    { "type": "header", "content": "全局佈局控制" },
+    { "type": "range", "id": "visible_columns", "label": "顯示欄數", "min": 1, "max": 4, "step": 1, "default": 4 },
+    { "type": "select", "id": "desktop_layout", "label": "桌面端排列方式", "options": [{"value":"row","label":"橫向排列 (Row)"},{"value":"column","label":"縱向排列 (Column)"}], "default": "row" },
+    { "type": "select", "id": "container_width_mode", "label": "容器寬度模式", "options": [{"value":"full","label":"佔據全寬 (100%)"},{"value":"fit","label":"緊湊模式"}], "default": "full" },
+    { "type": "select", "id": "horizontal_justify", "label": "橫向排列位置", "options": [{"value":"flex-start","label":"靠左"},{"value":"center","label":"居中"},{"value":"flex-end","label":"靠右"}], "default": "flex-start" },
+    { "type": "select", "id": "vertical_align", "label": "桌面端垂直對齊", "options": [{"value":"flex-start","label":"頂部"},{"value":"center","label":"居中"},{"value":"flex-end","label":"底部"}], "default": "center" },
+    { "type": "range", "id": "gap", "label": "桌面端間距", "min": 0, "max": 200, "step": 2, "default": 20 },
+    { "type": "range", "id": "desktop_width_percent", "label": "容器最大總寬度", "min": 50, "max": 100, "step": 1, "default": 100 },
+    { "type": "header", "content": "背景與樣式" },
+    { "type": "color", "id": "background_color", "label": "背景顏色", "default": "#f5f5f5" },
+    { "type": "range", "id": "background_opacity", "label": "背景透明度", "min": 0, "max": 100, "step": 5, "default": 0 },
+    { "type": "range", "id": "box_padding", "label": "內部邊距", "min": 0, "max": 60, "step": 1, "default": 0 },
+    { "type": "range", "id": "border_radius", "label": "圓角半徑", "min": 0, "max": 40, "step": 1, "default": 0 },
+    { "type": "header", "content": "欄位設定" },
+    { "type": "header", "content": "欄位 1" },
+    { "type": "textarea", "id": "text_1", "label": "內容", "default": "Flowing" },
+    { "type": "image_picker", "id": "img_1", "label": "背景圖" },
+    { "type": "video", "id": "vid_1", "label": "背景影片" },
+    { "type": "select", "id": "blend_mode_1", "label": "混合模式", "options": [{"value":"normal","label":"正常"},{"value":"multiply","label":"Multiply"},{"value":"screen","label":"Screen"},{"value":"overlay","label":"Overlay"},{"value":"difference","label":"Difference"},{"value":"plus-lighter","label":"Plus Lighter"}], "default": "normal" },
+    { "type": "range", "id": "size_1", "label": "字號", "min": 10, "max": 150, "step": 2, "default": 72 },
+    { "type": "select", "id": "weight_1", "label": "字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "200" },
+    { "type": "range", "id": "lh_1", "label": "行高", "min": 0.5, "max": 2.5, "step": 0.1, "default": 1.1 },
+    { "type": "select", "id": "align_1", "label": "對齊", "options": [{"value":"left","label":"左"},{"value":"center","label":"中"}], "default": "left" },
+    { "type": "color", "id": "color_1", "label": "顏色", "default": "#1a1a1a" },
+    { "type": "range", "id": "opacity_1", "label": "透明度", "min": 0, "max": 100, "step": 5, "default": 100 },
+    { "type": "checkbox", "id": "enable_hover_1", "label": "啟用懸停", "default": false },
+    { "type": "color", "id": "hover_color_1", "label": "懸停顏色", "default": "#666666" },
+    { "type": "range", "id": "hover_opacity_1", "label": "懸停透明度", "min": 0, "max": 100, "step": 5, "default": 80 },
+    { "type": "select", "id": "hover_weight_1", "label": "懸停字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "200" },
+    { "type": "checkbox", "id": "enable_active_1", "label": "啟用選中", "default": true },
+    { "type": "color", "id": "active_color_1", "label": "選中顏色", "default": "#1a1a1a" },
+    { "type": "range", "id": "active_opacity_1", "label": "選中透明度", "min": 0, "max": 100, "step": 5, "default": 100 },
+    { "type": "select", "id": "active_weight_1", "label": "選中字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "600" },
+    { "type": "header", "content": "欄位 2" },
+    { "type": "textarea", "id": "text_2", "label": "內容", "default": "Vision" },
+    { "type": "image_picker", "id": "img_2", "label": "背景圖" },
+    { "type": "video", "id": "vid_2", "label": "背景影片" },
+    { "type": "select", "id": "blend_mode_2", "label": "混合模式", "options": [{"value":"normal","label":"正常"},{"value":"multiply","label":"Multiply"},{"value":"screen","label":"Screen"},{"value":"overlay","label":"Overlay"},{"value":"difference","label":"Difference"},{"value":"plus-lighter","label":"Plus Lighter"}], "default": "normal" },
+    { "type": "range", "id": "size_2", "label": "字號", "min": 10, "max": 150, "step": 2, "default": 32 },
+    { "type": "select", "id": "weight_2", "label": "字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "200" },
+    { "type": "range", "id": "lh_2", "label": "行高", "min": 0.5, "max": 2.5, "step": 0.1, "default": 1.1 },
+    { "type": "select", "id": "align_2", "label": "對齊", "options": [{"value":"left","label":"左"},{"value":"center","label":"中"}], "default": "left" },
+    { "type": "color", "id": "color_2", "label": "顏色", "default": "#1a1a1a" },
+    { "type": "range", "id": "opacity_2", "label": "透明度", "min": 0, "max": 100, "step": 5, "default": 100 },
+    { "type": "checkbox", "id": "enable_hover_2", "label": "啟用懸停", "default": false },
+    { "type": "color", "id": "hover_color_2", "label": "懸停顏色", "default": "#666666" },
+    { "type": "range", "id": "hover_opacity_2", "label": "懸停透明度", "min": 0, "max": 100, "step": 5, "default": 80 },
+    { "type": "select", "id": "hover_weight_2", "label": "懸停字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "200" },
+    { "type": "checkbox", "id": "enable_active_2", "label": "啟用選中", "default": true },
+    { "type": "color", "id": "active_color_2", "label": "選中顏色", "default": "#1a1a1a" },
+    { "type": "range", "id": "active_opacity_2", "label": "選中透明度", "min": 0, "max": 100, "step": 5, "default": 100 },
+    { "type": "select", "id": "active_weight_2", "label": "選中字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "600" },
+    { "type": "header", "content": "欄位 3" },
+    { "type": "textarea", "id": "text_3", "label": "內容", "default": "Stream" },
+    { "type": "image_picker", "id": "img_3", "label": "背景圖" },
+    { "type": "video", "id": "vid_3", "label": "背景影片" },
+    { "type": "select", "id": "blend_mode_3", "label": "混合模式", "options": [{"value":"normal","label":"正常"},{"value":"multiply","label":"Multiply"},{"value":"screen","label":"Screen"},{"value":"overlay","label":"Overlay"},{"value":"difference","label":"Difference"},{"value":"plus-lighter","label":"Plus Lighter"}], "default": "normal" },
+    { "type": "range", "id": "size_3", "label": "字號", "min": 10, "max": 150, "step": 2, "default": 72 },
+    { "type": "select", "id": "weight_3", "label": "字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "200" },
+    { "type": "range", "id": "lh_3", "label": "行高", "min": 0.5, "max": 2.5, "step": 0.1, "default": 1.1 },
+    { "type": "select", "id": "align_3", "label": "對齊", "options": [{"value":"left","label":"左"},{"value":"center","label":"中"}], "default": "left" },
+    { "type": "color", "id": "color_3", "label": "顏色", "default": "#1a1a1a" },
+    { "type": "range", "id": "opacity_3", "label": "透明度", "min": 0, "max": 100, "step": 5, "default": 100 },
+    { "type": "checkbox", "id": "enable_hover_3", "label": "啟用懸停", "default": false },
+    { "type": "color", "id": "hover_color_3", "label": "懸停顏色", "default": "#666666" },
+    { "type": "range", "id": "hover_opacity_3", "label": "懸停透明度", "min": 0, "max": 100, "step": 5, "default": 80 },
+    { "type": "select", "id": "hover_weight_3", "label": "懸停字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "200" },
+    { "type": "checkbox", "id": "enable_active_3", "label": "啟用選中", "default": true },
+    { "type": "color", "id": "active_color_3", "label": "選中顏色", "default": "#1a1a1a" },
+    { "type": "range", "id": "active_opacity_3", "label": "選中透明度", "min": 0, "max": 100, "step": 5, "default": 100 },
+    { "type": "select", "id": "active_weight_3", "label": "選中字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "600" },
+    { "type": "header", "content": "欄位 4" },
+    { "type": "textarea", "id": "text_4", "label": "內容", "default": "Insight" },
+    { "type": "image_picker", "id": "img_4", "label": "背景圖" },
+    { "type": "video", "id": "vid_4", "label": "背景影片" },
+    { "type": "select", "id": "blend_mode_4", "label": "混合模式", "options": [{"value":"normal","label":"正常"},{"value":"multiply","label":"Multiply"},{"value":"screen","label":"Screen"},{"value":"overlay","label":"Overlay"},{"value":"difference","label":"Difference"},{"value":"plus-lighter","label":"Plus Lighter"}], "default": "normal" },
+    { "type": "range", "id": "size_4", "label": "字號", "min": 10, "max": 150, "step": 2, "default": 32 },
+    { "type": "select", "id": "weight_4", "label": "字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "200" },
+    { "type": "range", "id": "lh_4", "label": "行高", "min": 0.5, "max": 2.5, "step": 0.1, "default": 1.1 },
+    { "type": "select", "id": "align_4", "label": "對齊", "options": [{"value":"left","label":"左"},{"value":"center","label":"中"}], "default": "left" },
+    { "type": "color", "id": "color_4", "label": "顏色", "default": "#1a1a1a" },
+    { "type": "range", "id": "opacity_4", "label": "透明度", "min": 0, "max": 100, "step": 5, "default": 100 },
+    { "type": "checkbox", "id": "enable_hover_4", "label": "啟用懸停", "default": false },
+    { "type": "color", "id": "hover_color_4", "label": "懸停顏色", "default": "#666666" },
+    { "type": "range", "id": "hover_opacity_4", "label": "懸停透明度", "min": 0, "max": 100, "step": 5, "default": 80 },
+    { "type": "select", "id": "hover_weight_4", "label": "懸停字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "200" },
+    { "type": "checkbox", "id": "enable_active_4", "label": "啟用選中", "default": true },
+    { "type": "color", "id": "active_color_4", "label": "選中顏色", "default": "#1a1a1a" },
+    { "type": "range", "id": "active_opacity_4", "label": "選中透明度", "min": 0, "max": 100, "step": 5, "default": 100 },
+    { "type": "select", "id": "active_weight_4", "label": "選中字重", "options": [{"value":"200","label":"Extralight"},{"value":"400","label":"Normal"},{"value":"600","label":"Semibold"}], "default": "600" },
+    { "type": "header", "content": "移動端響應式控制" },
+    { "type": "range", "id": "mobile_font_scale", "label": "字體縮放比例", "min": 50, "max": 100, "step": 5, "default": 75 },
+    { "type": "range", "id": "mobile_gap_x", "label": "移动端词间距 (X)", "min": 0, "max": 60, "step": 2, "default": 20 },
+    { "type": "range", "id": "mobile_gap_y", "label": "移动端行间距 (Y)", "min": 0, "max": 60, "step": 2, "default": 20 },
+    { "type": "select", "id": "mobile_vertical_align", "label": "移动端垂直对齐", "options": [{"value":"flex-start","label":"顶部"},{"value":"center","label":"居中"},{"value":"flex-end","label":"底部"}], "default": "center" }
+  ],
+  "presets": [{"name":"互動多栏文本"}]
+}
+{% endschema %}
