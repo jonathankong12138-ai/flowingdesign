@@ -1,74 +1,201 @@
+{% comment %}
+  Section: Our Work (Koto 风格复刻 - 完整单文件版)
+{% endcomment %}
 
+{%- style -%}
+  /* --- 这里是 CSS 样式部分 --- */
+  .our-work-section-{{ section.id }} {
+    padding-top: 60px;
+    padding-bottom: 60px;
+    background-color: #ffffff; /* 背景颜色，可按需修改 */
+  }
 
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
-<div
-  class="section section--{{ section.settings.section_width }} spacing-style {% if section.settings.color_scheme != blank %}color-{{ section.settings.color_scheme }}{% endif %}"
-  style="{% render 'spacing-padding', settings: section.settings %}"
->
-  {{ section.settings.custom_liquid }}
+  .our-work-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -15px; 
+    margin-right: -15px;
+  }
+
+  .our-work-item {
+    padding: 15px; 
+    box-sizing: border-box;
+  }
+
+  /* 电脑端列数控制 */
+  @media screen and (min-width: 750px) {
+    .grid--2 .our-work-item { width: 50%; }
+    .grid--3 .our-work-item { width: 33.333%; }
+    .grid--4 .our-work-item { width: 25%; }
+  }
+
+  /* 手机端列数控制 */
+  @media screen and (max-width: 749px) {
+    .grid--1 .our-work-item { width: 100%; }
+    .grid--2 .our-work-item { width: 50%; }
+  }
+
+  .our-work-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  /* 图片容器：固定比例 (4:3) 且溢出隐藏 */
+  .our-work-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+    padding-top: 75%; /* 75% 代表 4:3 比例。如果是 1:1 正方形，改成 100% */
+    background-color: #f4f4f4;
+  }
+
+  .our-work-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease; /* 鼠标悬浮动画过渡 */
+  }
+
+  /* 鼠标放上去时图片微微放大 (高级感交互) */
+  .our-work-link:hover .our-work-image {
+    transform: scale(1.04);
+  }
+
+  .our-work-details {
+    text-align: left;
+  }
+
+  .our-work-project-title {
+    margin: 0 0 6px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #111;
+    letter-spacing: -0.02em; /* 稍微收紧字间距显得更现代 */
+  }
+
+  .our-work-client-name {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #666;
+  }
+{%- endstyle -%}
+
+<div class="our-work-section-{{ section.id }} page-width">
+  {%- if section.settings.title != blank -%}
+    <div class="section-header text-center" style="margin-bottom: 40px;">
+      <h2 style="font-size: 2.4rem; margin: 0;">{{ section.settings.title | escape }}</h2>
+    </div>
+  {%- endif -%}
+
+  <div class="our-work-grid grid grid--uniform grid--{{ section.settings.grid_mobile }} grid--{{ section.settings.grid_desktop }}">
+    {%- for block in section.blocks -%}
+      <div class="our-work-item grid__item" {{ block.shopify_attributes }}>
+        <a href="{{ block.settings.link | default: '#' }}" class="our-work-link">
+          <div class="our-work-image-wrapper">
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 1000 | image_tag:
+                loading: 'lazy',
+                sizes: '(min-width: 990px) 33vw, 100vw',
+                widths: '375, 550, 750, 1000',
+                class: 'our-work-image'
+              }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg our-work-image' }}
+            {%- endif -%}
+          </div>
+          <div class="our-work-details">
+            {%- if block.settings.project_title != blank -%}
+              <h3 class="our-work-project-title">{{ block.settings.project_title | escape }}</h3>
+            {%- endif -%}
+            {%- if block.settings.client_name != blank -%}
+              <p class="our-work-client-name">{{ block.settings.client_name | escape }}</p>
+            {%- endif -%}
+          </div>
+        </a>
+      </div>
+    {%- endfor -%}
+  </div>
+
+  {%- if section.blocks.size == 0 -%}
+    <p style="text-align: center; color: #999;">请在后台添加作品项目</p>
+  {%- endif -%}
 </div>
 
 {% schema %}
 {
-  "name": "t:names.custom_liquid",
+  "name": "Our Work (Koto 风格)",
   "settings": [
     {
-      "type": "liquid",
-      "id": "custom_liquid",
-      "label": "t:settings.custom_liquid",
-      "info": "t:info.custom_liquid"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:settings.color_scheme",
-      "default": "scheme-1"
+      "type": "text",
+      "id": "title",
+      "label": "板块大标题",
+      "default": "Our Work"
     },
     {
       "type": "select",
-      "id": "section_width",
-      "label": "t:settings.width",
+      "id": "grid_desktop",
+      "label": "电脑端每行显示几个",
+      "default": "3",
       "options": [
+        { "value": "2", "label": "2个" },
+        { "value": "3", "label": "3个" },
+        { "value": "4", "label": "4个" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "grid_mobile",
+      "label": "手机端每行显示几个",
+      "default": "1",
+      "options": [
+        { "value": "1", "label": "1个" },
+        { "value": "2", "label": "2个" }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "work_item",
+      "name": "单个作品案例",
+      "settings": [
         {
-          "value": "page-width",
-          "label": "t:options.page"
+          "type": "image_picker",
+          "id": "image",
+          "label": "作品图片 (建议使用横图，比例 4:3 最佳)"
         },
         {
-          "value": "full-width",
-          "label": "t:options.full"
+          "type": "text",
+          "id": "project_title",
+          "label": "项目名称 (黑体大字)",
+          "default": "项目名称"
+        },
+        {
+          "type": "text",
+          "id": "client_name",
+          "label": "客户名称/行业分类 (灰色小字)",
+          "default": "客户名称 / 行业"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "点击图片跳转的链接"
         }
-      ],
-      "default": "page-width"
-    },
-    {
-      "type": "header",
-      "content": "t:content.padding"
-    },
-    {
-      "type": "range",
-      "id": "padding-block-start",
-      "label": "t:settings.top",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding-block-end",
-      "label": "t:settings.bottom",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 0
+      ]
     }
   ],
   "presets": [
     {
-      "name": "t:names.custom_liquid",
-      "category": "t:categories.layout"
+      "name": "Our Work (Koto 风格)",
+      "category": "Image",
+      "blocks": [
+        { "type": "work_item" },
+        { "type": "work_item" },
+        { "type": "work_item" }
+      ]
     }
   ]
 }
