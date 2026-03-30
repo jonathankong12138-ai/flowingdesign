@@ -1,185 +1,199 @@
-{% comment %}
-  Section: Our Work (Koto 高级滚动悬停版)
-{% endcomment %}
+{%- comment -%}
+  Koto Style "Our Work" Section (Sticky Scroll)
+  1. 采用了与 Glacier Dune 相同的纯净结构设计。
+  2. 强制全宽布局，突破主题默认 container 限制。
+  3. 响应式超大排版 + Intersection Observer 滚动监听。
+{%- endcomment -%}
 
-{%- style -%}
-  .koto-section-{{ section.id }} {
-    background-color: #ffffff; /* 背景色 */
-    color: #000000;
-    padding-top: 40px;
-    padding-bottom: 80px;
+{%- liquid
+  assign section_id = section.id | replace: '-', '_'
+  assign bg_color = section.settings.bg_color
+  assign text_color = section.settings.text_color
+-%}
+
+<style>
+  /* --- 容器重置 (参考 section.liquid) --- */
+  .koto-wrapper-{{ section_id }} {
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 100px 5% !important; /* 保持全宽感知，但留出 5% 安全阅读边距 */
+    background-color: {{ bg_color }} !important;
+    color: {{ text_color }} !important;
+    box-sizing: border-box;
   }
 
-  /* --- 电脑端布局 (左右分屏) --- */
-  @media screen and (min-width: 900px) {
-    .koto-container-{{ section.id }} {
-      display: flex;
-      align-items: flex-start;
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 0 5%;
-    }
-
-    /* 左侧文字区：固定在屏幕上 */
-    .koto-left-panel {
-      width: 40%;
-      position: sticky;
-      top: 15vh; /* 距离顶部的悬停位置 */
-      height: 70vh; /* 留出上下空间 */
-      display: flex;
-      flex-direction: column;
-      padding-right: 60px;
-    }
-
-    /* 右侧媒体区：正常滚动 */
-    .koto-right-panel {
-      width: 60%;
-    }
-
-    /* 包含所有文字块的容器 */
-    .koto-text-wrapper {
-      position: relative;
-      flex-grow: 1;
-      margin-top: 40px;
-    }
-
-    /* 每一个动态文字块（绝对定位，堆叠在一起） */
-    .koto-text-item {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-      pointer-events: none; /* 隐藏时不可点击 */
-    }
-
-    /* 激活状态的文字块 */
-    .koto-text-item.active {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    /* 手机端专用的文字块（在电脑端隐藏） */
-    .koto-mobile-text {
-      display: none;
-    }
+  .koto-inner-{{ section_id }} {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1800px; /* 限制最大宽带，防止超宽屏变形 */
+    margin: 0 auto;
   }
 
-  /* --- 手机端布局 (上下排列) --- */
-  @media screen and (max-width: 899px) {
-    .koto-container-{{ section.id }} {
-      padding: 0 20px;
-    }
-    
-    .koto-left-panel {
-      margin-bottom: 30px;
-    }
-
-    /* 手机端隐藏左侧的动态文字块 */
-    .koto-text-wrapper {
-      display: none; 
-    }
-
-    /* 手机端显示跟在图片后面的文字块 */
-    .koto-mobile-text {
-      display: block;
-      margin-top: 20px;
-      margin-bottom: 60px;
-    }
-  }
-
-  /* --- 通用样式 --- */
-  .koto-main-title {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 700;
+  /* --- 字体与排版重置 --- */
+  .koto-wrapper-{{ section_id }} h2,
+  .koto-wrapper-{{ section_id }} h3,
+  .koto-wrapper-{{ section_id }} p {
+    color: {{ text_color }} !important;
     margin: 0;
     line-height: 1.1;
   }
 
-  .koto-project-title {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 700;
-    margin: 0 0 15px 0;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+  /* 左侧：固定文字面板 */
+  .koto-left-{{ section_id }} {
+    width: 38%;
+    position: sticky;
+    top: 15vh; /* 悬停在屏幕上方 15% 处 */
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    padding-right: 40px;
+    z-index: 2;
   }
 
-  .koto-project-desc {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #444;
-    margin-bottom: 30px;
+  .koto-main-title-{{ section_id }} {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    margin-bottom: 60px !important;
+    letter-spacing: -0.03em;
+  }
+
+  .koto-text-group-{{ section_id }} {
+    position: relative;
+    width: 100%;
+    min-height: 40vh; /* 预留给文字切换的空间 */
+  }
+
+  .koto-text-item-{{ section_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); /* 极其平滑的过渡 */
+    pointer-events: none;
+  }
+
+  .koto-text-item-{{ section_id }}.is-active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .koto-project-title-{{ section_id }} {
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 800;
+    margin-bottom: 24px !important;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
+
+  .koto-project-desc-{{ section_id }} {
+    font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+    line-height: 1.5 !important;
+    opacity: 0.8;
+    margin-bottom: 30px !important;
     max-width: 90%;
   }
 
-  .koto-award-box {
+  /* 奖项提示 */
+  .koto-award-{{ section_id }} {
     display: flex;
     align-items: center;
-    gap: 15px;
-    border-top: 1px solid #eee;
-    padding-top: 20px;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 2px solid rgba(0,0,0,0.1); /* 深色背景下需用 rgba(255,255,255,0.1) */
   }
 
-  .koto-award-img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
+  /* 右侧：滚动媒体面板 */
+  .koto-right-{{ section_id }} {
+    width: 58%;
+    display: flex;
+    flex-direction: column;
+    gap: 120px; /* 作品间距巨大，制造呼吸感 */
   }
 
-  .koto-award-text {
-    font-size: 0.9rem;
-    color: #666;
-    font-weight: 500;
-  }
-
-  .koto-media-item {
-    margin-bottom: 100px; /* 两个作品之间的间距 */
-    border-radius: 8px;
+  .koto-media-card-{{ section_id }} {
+    width: 100%;
+    border-radius: 12px;
     overflow: hidden;
     background: #f4f4f4;
+    transition: transform 0.5s ease;
   }
 
-  /* 最后一个作品不需要底边距 */
-  .koto-media-item:last-child {
-    margin-bottom: 0;
+  .koto-media-card-{{ section_id }}:hover {
+    transform: scale(0.98); /* 鼠标放上图片整体微缩，高级交互 */
   }
 
-  .koto-media-content {
-    width: 100%;
+  .koto-media-card-{{ section_id }} img,
+  .koto-media-card-{{ section_id }} video {
+    width: 100% !important;
+    height: auto !important;
     display: block;
-  }
-
-  .koto-media-content img, 
-  .koto-media-content video {
-    width: 100%;
-    height: auto;
     object-fit: cover;
-    display: block;
   }
-{%- endstyle -%}
 
-<div id="koto-section-{{ section.id }}" class="koto-section-{{ section.id }}">
-  <div class="koto-container-{{ section.id }}">
+  /* 手机端独有结构隐藏 */
+  .koto-mobile-text-{{ section_id }} {
+    display: none;
+  }
+
+  /* --- 移动端响应式 --- */
+  @media screen and (max-width: 989px) {
+    .koto-wrapper-{{ section_id }} {
+      padding: 60px 20px !important;
+    }
+    .koto-inner-{{ section_id }} {
+      flex-direction: column;
+    }
+    .koto-left-{{ section_id }} {
+      width: 100%;
+      position: relative;
+      top: 0;
+      padding-right: 0;
+      margin-bottom: 40px;
+    }
+    .koto-text-group-{{ section_id }} {
+      display: none; /* 手机端隐藏左侧动态文字 */
+    }
+    .koto-right-{{ section_id }} {
+      width: 100%;
+      gap: 60px;
+    }
+    .koto-mobile-text-{{ section_id }} {
+      display: block;
+      margin-top: 24px;
+    }
+    .koto-project-title-{{ section_id }} {
+      font-size: 2.5rem;
+      margin-bottom: 12px !important;
+    }
+  }
+</style>
+
+<div id="koto-{{ section_id }}" class="koto-wrapper-{{ section_id }}">
+  <div class="koto-inner-{{ section_id }}">
     
-    <div class="koto-left-panel">
-      <h2 class="koto-main-title">{{ section.settings.main_title }}</h2>
+    <div class="koto-left-{{ section_id }}">
+      <h2 class="koto-main-title-{{ section_id }}">{{ section.settings.main_title }}</h2>
       
-      <div class="koto-text-wrapper">
+      <div class="koto-text-group-{{ section_id }}">
         {%- for block in section.blocks -%}
-          <div class="koto-text-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}">
-            <h3 class="koto-project-title">{{ block.settings.title }}</h3>
-            <div class="koto-project-desc">{{ block.settings.description }}</div>
+          <div class="koto-text-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}">
+            <h3 class="koto-project-title-{{ section_id }}">{{ block.settings.title }}</h3>
+            <div class="koto-project-desc-{{ section_id }}">{{ block.settings.description }}</div>
             
-            {%- if block.settings.award_image != blank or block.settings.award_text != blank -%}
-              <div class="koto-award-box">
+            {%- if block.settings.award_text != blank or block.settings.award_image != blank -%}
+              <div class="koto-award-{{ section_id }}" {% if text_color == '#ffffff' or text_color == '#FFFFFF' %}style="border-color: rgba(255,255,255,0.2);"{% endif %}>
                 {%- if block.settings.award_image != blank -%}
-                  <img src="{{ block.settings.award_image | image_url: width: 100 }}" class="koto-award-img" alt="Award">
+                  <img src="{{ block.settings.award_image | image_url: width: 80 }}" style="width: 40px; height: 40px; object-fit: contain;" alt="Award">
                 {%- endif -%}
                 {%- if block.settings.award_text != blank -%}
-                  <span class="koto-award-text">{{ block.settings.award_text }}</span>
+                  <span style="font-weight: 600; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ block.settings.award_text }}</span>
                 {%- endif -%}
               </div>
             {%- endif -%}
@@ -188,31 +202,26 @@
       </div>
     </div>
 
-    <div class="koto-right-panel">
+    <div class="koto-right-{{ section_id }}">
       {%- for block in section.blocks -%}
-        <div class="koto-media-item" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+        <div class="koto-media-item-{{ section_id }}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
           
-          <a href="{{ block.settings.link | default: '#' }}" class="koto-media-content">
+          <a href="{{ block.settings.link | default: '#' }}" class="koto-media-card-{{ section_id }}">
             {%- if block.settings.video_url != blank -%}
-              <video autoplay loop muted playsinline>
-                <source src="{{ block.settings.video_url }}" type="video/mp4">
-              </video>
+              <video src="{{ block.settings.video_url }}" autoplay loop muted playsinline></video>
             {%- elsif block.settings.image != blank -%}
-              {{ block.settings.image | image_url: width: 1500 | image_tag: loading: 'lazy' }}
+              {{ block.settings.image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
             {%- else -%}
-              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
             {%- endif -%}
           </a>
 
-          <div class="koto-mobile-text">
-            <h3 class="koto-project-title" style="font-size: 2rem;">{{ block.settings.title }}</h3>
-            <div class="koto-project-desc">{{ block.settings.description }}</div>
-            {%- if block.settings.award_image != blank or block.settings.award_text != blank -%}
-              <div class="koto-award-box">
-                {%- if block.settings.award_image != blank -%}
-                  <img src="{{ block.settings.award_image | image_url: width: 100 }}" class="koto-award-img">
-                {%- endif -%}
-                <span class="koto-award-text">{{ block.settings.award_text }}</span>
+          <div class="koto-mobile-text-{{ section_id }}">
+            <h3 class="koto-project-title-{{ section_id }}">{{ block.settings.title }}</h3>
+            <div class="koto-project-desc-{{ section_id }}">{{ block.settings.description }}</div>
+             {%- if block.settings.award_text != blank -%}
+              <div class="koto-award-{{ section_id }}" style="padding-top: 16px;">
+                <span style="font-weight: 600; font-size: 0.9rem;">{{ block.settings.award_text }}</span>
               </div>
             {%- endif -%}
           </div>
@@ -226,20 +235,19 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // 只在电脑端运行滚动监听，以节省性能
-    if (window.innerWidth < 900) return;
+    // 仅在桌面端启动监听，避免移动端性能浪费
+    if (window.innerWidth < 990) return;
 
-    const sectionId = 'koto-section-{{ section.id }}';
-    const section = document.getElementById(sectionId);
-    if (!section) return;
+    const sectionId = '{{ section_id }}';
+    const wrapper = document.getElementById('koto-' + sectionId);
+    if (!wrapper) return;
 
-    const mediaItems = section.querySelectorAll('.koto-media-item');
-    const textItems = section.querySelectorAll('.koto-text-item');
+    const mediaItems = wrapper.querySelectorAll('.koto-media-item-' + sectionId);
+    const textItems = wrapper.querySelectorAll('.koto-text-item-' + sectionId);
 
-    // Intersection Observer 设置
+    // 设置观察器：当图片的中线越过屏幕正中间时触发切换
     const observerOptions = {
       root: null,
-      // 当图片的中线穿过屏幕垂直中心时触发切换
       rootMargin: '-50% 0px -50% 0px', 
       threshold: 0
     };
@@ -249,98 +257,108 @@
         if (entry.isIntersecting) {
           const activeIndex = entry.target.getAttribute('data-index');
 
-          // 切换左侧文字的 active 状态
+          // 遍历文字节点进行透明度和位移切换
           textItems.forEach(text => {
             if (text.getAttribute('data-index') === activeIndex) {
-              text.classList.add('active');
+              text.classList.add('is-active');
             } else {
-              text.classList.remove('active');
+              text.classList.remove('is-active');
             }
           });
         }
       });
     }, observerOptions);
 
-    // 观察每一个右侧的图片/视频
     mediaItems.forEach(item => observer.observe(item));
   });
 </script>
 
 {% schema %}
 {
-  "name": "Koto 滚动悬停作品展示",
+  "name": "Our Work (Koto Pro版)",
   "settings": [
+    {
+      "type": "header",
+      "content": "全局排版设置"
+    },
     {
       "type": "text",
       "id": "main_title",
-      "label": "左上角板块大标题",
+      "label": "左上角大标题",
       "default": "Our Work."
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "板块背景色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字颜色",
+      "default": "#000000"
     }
   ],
   "blocks": [
     {
       "type": "project",
-      "name": "作品项目",
+      "name": "作品案例",
       "settings": [
         {
           "type": "header",
-          "content": "媒体设置 (右侧)"
+          "content": "右侧媒体 (自动全宽)"
         },
         {
           "type": "image_picker",
           "id": "image",
-          "label": "作品图片"
+          "label": "图片"
         },
         {
           "type": "text",
           "id": "video_url",
-          "label": "或输入 MP4 视频链接",
-          "info": "如果输入视频链接，将优先播放视频。请上传到 Shopify 后台文件(Files)中，并复制链接粘贴到这里。"
+          "label": "MP4 视频直链",
+          "info": "填入后优先播放视频。例: https://cdn.shopify.com/.../video.mp4"
         },
         {
           "type": "url",
           "id": "link",
-          "label": "点击跳转链接"
+          "label": "图片跳转链接"
         },
         {
           "type": "header",
-          "content": "文字设置 (左侧)"
+          "content": "左侧悬停文字"
         },
         {
           "type": "text",
           "id": "title",
-          "label": "作品大标题",
-          "default": "项目名称"
+          "label": "超大粗体项目名称",
+          "default": "KOTO × BRAND"
         },
         {
           "type": "richtext",
           "id": "description",
-          "label": "作品解说",
-          "default": "<p>这里输入关于该作品的详细介绍，描述你们做了什么，达成了什么效果。</p>"
-        },
-        {
-          "type": "header",
-          "content": "奖项/提示设置"
+          "label": "描述解说",
+          "default": "<p>简短描述你们在这个项目中的核心贡献与设计理念。</p>"
         },
         {
           "type": "image_picker",
           "id": "award_image",
-          "label": "奖项小 Logo"
+          "label": "底部奖项 Logo"
         },
         {
           "type": "text",
           "id": "award_text",
-          "label": "奖项小字提示",
-          "default": "2026 最佳设计奖"
+          "label": "底部奖项/提示文字",
+          "default": "WINNER OF AWWWARDS 2026"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Koto 滚动悬停作品展示",
+      "name": "Our Work (Koto Pro版)",
       "blocks": [
-        { "type": "project" },
         { "type": "project" },
         { "type": "project" }
       ]
