@@ -1,8 +1,8 @@
 {%- comment -%}
-  Glacier Dune 动态背景 (完美预览追踪 + Ease-Out 变速版)
-  1. 彻底解决 Shopify 预览模式下无法滚动触发的 Bug (坐标物理追踪)。
-  2. 实现“先快后慢”(Ease-Out) 的白浪转场数学曲线。
-  3. 彻底防止 Liquid 空值导致的 SyntaxError 崩溃。
+  Glacier Dune 动态背景 (完美滚动阻尼版 - 修復小數點報錯)
+  1. 彻底解决预览模式下无法滚动的 Bug。
+  2. 新增：白浪滚屏物理惯性 (Scroll Lerp)，滚动时如弹簧般丝滑跟随。
+  3. 修復 Shopify Schema 不支援兩位小數點的限制。
 {%- endcomment -%}
 
 {%- liquid
@@ -207,9 +207,7 @@
         hsl.y = clamp(hsl.y * uSaturation, 0.0, 1.0);
         color = hsl2rgb(hsl);
         
-        // 🌊 先快后慢 (Ease-Out) 波浪转场算法 🌊
         float p = clamp(uScroll, 0.0, 1.0);
-        // 使用 1.0 - (1.0 - p)^curve 实现完美的 Ease-Out 起步爆发效果
         float easedScroll = 1.0 - pow(1.0 - p, uWaveCurve);
         
         float wavePos = easedScroll * uWaveSpeed - 0.2;
@@ -237,9 +235,7 @@
       const mediaLayer = document.getElementById('media-layer-' + sectionId);
       const mediaContent = document.getElementById('media-content-' + sectionId);
 
-      // 安全注入 body 底部
       if (globalBgContainer && globalBgContainer.parentNode !== document.body) {
-          // 尽量放在 main 标签内以适配 Shopify 栈，如果没有则挂载到 body
           const mainContent = document.getElementById('MainContent') || document.querySelector('main') || document.body;
           mainContent.insertBefore(globalBgContainer, mainContent.firstChild);
       }
@@ -270,7 +266,7 @@
                 uHueShift: { value: {{ section.settings.fluid_hue | default: 0 }} / 360.0 },
                 uSaturation: { value: {{ section.settings.fluid_saturation | default: 1.0 }} },
                 uWaveSpeed: { value: {{ section.settings.wave_speed | default: 2.8 }} },
-                uWaveCurve: { value: {{ section.settings.wave_curve | default: 2.0 }} } // 默认改为 2.0 强化 Ease-Out 效果
+                uWaveCurve: { value: {{ section.settings.wave_curve | default: 2.0 }} }
             }
         });
         
@@ -284,48 +280,65 @@
         window.addEventListener('resize', resize);
         resize();
         
-        const configSlowBoost = {{ section.settings.slow_mouse_boost | default: 10.0 }};
-        const configBaseSpeed = {{ section.settings.base_fluid_speed | default: 2.5 }};
-
         const clock = new THREE.Clock();
         let customTime = 0;
-        let targetSpeedOffset = 0; let currentSpeedOffset = 0;
+        
+        let targetSpeedOffset = 0; 
+        let currentSpeedOffset = 0;
+        
+        let targetScroll = 0; 
+        let currentScroll = 0;
+
         let lastMouseX = 0; let lastMouseY = 0;
         let lastMouseTime = performance.now();
         
         window.addEventListener('mousemove', (e) => {
-            const now = performance.now(); const dt = now - lastMouseTime;
+            const now = performance.now(); 
+            const dt = now - lastMouseTime;
             if (dt > 0) {
-                const dx = e.clientX - lastMouseX; const dy = e.clientY - lastMouseY;
+                const dx = e.clientX - lastMouseX; 
+                const dy = e.clientY - lastMouseY;
                 const speed = Math.sqrt(dx * dx + dy * dy) / dt; 
-                if (speed > 0.01) { targetSpeedOffset = (configSlowBoost / (1.0 + speed * 5.0)) - 1.5; } else { targetSpeedOffset = 0; }
+                if (speed > 0.01) { 
+                    const configSlowBoost = {{ section.settings.slow_mouse_boost | default: 15.0 }};
+                    let boost = configSlowBoost / (1.0 + speed * 2.0); 
+                    targetSpeedOffset = Math.min(targetSpeedOffset + boost * 0.15, configSlowBoost);
+                }
             }
-            lastMouseX = e.clientX; lastMouseY = e.clientY; lastMouseTime = now;
+            lastMouseX = e.clientX; 
+            lastMouseY = e.clientY; 
+            lastMouseTime = now;
         });
 
         const animate = () => {
             requestAnimationFrame(animate);
             
-            // 🌟【核心修复】放弃监听 window.scrollY，改为每一帧侦测板块真实的物理坐标！
-            // 无论 Shopify 怎么隐藏滚动条，只要板块在屏幕上移动，就能完美捕捉到进度。
             if (wrapper) {
                 const rect = wrapper.getBoundingClientRect();
                 let scrollPercent = 0;
                 if (rect.top <= 0) {
                     scrollPercent = Math.abs(rect.top) / window.innerHeight;
                 }
-                shaderMaterial.uniforms.uScroll.value = Math.max(0, scrollPercent);
+                targetScroll = Math.max(0, scrollPercent);
             }
             
-            const delta = clock.getDelta(); const elapsedTime = clock.getElapsedTime();
-            if (performance.now() - lastMouseTime > 150) { targetSpeedOffset *= 0.92; }
+            // 🌟 將整數 1~20 縮放為 0.01~0.20，繞過 Shopify 小數點限制
+            const scrollInertia = {{ section.settings.wave_scroll_inertia | default: 6 }} / 100.0;
+            currentScroll += (targetScroll - currentScroll) * scrollInertia;
+            
+            shaderMaterial.uniforms.uScroll.value = currentScroll;
+            
+            const friction = {{ section.settings.mouse_inertia | default: 96 }} / 100.0;
+            const delta = clock.getDelta(); 
+            const elapsedTime = clock.getElapsedTime();
+            
+            targetSpeedOffset *= friction; 
             currentSpeedOffset += (targetSpeedOffset - currentSpeedOffset) * 0.05;
             
-            const baseSpeed = configBaseSpeed;
+            const configBaseSpeed = {{ section.settings.base_fluid_speed | default: 2.5 }};
             const rhythm = Math.sin(elapsedTime * 1.8) * 0.9;
-            customTime += delta * (baseSpeed + rhythm + currentSpeedOffset);
+            customTime += delta * (configBaseSpeed + rhythm + currentSpeedOffset);
             
-            // 安全读取后台变量
             shaderMaterial.uniforms.uWaveSpeed.value = {{ section.settings.wave_speed | default: 2.8 }};
             shaderMaterial.uniforms.uWaveCurve.value = {{ section.settings.wave_curve | default: 2.0 }};
             
@@ -386,13 +399,15 @@
   "settings": [
     { "type": "paragraph", "content": "注：为实现全屏响应式布局，外层限制已解除。" },
     
-    { "type": "header", "content": "🌊 滚屏转场特效 (先快后慢 Ease-Out)" },
+    { "type": "header", "content": "🌊 滚屏转场特效" },
+    { "type": "range", "id": "wave_scroll_inertia", "label": "白浪滚动惯性 (阻尼平滑度)", "min": 1, "max": 20, "step": 1, "default": 6, "info": "数值越小（如3）惯性越强，白浪跟随滚动的物理滞后感越明显、越像弹簧；数值越大跟随越死板。" },
     { "type": "range", "id": "wave_speed", "label": "最终覆盖速度", "min": 1.0, "max": 6.0, "step": 0.1, "default": 2.8, "info": "控制整个白浪向上覆盖的最终进度。" },
-    { "type": "range", "id": "wave_curve", "label": "起步爆发指数 (Ease-Out)", "min": 1.0, "max": 4.0, "step": 0.1, "default": 2.0, "info": "1.0为匀速。数值越大，一开始滚动的瞬间波浪上升越快，后段逐渐变柔和（完美的先快后慢体验）。" },
+    { "type": "range", "id": "wave_curve", "label": "起步爆发指数 (Ease-Out)", "min": 1.0, "max": 4.0, "step": 0.1, "default": 2.0, "info": "1.0为匀速。数值越大，一开始滚动的瞬间波浪上升越快，后段逐渐变柔和。" },
     
-    { "type": "header", "content": "流体速度与交互设置" },
-    { "type": "range", "id": "slow_mouse_boost", "label": "慢速滑动加速强度", "min": 5, "max": 50, "step": 1, "default": 10, "info": "数值越大，鼠标轻微移动时流体爆发的速度越快" },
-    { "type": "range", "id": "base_fluid_speed", "label": "基础流动速度", "min": 0.5, "max": 10.0, "step": 0.5, "default": 2.5, "info": "不移动鼠标时，液体自身的流速" },
+    { "type": "header", "content": "🖱️ 鼠标交互与惯性" },
+    { "type": "range", "id": "slow_mouse_boost", "label": "扰动动能上限", "min": 5, "max": 50, "step": 1, "default": 15, "info": "反复滑动鼠标时，液体翻滚能达到的最高剧烈程度。" },
+    { "type": "range", "id": "mouse_inertia", "label": "滑动惯性 (衰减)", "min": 80, "max": 99, "step": 1, "default": 96, "info": "数值越大，鼠标停止后液体继续翻滚的时间越长、降速越优雅。" },
+    { "type": "range", "id": "base_fluid_speed", "label": "静止基础流速", "min": 0.5, "max": 10.0, "step": 0.5, "default": 2.5, "info": "不移动鼠标时，液体的自然呼吸流速。" },
 
     { "type": "header", "content": "液体流动色彩调解 (WebGL)" },
     { "type": "range", "id": "fluid_brightness", "label": "明度", "min": -0.5, "max": 0.5, "step": 0.1, "default": 0.0 },

@@ -1,27 +1,51 @@
-{%- comment -%}
-  Koto Style "Our Work" Section (Sticky Scroll)
-  1. 采用了与 Glacier Dune 相同的纯净结构设计。
-  2. 强制全宽布局，突破主题默认 container 限制。
-  3. 响应式超大排版 + Intersection Observer 滚动监听。
-{%- endcomment -%}
+{% comment %}
+  Section: Koto-Style 'Our Work' Sticky Scroll (排版大师版)
+  1. 支持首字母大写 (Capitalize)
+  2. 支持多达 5 个独立媒体流 & 3 个悬浮奖项
+  3. 开放大标题字间距与正文行高的自定义调节
+{% endcomment %}
 
 {%- liquid
   assign section_id = section.id | replace: '-', '_'
   assign bg_color = section.settings.bg_color
-  assign text_color = section.settings.text_color
 -%}
 
-<style>
-  /* --- 容器重置 (参考 section.liquid) --- */
+{%- style -%}
+  /* --- 注入动态变量 (间距与排版) --- */
+  #koto-{{ section_id }} {
+    --item-spacing-pc: {{ section.settings.item_spacing_desktop }}px;
+    --item-spacing-mb: {{ section.settings.item_spacing_mobile }}px;
+
+    --main-title-color: {{ section.settings.main_title_color }};
+    --main-title-size-pc: {{ section.settings.main_title_size_pc }}px;
+    --main-title-size-mb: {{ section.settings.main_title_size_mb }}px;
+    --main-title-weight: {{ section.settings.main_title_weight }};
+    --main-title-ls: {{ section.settings.main_title_ls }}px; /* 新增大标题字间距 */
+
+    --project-title-color: {{ section.settings.project_title_color }};
+    --project-title-size-pc: {{ section.settings.project_title_size_pc }}px;
+    --project-title-size-mb: {{ section.settings.project_title_size_mb }}px;
+    --project-title-weight: {{ section.settings.project_title_weight }};
+    --project-title-ls: {{ section.settings.project_title_ls }}px; /* 新增项目标题字间距 */
+
+    --desc-color: {{ section.settings.desc_color }};
+    --desc-size-pc: {{ section.settings.desc_size_pc }}px;
+    --desc-size-mb: {{ section.settings.desc_size_mb }}px;
+    --desc-line-height: {{ section.settings.desc_line_height }}; /* 新增正文行高 */
+
+    --award-color: {{ section.settings.award_color }};
+    --award-size-pc: {{ section.settings.award_size_pc }}px;
+    --award-size-mb: {{ section.settings.award_size_mb }}px;
+  }
+
+  /* --- 容器全局重置 --- */
   .koto-wrapper-{{ section_id }} {
     position: relative !important;
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
-    padding: 100px 5% !important; /* 保持全宽感知，但留出 5% 安全阅读边距 */
     background-color: {{ bg_color }} !important;
-    color: {{ text_color }} !important;
-    box-sizing: border-box;
+    box-sizing: border-box !important;
   }
 
   .koto-inner-{{ section_id }} {
@@ -29,92 +53,178 @@
     align-items: flex-start;
     justify-content: space-between;
     width: 100%;
-    max-width: 1800px; /* 限制最大宽带，防止超宽屏变形 */
+    max-width: 1800px;
     margin: 0 auto;
   }
 
-  /* --- 字体与排版重置 --- */
-  .koto-wrapper-{{ section_id }} h2,
-  .koto-wrapper-{{ section_id }} h3,
-  .koto-wrapper-{{ section_id }} p {
-    color: {{ text_color }} !important;
-    margin: 0;
-    line-height: 1.1;
-  }
-
-  /* 左侧：固定文字面板 */
+  /* --- 左侧：固定文字面板 --- */
   .koto-left-{{ section_id }} {
     width: 38%;
     position: sticky;
-    top: 15vh; /* 悬停在屏幕上方 15% 处 */
-    height: auto;
+    top: 0; 
+    height: 100vh;
     display: flex;
     flex-direction: column;
     padding-right: 40px;
     z-index: 2;
   }
 
-  .koto-main-title-{{ section_id }} {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 700;
-    margin-bottom: 60px !important;
-    letter-spacing: -0.03em;
+  .koto-title-group-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
   }
 
-  .koto-text-group-{{ section_id }} {
+  /* 1. 左上角大标题 (Works) */
+  .koto-works-title-{{ section_id }} {
+    color: var(--main-title-color) !important;
+    font-size: var(--main-title-size-pc) !important;
+    font-weight: var(--main-title-weight) !important;
+    margin: 0 0 20px 0 !important;
+    text-transform: capitalize !important;
+    letter-spacing: var(--main-title-ls) !important; /* 应用自定义字间距 */
+    line-height: 1.1;
+  }
+
+  /* 2. 项目大标题 */
+  .koto-project-title-wrapper-{{ section_id }} {
     position: relative;
     width: 100%;
-    min-height: 40vh; /* 预留给文字切换的空间 */
+    min-height: calc(var(--project-title-size-pc) * 1.5); 
   }
 
-  .koto-text-item-{{ section_id }} {
+  .koto-project-title-item-{{ section_id }} {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
+    margin: 0 !important;
+    color: var(--project-title-color) !important;
+    font-size: var(--project-title-size-pc) !important;
+    font-weight: var(--project-title-weight) !important;
+    letter-spacing: var(--project-title-ls) !important; /* 应用自定义字间距 */
+    text-transform: capitalize !important; 
+    line-height: 1.1;
     opacity: 0;
     transform: translateY(20px);
-    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); /* 极其平滑的过渡 */
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     pointer-events: none;
   }
 
-  .koto-text-item-{{ section_id }}.is-active {
+  .koto-project-title-item-{{ section_id }}.is-active {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
   }
 
-  .koto-project-title-{{ section_id }} {
-    font-size: clamp(3rem, 6vw, 5.5rem);
-    font-weight: 800;
-    margin-bottom: 24px !important;
-    letter-spacing: -0.04em;
-    text-transform: uppercase;
+  /* 3. 左侧底部解说与奖项 */
+  .koto-left-footer-{{ section_id }} {
+    margin-bottom: 40px; 
+    position: relative;
+    min-height: 150px; 
+  }
+
+  .koto-project-footer-item-{{ section_id }} {
+    position: absolute;
+    bottom: 0; 
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .koto-project-footer-item-{{ section_id }}.is-active {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .koto-project-desc-{{ section_id }} {
-    font-size: clamp(1.1rem, 1.5vw, 1.3rem);
-    line-height: 1.5 !important;
-    opacity: 0.8;
-    margin-bottom: 30px !important;
+    color: var(--desc-color) !important;
+    font-size: var(--desc-size-pc) !important;
+    line-height: var(--desc-line-height) !important; /* 应用自定义行高 */
+    margin: 0 0 24px 0 !important;
     max-width: 90%;
   }
 
-  /* 奖项提示 */
-  .koto-award-{{ section_id }} {
+  /* 🏆 奖项与悬浮气泡 */
+  .koto-award-list-{{ section_id }} {
     display: flex;
     align-items: center;
     gap: 16px;
     padding-top: 24px;
-    border-top: 2px solid rgba(0,0,0,0.1); /* 深色背景下需用 rgba(255,255,255,0.1) */
+    border-top: 1px solid rgba(128, 128, 128, 0.3);
   }
 
-  /* 右侧：滚动媒体面板 */
-  .koto-right-{{ section_id }} {
-    width: 58%;
+  .koto-award-item-{{ section_id }} {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    cursor: help;
+  }
+
+  .koto-award-img-{{ section_id }} {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+
+  .koto-award-item-{{ section_id }}:hover .koto-award-img-{{ section_id }} {
+    transform: scale(1.1);
+  }
+
+  .koto-award-tooltip-{{ section_id }} {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background-color: #111111;
+    color: #ffffff;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    z-index: 10;
+  }
+
+  .koto-award-tooltip-{{ section_id }}::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #111111 transparent transparent transparent;
+  }
+
+  .koto-award-item-{{ section_id }}:hover .koto-award-tooltip-{{ section_id }} {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* --- 右侧：媒体瀑布流面板 --- */
+  .koto-right-{{ section_id }}, 
+  .koto-project-group-{{ section_id }} {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 120px; /* 作品间距巨大，制造呼吸感 */
+    gap: var(--item-spacing-pc);
+  }
+
+  .koto-right-{{ section_id }} {
+    width: 58%;
   }
 
   .koto-media-card-{{ section_id }} {
@@ -123,10 +233,11 @@
     overflow: hidden;
     background: #f4f4f4;
     transition: transform 0.5s ease;
+    display: block;
   }
 
   .koto-media-card-{{ section_id }}:hover {
-    transform: scale(0.98); /* 鼠标放上图片整体微缩，高级交互 */
+    transform: scale(0.98); 
   }
 
   .koto-media-card-{{ section_id }} img,
@@ -137,64 +248,127 @@
     object-fit: cover;
   }
 
-  /* 手机端独有结构隐藏 */
   .koto-mobile-text-{{ section_id }} {
     display: none;
   }
 
-  /* --- 移动端响应式 --- */
+  /* =========================================
+     响应式设备间距与手机端排版适配
+     ========================================= */
+  @media screen and (min-width: 990px) {
+    .koto-wrapper-{{ section_id }} {
+      padding-top: {{ section.settings.padding_top_desktop }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom_desktop }}px !important;
+      padding-left: {{ section.settings.padding_left_desktop }}px !important;
+      padding-right: {{ section.settings.padding_right_desktop }}px !important;
+    }
+  }
+
   @media screen and (max-width: 989px) {
     .koto-wrapper-{{ section_id }} {
-      padding: 60px 20px !important;
+      padding-top: {{ section.settings.padding_top_mobile }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom_mobile }}px !important;
+      padding-left: {{ section.settings.padding_left_mobile }}px !important;
+      padding-right: {{ section.settings.padding_right_mobile }}px !important;
     }
     .koto-inner-{{ section_id }} {
       flex-direction: column;
     }
     .koto-left-{{ section_id }} {
       width: 100%;
+      height: auto;
       position: relative;
       top: 0;
       padding-right: 0;
       margin-bottom: 40px;
+      display: none; 
     }
-    .koto-text-group-{{ section_id }} {
-      display: none; /* 手机端隐藏左侧动态文字 */
-    }
-    .koto-right-{{ section_id }} {
+    
+    .koto-right-{{ section_id }}, 
+    .koto-project-group-{{ section_id }} {
       width: 100%;
-      gap: 60px;
+      gap: var(--item-spacing-mb);
     }
+
     .koto-mobile-text-{{ section_id }} {
       display: block;
-      margin-top: 24px;
+      margin-top: 10px;
     }
-    .koto-project-title-{{ section_id }} {
-      font-size: 2.5rem;
-      margin-bottom: 12px !important;
+    
+    .koto-project-title-mobile-{{ section_id }} {
+      color: var(--project-title-color) !important;
+      font-size: var(--project-title-size-mb) !important;
+      font-weight: var(--project-title-weight) !important;
+      margin: 0 0 12px 0 !important;
+      line-height: 1.1;
+      text-transform: capitalize !important;
+      letter-spacing: var(--project-title-ls) !important; /* 手机端应用自定义字间距 */
+    }
+    
+    .koto-project-desc-mobile-{{ section_id }} {
+      color: var(--desc-color) !important;
+      font-size: var(--desc-size-mb) !important;
+      margin: 0 0 20px 0 !important;
+      line-height: var(--desc-line-height) !important; /* 手机端应用自定义行高 */
+    }
+    
+    .koto-award-list-mobile-{{ section_id }} {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(128, 128, 128, 0.3);
     }
   }
-</style>
+{%- endstyle -%}
 
 <div id="koto-{{ section_id }}" class="koto-wrapper-{{ section_id }}">
   <div class="koto-inner-{{ section_id }}">
     
     <div class="koto-left-{{ section_id }}">
-      <h2 class="koto-main-title-{{ section_id }}">{{ section.settings.main_title }}</h2>
-      
-      <div class="koto-text-group-{{ section_id }}">
+      <div class="koto-title-group-{{ section_id }}">
+        {%- if section.settings.main_title != blank -%}
+          <h2 class="koto-works-title-{{ section_id }}">{{ section.settings.main_title }}</h2>
+        {%- endif -%}
+        
+        <div class="koto-project-title-wrapper-{{ section_id }}">
+          {%- for block in section.blocks -%}
+            <h3 class="koto-project-title-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}">
+              {{ block.settings.title }}
+            </h3>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <div class="koto-left-footer-{{ section_id }}">
         {%- for block in section.blocks -%}
-          <div class="koto-text-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}">
-            <h3 class="koto-project-title-{{ section_id }}">{{ block.settings.title }}</h3>
+          <div class="koto-project-footer-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}">
             <div class="koto-project-desc-{{ section_id }}">{{ block.settings.description }}</div>
             
-            {%- if block.settings.award_text != blank or block.settings.award_image != blank -%}
-              <div class="koto-award-{{ section_id }}" {% if text_color == '#ffffff' or text_color == '#FFFFFF' %}style="border-color: rgba(255,255,255,0.2);"{% endif %}>
-                {%- if block.settings.award_image != blank -%}
-                  <img src="{{ block.settings.award_image | image_url: width: 80 }}" style="width: 40px; height: 40px; object-fit: contain;" alt="Award">
-                {%- endif -%}
-                {%- if block.settings.award_text != blank -%}
-                  <span style="font-weight: 600; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ block.settings.award_text }}</span>
-                {%- endif -%}
+            {%- liquid 
+              assign has_award = false
+              if block.settings.award_image_1 != blank or block.settings.award_image_2 != blank or block.settings.award_image_3 != blank
+                assign has_award = true
+              endif
+            -%}
+            
+            {%- if has_award -%}
+              <div class="koto-award-list-{{ section_id }}">
+                {%- for i in (1..3) -%}
+                  {%- assign img_key = 'award_image_' | append: i -%}
+                  {%- assign txt_key = 'award_text_' | append: i -%}
+                  {%- assign current_image = block.settings[img_key] -%}
+                  {%- assign current_text = block.settings[txt_key] -%}
+
+                  {%- if current_image != blank -%}
+                    <div class="koto-award-item-{{ section_id }}">
+                      <img src="{{ current_image | image_url: width: 80 }}" class="koto-award-img-{{ section_id }}" alt="Award Logo">
+                      {%- if current_text != blank -%}
+                        <span class="koto-award-tooltip-{{ section_id }}">{{ current_text }}</span>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
               </div>
             {%- endif -%}
           </div>
@@ -204,27 +378,69 @@
 
     <div class="koto-right-{{ section_id }}">
       {%- for block in section.blocks -%}
-        <div class="koto-media-item-{{ section_id }}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+        
+        <div class="koto-project-group-{{ section_id }}" {{ block.shopify_attributes }}>
           
-          <a href="{{ block.settings.link | default: '#' }}" class="koto-media-card-{{ section_id }}">
-            {%- if block.settings.video_url != blank -%}
-              <video src="{{ block.settings.video_url }}" autoplay loop muted playsinline></video>
-            {%- elsif block.settings.image != blank -%}
-              {{ block.settings.image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
-            {%- else -%}
-              {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
-            {%- endif -%}
-          </a>
-
           <div class="koto-mobile-text-{{ section_id }}">
-            <h3 class="koto-project-title-{{ section_id }}">{{ block.settings.title }}</h3>
-            <div class="koto-project-desc-{{ section_id }}">{{ block.settings.description }}</div>
-             {%- if block.settings.award_text != blank -%}
-              <div class="koto-award-{{ section_id }}" style="padding-top: 16px;">
-                <span style="font-weight: 600; font-size: 0.9rem;">{{ block.settings.award_text }}</span>
+            <h3 class="koto-project-title-mobile-{{ section_id }}">{{ block.settings.title }}</h3>
+            <div class="koto-project-desc-mobile-{{ section_id }}">{{ block.settings.description }}</div>
+            
+             {%- liquid 
+              assign has_award_mobile = false
+              if block.settings.award_image_1 != blank or block.settings.award_image_2 != blank or block.settings.award_image_3 != blank
+                assign has_award_mobile = true
+              endif
+            -%}
+
+            {%- if has_award_mobile -%}
+              <div class="koto-award-list-mobile-{{ section_id }}">
+                 {%- for i in (1..3) -%}
+                  {%- assign img_key = 'award_image_' | append: i -%}
+                  {%- assign txt_key = 'award_text_' | append: i -%}
+                  {%- assign current_image = block.settings[img_key] -%}
+                  {%- assign current_text = block.settings[txt_key] -%}
+
+                  {%- if current_image != blank -%}
+                    <div class="koto-award-item-{{ section_id }}">
+                      <img src="{{ current_image | image_url: width: 60 }}" style="width: 30px; height: 30px; object-fit: contain; transition: transform 0.3s ease;">
+                      {%- if current_text != blank -%}
+                        <span class="koto-award-tooltip-{{ section_id }}">{{ current_text }}</span>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
               </div>
             {%- endif -%}
           </div>
+
+          {%- assign has_rendered_media = false -%}
+          {%- for i in (1..5) -%}
+            {%- assign image_key = 'image_' | append: i -%}
+            {%- assign video_key = 'video_url_' | append: i -%}
+            {%- assign current_image = block.settings[image_key] -%}
+            {%- assign current_video = block.settings[video_key] -%}
+
+            {%- if current_image != blank or current_video != blank -%}
+              {%- assign has_rendered_media = true -%}
+              <div class="koto-media-item-{{ section_id }}" data-index="{{ forloop.parentloop.index0 }}">
+                <a href="{{ block.settings.link | default: '#' }}" class="koto-media-card-{{ section_id }}">
+                  {%- if current_video != blank -%}
+                    <video src="{{ current_video }}" autoplay loop muted playsinline style="width: 100%; height: auto; display: block;"></video>
+                  {%- elsif current_image != blank -%}
+                    {{ current_image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
+                  {%- endif -%}
+                </a>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- if has_rendered_media == false -%}
+             <div class="koto-media-item-{{ section_id }}" data-index="{{ forloop.index0 }}">
+               <div class="koto-media-card-{{ section_id }}">
+                 {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+               </div>
+             </div>
+          {%- endif -%}
           
         </div>
       {%- endfor -%}
@@ -235,7 +451,6 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // 仅在桌面端启动监听，避免移动端性能浪费
     if (window.innerWidth < 990) return;
 
     const sectionId = '{{ section_id }}';
@@ -243,9 +458,9 @@
     if (!wrapper) return;
 
     const mediaItems = wrapper.querySelectorAll('.koto-media-item-' + sectionId);
-    const textItems = wrapper.querySelectorAll('.koto-text-item-' + sectionId);
+    const titleItems = wrapper.querySelectorAll('.koto-project-title-item-' + sectionId);
+    const footerItems = wrapper.querySelectorAll('.koto-project-footer-item-' + sectionId);
 
-    // 设置观察器：当图片的中线越过屏幕正中间时触发切换
     const observerOptions = {
       root: null,
       rootMargin: '-50% 0px -50% 0px', 
@@ -257,12 +472,19 @@
         if (entry.isIntersecting) {
           const activeIndex = entry.target.getAttribute('data-index');
 
-          // 遍历文字节点进行透明度和位移切换
-          textItems.forEach(text => {
+          titleItems.forEach(text => {
             if (text.getAttribute('data-index') === activeIndex) {
               text.classList.add('is-active');
             } else {
               text.classList.remove('is-active');
+            }
+          });
+
+          footerItems.forEach(footer => {
+            if (footer.getAttribute('data-index') === activeIndex) {
+              footer.classList.add('is-active');
+            } else {
+              footer.classList.remove('is-active');
             }
           });
         }
@@ -275,17 +497,11 @@
 
 {% schema %}
 {
-  "name": "Our Work (Koto Pro版)",
+  "name": "Koto Works (多媒体气泡版)",
   "settings": [
     {
       "type": "header",
-      "content": "全局排版设置"
-    },
-    {
-      "type": "text",
-      "id": "main_title",
-      "label": "左上角大标题",
-      "default": "Our Work."
+      "content": "🎨 背景设置"
     },
     {
       "type": "color",
@@ -294,73 +510,330 @@
       "default": "#ffffff"
     },
     {
+      "type": "header",
+      "content": "🔠 1.板块大标题 (Works)"
+    },
+    {
+      "type": "text",
+      "id": "main_title",
+      "label": "大标题文本",
+      "default": "Our Work."
+    },
+    {
       "type": "color",
-      "id": "text_color",
-      "label": "文字颜色",
+      "id": "main_title_color",
+      "label": "颜色",
       "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "main_title_size_pc",
+      "min": 12, "max": 100, "step": 2, "unit": "px",
+      "label": "电脑端字号", "default": 40
+    },
+    {
+      "type": "range",
+      "id": "main_title_size_mb",
+      "min": 12, "max": 80, "step": 1, "unit": "px",
+      "label": "手机端字号", "default": 28
+    },
+    {
+      "type": "select",
+      "id": "main_title_weight",
+      "label": "粗细",
+      "default": "700",
+      "options": [
+        { "value": "400", "label": "常规 (Normal)" },
+        { "value": "600", "label": "半粗 (Semi-Bold)" },
+        { "value": "700", "label": "加粗 (Bold)" },
+        { "value": "900", "label": "极粗 (Black)" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "main_title_ls",
+      "min": -10, "max": 20, "step": 1, "unit": "px",
+      "label": "字间距 (Letter Spacing)", "default": -2
+    },
+    {
+      "type": "header",
+      "content": "🔠 2.项目大标题"
+    },
+    {
+      "type": "color",
+      "id": "project_title_color",
+      "label": "颜色",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "project_title_size_pc",
+      "min": 20, "max": 150, "step": 2, "unit": "px",
+      "label": "电脑端字号", "default": 72
+    },
+    {
+      "type": "range",
+      "id": "project_title_size_mb",
+      "min": 20, "max": 100, "step": 1, "unit": "px",
+      "label": "手机端字号", "default": 40
+    },
+    {
+      "type": "select",
+      "id": "project_title_weight",
+      "label": "粗细",
+      "default": "800",
+      "options": [
+        { "value": "400", "label": "常规 (Normal)" },
+        { "value": "600", "label": "半粗 (Semi-Bold)" },
+        { "value": "800", "label": "特粗 (Extra-Bold)" },
+        { "value": "900", "label": "极粗 (Black)" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "project_title_ls",
+      "min": -10, "max": 20, "step": 1, "unit": "px",
+      "label": "字间距 (Letter Spacing)", "default": -3
+    },
+    {
+      "type": "header",
+      "content": "🔠 3.项目描述解说"
+    },
+    {
+      "type": "color",
+      "id": "desc_color",
+      "label": "颜色",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "desc_size_pc",
+      "min": 12, "max": 40, "step": 1, "unit": "px",
+      "label": "电脑端字号", "default": 18
+    },
+    {
+      "type": "range",
+      "id": "desc_size_mb",
+      "min": 12, "max": 30, "step": 1, "unit": "px",
+      "label": "手机端字号", "default": 15
+    },
+    {
+      "type": "range",
+      "id": "desc_line_height",
+      "min": 1.0, "max": 3.0, "step": 0.1,
+      "label": "行高 (Line Height)", "default": 1.5
+    },
+    {
+      "type": "header",
+      "content": "🖥️ 电脑端间距控制 (px)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0, "max": 200, "step": 5, "unit": "px",
+      "label": "上边距 (Top)", "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0, "max": 200, "step": 5, "unit": "px",
+      "label": "下边距 (Bottom)", "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_left_desktop",
+      "min": 0, "max": 150, "step": 5, "unit": "px",
+      "label": "左内边距 (Left)", "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_right_desktop",
+      "min": 0, "max": 150, "step": 5, "unit": "px",
+      "label": "右内边距 (Right)", "default": 80
+    },
+    {
+      "type": "range",
+      "id": "item_spacing_desktop",
+      "min": 0, "max": 300, "step": 5, "unit": "px",
+      "label": "所有项目与媒体的间距", "default": 160
+    },
+    {
+      "type": "header",
+      "content": "📱 手机端间距控制 (px)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0, "max": 150, "step": 5, "unit": "px",
+      "label": "上边距 (Top)", "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0, "max": 150, "step": 5, "unit": "px",
+      "label": "下边距 (Bottom)", "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "min": 0, "max": 80, "step": 2, "unit": "px",
+      "label": "左内边距 (Left)", "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "min": 0, "max": 80, "step": 2, "unit": "px",
+      "label": "右内边距 (Right)", "default": 20
+    },
+    {
+      "type": "range",
+      "id": "item_spacing_mobile",
+      "min": 0, "max": 150, "step": 2, "unit": "px",
+      "label": "所有项目与媒体的间距", "default": 60
     }
   ],
   "blocks": [
     {
       "type": "project",
-      "name": "作品案例",
+      "name": "作品案例组",
       "settings": [
         {
           "type": "header",
-          "content": "右侧媒体 (自动全宽)"
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "图片"
-        },
-        {
-          "type": "text",
-          "id": "video_url",
-          "label": "MP4 视频直链",
-          "info": "填入后优先播放视频。例: https://cdn.shopify.com/.../video.mp4"
-        },
-        {
-          "type": "url",
-          "id": "link",
-          "label": "图片跳转链接"
-        },
-        {
-          "type": "header",
-          "content": "左侧悬停文字"
+          "content": "文字与说明"
         },
         {
           "type": "text",
           "id": "title",
-          "label": "超大粗体项目名称",
-          "default": "KOTO × BRAND"
+          "label": "项目名称",
+          "default": "project name"
         },
         {
           "type": "richtext",
           "id": "description",
-          "label": "描述解说",
+          "label": "作品解说",
           "default": "<p>简短描述你们在这个项目中的核心贡献与设计理念。</p>"
         },
         {
+          "type": "url",
+          "id": "link",
+          "label": "全局跳转链接",
+          "info": "点击下方任意媒体时均跳转此链接"
+        },
+        {
+          "type": "header",
+          "content": "🏆 奖项气泡 (最多支持3个)"
+        },
+        {
           "type": "image_picker",
-          "id": "award_image",
-          "label": "底部奖项 Logo"
+          "id": "award_image_1",
+          "label": "奖项 1 Logo"
         },
         {
           "type": "text",
-          "id": "award_text",
-          "label": "底部奖项/提示文字",
-          "default": "WINNER OF AWWWARDS 2026"
+          "id": "award_text_1",
+          "label": "悬浮显示的文字 1",
+          "default": "Awwwards Winner"
+        },
+        {
+          "type": "image_picker",
+          "id": "award_image_2",
+          "label": "奖项 2 Logo"
+        },
+        {
+          "type": "text",
+          "id": "award_text_2",
+          "label": "悬浮显示的文字 2",
+          "default": "Site of the Day"
+        },
+        {
+          "type": "image_picker",
+          "id": "award_image_3",
+          "label": "奖项 3 Logo"
+        },
+        {
+          "type": "text",
+          "id": "award_text_3",
+          "label": "悬浮显示的文字 3"
+        },
+        {
+          "type": "header",
+          "content": "📷 媒体 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "图片 1"
+        },
+        {
+          "type": "text",
+          "id": "video_url_1",
+          "label": "或输入 MP4 视频直链 1"
+        },
+        {
+          "type": "header",
+          "content": "📷 媒体 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "图片 2"
+        },
+        {
+          "type": "text",
+          "id": "video_url_2",
+          "label": "或输入 MP4 视频直链 2"
+        },
+        {
+          "type": "header",
+          "content": "📷 媒体 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_3",
+          "label": "图片 3"
+        },
+        {
+          "type": "text",
+          "id": "video_url_3",
+          "label": "或输入 MP4 视频直链 3"
+        },
+        {
+          "type": "header",
+          "content": "📷 媒体 4"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_4",
+          "label": "图片 4"
+        },
+        {
+          "type": "text",
+          "id": "video_url_4",
+          "label": "或输入 MP4 视频直链 4"
+        },
+        {
+          "type": "header",
+          "content": "📷 媒体 5"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_5",
+          "label": "图片 5"
+        },
+        {
+          "type": "text",
+          "id": "video_url_5",
+          "label": "或输入 MP4 视频直链 5"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Our Work (Koto Pro版)",
+      "name": "Koto Works (排版大师版)",
       "blocks": [
-        { "type": "project" },
-        { "type": "project" }
+        { "type": "project", "settings": { "title": "branding koto" } },
+        { "type": "project", "settings": { "title": "digital exploration" } }
       ]
     }
   ]
