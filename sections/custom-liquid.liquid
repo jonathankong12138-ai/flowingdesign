@@ -1,8 +1,9 @@
 {% comment %}
-  Section: Koto-Style 'Our Work' Sticky Scroll (排版大师版)
+  Section: Koto-Style 'Our Work' Sticky Scroll (排版大师版 + 真正全屏无边界涟漪)
   1. 支持首字母大写 (Capitalize)
   2. 支持多达 5 个独立媒体流 & 3 个悬浮奖项
-  3. 开放大标题字间距与正文行高的自定义调节
+  3. 悬浮图片时，其余图片透明度降至50%
+  4. 【核心修复】：强行突破 Shopify Section 层级限制，波浪涟漪真正全屏覆盖，告别底部边界切割！
 {% endcomment %}
 
 {%- liquid
@@ -11,7 +12,6 @@
 -%}
 
 {%- style -%}
-  /* --- 注入动态变量 (间距与排版) --- */
   #koto-{{ section_id }} {
     --item-spacing-pc: {{ section.settings.item_spacing_desktop }}px;
     --item-spacing-mb: {{ section.settings.item_spacing_mobile }}px;
@@ -20,18 +20,18 @@
     --main-title-size-pc: {{ section.settings.main_title_size_pc }}px;
     --main-title-size-mb: {{ section.settings.main_title_size_mb }}px;
     --main-title-weight: {{ section.settings.main_title_weight }};
-    --main-title-ls: {{ section.settings.main_title_ls }}px; /* 新增大标题字间距 */
+    --main-title-ls: {{ section.settings.main_title_ls }}px;
 
     --project-title-color: {{ section.settings.project_title_color }};
     --project-title-size-pc: {{ section.settings.project_title_size_pc }}px;
     --project-title-size-mb: {{ section.settings.project_title_size_mb }}px;
     --project-title-weight: {{ section.settings.project_title_weight }};
-    --project-title-ls: {{ section.settings.project_title_ls }}px; /* 新增项目标题字间距 */
+    --project-title-ls: {{ section.settings.project_title_ls }}px;
 
     --desc-color: {{ section.settings.desc_color }};
     --desc-size-pc: {{ section.settings.desc_size_pc }}px;
     --desc-size-mb: {{ section.settings.desc_size_mb }}px;
-    --desc-line-height: {{ section.settings.desc_line_height }}; /* 新增正文行高 */
+    --desc-line-height: {{ section.settings.desc_line_height }};
 
     --award-color: {{ section.settings.award_color }};
     --award-size-pc: {{ section.settings.award_size_pc }}px;
@@ -46,6 +46,20 @@
     margin: 0 !important;
     background-color: {{ bg_color }} !important;
     box-sizing: border-box !important;
+    isolation: isolate; 
+    /* 【CSS 修复】：提升内部容器层级，压制后面的 Footer */
+    z-index: 50 !important; 
+  }
+
+  /* 悬浮全屏 WebGL 画布 */
+  .works-glacier-canvas-{{ section_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10; 
+    pointer-events: none;
   }
 
   .koto-inner-{{ section_id }} {
@@ -55,9 +69,10 @@
     width: 100%;
     max-width: 1800px;
     margin: 0 auto;
+    position: relative;
+    z-index: 20; 
   }
 
-  /* --- 左侧：固定文字面板 --- */
   .koto-left-{{ section_id }} {
     width: 38%;
     position: sticky;
@@ -66,7 +81,6 @@
     display: flex;
     flex-direction: column;
     padding-right: 40px;
-    z-index: 2;
   }
 
   .koto-title-group-{{ section_id }} {
@@ -76,18 +90,16 @@
     flex-grow: 1;
   }
 
-  /* 1. 左上角大标题 (Works) */
   .koto-works-title-{{ section_id }} {
     color: var(--main-title-color) !important;
     font-size: var(--main-title-size-pc) !important;
     font-weight: var(--main-title-weight) !important;
     margin: 0 0 20px 0 !important;
     text-transform: capitalize !important;
-    letter-spacing: var(--main-title-ls) !important; /* 应用自定义字间距 */
+    letter-spacing: var(--main-title-ls) !important;
     line-height: 1.1;
   }
 
-  /* 2. 项目大标题 */
   .koto-project-title-wrapper-{{ section_id }} {
     position: relative;
     width: 100%;
@@ -96,14 +108,11 @@
 
   .koto-project-title-item-{{ section_id }} {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    margin: 0 !important;
+    top: 0; left: 0; width: 100%; margin: 0 !important;
     color: var(--project-title-color) !important;
     font-size: var(--project-title-size-pc) !important;
     font-weight: var(--project-title-weight) !important;
-    letter-spacing: var(--project-title-ls) !important; /* 应用自定义字间距 */
+    letter-spacing: var(--project-title-ls) !important;
     text-transform: capitalize !important; 
     line-height: 1.1;
     opacity: 0;
@@ -113,148 +122,92 @@
   }
 
   .koto-project-title-item-{{ section_id }}.is-active {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
+    opacity: 1; transform: translateY(0); pointer-events: auto;
   }
 
-  /* 3. 左侧底部解说与奖项 */
   .koto-left-footer-{{ section_id }} {
-    margin-bottom: 40px; 
+    margin-bottom: 40px;
     position: relative;
     min-height: 150px; 
   }
 
   .koto-project-footer-item-{{ section_id }} {
-    position: absolute;
-    bottom: 0; 
-    left: 0;
-    width: 100%;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    pointer-events: none;
+    position: absolute; bottom: 0; left: 0; width: 100%;
+    opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
   }
 
   .koto-project-footer-item-{{ section_id }}.is-active {
-    opacity: 1;
-    pointer-events: auto;
+    opacity: 1; pointer-events: auto;
   }
 
   .koto-project-desc-{{ section_id }} {
     color: var(--desc-color) !important;
     font-size: var(--desc-size-pc) !important;
-    line-height: var(--desc-line-height) !important; /* 应用自定义行高 */
+    line-height: var(--desc-line-height) !important;
     margin: 0 0 24px 0 !important;
     max-width: 90%;
   }
 
-  /* 🏆 奖项与悬浮气泡 */
   .koto-award-list-{{ section_id }} {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(128, 128, 128, 0.3);
+    display: flex; align-items: center; gap: 16px;
+    padding-top: 24px; border-top: 1px solid rgba(128, 128, 128, 0.3);
   }
 
   .koto-award-item-{{ section_id }} {
-    position: relative;
-    display: inline-flex;
-    justify-content: center;
-    cursor: help;
+    position: relative; display: inline-flex; justify-content: center; cursor: help;
   }
 
   .koto-award-img-{{ section_id }} {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-    transition: transform 0.3s ease;
+    width: 40px; height: 40px; object-fit: contain; transition: transform 0.3s ease;
   }
 
-  .koto-award-item-{{ section_id }}:hover .koto-award-img-{{ section_id }} {
-    transform: scale(1.1);
-  }
+  .koto-award-item-{{ section_id }}:hover .koto-award-img-{{ section_id }} { transform: scale(1.1); }
 
   .koto-award-tooltip-{{ section_id }} {
-    position: absolute;
-    bottom: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background-color: #111111;
-    color: #ffffff;
-    padding: 6px 12px;
-    font-size: 13px;
-    font-weight: 500;
-    white-space: nowrap;
-    border-radius: 6px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-    z-index: 10;
+    position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(10px);
+    background-color: #111111; color: #ffffff; padding: 6px 12px; font-size: 13px; font-weight: 500;
+    white-space: nowrap; border-radius: 6px; letter-spacing: 0.05em; text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; visibility: hidden; pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); z-index: 10;
   }
-
   .koto-award-tooltip-{{ section_id }}::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 5px;
-    border-style: solid;
-    border-color: #111111 transparent transparent transparent;
+    content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border-width: 5px; border-style: solid; border-color: #111111 transparent transparent transparent;
   }
-
   .koto-award-item-{{ section_id }}:hover .koto-award-tooltip-{{ section_id }} {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
+    opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
   }
 
-  /* --- 右侧：媒体瀑布流面板 --- */
+  /* --- 右侧媒体区 --- */
   .koto-right-{{ section_id }}, 
   .koto-project-group-{{ section_id }} {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--item-spacing-pc);
+    width: 100%; display: flex; flex-direction: column; gap: var(--item-spacing-pc);
   }
+  .koto-right-{{ section_id }} { width: 58%; }
 
-  .koto-right-{{ section_id }} {
-    width: 58%;
+  /* =========================================================
+     ✨ 核心交互：悬浮时降低其余项目透明度至 50%
+     ========================================================= */
+  .koto-right-{{ section_id }}:hover .koto-media-card-{{ section_id }} {
+    opacity: 0.5;
+  }
+  .koto-right-{{ section_id }} .koto-media-card-{{ section_id }}:hover {
+    opacity: 1 !important;
+    transform: scale(0.98);
   }
 
   .koto-media-card-{{ section_id }} {
-    width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #f4f4f4;
-    transition: transform 0.5s ease;
-    display: block;
-  }
-
-  .koto-media-card-{{ section_id }}:hover {
-    transform: scale(0.98); 
+    width: 100%; border-radius: 12px; overflow: hidden; background: #f4f4f4;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    display: block; position: relative; z-index: 5;
   }
 
   .koto-media-card-{{ section_id }} img,
   .koto-media-card-{{ section_id }} video {
-    width: 100% !important;
-    height: auto !important;
-    display: block;
-    object-fit: cover;
+    width: 100% !important; height: auto !important; display: block; object-fit: cover;
   }
+  .koto-mobile-text-{{ section_id }} { display: none; }
 
-  .koto-mobile-text-{{ section_id }} {
-    display: none;
-  }
-
-  /* =========================================
-     响应式设备间距与手机端排版适配
-     ========================================= */
   @media screen and (min-width: 990px) {
     .koto-wrapper-{{ section_id }} {
       padding-top: {{ section.settings.padding_top_desktop }}px !important;
@@ -271,58 +224,34 @@
       padding-left: {{ section.settings.padding_left_mobile }}px !important;
       padding-right: {{ section.settings.padding_right_mobile }}px !important;
     }
-    .koto-inner-{{ section_id }} {
-      flex-direction: column;
-    }
+    .koto-inner-{{ section_id }} { flex-direction: column; }
     .koto-left-{{ section_id }} {
-      width: 100%;
-      height: auto;
-      position: relative;
-      top: 0;
-      padding-right: 0;
-      margin-bottom: 40px;
-      display: none; 
+      width: 100%; height: auto; position: relative; top: 0; padding-right: 0; margin-bottom: 40px; display: none; 
     }
-    
-    .koto-right-{{ section_id }}, 
-    .koto-project-group-{{ section_id }} {
-      width: 100%;
-      gap: var(--item-spacing-mb);
+    .koto-right-{{ section_id }}, .koto-project-group-{{ section_id }} {
+      width: 100%; gap: var(--item-spacing-mb);
     }
-
-    .koto-mobile-text-{{ section_id }} {
-      display: block;
-      margin-top: 10px;
-    }
-    
+    .koto-right-{{ section_id }}:hover .koto-media-card-{{ section_id }} { opacity: 1; }
+    .koto-mobile-text-{{ section_id }} { display: block; margin-top: 10px; }
     .koto-project-title-mobile-{{ section_id }} {
-      color: var(--project-title-color) !important;
-      font-size: var(--project-title-size-mb) !important;
-      font-weight: var(--project-title-weight) !important;
-      margin: 0 0 12px 0 !important;
-      line-height: 1.1;
-      text-transform: capitalize !important;
-      letter-spacing: var(--project-title-ls) !important; /* 手机端应用自定义字间距 */
+      color: var(--project-title-color) !important; font-size: var(--project-title-size-mb) !important;
+      font-weight: var(--project-title-weight) !important; margin: 0 0 12px 0 !important; line-height: 1.1;
+      text-transform: capitalize !important; letter-spacing: var(--project-title-ls) !important;
     }
-    
     .koto-project-desc-mobile-{{ section_id }} {
-      color: var(--desc-color) !important;
-      font-size: var(--desc-size-mb) !important;
-      margin: 0 0 20px 0 !important;
-      line-height: var(--desc-line-height) !important; /* 手机端应用自定义行高 */
+      color: var(--desc-color) !important; font-size: var(--desc-size-mb) !important;
+      margin: 0 0 20px 0 !important; line-height: var(--desc-line-height) !important;
     }
-    
     .koto-award-list-mobile-{{ section_id }} {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(128, 128, 128, 0.3);
+      display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid rgba(128, 128, 128, 0.3);
     }
   }
 {%- endstyle -%}
 
 <div id="koto-{{ section_id }}" class="koto-wrapper-{{ section_id }}">
+  
+  <canvas id="works-canvas-{{ section_id }}" class="works-glacier-canvas-{{ section_id }}"></canvas>
+
   <div class="koto-inner-{{ section_id }}">
     
     <div class="koto-left-{{ section_id }}">
@@ -344,14 +273,12 @@
         {%- for block in section.blocks -%}
           <div class="koto-project-footer-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}">
             <div class="koto-project-desc-{{ section_id }}">{{ block.settings.description }}</div>
-            
             {%- liquid 
               assign has_award = false
               if block.settings.award_image_1 != blank or block.settings.award_image_2 != blank or block.settings.award_image_3 != blank
                 assign has_award = true
               endif
             -%}
-            
             {%- if has_award -%}
               <div class="koto-award-list-{{ section_id }}">
                 {%- for i in (1..3) -%}
@@ -359,7 +286,6 @@
                   {%- assign txt_key = 'award_text_' | append: i -%}
                   {%- assign current_image = block.settings[img_key] -%}
                   {%- assign current_text = block.settings[txt_key] -%}
-
                   {%- if current_image != blank -%}
                     <div class="koto-award-item-{{ section_id }}">
                       <img src="{{ current_image | image_url: width: 80 }}" class="koto-award-img-{{ section_id }}" alt="Award Logo">
@@ -378,34 +304,29 @@
 
     <div class="koto-right-{{ section_id }}">
       {%- for block in section.blocks -%}
-        
         <div class="koto-project-group-{{ section_id }}" {{ block.shopify_attributes }}>
-          
           <div class="koto-mobile-text-{{ section_id }}">
             <h3 class="koto-project-title-mobile-{{ section_id }}">{{ block.settings.title }}</h3>
             <div class="koto-project-desc-mobile-{{ section_id }}">{{ block.settings.description }}</div>
-            
              {%- liquid 
               assign has_award_mobile = false
               if block.settings.award_image_1 != blank or block.settings.award_image_2 != blank or block.settings.award_image_3 != blank
                 assign has_award_mobile = true
               endif
             -%}
-
             {%- if has_award_mobile -%}
               <div class="koto-award-list-mobile-{{ section_id }}">
                  {%- for i in (1..3) -%}
-                  {%- assign img_key = 'award_image_' | append: i -%}
+                   {%- assign img_key = 'award_image_' | append: i -%}
                   {%- assign txt_key = 'award_text_' | append: i -%}
                   {%- assign current_image = block.settings[img_key] -%}
                   {%- assign current_text = block.settings[txt_key] -%}
-
                   {%- if current_image != blank -%}
                     <div class="koto-award-item-{{ section_id }}">
                       <img src="{{ current_image | image_url: width: 60 }}" style="width: 30px; height: 30px; object-fit: contain; transition: transform 0.3s ease;">
                       {%- if current_text != blank -%}
                         <span class="koto-award-tooltip-{{ section_id }}">{{ current_text }}</span>
-                      {%- endif -%}
+                       {%- endif -%}
                     </div>
                   {%- endif -%}
                 {%- endfor -%}
@@ -423,7 +344,7 @@
             {%- if current_image != blank or current_video != blank -%}
               {%- assign has_rendered_media = true -%}
               <div class="koto-media-item-{{ section_id }}" data-index="{{ forloop.parentloop.index0 }}">
-                <a href="{{ block.settings.link | default: '#' }}" class="koto-media-card-{{ section_id }}">
+                <a href="{{ block.settings.link | default: '#' }}" class="koto-media-card-{{ section_id }} js-hover-card">
                   {%- if current_video != blank -%}
                     <video src="{{ current_video }}" autoplay loop muted playsinline style="width: 100%; height: auto; display: block;"></video>
                   {%- elsif current_image != blank -%}
@@ -433,71 +354,279 @@
               </div>
             {%- endif -%}
           {%- endfor -%}
-
-          {%- if has_rendered_media == false -%}
-             <div class="koto-media-item-{{ section_id }}" data-index="{{ forloop.index0 }}">
-               <div class="koto-media-card-{{ section_id }}">
-                 {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
-               </div>
-             </div>
-          {%- endif -%}
-          
         </div>
       {%- endfor -%}
     </div>
-
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    if (window.innerWidth < 990) return;
+<script id="works-vs-{{ section_id }}" type="x-shader/x-vertex">
+  varying vec2 vUv;
+  void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+</script>
 
+<script id="works-fs-{{ section_id }}" type="x-shader/x-fragment">
+  uniform float uTime; 
+  uniform vec2 uResolution;
+  uniform float uRandomSeed;
+  uniform float uContrast; 
+  uniform float uBrightness;
+  uniform float uHueShift; 
+  uniform float uSaturation;
+  
+  uniform float uHoverProgress; 
+  uniform vec2 uOrigin; 
+
+  varying vec2 vUv;
+  
+  mat2 rotate2d(float angle){ return mat2(cos(angle), -sin(angle), sin(angle), cos(angle)); }
+  vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+  float snoise(vec2 v){
+      const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+      vec2 i = floor(v + dot(v, C.yy)); vec2 x0 = v - i + dot(i, C.xx);
+      vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+      vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1; i = mod(i, 289.0);
+      vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+      vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+      m = m*m; m = m*m;
+      vec3 x = 2.0 * fract(p * C.www) - 1.0; vec3 h = abs(x) - 0.5;
+      vec3 ox = floor(x + 0.5); vec3 a0 = x - ox;
+      m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+      vec3 g; g.x = a0.x * x0.x + h.x * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+      return 130.0 * dot(m, g);
+  }
+  
+  float getHeight(vec2 uv, float time, float seed) {
+      vec2 baseUV = uv + vec2(seed * 10.3, seed * 4.2); 
+      vec2 rotUV = rotate2d(-0.5) * baseUV;
+      vec2 distortion = vec2(0.0);
+      distortion.x = snoise(rotUV * 0.5 + vec2(time * 0.15, time * 0.1));
+      distortion.y = snoise(rotUV * 0.5 - vec2(time * 0.1, time * 0.1));
+      float detail = snoise(rotUV * 1.5 + distortion + time * 0.1) * 0.1;
+      float wave = sin(rotUV.y * 1.2 + distortion.x * 2.2 + time);
+      return pow(wave * 0.5 + 0.5, 0.8) + detail;
+  }
+  
+  vec3 rgb2hsl(vec3 c){
+      float maxC = max(c.r, max(c.g, c.b)); float minC = min(c.r, min(c.g, c.b));
+      float h, s, l = (maxC + minC) / 2.0;
+      if(maxC == minC){ h = s = 0.0; } else {
+          float d = maxC - minC;
+          s = l > 0.5 ? d / (2.0 - maxC - minC) : d / (maxC + minC);
+          if(maxC == c.r) h = (c.g - c.b) / d + (c.g < c.b ? 6.0 : 0.0);
+          else if(maxC == c.g) h = (c.b - c.r) / d + 2.0; else h = (c.r - c.g) / d + 4.0;
+          h /= 6.0;
+      }
+      return vec3(h, s, l);
+  }
+  
+  float hue2rgb(float p, float q, float t){
+      if(t < 0.0) t += 1.0; if(t > 1.0) t -= 1.0;
+      if(t < 1.0/6.0) return p + (q - p) * 6.0 * t;
+      if(t < 1.0/2.0) return q;
+      if(t < 2.0/3.0) return p + (q - p) * (2.0/3.0 - t) * 6.0;
+      return p;
+  }
+  
+  vec3 hsl2rgb(vec3 c){
+      vec3 rgb;
+      if(c.y == 0.0){ rgb = vec3(c.z); } else {
+          float q = c.z < 0.5 ? c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y;
+          float p = 2.0 * c.z - q;
+          rgb.r = hue2rgb(p, q, c.x + 1.0/3.0); rgb.g = hue2rgb(p, q, c.x); rgb.b = hue2rgb(p, q, c.x - 1.0/3.0);
+      }
+      return rgb;
+  }
+  
+  void main() {
+      // 屏幕宽高比校正：确保中心向外扩散是正圆
+      vec2 aspectUv = vUv;
+      aspectUv.x *= uResolution.x / uResolution.y;
+      vec2 aspectOrigin = uOrigin;
+      aspectOrigin.x *= uResolution.x / uResolution.y;
+
+      float time = uTime * 0.254;
+      
+      // 流体高度图计算
+      float h = getHeight(vUv, time, uRandomSeed);
+      float hx = getHeight(vUv + vec2(0.005, 0.0), time, uRandomSeed);
+      float hy = getHeight(vUv + vec2(0.0, 0.005), time, uRandomSeed);
+      vec3 normal = normalize(vec3(h - hx, h - hy, 0.008));
+      float light = dot(normal, normalize(vec3(-0.6, 0.5, 0.4))) * 0.5 + 0.5;
+      
+      vec3 colDeep = vec3(0.25, 0.23, 0.20);
+      vec3 colMid = vec3(0.58, 0.55, 0.50); vec3 colSoft = vec3(0.88, 0.85, 0.80); vec3 colHigh = vec3(0.98, 0.97, 0.95);
+      vec3 color = mix(mix(mix(colDeep, colMid, smoothstep(0.1, 0.65, light)), colSoft, smoothstep(0.45, 0.9, light)), colHigh, smoothstep(0.88, 1.0, light));
+      
+      color = (color - 0.5) * uContrast + 0.5 + uBrightness;
+      color = clamp(color, 0.0, 1.0);
+      vec3 hsl = rgb2hsl(color);
+      hsl.x = mod(hsl.x + uHueShift, 1.0);
+      hsl.y = clamp(hsl.y * uSaturation, 0.0, 1.0);
+      color = hsl2rgb(hsl);
+      
+      // 【核心复刻】：中心向四周涟漪扩散逻辑
+      float dist = length(aspectUv - aspectOrigin);
+      float maxRadius = length(vec2(uResolution.x/uResolution.y, 1.0)) * 1.2;
+      float wavePos = uHoverProgress * maxRadius;
+      
+      // 波形起伏，让圆形涟漪边缘有真实的液体海浪感
+      float waveOffset = h * 0.3 + sin(dist * 10.0 - time * 2.0) * 0.05;
+      float frontDist = wavePos - (dist + waveOffset);
+      
+      float fluidMask = smoothstep(0.0, 0.15, frontDist);
+      fluidMask *= smoothstep(0.0, 0.05, uHoverProgress);
+      
+      // 浪尖高光 
+      float waveCrest = smoothstep(-0.05, 0.1, frontDist) * smoothstep(0.2, 0.05, frontDist);
+      
+      vec3 finalColor = mix(color, vec3(0.98, 0.99, 1.0), waveCrest * 0.8);
+      float subtleBump = (light - 0.5) * 0.03 * fluidMask;
+      finalColor += subtleBump;
+      
+      finalColor = clamp(finalColor, 0.0, 1.0);
+      gl_FragColor = vec4(finalColor, fluidMask);
+  }
+</script>
+
+<script>
+  function initKotoWorks() {
     const sectionId = '{{ section_id }}';
     const wrapper = document.getElementById('koto-' + sectionId);
     if (!wrapper) return;
 
-    const mediaItems = wrapper.querySelectorAll('.koto-media-item-' + sectionId);
-    const titleItems = wrapper.querySelectorAll('.koto-project-title-item-' + sectionId);
-    const footerItems = wrapper.querySelectorAll('.koto-project-footer-item-' + sectionId);
+    // 【JS 提权修复】：主动寻找 Shopify 外层包裹的 Section，并赋予它高层级
+    // 这将彻底打破 Footer 遮挡波浪涟漪的边界问题
+    const shopifySection = wrapper.closest('.shopify-section');
+    if (shopifySection) {
+        shopifySection.style.position = 'relative';
+        shopifySection.style.zIndex = '50';
+    }
 
-    const observerOptions = {
-      root: null,
-      rootMargin: '-50% 0px -50% 0px', 
-      threshold: 0
-    };
+    // 1. 左侧文本联动逻辑
+    if (window.innerWidth >= 990) {
+      const mediaItems = wrapper.querySelectorAll('.koto-media-item-' + sectionId);
+      const titleItems = wrapper.querySelectorAll('.koto-project-title-item-' + sectionId);
+      const footerItems = wrapper.querySelectorAll('.koto-project-footer-item-' + sectionId);
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const activeIndex = entry.target.getAttribute('data-index');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const activeIndex = entry.target.getAttribute('data-index');
+            titleItems.forEach(text => { text.classList.toggle('is-active', text.getAttribute('data-index') === activeIndex); });
+            footerItems.forEach(footer => { footer.classList.toggle('is-active', footer.getAttribute('data-index') === activeIndex); });
+          }
+        });
+      }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
 
-          titleItems.forEach(text => {
-            if (text.getAttribute('data-index') === activeIndex) {
-              text.classList.add('is-active');
-            } else {
-              text.classList.remove('is-active');
-            }
-          });
+      mediaItems.forEach(item => observer.observe(item));
+    }
 
-          footerItems.forEach(footer => {
-            if (footer.getAttribute('data-index') === activeIndex) {
-              footer.classList.add('is-active');
-            } else {
-              footer.classList.remove('is-active');
-            }
-          });
-        }
+    // 2. WebGL 悬浮波浪扩散逻辑
+    function initHoverWebGL() {
+      const canvas = document.getElementById('works-canvas-' + sectionId);
+      if (!canvas) return;
+      
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: true });
+      
+      const shaderMaterial = new THREE.ShaderMaterial({
+          vertexShader: document.getElementById('works-vs-' + sectionId).textContent,
+          fragmentShader: document.getElementById('works-fs-' + sectionId).textContent,
+          transparent: true,
+          uniforms: {
+              uTime: { value: 0 },
+              uResolution: { value: new THREE.Vector2() },
+              uRandomSeed: { value: 42.0 }, 
+              uContrast: { value: {{ section.settings.fluid_contrast | default: 1.0 }} },
+              uBrightness: { value: {{ section.settings.fluid_brightness | default: 0.0 }} },
+              uHueShift: { value: {{ section.settings.fluid_hue | default: 0 }} / 360.0 },
+              uSaturation: { value: {{ section.settings.fluid_saturation | default: 1.0 }} },
+              uHoverProgress: { value: 0.0 },
+              uOrigin: { value: new THREE.Vector2(0.5, 0.5) }
+          }
       });
-    }, observerOptions);
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), shaderMaterial));
+      
+      const resize = () => {
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          shaderMaterial.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+      };
+      window.addEventListener('resize', resize);
+      resize();
 
-    mediaItems.forEach(item => observer.observe(item));
-  });
+      let targetHover = 0;
+      let currentHover = 0;
+      let activeCard = null;
+      const hoverCards = wrapper.querySelectorAll('.js-hover-card');
+
+      hoverCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          if (window.innerWidth < 990) return; 
+          activeCard = card;
+          targetHover = 1.0;
+        });
+        card.addEventListener('mouseleave', () => {
+          if (window.innerWidth < 990) return;
+          activeCard = null;
+          targetHover = 0.0;
+        });
+      });
+
+      const clock = new THREE.Clock();
+      let customTime = 0;
+
+      const animate = () => {
+          requestAnimationFrame(animate);
+          
+          if (activeCard) {
+            const rect = activeCard.getBoundingClientRect();
+            const originX = (rect.left + rect.width / 2) / window.innerWidth;
+            const originY = 1.0 - ((rect.top + rect.height / 2) / window.innerHeight); 
+            shaderMaterial.uniforms.uOrigin.value.set(originX, originY);
+          }
+
+          currentHover += (targetHover - currentHover) * 0.08;
+          shaderMaterial.uniforms.uHoverProgress.value = currentHover;
+
+          if (currentHover > 0.005 || targetHover > 0) {
+            const delta = clock.getDelta();
+            const elapsedTime = clock.getElapsedTime();
+            const configBaseSpeed = {{ section.settings.base_fluid_speed | default: 2.5 }};
+            const rhythm = Math.sin(elapsedTime * 1.8) * 0.9;
+            customTime += delta * (configBaseSpeed + rhythm);
+            
+            shaderMaterial.uniforms.uTime.value = customTime;
+            renderer.render(scene, camera);
+          } else {
+            clock.getDelta(); 
+          }
+      };
+      animate();
+    }
+
+    if (typeof THREE === 'undefined') {
+        const script = document.createElement('script');
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+        script.onload = initHoverWebGL;
+        document.head.appendChild(script);
+    } else {
+        initHoverWebGL();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initKotoWorks);
+  if (window.Shopify && Shopify.designMode) {
+    document.addEventListener('shopify:section:load', function(e) {
+      if (e.detail.sectionId === '{{ section.id }}') initKotoWorks();
+    });
+  }
 </script>
 
 {% schema %}
 {
-  "name": "Koto Works (多媒体气泡版)",
+  "name": "Koto Works (液态涟漪波浪)",
   "settings": [
     {
       "type": "header",
@@ -509,6 +638,23 @@
       "label": "板块背景色",
       "default": "#ffffff"
     },
+    {
+      "type": "header",
+      "content": "🌊 悬浮全屏流体色彩"
+    },
+    {
+      "type": "range",
+      "id": "base_fluid_speed",
+      "label": "静止基础流速 (同步 Section)",
+      "min": 0.5,
+      "max": 10.0,
+      "step": 0.5,
+      "default": 2.5
+    },
+    { "type": "range", "id": "fluid_brightness", "label": "明度", "min": -0.5, "max": 0.5, "step": 0.1, "default": 0.0 },
+    { "type": "range", "id": "fluid_contrast", "label": "对比度", "min": 0.5, "max": 2.0, "step": 0.1, "default": 1.0 },
+    { "type": "range", "id": "fluid_hue", "label": "色相旋转", "min": 0, "max": 360, "step": 4, "unit": "deg", "default": 0 },
+    { "type": "range", "id": "fluid_saturation", "label": "饱和度", "min": 0.0, "max": 2.0, "step": 0.1, "default": 1.0 },
     {
       "type": "header",
       "content": "🔠 1.板块大标题 (Works)"
@@ -830,7 +976,7 @@
   ],
   "presets": [
     {
-      "name": "Koto Works (排版大师版)",
+      "name": "Koto Works (液态涟漪波浪)",
       "blocks": [
         { "type": "project", "settings": { "title": "branding koto" } },
         { "type": "project", "settings": { "title": "digital exploration" } }

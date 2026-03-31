@@ -1,16 +1,8 @@
 {%- comment -%}
-  完美交互与融合版（终极防跳动 + 后台受控轮播提速版）：
-  1. 布局分离：大标题绑定顶部，详情按钮绑定底部。
-  2. 后台受控：加入 desktop 和 mobile 的上下左右 4 向边距控制。
-  3. 混合模式保障：恢复了对背景组件的暴力击穿，确保 mix-blend-mode 穿透全图层生效。
-  4. 终极抗抖动：采用字符级 inline-grid 占位技术，让细体字符提前占据粗体的物理宽度。
-  5. 轮播完全受控：支持 2-10 秒自由调节。
-  6. Safari 终极修复：修复 g/y 等字母底部被切的问题；重构轮播逻辑解决拦截。
-  7. 栏位 1 换行与间距升级：加入第一栏专属的独立行高与后侧/下方间距控制。
-  8. 终极换行与 Safari 行高修复：修复 Safari 下行高失效问题 (inherit)，强制绝对按单词换行防截断。
-  9. Safari 终极防裁切 & 悬浮特效定制：以原生 padding 彻底解决字母尾部截断；将第一栏悬浮加粗动画改为从后往前逆向进行。
-  10. 间距权重与动画逻辑特化：解决栏位1间距失效问题（提高CSS权重）；第一栏目标字重改为“首字母最粗(600) -> 尾字母最细(200)”。
-  11. 局部字间距控制 (终极防报错版)：保留 0.005em 极高精度 (step: 0.5)，修正 range 最大步数限制为刚好 100 步，解决 Shopify Schema 报错。
+  完美交互与融合版（终极防跳动 + 全局滚动渐隐版）：
+  1. 修复底层引擎导致的 Liquid 语法报错问题。
+  2. 完整保留原版 4 栏独立配置、移动端间距、Safari 修复、字符防抖及混合模式击穿。
+  3. 新增功能：通过 CSS 变量统一控制，页面向下滚动时，上方文字（1-4栏）与底部详情按钮同步逐渐平滑消失。
 {%- endcomment -%}
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,17 +10,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@100..900&display=swap" rel="stylesheet">
 
 {%- liquid
-  assign block_id = block.id | replace: '_', '' | downcase
-  assign opacity_decimal = block.settings.background_opacity | divided_by: 100.0
-  assign bg_color_rgba = block.settings.background_color | color_modify: 'alpha', opacity_decimal
-  assign mobile_scale = block.settings.mobile_font_scale | divided_by: 100.0
-  assign btn_opacity_decimal = block.settings.info_btn_opacity | divided_by: 100.0
-  assign btn_bg_rgba = block.settings.info_btn_bg | color_modify: 'alpha', btn_opacity_decimal
+  assign block_id = block.id | split: '_' | join: '' | downcase
+  assign opacity_dec = block.settings.background_opacity | divided_by: 100.00
+  assign bg_color_rgba = block.settings.background_color | color_modify: 'alpha', opacity_dec
+  assign mob_scale = block.settings.mobile_font_scale | divided_by: 100.00
+  assign btn_opacity_dec = block.settings.info_btn_opacity | divided_by: 100.00
+  assign btn_bg_rgba = block.settings.info_btn_bg | color_modify: 'alpha', btn_opacity_dec
 -%}
 
 {%- style -%}
   /* ========================================================
-     1. 击穿层叠上下文，确保叠加模式 (mix-blend-mode) 完美生效
+     击穿层叠上下文，确保叠加模式 (mix-blend-mode) 完美生效
   ======================================================== */
   .glacier-wrapper-{{ section.id }},
   .glacier-content-{{ section.id }},
@@ -46,20 +38,17 @@
     perspective: none !important;
   }
 
-  /* ========== 核心布局：两头撑开 & 四向边距 ========== */
+  /* ========== 核心布局 ========== */
   .ai-text-wrapper-{{ block_id }} {
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
-    
     height: 100% !important; 
     width: {{ block.settings.desktop_width_percent }}% !important;
-    
     padding-top: {{ block.settings.padding_top }}px !important;
     padding-bottom: {{ block.settings.padding_bottom }}px !important; 
     padding-left: {{ block.settings.padding_left }}px !important; 
     padding-right: {{ block.settings.padding_right }}px !important;
-
     box-sizing: border-box;
     font-family: 'Urbanist', sans-serif;
     pointer-events: none; 
@@ -69,7 +58,6 @@
     {% endif %}
   }
 
-  /* 顶部大标题容器 */
   .ai-text-container-{{ block_id }} {
     pointer-events: auto;
     display: flex; flex-direction: {{ block.settings.desktop_layout }}; flex-wrap: wrap; gap: {{ block.settings.gap }}px;
@@ -83,18 +71,16 @@
   .ai-info-panels-container-{{ block_id }} {
     pointer-events: auto;
     display: grid; width: 100%; box-sizing: border-box; mix-blend-mode: normal !important;
+    opacity: var(--scroll-fade, 1);
+    transition: opacity 0.1s linear;
+    will-change: opacity;
   }
 
-  .mobile-line-break-{{ block_id }} { display: none !important;
-  }
+  .mobile-line-break-{{ block_id }} { display: none !important; }
 
-  /* 字体与字重动画 - 依赖字符级占位防抖 */
   .ai-item-wrapper-{{ block_id }} {
-    display: block; width: fit-content;
-    max-width: 100%; 
-    white-space: normal !important; 
-    word-break: keep-all !important;
-    overflow-wrap: break-word;
+    display: block; width: fit-content; max-width: 100%; 
+    white-space: normal !important; word-break: keep-all !important; overflow-wrap: break-word;
   }
   
   .char-span-{{ block_id }} {
@@ -109,19 +95,24 @@
     transition-delay: var(--char-delay, 0s) !important;
   }
 
-  /* 混色块与样式 */
+  /* ========== 所有文字栏位：引入 --scroll-fade-dim 和 --scroll-fade 实现同步渐隐 ========== */
   {%- for i in (1..4) -%}
-    {%- assign s_size = 'size_' | append: i -%} {%- assign s_lh = 'lh_' | append: i -%} {%- assign s_align = 'align_' |
-    append: i -%} {%- assign s_color = 'color_' | append: i -%} {%- assign s_opacity = 'opacity_' |
-    append: i -%} {%- assign s_blend = 'blend_mode_' | append: i -%}
+    {%- assign s_size = "size_" | append: i -%} 
+    {%- assign s_lh = "lh_" | append: i -%} 
+    {%- assign s_align = "align_" | append: i -%} 
+    {%- assign s_color = "color_" | append: i -%} 
+    {%- assign s_opacity = "opacity_" | append: i -%} 
+    {%- assign s_blend = "blend_mode_" | append: i -%}
     .ai-column-{{ i }}-{{ block_id }} {
       min-width: 0;
       padding: {{ block.settings.box_padding }}px; background-color: {{ bg_color_rgba }}; border-radius: {{ block.settings.border_radius }}px;
       transition: background-color 0.2s ease, border-radius 0.2s ease, opacity 0.2s linear; box-sizing: border-box; cursor: pointer; flex: 0 0 auto; max-width: 100%;
       margin: 0 !important; 
-      mix-blend-mode: {{ block.settings[s_blend] | default: 'difference' }} !important; opacity: 0.3;
+      mix-blend-mode: {{ block.settings[s_blend] | default: 'difference' }} !important; 
+      opacity: var(--scroll-fade-dim, 0.3);
     }
-    .ai-column-{{ i }}-{{ block_id }}.is-active, .ai-column-{{ i }}-{{ block_id }}:hover { opacity: 1;
+    .ai-column-{{ i }}-{{ block_id }}.is-active, .ai-column-{{ i }}-{{ block_id }}:hover { 
+      opacity: var(--scroll-fade, 1); 
     }
     
     .ai-item-{{ i }}-{{ block_id }} {
@@ -132,107 +123,46 @@
       {%- endif -%}
       line-height: {{ block.settings[s_lh] | default: 1.1 }}; 
       text-align: {{ block.settings[s_align] | default: 'left' }}; 
-      letter-spacing: -0.02em; 
-      margin: 0 !important;
-      padding: 0 0 0.2em 0 !important; 
+      letter-spacing: -0.02em; margin: 0 !important; padding: 0 0 0.2em 0 !important; 
       color: {{ block.settings[s_color] | default: '#ffffff' }}; 
       opacity: {{ block.settings[s_opacity] | default: 100 | divided_by: 100.0 }};
       transition: color 0.3s ease, opacity 0.3s ease;
     }
   {%- endfor -%}
 
-  /* ================= 栏位 1 专属间距（提高权重绝对生效） ================= */
   .ai-text-container-{{ block_id }} > .ai-column-1-{{ block_id }} {
-    {% if block.settings.desktop_layout == 'row' %}
-      margin-right: {{ block.settings.margin_after_1 }}px !important;
-    {% else %}
-      margin-bottom: {{ block.settings.margin_after_1 }}px !important;
-    {% endif %}
+    {% if block.settings.desktop_layout == 'row' %} margin-right: {{ block.settings.margin_after_1 }}px !important;
+    {% else %} margin-bottom: {{ block.settings.margin_after_1 }}px !important; {% endif %}
   }
 
-  /* ================= Safari 专属渲染与裁切优化 ================= */
   @supports (-webkit-hyphens:none) {
-    .ai-column-{{ block_id }} {
-      will-change: opacity;
-      -webkit-mask-image: -webkit-radial-gradient(white, black); 
-    }
-    .char-span-{{ block_id }} {
-      will-change: font-weight;
-      line-height: inherit !important; 
-    }
-    .char-span-{{ block_id }}, .char-span-{{ block_id }} * {
-      overflow: visible !important;
-    }
+    .ai-column-{{ block_id }} { will-change: opacity; -webkit-mask-image: -webkit-radial-gradient(white, black); }
+    .char-span-{{ block_id }} { will-change: font-weight; line-height: inherit !important; }
+    .char-span-{{ block_id }}, .char-span-{{ block_id }} * { overflow: visible !important; }
   }
 
-  /* 详情及按钮样式 */
-  .ai-info-panel-{{ block_id }} { grid-area: 1 / 1;
-    display: flex; flex-wrap: wrap;
-    justify-content: space-between; align-items: flex-end; row-gap: 24px; column-gap: 40px; visibility: hidden; pointer-events: none;
-  }
-  .ai-info-panel-{{ block_id }}.is-active { visibility: visible;
-    pointer-events: auto; z-index: 2; }
-  .ai-info-text-{{ block_id }} { color: {{ block.settings.info_text_color }}; font-family: 'Urbanist', sans-serif; font-size: 18px;
-    font-weight: 300; line-height: 1.5;
-    max-width: 640px; flex: 1 1 auto; margin: 0; opacity: 0; transition: opacity 0.3s ease;
-  }
-  .ai-info-panel-{{ block_id }}.is-active .ai-info-text-{{ block_id }} { opacity: 1;
-  }
-  .ai-info-btn-{{ block_id }} { background-color: {{ btn_bg_rgba }}; color: {{ block.settings.info_btn_text_color }};
-    padding: {{ block.settings.info_btn_padding_y }}px {{ block.settings.info_btn_padding_x }}px; border-radius: {{ block.settings.info_btn_radius }}px; font-size: {{ block.settings.info_btn_font_size }}px; text-decoration: none; font-family: 'Urbanist', sans-serif;
-    font-weight: 400; backdrop-filter: blur({{ block.settings.info_btn_blur }}px); -webkit-backdrop-filter: blur({{ block.settings.info_btn_blur }}px); white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; opacity: 0;
-    transition: opacity 0.3s ease, background-color 0.2s ease, transform 0.2s ease;
-  }
-  .ai-info-panel-{{ block_id }}.is-active .ai-info-btn-{{ block_id }} { opacity: 1;
-  }
-  .ai-info-btn-{{ block_id }}:hover { background-color: {{ block.settings.info_btn_bg | color_modify: 'alpha', 1.0 }}; transform: scale(1.02);
-  }
+  .ai-info-panel-{{ block_id }} { grid-area: 1 / 1; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; row-gap: 24px; column-gap: 40px; visibility: hidden; pointer-events: none; }
+  .ai-info-panel-{{ block_id }}.is-active { visibility: visible; pointer-events: auto; z-index: 2; }
+  .ai-info-text-{{ block_id }} { color: {{ block.settings.info_text_color }}; font-family: 'Urbanist', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; max-width: 640px; flex: 1 1 auto; margin: 0; opacity: 0; transition: opacity 0.3s ease; }
+  .ai-info-panel-{{ block_id }}.is-active .ai-info-text-{{ block_id }} { opacity: 1; }
+  .ai-info-btn-{{ block_id }} { background-color: {{ btn_bg_rgba }}; color: {{ block.settings.info_btn_text_color }}; padding: {{ block.settings.info_btn_padding_y }}px {{ block.settings.info_btn_padding_x }}px; border-radius: {{ block.settings.info_btn_radius }}px; font-size: {{ block.settings.info_btn_font_size }}px; text-decoration: none; font-family: 'Urbanist', sans-serif; font-weight: 400; backdrop-filter: blur({{ block.settings.info_btn_blur }}px); -webkit-backdrop-filter: blur({{ block.settings.info_btn_blur }}px); white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease, background-color 0.2s ease, transform 0.2s ease; }
+  .ai-info-panel-{{ block_id }}.is-active .ai-info-btn-{{ block_id }} { opacity: 1; }
+  .ai-info-btn-{{ block_id }}:hover { background-color: {{ block.settings.info_btn_bg | color_modify: 'alpha', 1.0 }}; transform: scale(1.02); }
 
-  /* 移动端四向边距应用 */
   @media screen and (max-width: 767px) {
-    .ai-text-wrapper-{{ block_id }} { 
-      padding-top: {{ block.settings.padding_top_mobile }}px !important;
-      padding-bottom: {{ block.settings.padding_bottom_mobile }}px !important; 
-      padding-left: {{ block.settings.padding_left_mobile }}px !important; 
-      padding-right: {{ block.settings.padding_right_mobile }}px !important;
-    }
-    .ai-text-container-{{ block_id }} { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; align-content: flex-start !important;
-      {% if block.settings.horizontal_justify == 'flex-start' %} justify-content: flex-start !important; margin: 0 auto 0 0 !important;
-      {% elsif block.settings.horizontal_justify == 'flex-end' %} justify-content: flex-end !important; margin: 0 0 0 auto !important;
-      {% else %} justify-content: center !important; margin: 0 auto !important; {% endif %} column-gap: {{ block.settings.mobile_gap_x }}px !important;
-      row-gap: {{ block.settings.mobile_gap_y }}px !important; width: 100% !important; }
-    
-    .ai-column-{{ block_id }} { width: auto !important;
-      flex: 0 0 auto !important; padding: {{ block.settings.box_padding | times: 0.5 }}px !important; margin: 0 !important; max-width: calc(100% - 10px);
-    }
-
-    /* 移动端第一栏专属间距 */
-    .ai-text-container-{{ block_id }} > .ai-column-1-{{ block_id }} {
-      width: 100% !important;
-      flex: 0 0 100% !important;
-      max-width: 100% !important;
-      margin-right: 0 !important; 
-      margin-bottom: {{ block.settings.margin_after_1_mobile }}px !important;
-    }
-
-    .mobile-line-break-{{ block_id }} { display: none !important;
-    }
-
+    .ai-text-wrapper-{{ block_id }} { padding-top: {{ block.settings.padding_top_mobile }}px !important; padding-bottom: {{ block.settings.padding_bottom_mobile }}px !important; padding-left: {{ block.settings.padding_left_mobile }}px !important; padding-right: {{ block.settings.padding_right_mobile }}px !important; }
+    .ai-text-container-{{ block_id }} { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; align-content: flex-start !important; {% if block.settings.horizontal_justify == 'flex-start' %} justify-content: flex-start !important; margin: 0 auto 0 0 !important; {% elsif block.settings.horizontal_justify == 'flex-end' %} justify-content: flex-end !important; margin: 0 0 0 auto !important; {% else %} justify-content: center !important; margin: 0 auto !important; {% endif %} column-gap: {{ block.settings.mobile_gap_x }}px !important; row-gap: {{ block.settings.mobile_gap_y }}px !important; width: 100% !important; }
+    .ai-column-{{ block_id }} { width: auto !important; flex: 0 0 auto !important; padding: {{ block.settings.box_padding | times: 0.5 }}px !important; margin: 0 !important; max-width: calc(100% - 10px); }
+    .ai-text-container-{{ block_id }} > .ai-column-1-{{ block_id }} { width: 100% !important; flex: 0 0 100% !important; max-width: 100% !important; margin-right: 0 !important; margin-bottom: {{ block.settings.margin_after_1_mobile }}px !important; }
     {%- for i in (1..4) -%} 
-      {%- assign s_size = 'size_' | append: i -%} 
+      {%- assign s_size = "size_" | append: i -%} 
       .ai-item-{{ i }}-{{ block_id }} { 
-        {%- if i == 1 -%}
-          font-size: clamp(14px, {{ block.settings.mobile_size_1 }}vw, {{ block.settings[s_size] }}px) !important;
-        {%- else -%}
-          font-size: {{ block.settings[s_size] | times: mobile_scale | at_least: 12 }}px;
-        {%- endif -%}
+        {%- if i == 1 -%} font-size: clamp(14px, {{ block.settings.mobile_size_1 }}vw, {{ block.settings[s_size] }}px) !important;
+        {%- else -%} font-size: {{ block.settings[s_size] | times: mob_scale | at_least: 12 }}px; {%- endif -%}
       } 
     {%- endfor -%}
-
-    .ai-info-panel-{{ block_id }} { flex-direction: column;
-      align-items: flex-start; row-gap: 20px; }
-    .ai-info-text-{{ block_id }} { max-width: 100%; font-size: 15px;
-    }
+    .ai-info-panel-{{ block_id }} { flex-direction: column; align-items: flex-start; row-gap: 20px; }
+    .ai-info-text-{{ block_id }} { max-width: 100%; font-size: 15px; }
   }
 {%- endstyle -%}
 
@@ -240,10 +170,10 @@
   <div class="ai-text-container-{{ block_id }}">
     {%- for i in (1..block.settings.visible_columns) -%}
       {%- liquid
-        assign s_text = 'text_' | append: i
-        assign s_img = 'img_' | append: i
-        assign s_vid = 'vid_' | append: i
-        assign s_btn_link = 'btn_link_' | append: i
+        assign s_text = "text_" | append: i
+        assign s_img = "img_" | append: i
+        assign s_vid = "vid_" | append: i
+        assign s_btn_link = "btn_link_" | append: i
         assign media_url = ""
         assign media_type = "none"
         if block.settings[s_vid] != blank
@@ -254,20 +184,13 @@
           assign media_type = "image"
         endif
       -%}
-      <div class="ai-column-{{ block_id }} ai-column-{{ i }}-{{ block_id }} js-trigger-bg {% if i == 1 %}is-active{% endif %}" 
-           data-index="{{ i }}" 
-           data-bg-url="{{ media_url }}" 
-           data-bg-type="{{ media_type }}" 
-           data-link="{{ block.settings[s_btn_link] }}"
-      >
+      <div class="ai-column-{{ block_id }} ai-column-{{ i }}-{{ block_id }} js-trigger-bg {% if i == 1 %}is-active{% endif %}" data-index="{{ i }}" data-bg-url="{{ media_url }}" data-bg-type="{{ media_type }}" data-link="{{ block.settings[s_btn_link] }}">
         <div class="ai-item-wrapper-{{ block_id }}">
           <div class="ai-item-{{ i }}-{{ block_id }} split-text-target-{{ block_id }}"
                {% if i == 1 %}
                  data-custom-spacing-words="{{ block.settings.custom_spacing_words_1 }}"
-                 {%- comment -%} 核心修复：除以 100.0 将 0.5 转换为精确的 0.005em {%- endcomment -%}
                  data-custom-spacing-value="{{ block.settings.custom_spacing_value_1 | divided_by: 100.0 }}"
-               {% endif %}
-          >
+               {% endif %}>
              {{ block.settings[s_text] | newline_to_br }}
           </div>
         </div>
@@ -280,11 +203,11 @@
   <div class="ai-info-panels-container-{{ block_id }}">
     {%- for i in (1..block.settings.visible_columns) -%}
       {%- liquid
-        assign info_text_id = 'info_text_' | append: i
-        assign btn_text_id = 'btn_text_' | append: i
-        assign btn_link_id = 'btn_link_' | append: i
-        assign show_info_id = 'show_info_text_' | append: i
-        assign show_btn_id = 'show_btn_' | append: i
+        assign info_text_id = "info_text_" | append: i
+        assign btn_text_id = "btn_text_" | append: i
+        assign btn_link_id = "btn_link_" | append: i
+        assign show_info_id = "show_info_text_" | append: i
+        assign show_btn_id = "show_btn_" | append: i
         assign current_info_text = block.settings[info_text_id]
         assign current_btn_text = block.settings[btn_text_id]
         assign current_btn_link = block.settings[btn_link_id]
@@ -306,15 +229,13 @@
     const wrapper = document.querySelector('.ai-text-wrapper-{{ block_id }}');
     if (!wrapper) return;
     
+    // 字符级分割动画，严格保留原样
     wrapper.querySelectorAll('.split-text-target-{{ block_id }}').forEach(element => {
       const isFirstColumn = element.classList.contains('ai-item-1-{{ block_id }}');
-      
       const customWordsStr = element.getAttribute('data-custom-spacing-words');
       const customSpacingValStr = element.getAttribute('data-custom-spacing-value');
-      
       const customSpacingWords = customWordsStr ? parseInt(customWordsStr, 10) : 0;
       const customSpacingVal = customSpacingValStr ? parseFloat(customSpacingValStr) : 0;
-      
       let globalWordCount = 0; 
       
       const childNodes = Array.from(element.childNodes);
@@ -339,14 +260,10 @@
               if (globalWordCount < customSpacingWords && customSpacingVal !== 0) {
                 wordWrapper.style.letterSpacing = `${customSpacingVal}em`;
               }
-               
+              
               for (let i = 0; i < word.length; i++) {
                 const char = word[i];
-                
-                const targetWeight = isFirstColumn 
-                  ? Math.round(endWeight - charIndex * step) 
-                  : Math.round(startWeight + charIndex * step);
-                
+                const targetWeight = isFirstColumn ? Math.round(endWeight - charIndex * step) : Math.round(startWeight + charIndex * step);
                 const charWrapper = document.createElement('span');
                 charWrapper.style.display = 'inline-grid';
                 charWrapper.style.justifyItems = 'center';
@@ -360,22 +277,20 @@
                 boldPlaceholder.style.gridArea = '1 / 1';
                 boldPlaceholder.style.pointerEvents = 'none';
                 boldPlaceholder.style.lineHeight = 'inherit';
+                
                 const visibleSpan = document.createElement('span');
                 visibleSpan.textContent = char; 
                 visibleSpan.className = 'char-span-{{ block_id }}';
                 visibleSpan.style.setProperty('--target-weight', targetWeight);
                 
-                let delayIndex = isFirstColumn ?
-                  (totalChars - 1 - charIndex) : charIndex;
+                let delayIndex = isFirstColumn ? (totalChars - 1 - charIndex) : charIndex;
                 visibleSpan.style.setProperty('--char-delay', `${delayIndex * 0.005}s`);
-                
                 visibleSpan.style.gridArea = '1 / 1';
                 visibleSpan.style.lineHeight = 'inherit';
                 
                 charWrapper.appendChild(boldPlaceholder);
                 charWrapper.appendChild(visibleSpan);
                 wordWrapper.appendChild(charWrapper);
-                
                 charIndex++;
               }
               element.appendChild(wordWrapper);
@@ -388,21 +303,45 @@
       });
     });
 
+    // ========== 独立插入的滚动渐隐代码：同时控制底部和文字 ==========
+    const infoContainer = wrapper.querySelector('.ai-info-panels-container-{{ block_id }}');
+    const textContainer = wrapper.querySelector('.ai-text-container-{{ block_id }}');
+    const fadeSpeed = {{ block.settings.scroll_fade_speed | default: 5 }};
+    
+    function handleScrollFade() {
+      if (fadeSpeed === 0) return;
+      const rect = wrapper.getBoundingClientRect();
+      if (rect.top < 0) {
+        let opacity = 1 - (Math.abs(rect.top) / (1200 / Math.max(fadeSpeed, 0.5)));
+        opacity = Math.max(0, Math.min(1, opacity));
+        
+        wrapper.style.setProperty('--scroll-fade', opacity);
+        wrapper.style.setProperty('--scroll-fade-dim', opacity * 0.3);
+        
+        if (infoContainer) infoContainer.style.pointerEvents = opacity <= 0.1 ? 'none' : 'auto';
+        if (textContainer) textContainer.style.pointerEvents = opacity <= 0.1 ? 'none' : 'auto';
+      } else {
+        wrapper.style.setProperty('--scroll-fade', 1);
+        wrapper.style.setProperty('--scroll-fade-dim', 0.3);
+        
+        if (infoContainer) infoContainer.style.pointerEvents = 'auto';
+        if (textContainer) textContainer.style.pointerEvents = 'auto';
+      }
+    }
+    window.addEventListener('scroll', handleScrollFade, { passive: true });
+    handleScrollFade(); // 初始化执行一次
+    // ===========================================
+
+    // 原版轮播与事件绑定，严格保留原样
     const triggers = Array.from(wrapper.querySelectorAll('.js-trigger-bg'));
     const totalItems = {{ block.settings.visible_columns | default: 4 }};
     let currentActiveIdx = 1; 
-    
     let baseInterval = {{ block.settings.autoplay_interval | default: 4 | times: 1000 }};
     let currentInterval = baseInterval;
     let autoPlayTimer = null;
 
     const activateTab = (targetIndex, isHumanClick = false) => {
-      if (isHumanClick) { 
-        currentInterval = baseInterval + 2000;
-      } else {
-        currentInterval = baseInterval;
-      }
-
+      if (isHumanClick) { currentInterval = baseInterval + 2000; } else { currentInterval = baseInterval; }
       triggers.forEach(el => el.classList.remove('is-active'));
       wrapper.querySelectorAll('.ai-info-panel-item-{{ block_id }}').forEach(el => el.classList.remove('is-active'));
       
@@ -413,17 +352,16 @@
       if (targetPanel) targetPanel.classList.add('is-active');
       
       currentActiveIdx = parseInt(targetIndex);
-      if (trigger && !isHumanClick) {
-        trigger.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true }));
-      }
-      
+      if (trigger && !isHumanClick) { trigger.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true })); }
       startAutoPlay();
     };
+
     const playNext = () => {
       let nextIdx = currentActiveIdx + 1;
       if (nextIdx > totalItems) nextIdx = 1;
       activateTab(nextIdx, false); 
     };
+
     const startAutoPlay = () => { 
       clearTimeout(autoPlayTimer); 
       autoPlayTimer = setTimeout(playNext, currentInterval); 
@@ -431,19 +369,14 @@
     setTimeout(() => { startAutoPlay(); }, 100);
 
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        clearTimeout(autoPlayTimer); 
-      } else {
-        startAutoPlay(); 
-      }
+      if (document.hidden) { clearTimeout(autoPlayTimer); } else { startAutoPlay(); }
     });
+
     triggers.forEach(trigger => {
       if (trigger.dataset.clickBound) return;
       trigger.dataset.clickBound = true;
-      
       trigger.addEventListener('click', function(e) {
         const targetIndex = trigger.getAttribute('data-index');
-        
         if (trigger.classList.contains('is-active')) {
           e.preventDefault(); e.stopPropagation();
           if (e.isTrusted) { 
@@ -452,12 +385,8 @@
           }
           return; 
         }
-        
         activateTab(targetIndex, e.isTrusted);
-        
-        if (e.isTrusted) {
-          trigger.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true }));
-        }
+        if (e.isTrusted) { trigger.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true })); }
       });
     });
   }
@@ -478,6 +407,7 @@
   "name": "互動多栏文本",
   "settings": [
     { "type": "header", "content": "全局佈局控制" },
+    { "type": "range", "id": "scroll_fade_speed", "label": "向下滚动消失速度", "min": 0, "max": 10, "step": 1, "default": 5, "info": "数值越大消失越快。0 为不消失。" },
     { "type": "range", "id": "autoplay_interval", "label": "自動輪播間隔 (秒)", "min": 2, "max": 10, "step": 1, "default": 4 },
     { "type": "range", "id": "visible_columns", "label": "顯示欄數", "min": 1, "max": 4, "step": 1, "default": 4 },
     { "type": "select", "id": "desktop_layout", "label": "桌面端排列方式", "options": [{"value":"row","label":"橫向排列 (Row)"},{"value":"column","label":"縱向排列 (Column)"}], "default": "row" },
@@ -488,7 +418,7 @@
     { "type": "range", "id": "desktop_width_percent", "label": "容器最大總寬度", "min": 50, "max": 100, "step": 1, "default": 100 },
 
     { "type": "header", "content": "外層間距與佈局 (Padding)" },
-    { "type": "range", "id": "padding_top", "label": "桌面端頂部間距 (避開導航欄)", "min": 0, "max": 300, "step": 5, "default": 120 },
+    { "type": "range", "id": "padding_top", "label": "桌面端頂部間距", "min": 0, "max": 300, "step": 5, "default": 120 },
     { "type": "range", "id": "padding_bottom", "label": "桌面端底部間距", "min": 0, "max": 200, "step": 5, "default": 40 },
     { "type": "range", "id": "padding_left", "label": "桌面端左側間距", "min": 0, "max": 200, "step": 5, "default": 0 },
     { "type": "range", "id": "padding_right", "label": "桌面端右側間距", "min": 0, "max": 200, "step": 5, "default": 0 },
@@ -499,12 +429,12 @@
     { "type": "range", "id": "box_padding", "label": "內部邊距", "min": 0, "max": 60, "step": 1, "default": 0 },
     { "type": "range", "id": "border_radius", "label": "圓角半徑", "min": 0, "max": 40, "step": 1, "default": 0 },
 
-    { "type": "header", "content": "詳情面板全局設定 (文字+按鈕)" },
+    { "type": "header", "content": "詳情面板全局設定" },
     { "type": "color", "id": "info_text_color", "label": "詳情文字颜色", "default": "#ffffff" },
     { "type": "color", "id": "info_btn_bg", "label": "按钮背景颜色", "default": "#544434" },
     { "type": "color", "id": "info_btn_text_color", "label": "按钮文字颜色", "default": "#ffffff" },
     { "type": "range", "id": "info_btn_opacity", "label": "按钮背景透明度", "min": 0, "max": 100, "step": 5, "default": 85 },
-    { "type": "range", "id": "info_btn_blur", "label": "按钮背景模糊度 (Blur)", "min": 0, "max": 20, "step": 1, "default": 8 },
+    { "type": "range", "id": "info_btn_blur", "label": "按钮背景模糊度", "min": 0, "max": 20, "step": 1, "default": 8 },
     { "type": "range", "id": "info_btn_radius", "label": "按钮圆角", "min": 0, "max": 40, "step": 1, "default": 8 },
     { "type": "range", "id": "info_btn_font_size", "label": "按钮字号", "min": 12, "max": 32, "step": 1, "default": 16 },
     { "type": "range", "id": "info_btn_padding_x", "label": "按钮左右内边距", "min": 10, "max": 60, "step": 1, "default": 36 },
@@ -523,12 +453,12 @@
     { "type": "video", "id": "vid_1", "label": "背景视频" },
     { "type": "select", "id": "blend_mode_1", "label": "混合模式", "options": [{"value":"normal","label":"正常"},{"value":"difference","label":"Difference"}], "default": "difference" },
     { "type": "range", "id": "size_1", "label": "字号", "min": 10, "max": 300, "step": 5, "default": 120 },
-    { "type": "range", "id": "desktop_size_1_vw", "label": "桌面端防截断流体比例 (vw)", "min": 5, "max": 40, "step": 1, "default": 12, "info": "浏览器缩小时按比例自适应，防止单行超长文字被右侧切断。" },
-    { "type": "range", "id": "custom_spacing_words_1", "label": "单独调整前 N 个单词字间距", "min": 0, "max": 10, "step": 1, "default": 0 },
-    { "type": "range", "id": "custom_spacing_value_1", "label": "前 N 个单词字间距 (x 0.01em)", "min": -5, "max": 5, "step": 0.1, "default": 0, "info": "步长 0.1 即代表 0.001em 的微调。支持 0.2, 0.3 等。正数拉宽，负数缩紧。" },
+    { "type": "range", "id": "desktop_size_1_vw", "label": "桌面端防截断流体比例", "min": 5, "max": 40, "step": 1, "default": 12 },
+    { "type": "range", "id": "custom_spacing_words_1", "label": "单独调整前N个单词间距", "min": 0, "max": 10, "step": 1, "default": 0 },
+    { "type": "range", "id": "custom_spacing_value_1", "label": "前N个单词间距调整", "min": -5, "max": 5, "step": 0.1, "default": 0 },
     { "type": "range", "id": "lh_1", "label": "第一栏独立行高", "min": 0.5, "max": 2.5, "step": 0.1, "default": 1.1 },
-    { "type": "range", "id": "margin_after_1", "label": "此栏后侧间距 (与下一栏距离)", "min": 0, "max": 200, "step": 2, "default": 0 },
-    { "type": "range", "id": "margin_after_1_mobile", "label": "移动端此栏下方间距", "min": 0, "max": 100, "step": 1, "default": 0 },
+    { "type": "range", "id": "margin_after_1", "label": "此栏后侧间距", "min": 0, "max": 200, "step": 2, "default": 0 },
+    { "type": "range", "id": "margin_after_1_mobile", "label": "移动端下方间距", "min": 0, "max": 100, "step": 1, "default": 0 },
     { "type": "select", "id": "align_1", "label": "对齐", "options": [{"value":"left","label":"左"},{"value":"center","label":"中"}], "default": "left" },
     { "type": "color", "id": "color_1", "label": "颜色", "default": "#ffffff" },
     { "type": "range", "id": "opacity_1", "label": "透明度", "min": 0, "max": 100, "step": 5, "default": 100 },

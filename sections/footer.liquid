@@ -1,252 +1,565 @@
+{%- comment -%}
+  Custom Portfolio Footer (Synchronized Upward Surge)
+  - 修复：按钮样式全面对齐高级设计规范 (精致胶囊形 / 细微阴影)。
+  - 修复：按钮长度自适应问题 (max-content 阻止异常拉伸)。
+  - 新增：智能圆形按钮逻辑，当清空"Back to Top"文字只留图标时，自动变为完美圆形。
+{%- endcomment -%}
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
-<div
-  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
->
-  {% liquid
-    assign total_blocks = section.blocks.size
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding-block-start }}px;
+    padding-bottom: {{ section.settings.padding-block-end }}px;
+  }
+  
+  .custom-footer-{{ section.id }} {
+    font-family: 'Urbanist', sans-serif;
+    padding-left: 5%;
+    padding-right: 5%;
+    /* 必须有实色背景，为差值模式提供计算基础 */
+    background-color: #ffffff !important; 
+    color: rgb(var(--color-foreground));
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    isolation: isolate; 
+  }
 
-    # Grid layout calculations
-    assign grid_columns = total_blocks | at_most: 4
+  .footer-glacier-canvas-{{ section.id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; 
+    pointer-events: none;
+  }
 
-    # Calculate last row counts using modulo arithmetic
-    # last_row_count = (total_blocks - 1) % N + 1
-    assign last_row_count = total_blocks | minus: 1 | modulo: 4 | plus: 1
-    assign tablet_last_row_count = total_blocks | minus: 1 | modulo: 2 | plus: 1
+  .footer-top-row, .footer-bottom-row {
+    position: relative;
+  }
 
-    # Check if there are orphaned elements (single item in last row)
-    assign has_isolated_grid_item_desktop = false
-    assign has_isolated_grid_item_tablet = false
+  .animate-up {
+    opacity: 0;
+    transform: translateY(60px);
+    transition: opacity 0.8s ease-out, transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
 
-    if total_blocks > 4 and last_row_count == 1
-      assign has_isolated_grid_item_desktop = true
-    endif
+  .custom-footer-{{ section.id }}.is-visible .animate-up {
+    opacity: 1;
+    transform: none !important; 
+  }
 
-    if total_blocks == 5
-      assign has_isolated_grid_item_tablet = true
-    endif
-  %}
-  <div
-    class="
-      footer-content
-      spacing-style
-      {% if has_isolated_grid_item_desktop %}footer-content--isolated-grid-item-desktop{% endif %}
-      {% if has_isolated_grid_item_tablet %}footer-content--isolated-grid-item-tablet{% endif %}
-    "
-    style="
-      {%  render 'spacing-style', settings: section.settings %}
-      --footer-gap: {{ section.settings.gap }}px;
-      --grid-columns: {{ grid_columns }};
-      --last-row-count: {{ last_row_count }};
-      --tablet-last-row-count: {{ tablet_last_row_count }};
-    "
-  >
-    {% content_for 'blocks' %}
+  .delay-1 { transition-delay: 0.1s; }
+  .delay-2 { transition-delay: 0.3s; }
+  .delay-3 { transition-delay: 0.5s; }
+
+  /* =========================================================
+     基础排版与布局
+  ========================================================= */
+  .footer-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-bottom: 80px;
+  }
+
+  .footer-title {
+    font-size: clamp(40px, 6vw, 80px);
+    font-weight: 300;
+    line-height: 1.1;
+    margin: 0;
+    letter-spacing: -0.02em;
+    color: #ffffff !important; /* 强制白字配合差值模式 */
+    mix-blend-mode: {{ section.settings.text_blend_mode }};
+    position: relative;
+  }
+
+  /* =========================================================
+     🔥 按钮高级样式区
+  ========================================================= */
+  .footer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    mix-blend-mode: normal; 
+    position: relative;
+    z-index: 10;
+  }
+
+  .footer-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* 图标与文字的精致间距 */
+    padding: 12px 28px;
+    border-radius: 50px; /* 完美的胶囊形状 */
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    font-family: inherit;
+    line-height: 1;
+    width: max-content; /* 【核心修复】：防止 Flex 异常拉伸 */
+    box-sizing: border-box;
+  }
+
+  /* 当清空文字只剩图标时，自动变为完美的正圆按钮 */
+  .footer-btn.btn-icon-only {
+    padding: 14px;
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+  }
+
+  /* 线框按钮样式 */
+  .btn-outline {
+    border: 1px solid rgb(var(--color-foreground, 0, 0, 0));
+    color: rgb(var(--color-foreground, 0, 0, 0));
+    background: transparent;
+  }
+
+  .btn-outline:hover {
+    background: rgb(var(--color-foreground, 0, 0, 0));
+    color: rgb(var(--color-background, 255, 255, 255));
+  }
+
+  /* 实心按钮样式 (带细微 Apple 质感阴影) */
+  .btn-solid {
+    background: rgb(var(--color-background, 255, 255, 255));
+    color: rgb(var(--color-foreground, 0, 0, 0)); /* 强制黑字，防止文字隐形 */
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .btn-solid:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer-bottom-row {
+    border-top: 1px solid rgba(128, 128, 128, 0.2);
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .footer-note-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+    color: inherit;
+  }
+
+  .footer-note-desc {
+    font-size: 12px;
+    line-height: 1.6;
+    opacity: 0.6;
+    margin: 0;
+    max-width: 1000px;
+    color: inherit;
+  }
+
+  @media screen and (max-width: 767px) {
+    .footer-top-row { flex-direction: column; align-items: flex-start; gap: 30px; margin-bottom: 40px; }
+    .footer-actions { width: 100%; flex-direction: column; align-items: stretch; }
+    .footer-btn { width: 100%; }
+    .footer-btn.btn-icon-only { width: max-content; margin-left: auto; } /* 手机端独立圆按钮靠右 */
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} section-{{ section.id }}-padding custom-footer-{{ section.id }}" id="PortfolioFooter-{{ section.id }}">
+  
+  <canvas id="footer-canvas-{{ section.id }}" class="footer-glacier-canvas-{{ section.id }}"></canvas>
+
+  <div class="footer-top-row">
+    <h2 class="footer-title animate-up delay-1">Got a vision?<br>Let’s flow with it.</h2>
+    <div class="footer-actions animate-up delay-2">
+      
+      <a href="{{ section.settings.contact_link | default: '/pages/contact' }}" class="footer-btn btn-outline">
+        {{ section.settings.contact_text | default: 'Contact Me' }}
+      </a>
+      
+      {%- assign btt_text = section.settings.back_to_top_text -%}
+      <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="footer-btn btn-solid {% if btt_text == blank %}btn-icon-only{% endif %}">
+        
+        {%- if btt_text != blank -%}
+          <span>{{ btt_text }}</span>
+        {%- endif -%}
+        
+        {%- if section.settings.back_to_top_icon != blank -%}
+          <img src="{{ section.settings.back_to_top_icon | image_url: width: 40 }}" 
+               alt="Back to top" 
+               class="btn-icon"
+               loading="lazy">
+        {%- else -%}
+          <span class="btn-icon">&uarr;</span>
+        {%- endif -%}
+      </button>
+      
+    </div>
+  </div>
+
+  <div class="footer-bottom-row animate-up delay-3">
+    <p class="footer-note-title">Design in Flow. Touch the World.</p>
+    <p class="footer-note-desc">
+      All visual works, design concepts, interface mockups, branding explorations, and original imagery presented on this website are the intellectual property of the author and are protected under copyright law.<br><br>
+      &copy; {{ 'now' | date: '%Y' }}. All rights reserved.
+    </p>
   </div>
 </div>
 
-{% stylesheet %}
-  .footer-content {
-    contain: content;
-    content-visibility: auto;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--footer-gap);
+<script id="footer-vs-{{ section.id }}" type="x-shader/x-vertex">
+  varying vec2 vUv;
+  void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+</script>
+
+<script id="footer-fs-{{ section.id }}" type="x-shader/x-fragment">
+  uniform float uTime; uniform vec2 uResolution;
+  uniform float uScroll; uniform float uRandomSeed;
+  uniform float uContrast; uniform float uBrightness;
+  uniform float uHueShift; uniform float uSaturation;
+  uniform float uWaveSpeed; 
+  uniform float uWaveCurve;
+  varying vec2 vUv;
+  
+  mat2 rotate2d(float angle){ return mat2(cos(angle), -sin(angle), sin(angle), cos(angle)); }
+  vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+  float snoise(vec2 v){
+      const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+      vec2 i = floor(v + dot(v, C.yy)); vec2 x0 = v - i + dot(i, C.xx);
+      vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+      vec4 x12 = x0.xyxy + C.xxzz;
+      x12.xy -= i1; i = mod(i, 289.0);
+      vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+      vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+      m = m*m; m = m*m;
+      vec3 x = 2.0 * fract(p * C.www) - 1.0; vec3 h = abs(x) - 0.5;
+      vec3 ox = floor(x + 0.5); vec3 a0 = x - ox;
+      m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+      vec3 g;
+      g.x = a0.x * x0.x + h.x * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+      return 130.0 * dot(m, g);
+  }
+  
+  float getHeight(vec2 uv, float time, float scroll, float seed) {
+      vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
+      vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.2); 
+      float flowTime = time + scroll * 8.0;
+      vec2 rotUV = rotate2d(-0.5) * baseUV;
+      vec2 distortion = vec2(0.0);
+      distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
+      distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
+      float detail = snoise(rotUV * 1.5 + distortion + flowTime * 0.1) * 0.1;
+      float wave = sin(rotUV.y * 1.2 + distortion.x * 2.2 + flowTime);
+      return pow(wave * 0.5 + 0.5, 0.8) + detail;
+  }
+  
+  vec3 rgb2hsl(vec3 c){
+      float maxC = max(c.r, max(c.g, c.b));
+      float minC = min(c.r, min(c.g, c.b));
+      float h, s, l = (maxC + minC) / 2.0;
+      if(maxC == minC){ h = s = 0.0; } else {
+          float d = maxC - minC;
+          s = l > 0.5 ? d / (2.0 - maxC - minC) : d / (maxC + minC);
+          if(maxC == c.r) h = (c.g - c.b) / d + (c.g < c.b ? 6.0 : 0.0);
+          else if(maxC == c.g) h = (c.b - c.r) / d + 2.0;
+          else h = (c.r - c.g) / d + 4.0;
+          h /= 6.0;
+      }
+      return vec3(h, s, l);
+  }
+  
+  float hue2rgb(float p, float q, float t){
+      if(t < 0.0) t += 1.0;
+      if(t > 1.0) t -= 1.0;
+      if(t < 1.0/6.0) return p + (q - p) * 6.0 * t;
+      if(t < 1.0/2.0) return q;
+      if(t < 2.0/3.0) return p + (q - p) * (2.0/3.0 - t) * 6.0;
+      return p;
+  }
+  
+  vec3 hsl2rgb(vec3 c){
+      vec3 rgb;
+      if(c.y == 0.0){ rgb = vec3(c.z); } else {
+          float q = c.z < 0.5 ?
+          c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y;
+          float p = 2.0 * c.z - q;
+          rgb.r = hue2rgb(p, q, c.x + 1.0/3.0);
+          rgb.g = hue2rgb(p, q, c.x);
+          rgb.b = hue2rgb(p, q, c.x - 1.0/3.0);
+      }
+      return rgb;
+  }
+  
+  void main() {
+      vec2 uv = vUv;
+      uv.x *= uResolution.x / uResolution.y;
+      
+      float time = uTime * 0.254;
+      float h = getHeight(uv, time, uScroll, uRandomSeed);
+      float hx = getHeight(uv + vec2(0.005, 0.0), time, uScroll, uRandomSeed);
+      float hy = getHeight(uv + vec2(0.0, 0.005), time, uScroll, uRandomSeed);
+      vec3 normal = normalize(vec3(h - hx, h - hy, 0.008));
+      float light = dot(normal, normalize(vec3(-0.6, 0.5, 0.4))) * 0.5 + 0.5;
+      
+      vec3 colDeep = vec3(0.25, 0.23, 0.20);
+      vec3 colMid = vec3(0.58, 0.55, 0.50); vec3 colSoft = vec3(0.88, 0.85, 0.80); vec3 colHigh = vec3(0.98, 0.97, 0.95);
+      vec3 color = mix(mix(mix(colDeep, colMid, smoothstep(0.1, 0.65, light)), colSoft, smoothstep(0.45, 0.9, light)), colHigh, smoothstep(0.88, 1.0, light));
+      color = (color - 0.5) * uContrast + 0.5 + uBrightness;
+      color = clamp(color, 0.0, 1.0);
+      vec3 hsl = rgb2hsl(color);
+      hsl.x = mod(hsl.x + uHueShift, 1.0);
+      hsl.y = clamp(hsl.y * uSaturation, 0.0, 1.0);
+      color = hsl2rgb(hsl);
+      float p = clamp(uScroll, 0.0, 1.0);
+      float easedScroll = 1.0 - pow(1.0 - p, uWaveCurve);
+      float wavePos = easedScroll * uWaveSpeed - 0.2;
+      float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
+      float dist = wavePos - (vUv.y + waveOffset);
+      
+      float fluidMask = smoothstep(0.0, 0.15, dist);
+      float waveCrest = smoothstep(-0.05, 0.1, dist) * smoothstep(0.2, 0.05, dist);
+      
+      vec3 finalColor = color;
+      finalColor = mix(finalColor, vec3(0.98, 0.99, 1.0), waveCrest * 0.8);
+      float subtleBump = (light - 0.5) * 0.03 * fluidMask;
+      finalColor += subtleBump;
+
+      finalColor = clamp(finalColor, 0.0, 1.0);
+      gl_FragColor = vec4(finalColor, fluidMask);
+  }
+</script>
+
+<script>
+  function initFooterScript() {
+    const footerElement = document.getElementById('PortfolioFooter-{{ section.id }}');
+    if (!footerElement) return;
+
+    footerElement.classList.remove('is-visible');
+    const checkVisibility = () => {
+      const rect = footerElement.getBoundingClientRect();
+      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+      if (rect.top <= windowHeight - 50) {
+        footerElement.classList.add('is-visible');
+        window.removeEventListener('scroll', checkVisibility);
+      }
+    };
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+    checkVisibility();
+
+    function initFooterWebGL() {
+      const canvas = document.getElementById('footer-canvas-{{ section.id }}');
+      if (!canvas) return;
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: true });
+      const shaderMaterial = new THREE.ShaderMaterial({
+          vertexShader: document.getElementById('footer-vs-{{ section.id }}').textContent,
+          fragmentShader: document.getElementById('footer-fs-{{ section.id }}').textContent,
+          transparent: true,
+          uniforms: {
+              uTime: { value: 0 },
+              uResolution: { value: new THREE.Vector2() },
+              uScroll: { value: 0 },
+              uRandomSeed: { value: 42.0 }, 
+              uContrast: { value: {{ section.settings.fluid_contrast | default: 1.0 }} },
+              uBrightness: { value: {{ section.settings.fluid_brightness | default: 0.0 }} },
+              uHueShift: { value: {{ section.settings.fluid_hue | default: 0 }} / 360.0 },
+              uSaturation: { value: {{ section.settings.fluid_saturation | default: 1.0 }} },
+              uWaveSpeed: { value: {{ section.settings.wave_speed | default: 2.8 }} },
+              uWaveCurve: { value: {{ section.settings.wave_curve | default: 2.0 }} }
+          }
+      });
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), shaderMaterial));
+      
+      const resize = () => {
+          const rect = footerElement.getBoundingClientRect();
+          renderer.setSize(rect.width, rect.height);
+          shaderMaterial.uniforms.uResolution.value.set(rect.width, rect.height);
+      };
+      window.addEventListener('resize', resize);
+      resize();
+      
+      const clock = new THREE.Clock();
+      let customTime = 0;
+      let targetScroll = 0; 
+      let currentScroll = 0;
+
+      const animate = () => {
+          requestAnimationFrame(animate);
+          const rect = footerElement.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          
+          if (rect.top < windowHeight && rect.bottom > 0) {
+              let visibleHeight = windowHeight - rect.top;
+              let scrollPercent = visibleHeight / rect.height;
+              targetScroll = Math.max(0, Math.min(1, scrollPercent * 1.2));
+          }
+          
+          currentScroll += (targetScroll - currentScroll) * 0.1;
+          shaderMaterial.uniforms.uScroll.value = currentScroll;
+          
+          const delta = clock.getDelta(); 
+          const elapsedTime = clock.getElapsedTime();
+          const configBaseSpeed = {{ section.settings.base_fluid_speed | default: 2.5 }};
+          const rhythm = Math.sin(elapsedTime * 1.8) * 0.9;
+          
+          customTime += delta * (configBaseSpeed + rhythm);
+          shaderMaterial.uniforms.uTime.value = customTime;
+          
+          renderer.render(scene, camera);
+      };
+      animate();
+    }
+
+    if (typeof THREE === 'undefined') {
+        const script = document.createElement('script');
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+        script.onload = initFooterWebGL;
+        document.head.appendChild(script);
+    } else {
+        initFooterWebGL();
+    }
   }
 
-  @media screen and (min-width: 750px) and (max-width: 989px) {
-    .footer-content {
-      grid-template-columns: repeat(min(var(--grid-columns), 3), 1fr);
-      grid-auto-flow: row;
-    }
+  document.addEventListener('DOMContentLoaded', initFooterScript);
 
-    .footer-content[style*='--grid-columns: 4'] {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .footer-content--isolated-grid-item-tablet > :last-child {
-      grid-column: 1 / -1;
-    }
+  if (window.Shopify && Shopify.designMode) {
+    document.addEventListener('shopify:section:load', function(e) {
+      if (e.detail.sectionId === '{{ section.id }}') {
+        initFooterScript();
+      }
+    });
   }
-
-  @media screen and (min-width: 990px) {
-    .footer-content {
-      grid-template-columns: repeat(var(--grid-columns), 1fr);
-    }
-
-    /* Single item centered */
-    .footer-content[style*='--grid-columns: 1'] {
-      justify-items: center;
-    }
-
-    .footer-content--isolated-grid-item-desktop > :last-child {
-      grid-column: 1 / -1;
-    }
-  }
-{% endstylesheet %}
+</script>
 
 {% schema %}
 {
-  "name": "t:names.footer",
+  "name": "Custom Portfolio Footer",
   "class": "section-wrapper",
-  "blocks": [
-    {
-      "type": "_divider"
-    },
-    {
-      "type": "@app"
-    },
-    {
-      "type": "button"
-    },
-    {
-      "type": "follow-on-shop"
-    },
-    {
-      "type": "group"
-    },
-    {
-      "type": "icon"
-    },
-    {
-      "type": "image"
-    },
-    {
-      "type": "menu"
-    },
-    {
-      "type": "payment-icons"
-    },
-    {
-      "type": "text"
-    },
-    {
-      "type": "logo"
-    },
-    {
-      "type": "jumbo-text"
-    },
-    {
-      "type": "social-links"
-    },
-    {
-      "type": "email-signup"
-    }
-  ],
-  "enabled_on": {
-    "groups": ["footer"]
-  },
   "settings": [
-    {
-      "type": "select",
-      "id": "section_width",
-      "label": "t:settings.width",
-      "options": [
-        {
-          "value": "page-width",
-          "label": "t:options.page"
-        },
-        {
-          "value": "full-width",
-          "label": "t:options.full"
-        }
-      ],
-      "default": "page-width"
-    },
-    {
-      "type": "range",
-      "id": "gap",
-      "label": "t:settings.gap",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 0
-    },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "t:settings.color_scheme",
+      "label": "Color Scheme (配色方案)",
       "default": "scheme-1"
     },
     {
       "type": "header",
-      "content": "t:content.padding"
+      "content": "✨ 按钮设置"
+    },
+    {
+      "type": "text",
+      "id": "contact_text",
+      "label": "左侧联系按钮文字",
+      "default": "Contact Me"
+    },
+    {
+      "type": "url",
+      "id": "contact_link",
+      "label": "左侧联系按钮链接"
+    },
+    {
+      "type": "text",
+      "id": "back_to_top_text",
+      "label": "右侧返回顶部文字",
+      "default": "Back to Top",
+      "info": "💡 如果清空此文字，按钮会自动变成完美的正圆形图标！"
+    },
+    {
+      "type": "image_picker",
+      "id": "back_to_top_icon",
+      "label": "返回顶部图标 (可选)",
+      "info": "建议上传透明 PNG 或 SVG。"
+    },
+    {
+      "type": "select",
+      "id": "text_blend_mode",
+      "label": "标题文字叠加模式",
+      "options": [
+        { "value": "normal", "label": "正常" },
+        { "value": "difference", "label": "差值 (推荐，反色透显)" },
+        { "value": "exclusion", "label": "排除" },
+        { "value": "overlay", "label": "叠加" }
+      ],
+      "default": "difference"
+    },
+    {
+      "type": "header",
+      "content": "🌊 涌起滚屏特效"
+    },
+    {
+      "type": "range",
+      "id": "wave_speed",
+      "label": "向上吞没速度",
+      "min": 1.0,
+      "max": 6.0,
+      "step": 0.1,
+      "default": 2.8
+    },
+    {
+      "type": "range",
+      "id": "wave_curve",
+      "label": "起步爆发指数",
+      "min": 1.0,
+      "max": 4.0,
+      "step": 0.1,
+      "default": 2.0
+    },
+    {
+      "type": "range",
+      "id": "base_fluid_speed",
+      "label": "静止基础流速 (同步 Section)",
+      "min": 0.5,
+      "max": 10.0,
+      "step": 0.5,
+      "default": 2.5
+    },
+    {
+      "type": "header",
+      "content": "🎨 流体色彩微调"
+    },
+    { "type": "range", "id": "fluid_brightness", "label": "明度", "min": -0.5, "max": 0.5, "step": 0.1, "default": 0.0 },
+    { "type": "range", "id": "fluid_contrast", "label": "对比度", "min": 0.5, "max": 2.0, "step": 0.1, "default": 1.0 },
+    { "type": "range", "id": "fluid_hue", "label": "色相旋转", "min": 0, "max": 360, "step": 4, "unit": "deg", "default": 0 },
+    { "type": "range", "id": "fluid_saturation", "label": "饱和度", "min": 0.0, "max": 2.0, "step": 0.1, "default": 1.0 },
+    {
+      "type": "header",
+      "content": "Padding (边距)"
     },
     {
       "type": "range",
       "id": "padding-block-start",
-      "label": "t:settings.top",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 20
+      "label": "Top Padding",
+      "min": 0, "max": 120, "step": 2, "unit": "px", "default": 80
     },
     {
       "type": "range",
       "id": "padding-block-end",
-      "label": "t:settings.bottom",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 20
+      "label": "Bottom Padding",
+      "min": 0, "max": 120, "step": 2, "unit": "px", "default": 60
     }
   ],
   "presets": [
     {
-      "name": "t:names.footer",
-      "category": "t:categories.footer",
-      "settings": {
-        "gap": 20,
-        "color_scheme": "scheme-1",
-        "padding-block-start": 36,
-        "padding-block-end": 36
-      },
-      "blocks": {
-        "newsletter-group": {
-          "type": "group",
-          "settings": {
-            "content_direction": "column",
-            "vertical_on_mobile": true,
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "center",
-            "gap": 6,
-            "width": "fill",
-            "inherit_color_scheme": true
-          },
-          "blocks": {
-            "newsletter-heading": {
-              "type": "text",
-              "settings": {
-                "text": "t:html_defaults.join_our_email_list",
-                "width": "100%",
-                "alignment": "left",
-                "type_preset": "h3"
-              }
-            },
-            "newsletter-text": {
-              "type": "text",
-              "settings": {
-                "text": "t:html_defaults.get_exclusive_deals_and_early_access_to_new_products",
-                "width": "100%",
-                "alignment": "left",
-                "type_preset": "rte"
-              }
-            }
-          },
-          "block_order": ["newsletter-heading", "newsletter-text"]
-        },
-        "newsletter-form": {
-          "type": "email-signup",
-          "settings": {
-            "width": "fill"
-          }
-        }
-      },
-      "block_order": ["newsletter-group", "newsletter-form"]
+      "name": "Custom Portfolio Footer"
     }
   ]
 }
