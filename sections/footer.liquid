@@ -3,6 +3,7 @@
   - 修复：按钮样式全面对齐高级设计规范 (精致胶囊形 / 细微阴影)。
   - 修复：按钮长度自适应问题 (max-content 阻止异常拉伸)。
   - 新增：智能圆形按钮逻辑，当清空"Back to Top"文字只留图标时，自动变为完美圆形。
+  - 新增：各文字及全局区块的上下左右 px 边距自定义控制。
 {%- endcomment -%}
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,8 +18,9 @@
   
   .custom-footer-{{ section.id }} {
     font-family: 'Urbanist', sans-serif;
-    padding-left: 5%;
-    padding-right: 5%;
+    /* 将百分比边距替换为后台设置的 px 单位 */
+    padding-left: {{ section.settings.padding_left }}px;
+    padding-right: {{ section.settings.padding_right }}px;
     /* 必须有实色背景，为差值模式提供计算基础 */
     background-color: #ffffff !important; 
     color: rgb(var(--color-foreground));
@@ -50,7 +52,7 @@
 
   .custom-footer-{{ section.id }}.is-visible .animate-up {
     opacity: 1;
-    transform: none !important; 
+    transform: none !important;
   }
 
   .delay-1 { transition-delay: 0.1s; }
@@ -73,7 +75,11 @@
     font-size: clamp(40px, 6vw, 80px);
     font-weight: 300;
     line-height: 1.1;
-    margin: 0;
+    /* 引入后台设置的各方向边距 */
+    margin-top: {{ section.settings.title_margin_top }}px;
+    margin-bottom: {{ section.settings.title_margin_bottom }}px;
+    margin-left: {{ section.settings.title_margin_left }}px;
+    margin-right: {{ section.settings.title_margin_right }}px;
     letter-spacing: -0.02em;
     color: #ffffff !important; /* 强制白字配合差值模式 */
     mix-blend-mode: {{ section.settings.text_blend_mode }};
@@ -97,7 +103,8 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    gap: 10px; /* 图标与文字的精致间距 */
+    gap: 10px;
+    /* 图标与文字的精致间距 */
     padding: 12px 28px;
     border-radius: 50px; /* 完美的胶囊形状 */
     font-size: 15px;
@@ -107,7 +114,8 @@
     transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     font-family: inherit;
     line-height: 1;
-    width: max-content; /* 【核心修复】：防止 Flex 异常拉伸 */
+    width: max-content;
+    /* 【核心修复】：防止 Flex 异常拉伸 */
     box-sizing: border-box;
   }
 
@@ -163,7 +171,11 @@
   .footer-note-title {
     font-size: 18px;
     font-weight: 500;
-    margin: 0;
+    /* 引入后台设置的各方向边距 */
+    margin-top: {{ section.settings.note_title_margin_top }}px;
+    margin-bottom: {{ section.settings.note_title_margin_bottom }}px;
+    margin-left: {{ section.settings.note_title_margin_left }}px;
+    margin-right: {{ section.settings.note_title_margin_right }}px;
     color: inherit;
   }
 
@@ -171,12 +183,21 @@
     font-size: 12px;
     line-height: 1.6;
     opacity: 0.6;
-    margin: 0;
+    /* 引入后台设置的各方向边距 */
+    margin-top: {{ section.settings.note_desc_margin_top }}px;
+    margin-bottom: {{ section.settings.note_desc_margin_bottom }}px;
+    margin-left: {{ section.settings.note_desc_margin_left }}px;
+    margin-right: {{ section.settings.note_desc_margin_right }}px;
     max-width: 1000px;
     color: inherit;
   }
 
   @media screen and (max-width: 767px) {
+    /* 移动端智能缩放保护：由于大 px 容易在手机上溢出，自动减半 */
+    .custom-footer-{{ section.id }} {
+      padding-left: {{ section.settings.padding_left | divided_by: 2 }}px;
+      padding-right: {{ section.settings.padding_right | divided_by: 2 }}px;
+    }
     .footer-top-row { flex-direction: column; align-items: flex-start; gap: 30px; margin-bottom: 40px; }
     .footer-actions { width: 100%; flex-direction: column; align-items: stretch; }
     .footer-btn { width: 100%; }
@@ -298,8 +319,7 @@
   vec3 hsl2rgb(vec3 c){
       vec3 rgb;
       if(c.y == 0.0){ rgb = vec3(c.z); } else {
-          float q = c.z < 0.5 ?
-          c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y;
+          float q = c.z < 0.5 ? c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y;
           float p = 2.0 * c.z - q;
           rgb.r = hue2rgb(p, q, c.x + 1.0/3.0);
           rgb.g = hue2rgb(p, q, c.x);
@@ -540,9 +560,22 @@
     { "type": "range", "id": "fluid_contrast", "label": "对比度", "min": 0.5, "max": 2.0, "step": 0.1, "default": 1.0 },
     { "type": "range", "id": "fluid_hue", "label": "色相旋转", "min": 0, "max": 360, "step": 4, "unit": "deg", "default": 0 },
     { "type": "range", "id": "fluid_saturation", "label": "饱和度", "min": 0.0, "max": 2.0, "step": 0.1, "default": 1.0 },
+
     {
       "type": "header",
-      "content": "Padding (边距)"
+      "content": "📏 全局边距 (Section Padding)"
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "Left Padding",
+      "min": 0, "max": 200, "step": 2, "unit": "px", "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "Right Padding",
+      "min": 0, "max": 200, "step": 2, "unit": "px", "default": 40
     },
     {
       "type": "range",
@@ -555,7 +588,34 @@
       "id": "padding-block-end",
       "label": "Bottom Padding",
       "min": 0, "max": 120, "step": 2, "unit": "px", "default": 60
-    }
+    },
+
+    {
+      "type": "header",
+      "content": "📏 主标题边距 (Main Title Margins)"
+    },
+    { "type": "range", "id": "title_margin_top", "label": "Top", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "title_margin_bottom", "label": "Bottom", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "title_margin_left", "label": "Left", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "title_margin_right", "label": "Right", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+
+    {
+      "type": "header",
+      "content": "📏 底部标题边距 (Note Title Margins)"
+    },
+    { "type": "range", "id": "note_title_margin_top", "label": "Top", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "note_title_margin_bottom", "label": "Bottom", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "note_title_margin_left", "label": "Left", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "note_title_margin_right", "label": "Right", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+
+    {
+      "type": "header",
+      "content": "📏 底部描述边距 (Note Desc Margins)"
+    },
+    { "type": "range", "id": "note_desc_margin_top", "label": "Top", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "note_desc_margin_bottom", "label": "Bottom", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "note_desc_margin_left", "label": "Left", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "note_desc_margin_right", "label": "Right", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 0 }
   ],
   "presets": [
     {
