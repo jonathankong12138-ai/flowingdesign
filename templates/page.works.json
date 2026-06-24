@@ -1,1 +1,11 @@
-{"sections":{"main":{"type":"main-page","blocks":{"content_unit_qMNePP":{"type":"content_unit","settings":{"heading_level":"h2","title":"","content":"","image":"shopify:\/\/shop_images\/6.png","layout_style":"text_top","overlay_opacity":40}}},"block_order":["content_unit_qMNePP"],"settings":{"color_scheme":"","full_width":true,"max_width":1400,"column_gap":40,"padding_top":0,"padding_bottom":0,"padding_left":40,"padding_right":40,"sidebar_title":"Visual Design for DTC Site","sidebar_title_color":"#000000","sidebar_title_size":32,"sidebar_title_weight":"300","sidebar_title_spacing":2,"title_line_height":1.2,"sidebar_title_transform":"none","sidebar_title_style":"normal"}}},"order":["main"]}
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

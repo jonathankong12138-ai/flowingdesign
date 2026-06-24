@@ -1,1101 +1,744 @@
-{%- style -%}
-  /* =========================================
-     0. 滚动条隐身魔法 (Scrollbar Hidden)
-     ========================================= */
-  {%- if section.settings.hide_scrollbar -%}
-    html::-webkit-scrollbar, 
-    body::-webkit-scrollbar, 
-    .koto-doc-sidebar::-webkit-scrollbar {
-      display: none !important;
-      width: 0 !important;
-      height: 0 !important;
-    }
-    html, body, .koto-doc-sidebar {
-      -ms-overflow-style: none !important; 
-      scrollbar-width: none !important; 
-    }
-  {%- endif -%}
+{% comment %}
+  Generated from 项目详情.html by scripts/project-detail-shopify-export.mjs.
+  Keep local edits in the source file, then regenerate this Shopify package.
+  Local source map: output/shopify/project-detail/source-map.md
+{% endcomment %}
 
-  /* =========================================
-     🌟 渐进式内容浮现 (新加入的动画特效)
-     ========================================= */
-  .koto-reveal-after-wave {
-    opacity: 0;
-    transform: translateY(30px);
-    /* 延迟 0.9s：等背景波浪退去大半时，内容才开始浮现 */
-    animation: kotoContentFadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.9s forwards;
-  }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Urbanist:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+{{ "fd-project-detail.css" | asset_url | stylesheet_tag }}
 
-  @keyframes kotoContentFadeIn {
-    to { 
-      opacity: 1; 
-      transform: translateY(0); 
-    }
-  }
+<script>
+  window.projectDetailAssetMap = {
+    "电脑端素材/产研概念导入.webp": {{ "fd-project-detail-3c191f2ed4-asset.webp" | asset_url | json }},
+    "电脑端素材/项目总结 资产盘点 迭代机制.webp": {{ "fd-project-detail-f7f1814be6-asset.webp" | asset_url | json }},
+    "电脑端素材/用户访谈 核心页设计 数据监控.webp": {{ "fd-project-detail-1012bb5031-asset.webp" | asset_url | json }},
+    "电脑端素材/用户路径 工作流沉淀 团队搭建.webp": {{ "fd-project-detail-63a89cc180-asset.webp" | asset_url | json }},
+    "电脑端素材/用户研究.webp": {{ "fd-project-detail-5b0899d855-asset.webp" | asset_url | json }},
+    "构建流程/交互设计.svg": {{ "fd-project-detail-44586eb55f-asset.svg" | asset_url | json }},
+    "构建流程/视觉与组件.svg": {{ "fd-project-detail-dee9eb1567-asset.svg" | asset_url | json }},
+    "构建流程/数据复盘.svg": {{ "fd-project-detail-2b4685081c-asset.svg" | asset_url | json }},
+    "构建流程/需求分析.svg": {{ "fd-project-detail-6b86c2e424-asset.svg" | asset_url | json }},
+    "构建流程/验证与交付.svg": {{ "fd-project-detail-e4b720f766-asset.svg" | asset_url | json }},
+    "构建流程/用户研究.svg": {{ "fd-project-detail-030dcc63c2-asset.svg" | asset_url | json }},
+    "旅程素材/浏览与定位1.webp": {{ "fd-project-detail-52c56caa31-1.webp" | asset_url | json }},
+    "旅程素材/评估与对比1.webp": {{ "fd-project-detail-ceab11fe9f-1.webp" | asset_url | json }},
+    "旅程素材/评估与对比2.webp": {{ "fd-project-detail-8b3ba1d8ce-2.webp" | asset_url | json }},
+    "旅程素材/认知与入站1.webp": {{ "fd-project-detail-c12fc344b0-1.webp" | asset_url | json }},
+    "旅程素材/认知与入站2.webp": {{ "fd-project-detail-d76cd55a15-2.webp" | asset_url | json }},
+    "旅程素材/转化与加购.webp": {{ "fd-project-detail-8951e82158-asset.webp" | asset_url | json }},
+    "目标用户/决策型 目标买家.webp": {{ "fd-project-detail-02f4052f30-asset.webp" | asset_url | json }},
+    "目标用户/认知型 评估探索者.webp": {{ "fd-project-detail-79b27e96b4-asset.webp" | asset_url | json }},
+    "目标用户/深度支持 特殊诉求者.webp": {{ "fd-project-detail-56d9d692fe-asset.webp" | asset_url | json }},
+    "素材/icon/箭头.svg": {{ "fd-project-detail-5f6a2c33a4-icon.svg" | asset_url | json }},
+    "页面浏览素材/1.webp": {{ "fd-project-detail-d7103c39e2-1.webp" | asset_url | json }},
+    "页面浏览素材/2.webp": {{ "fd-project-detail-763b111c0e-2.webp" | asset_url | json }},
+    "页面浏览素材/3.webp": {{ "fd-project-detail-637d0dbaf2-3.webp" | asset_url | json }},
+    "组件库轮播.png": {{ "fd-project-detail-dc6ece9570-asset.png" | asset_url | json }},
+    "组件库素材/北美弹窗-邮箱-Desktop.webp": {{ "fd-project-detail-96ee43dd3f-desktop.webp" | asset_url | json }},
+    "组件库素材/促销-产品卡-M-1.webp": {{ "fd-project-detail-687110c5fd-m-1.webp" | asset_url | json }},
+    "组件库素材/促销-产品卡-M.webp": {{ "fd-project-detail-131b530a7c-m.webp" | asset_url | json }},
+    "组件库素材/国际弹窗-Desktop.webp": {{ "fd-project-detail-3f69a9b444-desktop.webp" | asset_url | json }},
+    "组件库素材/首页-产品卡-M-1.webp": {{ "fd-project-detail-52334ff868-m-1.webp" | asset_url | json }},
+    "组件库素材/首页-产品卡-M.webp": {{ "fd-project-detail-40c61cf647-m.webp" | asset_url | json }},
+    "组件库素材/Group 2062151530.webp": {{ "fd-project-detail-0ebace0cde-group-2062151530.webp" | asset_url | json }},
+    "组件库素材/Group 2062151531.webp": {{ "fd-project-detail-3dbc461f46-group-2062151531.webp" | asset_url | json }},
+    "shokz user.mp4": {{ "fd-project-detail-9abdb01102-shokz-user.mp4" | asset_url | json }},
+    "ugc素材/250427_Shokz_London_Marathon_01533 1.webp": {{ "fd-project-detail-3621a33c36-ugc-250427-shokz-london-marathon-01533-1.webp" | asset_url | json }},
+    "ugc素材/250427_Shokz_London_Marathon_01839 1.webp": {{ "fd-project-detail-3d4724b428-ugc-250427-shokz-london-marathon-01839-1.webp" | asset_url | json }},
+    "ugc素材/250427_Shokz_London_Marathon_02027 1.webp": {{ "fd-project-detail-5c7e8d56c1-ugc-250427-shokz-london-marathon-02027-1.webp" | asset_url | json }},
+    "ugc素材/250427_Shokz_London_Marathon_02330 1.webp": {{ "fd-project-detail-88c67634c6-ugc-250427-shokz-london-marathon-02330-1.webp" | asset_url | json }},
+    "ugc素材/250427_Shokz_London_Marathon_02381 1.webp": {{ "fd-project-detail-c813c3e4bc-ugc-250427-shokz-london-marathon-02381-1.webp" | asset_url | json }},
+    "ugc素材/4Y7A2425 1.webp": {{ "fd-project-detail-280fb60f66-ugc-4y7a2425-1.webp" | asset_url | json }},
+    "ugc素材/4Y7A2517 1.webp": {{ "fd-project-detail-cd9323bdfe-ugc-4y7a2517-1.webp" | asset_url | json }},
+    "ugc素材/4Y7A3312 1.webp": {{ "fd-project-detail-84bfcf3654-ugc-4y7a3312-1.webp" | asset_url | json }},
+    "ugc素材/DSC00398 1.webp": {{ "fd-project-detail-d7d6021b50-ugc-dsc00398-1.webp" | asset_url | json }},
+    "ugc素材/DSC00514 1.webp": {{ "fd-project-detail-fe4822e84b-ugc-dsc00514-1.webp" | asset_url | json }},
+    "ugc素材/DSC00526 1.webp": {{ "fd-project-detail-f7db591274-ugc-dsc00526-1.webp" | asset_url | json }},
+    "ugc素材/London Marathon_Shakeout Run_3 1.webp": {{ "fd-project-detail-c35fda3308-ugc-london-marathon-shakeout-run-3-1.webp" | asset_url | json }},
+    "ugc素材/NA_BOS_WT_Running_Dakotah_022 1.webp": {{ "fd-project-detail-b610133212-ugc-na-bos-wt-running-dakotah-022-1.webp" | asset_url | json }},
+    "ugc素材/NA_BOS_WT_Running_Dakotah_022 2.webp": {{ "fd-project-detail-0fc4de81a9-ugc-na-bos-wt-running-dakotah-022-2.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_EK_LDT_Running_UK_17 1.webp": {{ "fd-project-detail-5d6609ff2a-ugc-openrun-pro-2-ek-ldt-running-uk-17-1.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_LDT_Running_UK_15 1.webp": {{ "fd-project-detail-ff0ecdb7e1-ugc-openrun-pro-2-ldt-running-uk-15-1.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_LDT_Running_UK_16 1.webp": {{ "fd-project-detail-8eca03e784-ugc-openrun-pro-2-ldt-running-uk-16-1.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_LDT_Running_UK_4 1.webp": {{ "fd-project-detail-deb47209f1-ugc-openrun-pro-2-ldt-running-uk-4-1.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_LDT_Running_UK_7 1.webp": {{ "fd-project-detail-5f0cce6e48-ugc-openrun-pro-2-ldt-running-uk-7-1.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_OR_LDT_Running_UK_2 1.webp": {{ "fd-project-detail-f67e663089-ugc-openrun-pro-2-or-ldt-running-uk-2-1.webp" | asset_url | json }}
+  };
+  window.projectDetailAssetUrl = function projectDetailAssetUrl(path) {
+    return window.projectDetailAssetMap[path] || path;
+  };
+</script>
 
-  /* =========================================
-     1. 终极空间清理
-     ========================================= */
-  #shopify-section-{{ section.id }} {
-    margin: 0 !important;
-    padding: 0 !important;
-    display: block;
-  }
+<div class="fd-project-detail-section" data-section-id="{{ section.id }}">
+<div class="canvas-wrap">
 
-  .koto-master-wrapper-{{ section.id }} {
-    position: relative;
-    width: 100% !important;
-    margin: 0 auto !important;
-    padding-top: {{ section.settings.padding_top }}px !important;
-    padding-bottom: {{ section.settings.padding_bottom }}px !important;
-    padding-left: {{ section.settings.padding_left }}px !important;
-    padding-right: {{ section.settings.padding_right }}px !important;
-
-    {% if section.settings.full_width %}
-      max-width: 100% !important;
-    {% else %}
-      max-width: {{ section.settings.max_width }}px !important;
-    {% endif %}
-
-    box-sizing: border-box !important;
-    overflow: visible !important;
-  }
-
-  /* =========================================
-     2. 核心 Grid 布局
-     ========================================= */
-  .koto-doc-layout-{{ section.id }} {
-    display: grid;
-    grid-template-columns: 1fr 3fr; 
-    align-items: start;
-    width: 100%;
-    gap: {{ section.settings.column_gap }}px;
-  }
-
-  /* =========================================
-     🔥 3. 终极中文排版引擎 (Typography Engine)
-     ========================================= */
-  .sidebar-title-{{ section.id }},
-  .koto-doc-toc-link,
-  .koto-doc-heading,
-  .koto-grid-title,
-  h2, h3 {
-    word-break: normal;
-    overflow-wrap: break-word; 
-    line-break: strict; 
-    text-wrap: balance; 
-  }
-
-  .sidebar-desc-{{ section.id }},
-  .koto-doc-toc-desc,
-  .koto-optimize-text,
-  .koto-grid-text,
-  .koto-inner-content div {
-    text-align: justify;
-    text-justify: inter-ideograph; 
-    word-break: normal; 
-    overflow-wrap: break-word; 
-    line-break: strict; 
-    text-wrap: pretty; 
-    hyphens: auto;
-  }
-
-  /* 🌟 文字块最大阅读宽度限制 */
-  .koto-doc-heading,
-  .koto-optimize-text,
-  .koto-grid-text {
-    max-width: {{ section.settings.text_max_width }}px;
-  }
-
-  /* =========================================
-     4. 左侧高级目录排版设置
-     ========================================= */
-  .koto-doc-sidebar {
-    position: sticky;
-    top: {{ section.settings.sticky_offset }}px;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
-    margin: 0 !important;
-    padding: 0 !important;
-    align-self: start;
-  }
-
-  .sidebar-title-{{ section.id }} {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-    margin-bottom: {{ section.settings.sidebar_title_margin_bottom }}px !important;
-    line-height: {{ section.settings.title_line_height }};
-    color: {{ section.settings.sidebar_title_color }};
-    font-size: {{ section.settings.sidebar_title_size }}px;
-    font-weight: {{ section.settings.sidebar_title_weight }};
-    letter-spacing: {{ section.settings.sidebar_title_spacing }}px;
-    text-transform: {{ section.settings.sidebar_title_transform }};
-    font-style: {{ section.settings.sidebar_title_style }};
-    display: block !important;
-  }
-
-  .sidebar-desc-{{ section.id }} {
-    margin-bottom: {{ section.settings.sidebar_desc_margin_bottom }}px !important;
-    color: {{ section.settings.sidebar_desc_color }};
-    font-size: {{ section.settings.sidebar_desc_size }}px;
-    font-weight: {{ section.settings.sidebar_desc_weight }};
-    letter-spacing: {{ section.settings.sidebar_desc_spacing }}px;
-    line-height: {{ section.settings.sidebar_desc_line_height }};
-    text-transform: {{ section.settings.sidebar_desc_transform }};
-    font-style: {{ section.settings.sidebar_desc_style }};
-  }
-  .sidebar-desc-{{ section.id }} p, .koto-doc-toc-desc p, .koto-optimize-text p { margin: 0 0 0.8em 0; padding: 0; }
-  .sidebar-desc-{{ section.id }} p:last-child, .koto-doc-toc-desc p:last-child, .koto-optimize-text p:last-child { margin: 0; }
-
-  .koto-doc-toc { list-style: none; padding: 0 !important; margin: 0 !important; display: flex; flex-direction: column; gap: {{ section.settings.toc_item_gap }}px; }
-
-  .koto-toc-item {
-    opacity: {{ section.settings.toc_inactive_opacity | divided_by: 100.0 }};
-    transition: opacity 0.3s ease;
-    cursor: pointer;
-    padding: 4px 0; 
-  }
-  .koto-toc-item:hover,
-  .koto-toc-item.is-active {
-    opacity: 1;
-  }
-
-  .koto-doc-toc-link { 
-    text-decoration: none; display: block; padding: 0 !important; margin: 0 !important;
-    color: {{ section.settings.toc_link_color }};
-    font-size: {{ section.settings.toc_link_size }}px;
-    font-weight: {{ section.settings.toc_link_weight }};
-    letter-spacing: {{ section.settings.toc_link_spacing }}px;
-    line-height: {{ section.settings.toc_link_line_height }};
-    text-transform: {{ section.settings.toc_link_transform }};
-    font-style: {{ section.settings.toc_link_style }};
-    pointer-events: none; 
-  }
-  .koto-toc-item.is-active .koto-doc-toc-link { font-weight: 700; }
-
-  .toc-level-h3 .koto-doc-toc-link { font-size: 0.95em; position: relative; padding-left: 20px !important; }
-  .toc-level-h3 .koto-doc-toc-link::before { content: "—"; position: absolute; left: 0; opacity: 0.5; }
-
-  .koto-doc-toc-desc {
-    color: {{ section.settings.toc_desc_color }};
-    font-size: {{ section.settings.toc_desc_size }}px;
-    font-weight: {{ section.settings.toc_desc_weight }};
-    letter-spacing: {{ section.settings.toc_desc_spacing }}px;
-    line-height: {{ section.settings.toc_desc_line_height }};
-    text-transform: {{ section.settings.toc_desc_transform }};
-    font-style: {{ section.settings.toc_desc_style }};
-    margin-top: {{ section.settings.toc_desc_margin_top }}px;
-    margin-bottom: 0;
-    pointer-events: none; 
-  }
-  .toc-level-h3 .koto-doc-toc-desc { padding-left: 20px; }
-
-  /* =========================================
-     5. 标签引擎
-     ========================================= */
-  .koto-doc-toc-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: {{ section.settings.tag_margin_top }}px;
-    margin-bottom: 2px;
-    pointer-events: none; 
-  }
-  .toc-level-h3 .koto-doc-toc-tags { padding-left: 20px; }
-
-  .koto-toc-tag {
-    background-color: color-mix(in srgb, {{ section.settings.tag_bg_color }} {{ section.settings.tag_bg_opacity }}%, transparent);
-    color: {{ section.settings.tag_text_color }};
-    font-size: {{ section.settings.tag_font_size }}px;
-    font-weight: {{ section.settings.tag_font_weight }};
-    border-radius: {{ section.settings.tag_radius }}px;
-    padding: 4px 12px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    line-height: 1.4;
-    text-decoration: none;
-    transition: opacity 0.3s ease;
-  }
-
-  .koto-back-btn-wrapper {
-    margin-bottom: {{ section.settings.back_btn_margin_bottom }}px;
-    display: flex;
-    align-items: center;
-  }
-  .koto-back-btn:hover { opacity: 0.8; }
-  .koto-back-icon { height: 1.2em; width: auto; object-fit: contain; display: block; }
-
-  /* =========================================
-     6. 右侧内容区
-     ========================================= */
-  .koto-block-card {
-    position: relative;
-    border-radius: {{ section.settings.card_radius }}px;
-    overflow: hidden;
-    width: 100%;
-    margin-bottom: {{ section.settings.block_margin_bottom }}px;
-    box-sizing: border-box !important;
-    margin-top: 0 !important;
-  }
-  .koto-block-card:last-child { margin-bottom: 0; }
-
-  .koto-grid-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-  .koto-grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
-
-  .koto-media-wrap { width: 100%; border-radius: {{ section.settings.media_radius }}px; overflow: hidden; line-height: 0; }
-  .koto-media-wrap video, .koto-media-wrap img { width: 100%; height: auto; display: block; object-fit: cover; }
-
-  .koto-square-media { width: 100%; aspect-ratio: 1 / 1; border-radius: {{ section.settings.media_radius }}px; overflow: hidden; margin-left: auto; margin-right: auto; }
-  .koto-square-media img { width: 100%; height: 100%; object-fit: cover; }
-
-  .koto-bg-card-item { position: relative; display: block; overflow: hidden; border-radius: {{ section.settings.media_radius }}px; }
-  .koto-abs-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
-  .koto-abs-bg img { width: 100%; height: 100%; object-fit: cover; }
-  .koto-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1; }
-
-  .koto-inner-content { 
-    position: absolute;
-    top: 0; left: 0; 
-    width: 100%; 
-    height: 100%; 
-    z-index: 2;
-    display: flex; 
-    flex-direction: column; 
-    justify-content: space-between; 
-    box-sizing: border-box;
-  }
-
-  /* =========================================
-     🌟 7. 左文右图贴边滑动卡片专属 CSS
-     ========================================= */
-  .koto-slider-bleed-wrapper {
-    display: flex;
-    align-items: stretch;
-    width: 100%;
-    overflow: hidden;
-  }
-  .koto-slider-text-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-sizing: border-box;
-  }
-  .koto-slider-text-slides {
-    position: relative;
-    flex: 1;
-  }
-  .koto-slide-text-item {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; 
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s ease;
-  }
-  .koto-slide-text-item.is-active {
-    opacity: 1;
-    pointer-events: auto;
-    z-index: 2;
-  }
-  .koto-slider-controls {
-    display: flex;
-    gap: 12px;
-    margin-top: 30px;
-    z-index: 10;
-  }
-  .koto-slider-btn {
-    border-radius: 50%;
-    border: 1px solid currentColor;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    opacity: 0.4;
-    transition: all 0.3s ease;
-    overflow: hidden;
-  }
-  .koto-slider-btn:hover {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-  .koto-slider-image-area {
-    flex-shrink: 0;
-    position: relative;
-  }
-  .koto-slide-img-item {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-  }
-  .koto-slide-img-item.is-active {
-    opacity: 1;
-    z-index: 2;
-  }
-  .koto-slide-img-item img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  @media screen and (max-width: 990px) {
-    .koto-master-wrapper-{{ section.id }} { padding-left: 20px !important; padding-right: 20px !important; }
-    .koto-doc-layout-{{ section.id }} { grid-template-columns: 1fr; }
-    .koto-grid-3col, .koto-grid-2col { grid-template-columns: 1fr !important; }
-    .koto-doc-sidebar { position: relative; top: 0 !important; margin-bottom: 40px !important; }
-    .koto-square-media { width: 100% !important; max-width: 100% !important; }
-    
-    .koto-slider-bleed-wrapper { flex-direction: column-reverse; }
-    .koto-slider-image-area { width: 100% !important; min-height: 300px; }
-    .koto-slide-text-item { position: relative; height: auto; display: none; gap: 20px; }
-    .koto-slide-text-item.is-active { display: flex; }
-    .koto-slider-controls { margin-top: 20px; }
-  }
-{%- endstyle -%}
-
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
-
-<div id="koto-master-wrapper-{{ section.id }}" class="koto-master-wrapper-{{ section.id }} color-{{ section.settings.color_scheme }}" lang="zh">
-  
-  {% comment %} 在这里加了 koto-reveal-after-wave 控制内容延迟浮现 {% endcomment %}
-  <div class="koto-doc-layout-{{ section.id }} koto-reveal-after-wave">
-
-    <aside class="koto-doc-sidebar">
-      {%- if section.settings.sidebar_title != blank -%}
-        <h1 class="sidebar-title-{{ section.id }}">{{ section.settings.sidebar_title }}</h1>
-      {%- endif -%}
-
-      {%- if section.settings.sidebar_desc != blank -%}
-        <div class="sidebar-desc-{{ section.id }}">
-          {{ section.settings.sidebar_desc }}
+  <div class="rail-layer">
+    <div class="rail-sticky">
+      <div class="rail-scaler">
+        <div class="rail-positioner">
+          <aside class="rail" data-screen-label="02 Rail">
+            <div class="acc-item is-open" data-target="c1">
+              <button class="acc-trigger" type="button" aria-expanded="true">
+                <span>2025的战略背景</span><span class="ind" aria-hidden="true"></span>
+              </button>
+              <div class="acc-panel"><div class="acc-body">Shokz（韶音）作为全球运动耳机领跑者，产品已覆盖 60+ 国家和地区。当品牌进入全球扩张深水区，官网已不仅是技术科普窗口，而是承载数千万访问、驱动 DTC 增长的核心引擎。
+2025年韶音官网面临品牌心智、增长效能与内部设计碎片化的三大核心挑战。</div></div>
+            </div>
+            <div class="acc-item" data-target="c2">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <span>三个整体目标</span><span class="ind" aria-hidden="true"></span>
+              </button>
+              <div class="acc-panel"><div class="acc-body">我们通过用户研究、组件库建设与流程重塑，系统性提升了官网体验与协作效率 。
+通过大样本定量问卷与典型用户深度访谈建立档案，精准识别全链路摩擦点并输出可执行优化方案 ；同时制定统一的色彩、字体及间距系统，主导建设 UI 基础组件库 1.0，确保全域站点视觉表达高度一致 ；并进一步明确从设计方案评审到代码组件选型落地的流转规范，大幅降低跨部门沟通成本 。</div></div>
+            </div>
+            <div class="acc-item" data-target="c3">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <span>机遇与难点</span><span class="ind" aria-hidden="true"></span>
+              </button>
+              <div class="acc-panel"><div class="acc-body">资源错配、决策碎片与流程缺失，共同构成官网体验升级的三大系统性阻力。</div></div>
+            </div>
+            <div class="acc-item" data-target="c4">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <span>规划阶段</span><span class="ind" aria-hidden="true"></span>
+              </button>
+              <div class="acc-panel"><div class="acc-body">从基建搭建与用户研究入手，经历核心页面改版上线，最终沉淀为可持续的优化机制。</div></div>
+            </div>
+            <div class="acc-item" data-target="c6">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <span>执行细节</span><span class="ind" aria-hidden="true"></span>
+              </button>
+              <div class="acc-panel"><div class="acc-body">从立项、资源补充到组件库与核心页面改版，完成官网体验的系统性升级。</div></div>
+            </div>
+          </aside>
         </div>
-      {%- endif -%}
-
-      <ul class="koto-doc-toc">
-        {%- for block in section.blocks -%}
-          {%- if block.settings.title != blank or block.settings.toc_label != blank or block.settings.main_title != blank -%}
-            {%- assign label = block.settings.toc_label | default: block.settings.title | default: block.settings.main_title -%}
-            <li class="koto-toc-item toc-level-{{ block.settings.heading_level }}">
-              <a href="#block-{{ block.id }}" class="koto-doc-toc-link js-toc-link">{{ label }}</a>
-
-              {%- if block.settings.toc_desc != blank -%}
-                <div class="koto-doc-toc-desc">{{ block.settings.toc_desc }}</div>
-              {%- endif -%}
-
-              {%- if block.settings.tag_1 != blank or block.settings.tag_2 != blank or block.settings.tag_3 != blank -%}
-                <div class="koto-doc-toc-tags">
-                  {%- if block.settings.tag_1 != blank -%}<span class="koto-toc-tag">{{ block.settings.tag_1 }}</span>{%- endif -%}
-                  {%- if block.settings.tag_2 != blank -%}<span class="koto-toc-tag">{{ block.settings.tag_2 }}</span>{%- endif -%}
-                  {%- if block.settings.tag_3 != blank -%}<span class="koto-toc-tag">{{ block.settings.tag_3 }}</span>{%- endif -%}
-                </div>
-              {%- endif -%}
-
-            </li>
-          {%- endif -%}
-        {%- endfor -%}
-      </ul>
-    </aside>
-
-    <main class="koto-doc-main">
-
-      {%- if section.settings.show_back_btn -%}
-        <div class="koto-back-btn-wrapper">
-          <a href="{{ section.settings.back_btn_link | default: '#' }}" class="koto-toc-tag koto-back-btn">
-            {%- if section.settings.back_btn_icon != blank -%}
-              <img src="{{ section.settings.back_btn_icon | image_url: width: 60 }}" alt="Back" class="koto-back-icon" loading="lazy">
-            {%- endif -%}
-            {%- if section.settings.back_btn_text != blank -%}
-              <span>{{ section.settings.back_btn_text }}</span>
-            {%- endif -%}
-          </a>
-        </div>
-      {%- endif -%}
-
-      <div class="koto-doc-content-shell">
-        {%- for block in section.blocks -%}
-          
-          {%- if block.type == 'slider_bleed_box' -%}
-            <style>
-              #block-{{ block.id }} {
-                padding: 0 !important; 
-                border-radius: {{ block.settings.box_radius }}px !important; 
-              }
-            </style>
-          {%- endif -%}
-
-          <div id="block-{{ block.id }}" 
-               class="koto-block-card js-scroll-section" 
-               style="background-color: {{ block.settings.box_bg_color }}; {% if block.type != 'slider_bleed_box' %}padding: {{ block.settings.box_padding_top }}px {{ block.settings.box_padding_right }}px {{ block.settings.box_padding_bottom }}px {{ block.settings.box_padding_left }}px;{% endif %}"
-               {{ block.shopify_attributes }}>
-
-            {%- case block.type -%}
-
-              {%- when 'slider_bleed_box' -%}
-                <div class="koto-slider-bleed-wrapper js-koto-slider" style="min-height: {{ block.settings.card_height }}px;">
-                  <div class="koto-slider-text-area" style="padding-top: {{ block.settings.box_padding_top }}px; padding-bottom: {{ block.settings.box_padding_bottom }}px; padding-left: {{ block.settings.box_padding_left }}px; padding-right: {{ block.settings.content_gap }}px;">
-                    
-                    <div class="koto-slider-text-slides">
-                      {%- assign slide_count = 0 -%}
-                      {%- for i in (1..5) -%}
-                        {%- capture img_key -%}image_{{ i }}{%- endcapture -%}
-                        {%- capture t_key -%}title_{{ i }}{%- endcapture -%}
-                        {%- capture p_key -%}text_{{ i }}{%- endcapture -%}
- 
-                        {%- if block.settings[img_key] != blank or block.settings[t_key] != blank -%}
-                          <div class="koto-slide-text-item js-slide-text {% if slide_count == 0 %}is-active{% endif %}" data-has-content="true">
-                            <div class="koto-bleed-title">
-                              <h2 class="koto-doc-heading" style="margin: 0; color: {{ block.settings.title_color }}; font-size: {{ block.settings.title_size }}px; font-weight: {{ block.settings.title_weight }}; line-height: {{ block.settings.title_lh }};">{{ block.settings[t_key] }}</h2>
-                            </div>
-                            <div class="koto-bleed-desc">
-                              <div class="koto-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; opacity: 0.9;">{{ block.settings[p_key] }}</div>
-                            </div>
-                          </div>
-                          {%- assign slide_count = slide_count | plus: 1 -%}
-                        {%- endif -%}
-                      {%- endfor -%}
-                    </div>
-
-                    <div class="koto-slider-controls" style="color: {{ block.settings.title_color }};">
-                      <div class="koto-slider-btn js-prev" style="width: {{ block.settings.btn_size }}px; height: {{ block.settings.btn_size }}px; {% if block.settings.prev_btn_icon != blank %}border: none;{% endif %}">
-                        {%- if block.settings.prev_btn_icon != blank -%}
-                          <img src="{{ block.settings.prev_btn_icon | image_url: width: 100 }}" style="width: 100%; height: 100%; object-fit: contain;" alt="Prev">
-                        {%- else -%}
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 40%; height: 40%;"><path d="M15 18l-6-6 6-6"/></svg>
-                        {%- endif -%}
-                      </div>
-                      <div class="koto-slider-btn js-next" style="width: {{ block.settings.btn_size }}px; height: {{ block.settings.btn_size }}px; {% if block.settings.next_btn_icon != blank %}border: none;{% endif %}">
-                        {%- if block.settings.next_btn_icon != blank -%}
-                          <img src="{{ block.settings.next_btn_icon | image_url: width: 100 }}" style="width: 100%; height: 100%; object-fit: contain;" alt="Next">
-                        {%- else -%}
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 40%; height: 40%;"><path d="M9 18l-6-6-6-6"/></svg>
-                        {%- endif -%}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="koto-slider-image-area" style="width: {{ block.settings.image_width }}%;">
-                    {%- assign slide_count_img = 0 -%}
-                    {%- for i in (1..5) -%}
-                      {%- capture img_key -%}image_{{ i }}{%- endcapture -%}
-                      {%- capture t_key -%}title_{{ i }}{%- endcapture -%}
-                      {%- if block.settings[img_key] != blank or block.settings[t_key] != blank -%}
-                        <div class="koto-slide-img-item js-slide-img {% if slide_count_img == 0 %}is-active{% endif %}">
-                           {%- if block.settings[img_key] != blank -%}
-                            {{ block.settings[img_key] | image_url: width: 1400 | image_tag: loading: 'lazy' }}
-                          {%- endif -%}
-                        </div>
-                        {%- assign slide_count_img = slide_count_img | plus: 1 -%}
-                      {%- endif -%}
-                    {%- endfor -%}
-                  </div>
-
-                </div>
-
-              {%- when 'content_unit' -%}
-                <div class="koto-media-wrap" style="margin-bottom: {{ block.settings.media_bottom_margin }}px;">
-                  {%- if block.settings.video != blank -%}
-                    {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
-                  {%- elsif block.settings.image != blank -%}
-                    {{ block.settings.image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
-                  {%- endif -%}
-                </div>
-                {%- if block.settings.title != blank -%}
-                  <h2 class="koto-doc-heading" style="margin: 0 0 {{ block.settings.title_bottom_margin }}px 0; color: {{ block.settings.title_color }}; font-size: {{ block.settings.title_size }}px; font-weight: {{ block.settings.title_weight }}; line-height: {{ block.settings.title_lh }}; text-align: {{ block.settings.text_alignment }} !important;">
-                    {{ block.settings.title }}
-                  </h2>
-                {%- endif -%}
-                <div class="koto-grid-3col" style="gap: {{ block.settings.col_gap }}px;">
-                  <div class="koto-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important; opacity: 0.9;">{{ block.settings.content }}</div>
-                  <div class="koto-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important; opacity: 0.9;">{{ block.settings.col_2_text }}</div>
-                  <div class="koto-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important; opacity: 0.9;">{{ block.settings.col_3_text }}</div>
-                </div>
-
-              {%- when 'triple_bg_image_box' -%}
-                <div class="koto-grid-3col" style="gap: {{ block.settings.image_gap }}px;">
-                  {%- for i in (1..3) -%}
-                    {%- capture img_key -%}image_{{ i }}{%- endcapture -%}
-                    {%- capture t_key -%}title_{{ i }}{%- endcapture -%}
-                    {%- capture p_key -%}text_{{ i }}{%- endcapture -%}
-                    <div class="koto-bg-card-item" style="min-height: {{ block.settings.card_height }}px; color: {{ block.settings.card_text_color }};">
-                      {%- if block.settings[img_key] != blank -%}
-                        <div class="koto-abs-bg">{{ block.settings[img_key] | image_url: width: 800 | image_tag: loading: 'lazy' }}</div>
-                      {%- endif -%}
-                      <div class="koto-overlay" style="opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};"></div>
-                      <div class="koto-inner-content" style="padding: {{ block.settings.card_inner_padding }}px;">
-                        <h3 class="koto-grid-title" style="color: inherit; font-size: {{ block.settings.card_title_size }}px; font-weight: {{ block.settings.card_title_weight }}; margin: 0; text-align: {{ block.settings.text_alignment }} !important;">
-                          {{ block.settings[t_key] }}
-                        </h3>
-                        <div class="koto-optimize-text" style="color: inherit; font-size: {{ block.settings.card_desc_size }}px; opacity: 0.9; margin: 0; text-align: {{ block.settings.text_alignment }} !important;">
-                          {{ block.settings[p_key] }}
-                        </div>
-                      </div>
-                    </div>
-                  {%- endfor -%}
-                </div>
-
-              {%- when 'double_column_box' -%}
-                {%- assign img_margin = 'margin-left: auto; margin-right: auto;' -%}
-                {%- if block.settings.text_alignment == 'left' -%}
-                  {%- assign img_margin = 'margin-left: 0; margin-right: auto;' -%}
-                {%- elsif block.settings.text_alignment == 'right' -%}
-                  {%- assign img_margin = 'margin-left: auto; margin-right: 0;' -%}
-                {%- endif -%}
-
-                <div class="koto-grid-2col" style="gap: {{ block.settings.grid_gap }}px;">
-                  {%- for i in (1..6) -%}
-                    {%- capture img_key -%}image_{{ i }}{%- endcapture -%}
-                    {%- capture t_key -%}title_{{ i }}{%- endcapture -%}
-                    {%- capture p_key -%}text_{{ i }}{%- endcapture -%}
-                    {%- if block.settings[img_key] != blank -%}
-                      <div class="koto-grid-unit">
-                        <div class="koto-square-media" style="margin-bottom: {{ block.settings.media_bottom_margin }}px; width: {{ block.settings.img_size }}px; max-width: 100%; {{ img_margin }}">
-                          {{ block.settings[img_key] | image_url: width: 800 | image_tag: loading: 'lazy' }}
-                        </div>
-                        <h3 class="koto-grid-title" style="margin: 0 0 {{ block.settings.title_bottom_margin }}px 0; color: {{ block.settings.title_color }}; font-size: {{ block.settings.title_size }}px; font-weight: {{ block.settings.title_weight }}; line-height: {{ block.settings.title_lh }}; text-align: {{ block.settings.text_alignment }} !important;">
-                          {{ block.settings[t_key] }}
-                        </h3>
-                        <div class="koto-grid-text" style="margin: 0; color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important;">
-                          {{ block.settings[p_key] }}
-                        </div>
-                      </div>
-                    {%- endif -%}
-                  {%- endfor -%}
-                </div>
-
-              {%- when 'split_content_box' -%}
-                <div class="koto-grid-2col" style="align-items: center; gap: {{ block.settings.content_gap }}px;">
-                  <div>
-                    <h2 class="koto-doc-heading" style="font-size: {{ block.settings.title_size }}px; margin-bottom: 15px;">{{ block.settings.title }}</h2>
-                    <div class="koto-optimize-text" style="font-size: 15px; line-height: 1.7;">{{ block.settings.content }}</div>
-                  </div>
-                  <div class="koto-media-wrap" style="margin-bottom: 0;">
-                    {%- if block.settings.image != blank -%}
-                      {{ block.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy' }}
-                    {%- endif -%}
-                  </div>
-                </div>
-
-              {%- when 'media_hero_2col' -%}
-                <div class="koto-media-wrap" style="margin-bottom: {{ block.settings.media_bottom_margin }}px;">
-                  {%- if block.settings.video != blank -%}
-                    {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
-                  {%- elsif block.settings.image != blank -%}
-                    {{ block.settings.image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
-                  {%- endif -%}
-                </div>
-
-                <div style="margin-bottom: {{ block.settings.main_text_bottom_margin }}px;">
-                  {%- if block.settings.main_title != blank -%}
-                    <h2 class="koto-doc-heading" style="margin: 0 0 15px 0; color: {{ block.settings.main_title_color }}; font-size: {{ block.settings.main_title_size }}px; font-weight: {{ block.settings.main_title_weight }}; line-height: {{ block.settings.main_title_lh }};">{{ block.settings.main_title }}</h2>
-                  {%- endif -%}
-                  {%- if block.settings.main_desc != blank -%}
-                    <div class="koto-optimize-text" style="color: {{ block.settings.main_desc_color }}; font-size: {{ block.settings.main_desc_size }}px; font-weight: {{ block.settings.main_desc_weight }}; line-height: {{ block.settings.main_desc_lh }};">{{ block.settings.main_desc }}</div>
-                  {%- endif -%}
-                </div>
-
-                <div class="koto-grid-2col" style="gap: {{ block.settings.col_gap }}px;">
-                  <div>
-                    {%- if block.settings.col_1_title != blank -%}
-                      <h3 class="koto-doc-heading" style="margin: 0 0 10px 0; color: {{ block.settings.col_title_color }}; font-size: {{ block.settings.col_title_size }}px; font-weight: {{ block.settings.col_title_weight }}; line-height: {{ block.settings.col_title_lh }};">{{ block.settings.col_1_title }}</h3>
-                    {%- endif -%}
-                    <div class="koto-optimize-text" style="color: {{ block.settings.col_desc_color }}; font-size: {{ block.settings.col_desc_size }}px; font-weight: {{ block.settings.col_desc_weight }}; line-height: {{ block.settings.col_desc_lh }};">{{ block.settings.col_1_desc }}</div>
-                  </div>
-                  <div>
-                    {%- if block.settings.col_2_title != blank -%}
-                      <h3 class="koto-doc-heading" style="margin: 0 0 10px 0; color: {{ block.settings.col_title_color }}; font-size: {{ block.settings.col_title_size }}px; font-weight: {{ block.settings.col_title_weight }}; line-height: {{ block.settings.col_title_lh }};">{{ block.settings.col_2_title }}</h3>
-                    {%- endif -%}
-                    <div class="koto-optimize-text" style="color: {{ block.settings.col_desc_color }}; font-size: {{ block.settings.col_desc_size }}px; font-weight: {{ block.settings.col_desc_weight }}; line-height: {{ block.settings.col_desc_lh }};">{{ block.settings.col_2_desc }}</div>
-                  </div>
-                </div>
-
-            {%- endcase -%}
-          </div>
-        {%- endfor -%}
       </div>
-    </main>
+    </div>
+  </div>
+
+  <div class="canvas">
+    <header class="header" data-screen-label="01 Header">
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="{{ routes.root_url }}">首页</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span class="breadcrumb-current" aria-current="page">全球官网UX与视觉系统重塑，从0到1的全链路建设</span>
+      </nav>
+      <h1 class="h-title blend-difference">Shokz
+跨境电商体验升级</h1>
+      <div class="h-stats">
+        <div class="h-stat"><div class="label">BFCM预估营收增量</div><div class="value">+2.6 m</div></div>
+        <div class="h-stat"><div class="label">首页优化：核心转化飙升</div><div class="value">+24.3%</div></div>
+        <div class="h-stat"><div class="label">对比页优化：加购率提效</div><div class="value">+4.2pp</div></div>
+      </div>
+    </header>
+
+    <section class="body">
+      <div class="rail-col"></div>
+      
+      <main class="content" data-screen-label="03 Content">
+        <article class="card c-hero" id="c1">
+          <video class="c-hero-video" src="{{ "fd-project-detail-9abdb01102-shokz-user.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="c-hero-caption">韶音科技全球快速扩张</div>
+          <div class="c-hero-stats">
+            <div class="c-hero-stats-row">
+              <div class="stat-l"><div class="v">7,000,000</div><div class="l">Customers</div></div>
+            </div>
+            <div class="c-hero-stats-row">
+              <div class="stat-l"><div class="v">60</div><div class="l">Countries And Regions</div></div>
+              <div class="stat-l"><div class="v">4.7</div><div class="l">Customer Review Rating</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card c-pillars" id="c2" data-pillar-index="0">
+          <div class="pillar pillar-1 pillar-tint-1">
+            <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+            <div class="pillar-ugc-wall" aria-hidden="true">
+              <div class="ugc-col"></div>
+              <div class="ugc-col"></div>
+              <div class="ugc-col"></div>
+            </div>
+            <div class="pillar-component-wall" aria-hidden="true">
+              <div class="component-col"></div>
+              <div class="component-col"></div>
+              <div class="component-col"></div>
+            </div>
+            <div class="pillar-flow-wall is-revealing" aria-hidden="true">
+              <div class="flow-step"><img src="{{ "fd-project-detail-6b86c2e424-asset.svg" | asset_url }}" alt="" loading="lazy" /></div>
+              <div class="flow-step"><img src="{{ "fd-project-detail-030dcc63c2-asset.svg" | asset_url }}" alt="" loading="lazy" /></div>
+              <div class="flow-step"><img src="{{ "fd-project-detail-44586eb55f-asset.svg" | asset_url }}" alt="" loading="lazy" /></div>
+              <div class="flow-step"><img src="{{ "fd-project-detail-dee9eb1567-asset.svg" | asset_url }}" alt="" loading="lazy" /></div>
+              <div class="flow-step"><img src="{{ "fd-project-detail-e4b720f766-asset.svg" | asset_url }}" alt="" loading="lazy" /></div>
+              <div class="flow-step"><img src="{{ "fd-project-detail-2b4685081c-asset.svg" | asset_url }}" alt="" loading="lazy" /></div>
+            </div>
+            <div class="pillar-label">
+              <div class="pillar-tabs" role="tablist" aria-label="三个整体目标">
+                <button class="pillar-tab blend-difference is-active" type="button" role="tab" aria-selected="true" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="通过“大样本定量问卷”与“典型用户深度访谈”的科学组合，建立用户档案，精准识别用户在官网全链路中的真实摩擦点，输出可执行的优化方案。">官网首次用研</button>
+                <button class="pillar-tab blend-difference" type="button" role="tab" aria-selected="false" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="梳理并制定统一的色彩、字体及间距系统，主导建设 UI 基础组件库 1.0，确保全域站点的视觉表达高度一致。">/构建组件库</button>
+                <button class="pillar-tab blend-difference" type="button" role="tab" aria-selected="false" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="制定设计与开发流程，明确从设计方案评审到代码组件库选型落地的流转规范，降低跨部门沟通成本。">/重塑流程规范</button>
+              </div>
+              <div class="s pillar-copy" aria-live="polite">通过“大样本定量问卷”与“典型用户深度访谈”的科学组合，建立用户档案，精准识别用户在官网全链路中的真实摩擦点，输出可执行的优化方案。</div>
+            </div>
+            <div class="pillar-target">Target</div>
+            <div class="nav-arrows nav-arrows--row pillar-switch" aria-label="切换目标">
+              <button class="nav-btn prev" type="button" aria-label="上一个目标" onclick="window.switchPillarTab && window.switchPillarTab(this, -1)"><span class="ic"></span></button>
+              <button class="nav-btn next" type="button" aria-label="下一个目标" onclick="window.switchPillarTab && window.switchPillarTab(this, 1)"><span class="ic"></span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card c-friction" id="c3" data-friction-index="0">
+          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+          <div class="c-friction-kicker">Systemic
+Challenges</div>
+          <div class="c-friction-label">
+            <div class="s friction-intro">在项目推进过程中，受限于资源配置、决策机制及产研流程等多重宏观因素，面临诸多系统性挑战。</div>
+            <div class="friction-list">
+              <div class="friction-item">
+                <div class="t friction-title blend-difference">资源配置
+与交付需求的持续错位</div>
+                <div class="s friction-copy">外包开发资源长期存在缺口且沟通路径冗长，加之内部设计人力需应对大量高频并行的运营项目，导致官网系统性优化与日常业务交付在资源分配上存在冲突。</div>
+              </div>
+              <div class="friction-item">
+                <div class="t friction-title blend-difference">全球化运营下
+的决策权碎片化</div>
+                <div class="s friction-copy">国际与北美区域运营侧在业务优先级上存在分歧，由于缺乏统一的客观评价标准，导致官网优化决策长期依赖非量化依据，整体话语权分布较为分散。</div>
+              </div>
+              <div class="friction-item">
+                <div class="t friction-title blend-difference">产研意识
+与流程基建不完善</div>
+                <div class="s friction-copy">项目初期缺乏标准化的用户体验优化流程与统一的 UI 组件库，现有工作模式多为针对具体问题的被动响应，缺乏长期的体验演进规划，增加了跨部门协同的阻力。</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card c-timeline" id="c4" data-timeline-index="0" data-bg-index="0">
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="dates">
+            <div class="d">07.08</div>
+            <div class="line"></div>
+            <div class="d">10.08</div>
+            <div class="line"></div>
+            <div class="d">11.08</div>
+          </div>
+          <div class="phase">
+            <div class="phase-title">用户路径
+工作流沉淀
+团队搭建</div>
+            <div class="phase-date">2025.07.08</div>
+            <div class="phase-name">探索与诊断期</div>
+            <div class="phase-copy">完成数据埋点基建与 A/B 测试框架搭建，现有工作流沉淀；
+确定初步用户旅程路径及核心页面优化方案；
+完成项目团队搭建。</div>
+          </div>
+          <div class="nav-arrows nav-arrows--row">
+            <button class="nav-btn prev nav-btn--light" type="button" aria-label="上一个阶段" data-timeline-step="-1" onclick="window.triggerTimelineSlide && window.triggerTimelineSlide(this, -1)"><span class="ic"></span></button>
+            <button class="nav-btn next nav-btn--light" type="button" aria-label="下一个阶段" data-timeline-step="1" onclick="window.triggerTimelineSlide && window.triggerTimelineSlide(this, 1)"><span class="ic"></span></button>
+          </div>
+        </article>
+
+        <article class="card c-research" id="c5">
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="heading">
+            <div class="t">产研概念导入</div>
+            <div class="row">
+              <span>需求分析</span><span>产品与系统设计</span><span>研发编码</span><span>数据收集</span><span>迭代优化</span>
+            </div>
+          </div>
+          <div class="quote-eyebrow">为什么需要它？</div>
+          <div class="quote" aria-live="polite">在缺乏DTC基因或技术较弱的传统企业中，网页常被视为一次性的“数字名片”而非持续生长的业务引擎。</div>
+        </article>
+
+        <article class="card c-org" id="c6">
+          <div class="c-org-l">
+            <div class="bg-placeholder" aria-hidden="true"></div>
+            <div class="org-left-top">
+              <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+              <div class="org-title">首页/集合页/
+产品页/结算页</div>
+              <div class="org-sub">数据分析+主路径定义+业务需求收集，明确项目目标</div>
+            </div>
+            <div class="org-left-bottom">
+              <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+              <div class="org-title">10+工作流沉淀</div>
+              <div class="org-list">页面评审流程
+页面测试流
+促销类设计流
+官网设计关键动作清单
+设计组件库 2.0
+用户画像 + 用户旅程图
+......</div>
+            </div>
+            <div class="body-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+国际与北美产品经理双擎驱动本地化定制，
+设计代表统筹全渠道视觉与UX体验。
+在落地端，新增内部设计团队(UI及助理)保障视觉交付，
+并深度洽谈引入外部开发经理严控代码质量。</div>
+            <div class="nodes">
+              <div class="node"></div><div class="divider"></div><div class="node"></div><div class="node"></div>
+            </div>
+            <div class="legend">- 设计团队架构 -</div>
+          </div>
+          <div class="c-org-r">
+            <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+            <div class="bg-placeholder" aria-hidden="true"></div>
+            <div class="org-team">
+              <div class="org-team-grid">
+                <div class="org-team-chip">设计代表</div>
+                <div class="org-team-chip">国际产品经理</div>
+                <div class="org-team-chip">北美产品经理</div>
+                <div class="org-team-chip">开发经理</div>
+              </div>
+              <div class="org-team-copy">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+国际与北美产品经理双擎驱动本地化定制，
+设计代表统筹全渠道视觉与UX体验。
+在落地端，新增内部设计团队(UI及助理)保障视觉交付，
+并深度洽谈引入外部开发经理严控代码质量。</div>
+            </div>
+            <div class="top">
+              <div class="bg-placeholder" aria-hidden="true"></div>
+              <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+              <div class="lbl">数据分析+主路径定义+业务需求收集，明确项目目标</div>
+            </div>
+            <div class="bot">
+              <div class="bg-placeholder" aria-hidden="true"></div>
+              <div class="v">10+</div>
+              <div class="hd">工作流沉淀，解决流程缺陷</div>
+              <div class="ls">页面评审流程
+页面测试流
+促销类设计流
+官网设计关键动作清单
+设计组件库 2.0
+用户画像 + 用户旅程图
+......</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card c-userres" id="c7">
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="label">用户研究</div>
+          <div class="stats">
+            <div class="stat"><div class="l">有效清洗样本</div><div class="v">529</div></div>
+            <div class="stat"><div class="l">深访洞察时长-分钟</div><div class="v">600</div></div>
+            <div class="stat"><div class="l">闭环落地更新项</div><div class="v">35</div></div>
+            <div class="stat"><div class="l">处理系统卡点</div><div class="v">14</div></div>
+          </div>
+        </article>
+
+        <article class="card c-persona" id="c8" data-bg-index="0">
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="nav-arrows nav-arrows--row">
+            <button class="nav-btn prev" type="button" aria-label="上一个画像" data-persona-step="-1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, -1)"><span class="ic"></span></button>
+            <button class="nav-btn next" type="button" aria-label="下一个画像" data-persona-step="1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, 1)"><span class="ic"></span></button>
+            <span class="switch-count" aria-live="polite">01 / 03</span>
+          </div>
+          <div class="title">决策型
+目标买家</div>
+          <div class="lede">重度依赖移动端碎片化时间进行快速浏览，购买动机往往由即将到来的运动赛事驱动，目的性极强。</div>
+          <div class="who">
+            <div class="name">赛事备战与快速决策用户</div>
+            <div class="chips">
+              <span class="chip">设备: 移动端为主</span><span class="chip">决策周期: Within 1 day</span>
+            </div>
+            <div class="quotes">
+<div class="q">在 3 次点击内找到特定型号 - 反感拥挤的移动端导航</div>
+<div class="q">顺畅调用 Klarna 或信用卡完成无缝支付 - 对支付网关报错极度缺乏耐心。</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card c-journey" id="c9" data-bg-count="4" data-bg-index="0">
+          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="nav-arrows nav-arrows--row">
+            <button class="nav-btn prev" type="button" aria-label="上一张背景图" data-bg-step="-1"><span class="ic"></span></button>
+            <button class="nav-btn next" type="button" aria-label="下一张背景图" data-bg-step="1"><span class="ic"></span></button>
+            <span class="switch-count" aria-live="polite">01 / 04</span>
+          </div>
+          <div class="steps">
+            <button class="step active" type="button" data-journey-index="0">认知与入站</button>
+            <button class="step" type="button" data-journey-index="1">浏览与定位</button>
+            <button class="step" type="button" data-journey-index="2">评估与对比</button>
+            <button class="step" type="button" data-journey-index="3">转化与加购</button>
+          </div>
+          <div class="body-text">
+            <div class="journey-copy-line">用户通过 Google 搜索品牌词进入，快速扫视首屏，试图寻找官方背书与核心科技解释。期望立刻了解品牌核心价值、官方购物保障（DTC优势）。</div>
+<div class="journey-copy-line">"Technical language feel foreign." - Olfa Fdhila</div>
+            <div class="journey-copy-gap"></div>
+            <div class="journey-head blend-difference">强化品牌背书与 DTC 利益点</div>
+            <div class="journey-copy-line">Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力保障展示。</div>
+            <div class="journey-copy-gap"></div>
+            <div class="journey-head blend-difference">科技降维解释与构建社会认同</div>
+            <div class="journey-copy-line">合并科技与痛点展示并采用易懂文案。引入明星推荐与真实 Reviews，增加独立对比页跳转。</div>
+          </div>
+          <div class="journey-result" aria-live="polite"></div>
+          <div class="quote">"Technical language feel foreign." / "Confusing navigation, Slightly too busy on mobile device." / "Contact form was just automated bot answers..."</div>
+          <div class="journey-shot" aria-hidden="true"></div>
+          <div class="pains">
+            <div class="pain">体验阻力：科技名词劝退、导航拥挤、筛选缺失、参数割裂、结算断裂与客服死循环共同造成跨阶段流失。</div>
+            <div class="pain">战略机会：重塑品牌第一印象，缩短寻找路径，图示化参数与佩戴细节，并建立自动退换货与 A11y 底层适配。</div>
+          </div>
+        </article>
+
+        <article class="card c-libs" id="c10" data-bg-count="3" data-bg-index="0">
+          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="c-libs-marquee" aria-hidden="true">
+            <div class="c-libs-marquee-track">
+              <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" alt="" loading="lazy">
+              <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" alt="" loading="lazy">
+            </div>
+          </div>
+          <div class="c-libs-label">
+            <div class="t blend-difference">组件库设计</div>
+            <div class="s">组件库 2.0 是 Shokz 官网的核心设计资产，沉淀首页、对比页、集合页、产品卡等高频模块，统一组件规范与交互体验。它让设计从单页交付走向系统复用，并为后续 Shopify 代码组件打基础，实现从设计一致到上线一致。</div>
+          </div>
+        </article>
+
+        <article class="card c-final" id="c11" data-bg-count="3" data-bg-index="0">
+          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="final-mock" aria-label="页面浏览预览">
+            <img class="final-shot" src="{{ "fd-project-detail-d7103c39e2-1.webp" | asset_url }}" alt="页面浏览素材 1" loading="lazy">
+            <img class="final-shot" src="{{ "fd-project-detail-763b111c0e-2.webp" | asset_url }}" alt="页面浏览素材 2" loading="lazy">
+            <img class="final-shot" src="{{ "fd-project-detail-637d0dbaf2-3.webp" | asset_url }}" alt="页面浏览素材 3" loading="lazy">
+          </div>
+          <div class="nav-arrows">
+            <button class="nav-btn prev" type="button" aria-label="上一张页面浏览图片" data-final-step="-1"><span class="ic"></span></button>
+            <button class="nav-btn next" type="button" aria-label="下一张页面浏览图片" data-final-step="1"><span class="ic"></span></button>
+            <span class="switch-count" aria-live="polite">01 / 03</span>
+          </div>
+        </article>
+      </main>
+    </section>
   </div>
 </div>
 
-<script>
-  (function() {
-    function initKotoVisionJS() {
-      const sectionWrapper = document.getElementById('koto-master-wrapper-{{ section.id }}');
-      if (!sectionWrapper) return;
+<main class="mobile-393" aria-label="Shokz 跨境电商体验升级手机端">
+  <header class="m-head">
+    <nav class="m-breadcrumb" aria-label="手机端面包屑导航">
+      <a href="{{ routes.root_url }}">首页</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Shokz 官网体验升级</span>
+    </nav>
+    <h1 class="m-title blend-difference" data-sync-project-title></h1>
+    <div class="m-stats">
+      <div class="m-stat">
+        <div class="m-stat__label"></div>
+        <div class="m-stat__value"></div>
+      </div>
+      <div class="m-stat">
+        <div class="m-stat__label"></div>
+        <div class="m-stat__value"></div>
+      </div>
+      <div class="m-stat">
+        <div class="m-stat__label"></div>
+        <div class="m-stat__value"></div>
+      </div>
+    </div>
+  </header>
 
-      const tocItems = sectionWrapper.querySelectorAll('.koto-toc-item');
+  <section class="m-media m-media--dark m-ratio-hero m-hero-media">
+    <div class="m-img" aria-hidden="true"></div>
+    <video class="mobile-hero-video" src="{{ "fd-project-detail-9abdb01102-shokz-user.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    <div class="m-overlay m-hero-caption">韶音科技全球快速扩张</div>
+    <div class="m-overlay m-hero-stats">
+      <div class="m-hero-stat">
+        <div class="m-hero-stat__value">7,000,000</div>
+        <div class="m-hero-stat__label">Customers</div>
+      </div>
+      <div class="m-hero-stat">
+        <div class="m-hero-stat__value">60</div>
+        <div class="m-hero-stat__label">Countries And Regions</div>
+      </div>
+      <div class="m-hero-stat">
+        <div class="m-hero-stat__value">4.7</div>
+        <div class="m-hero-stat__label">Customer Review Rating</div>
+      </div>
+    </div>
+  </section>
 
-      tocItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-          e.preventDefault(); 
-          const link = this.querySelector('.js-toc-link');
-          if (!link) return;
+  <section class="m-media m-ratio-medium m-structure-goals" id="m-mobile-goals" data-mobile-pillar data-bg-count="3" data-bg-index="0">
+    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <div class="m-mobile-pillar-visual" aria-hidden="true"></div>
+    <div class="m-overlay m-arrow-row m-pillar-controls">
+      <button class="m-arrow m-arrow--dark" type="button" aria-label="上一个目标" data-mobile-pillar-step="-1"></button>
+      <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一个目标" data-mobile-pillar-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 03</span>
+    </div>
+    <div class="m-overlay m-card-label">
+      <div class="m-card-label__title blend-difference m-mobile-pillar-tabs" role="tablist" aria-label="三个整体目标"></div>
+      <div class="m-card-label__sub"></div>
+    </div>
+    <div class="m-overlay m-structure-target">Target</div>
+  </section>
 
-          const href = link.getAttribute('href');
-          if (!href || !href.includes('#')) return;
+  <section class="m-media m-media--square" id="m-mobile-challenges" data-bg-count="3" data-bg-index="0" aria-label="系统性挑战视觉概览">
+    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <div class="m-overlay m-arrow-row">
+      <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+      <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 03</span>
+    </div>
+    <div class="m-overlay m-card-label">
+      <div class="m-card-label__sub m-friction-intro">在项目推进过程中，受限于资源配置、决策机制及产研流程等多重宏观因素，面临诸多系统性挑战。</div>
+      <div class="m-friction-list">
+        <div class="m-friction-item">
+          <div class="m-friction-title blend-difference">资源配置
+与交付需求的持续错位</div>
+          <div class="m-friction-copy">外包开发资源长期存在缺口且沟通路径冗长，加之内部设计人力需应对大量高频并行的运营项目，导致官网系统性优化与日常业务交付在资源分配上存在冲突。</div>
+        </div>
+        <div class="m-friction-item">
+          <div class="m-friction-title blend-difference">全球化运营下
+的决策权碎片化</div>
+          <div class="m-friction-copy">国际与北美区域运营侧在业务优先级上存在分歧，由于缺乏统一的客观评价标准，导致官网优化决策长期依赖非量化依据，整体话语权分布较为分散。</div>
+        </div>
+        <div class="m-friction-item">
+          <div class="m-friction-title blend-difference">产研意识
+与流程基建不完善</div>
+          <div class="m-friction-copy">项目初期缺乏标准化的用户体验优化流程与统一的 UI 组件库，现有工作模式多为针对具体问题的被动响应，缺乏长期的体验演进规划，增加了跨部门协同的阻力。</div>
+        </div>
+      </div>
+    </div>
+    <div class="m-overlay m-structure-kicker">Systemic
+Challenges</div>
+  </section>
 
-          const targetId = href.split('#')[1];
-          const target = document.getElementById(targetId);
+  <section class="m-media m-timeline m-media--square" data-mobile-timeline-index="0">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-arrow-row m-timeline-controls">
+      <button class="m-arrow m-arrow--light" type="button" aria-label="上一个阶段" data-mobile-timeline-step="-1"></button>
+      <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一个阶段" data-mobile-timeline-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 03</span>
+    </div>
+    <div class="m-overlay m-timeline__phase">
+      <div class="m-timeline__phase-title">用户路径
+工作流沉淀
+团队搭建</div>
+      <div class="m-timeline__phase-text">
+        <span class="m-timeline__phase-date">2025.07.08</span>
+        <span class="m-timeline__phase-name">探索与诊断期</span>
+        <span class="m-timeline__phase-copy">完成数据埋点基建与 A/B 测试框架搭建，现有工作流沉淀；
+确定初步用户旅程路径及核心页面优化方案；
+完成项目团队搭建。</span>
+      </div>
+    </div>
+    <div class="m-overlay m-timeline__dates">
+      <span class="m-timeline__date">07.08</span>
+      <span class="m-timeline__line"></span>
+      <span class="m-timeline__date">10.08</span>
+      <span class="m-timeline__line"></span>
+      <span class="m-timeline__date">11.08</span>
+    </div>
+  </section>
+  <section class="m-media m-media--dark m-ratio-tall m-research-intro">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-card-label m-card-label--light">
+      <div class="m-card-label__title">产研概念导入</div>
+      <div class="m-card-label__sub">需求分析　产品与系统设计　研发编码　数据收集　迭代优化</div>
+    </div>
+    <div class="m-overlay m-research-quote-eyebrow">为什么需要它？</div>
+    <div class="m-overlay m-research-quote" aria-live="polite">在缺乏DTC基因或技术较弱的传统企业中，网页常被视为一次性的“数字名片”而非持续生长的业务引擎。</div>
+  </section>
 
-          if (target) {
-            const offset = {{ section.settings.sticky_offset | default: 120 }};
-            const bodyRect = document.body.getBoundingClientRect().top;
-            const elementRect = target.getBoundingClientRect().top;
-            const offsetPosition = (elementRect - bodyRect) - offset;
-            window.scrollTo({ 
-              top: offsetPosition, 
-              behavior: 'smooth' 
-            });
-          }
-        });
-      });
+  <section class="m-media m-media--square m-org-overview">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-org-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+国际与北美产品经理双擎驱动本地化定制，
+设计代表统筹全渠道视觉与UX体验。
+在落地端，新增内部设计团队(UI及助理)保障视觉交付，
+并深度洽谈引入外部开发经理严控代码质量。</div>
+    <div class="m-org-nodes">
+      <span class="m-org-node">设计代表</span>
+      <span class="m-org-node">国际产品经理</span>
+      <span class="m-org-node">北美产品经理</span>
+      <span class="m-org-node">开发经理</span>
+    </div>
+    <div class="m-overlay m-org-legend">- 设计团队架构 -</div>
+  </section>
+  <section class="m-media m-media--dark m-ratio-tall m-org-goals">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-card-label m-card-label--light">
+      <div class="m-card-label__title">首页/集合页/
+产品页/结算页</div>
+      <div class="m-card-label__sub">数据分析+主路径定义+业务需求收集，明确项目目标</div>
+    </div>
+  </section>
+  <section class="m-media m-media--soft m-ratio-tall m-org-workflow">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-workflow-value"></div>
+    <div class="m-overlay m-workflow-title">10+工作流沉淀</div>
+    <div class="m-overlay m-workflow-list">页面评审流程
+页面测试流
+促销类设计流
+官网设计关键动作清单
+设计组件库 2.0
+用户画像 + 用户旅程图
+......</div>
+  </section>
 
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            sectionWrapper.querySelectorAll('.koto-toc-item').forEach(li => li.classList.remove('is-active'));
-            const activeLink = sectionWrapper.querySelector(`.js-toc-link[href="#${entry.target.id}"]`);
-            if (activeLink) {
-              const parentLi = activeLink.closest('.koto-toc-item');
-              if (parentLi) parentLi.classList.add('is-active');
-            }
-          }
-        });
-      }, { rootMargin: '-15% 0px -60% 0px' });
+  <section class="m-media m-media--dark m-ratio-tall m-user-research" id="m-mobile-research">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-user-title">用户研究</div>
+    <div class="m-overlay m-user-stats">
+      <div>
+        <div class="m-user-stat__label">有效清洗样本</div>
+        <div class="m-user-stat__value">529</div>
+      </div>
+      <div>
+        <div class="m-user-stat__label">深访洞察时长-分钟</div>
+        <div class="m-user-stat__value">600</div>
+      </div>
+      <div>
+        <div class="m-user-stat__label">闭环落地更新项</div>
+        <div class="m-user-stat__value">35</div>
+      </div>
+      <div>
+        <div class="m-user-stat__label">处理系统卡点</div>
+        <div class="m-user-stat__value">14</div>
+      </div>
+    </div>
+  </section>
 
-      sectionWrapper.querySelectorAll('.js-scroll-section').forEach(s => observer.observe(s));
+  <section class="m-media m-ratio-medium m-structure-image m-structure-decision" data-mobile-persona data-bg-count="3" data-bg-index="0">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-arrow-row">
+      <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+      <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 03</span>
+    </div>
+    <div class="m-overlay m-persona-title">决策型
+目标买家</div>
+    <div class="m-overlay m-persona-lede">重度依赖移动端碎片化时间进行快速浏览，购买动机往往由即将到来的运动赛事驱动，目的性极强。</div>
+    <div class="m-overlay m-persona-info">
+      <div class="m-persona-name">赛事备战与快速决策用户</div>
+      <div class="m-chip-row">
+        <span class="m-chip">设备: 移动端为主</span>
+        <span class="m-chip">决策周期: Within 1 day</span>
+      </div>
+      <div class="m-quote-stack">
+<div>在 3 次点击内找到特定型号 - 反感拥挤的移动端导航</div>
+<div>顺畅调用 Klarna 或信用卡完成无缝支付 - 对支付网关报错极度缺乏耐心。</div>
+      </div>
+    </div>
+  </section>
 
-      const bleedSliders = sectionWrapper.querySelectorAll('.js-koto-slider');
-      bleedSliders.forEach(slider => {
-        const textSlides = slider.querySelectorAll('.js-slide-text');
-        const imgSlides = slider.querySelectorAll('.js-slide-img');
-        const prevBtn = slider.querySelector('.js-prev');
-        const nextBtn = slider.querySelector('.js-next');
-        const controls = slider.querySelector('.koto-slider-controls');
-        
-        let validCount = 0;
-        textSlides.forEach(s => { if(s.getAttribute('data-has-content') === 'true') validCount++; });
+  <section class="m-media m-ratio-tall m-structure-image m-structure-browse" id="m-mobile-journey" data-mobile-journey data-bg-count="4" data-bg-index="0">
+    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-journey-shot" aria-hidden="true"></div>
+    <div class="m-overlay m-arrow-row">
+      <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+      <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 04</span>
+    </div>
+    <div class="m-overlay m-journey-tabs" role="tablist" aria-label="用户旅程阶段">
+      <button class="m-journey-tab is-active" type="button" role="tab" aria-selected="true" data-mobile-journey-index="0">认知与入站</button>
+      <button class="m-journey-tab" type="button" role="tab" aria-selected="false" data-mobile-journey-index="1">浏览与定位</button>
+      <button class="m-journey-tab" type="button" role="tab" aria-selected="false" data-mobile-journey-index="2">评估与对比</button>
+      <button class="m-journey-tab" type="button" role="tab" aria-selected="false" data-mobile-journey-index="3">转化与加购</button>
+    </div>
+    <div class="m-overlay m-journey-copy">用户通过 Google 搜索品牌词进入，快速扫视首屏，试图寻找官方背书与核心科技解释。期望立刻了解品牌核心价值、官方购物保障（DTC优势）。
+"Technical language feel foreign." - Olfa Fdhila
 
-        if (validCount <= 1 && controls) {
-          controls.style.display = 'none';
-        }
+强化品牌背书与 DTC 利益点
+Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力保障展示。
 
-        let currentIndex = 0;
+科技降维解释与构建社会认同
+合并科技与痛点展示并采用易懂文案。引入明星推荐与真实 Reviews，增加独立对比页跳转。
 
-        function updateBleedSlider() {
-          textSlides.forEach((s, idx) => {
-            if (idx === currentIndex) s.classList.add('is-active');
-            else s.classList.remove('is-active');
-          });
-          imgSlides.forEach((s, idx) => {
-            if (idx === currentIndex) s.classList.add('is-active');
-            else s.classList.remove('is-active');
-          });
-        }
+数据成果：
+首页 CTA 点击率 CTR +24.3%：首页核心转化显著提升，验证“品牌背书 + DTC利益点 + 社会认同”的首屏模型有效，并已推动北美及国际首页同口径优化排期。</div>
+<div class="m-overlay m-journey-quote"></div>
+    <div class="m-overlay m-journey-pains">
+    </div>
+  </section>
 
-        if (prevBtn) {
-          prevBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            currentIndex = (currentIndex === 0) ? validCount - 1 : currentIndex - 1;
-            updateBleedSlider();
-          });
-        }
-        
-        if (nextBtn) {
-          nextBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            currentIndex = (currentIndex === validCount - 1) ? 0 : currentIndex + 1;
-            updateBleedSlider();
-          });
-        }
-      });
-    }
+  <section class="m-media m-ratio-medium m-structure-image m-structure-components" data-bg-count="3" data-bg-index="0">
+    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-component-preview" aria-hidden="true">
+      <div class="c-libs-marquee-track">
+        <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" alt="" loading="eager">
+        <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" alt="" loading="eager">
+      </div>
+    </div>
+    <div class="m-overlay m-arrow-row">
+      <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+      <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 03</span>
+    </div>
+    <div class="m-overlay m-card-label">
+      <div class="m-card-label__title blend-difference"></div>
+      <div class="m-card-label__sub"></div>
+    </div>
+  </section>
+  <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" aria-label="页面浏览预览">
+    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <div class="m-final-mobile__head">
+      <div class="m-final-mobile__controls">
+        <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张页面浏览图片" data-mobile-final-step="-1"></button>
+        <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张页面浏览图片" data-mobile-final-step="1"></button>
+        <span class="m-switch-count" aria-live="polite">01 / 03</span>
+      </div>
+    </div>
+    <div class="m-final-mobile__frame">
+    </div>
+  </section>
+</main>
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initKotoVisionJS);
-    } else {
-      initKotoVisionJS();
-    }
+<section class="outro" data-screen-label="04 Outro">
+  <div class="outro-pin">
+    <div class="outro-pane outro-next" id="outroNext">
+      <canvas class="outro-wave-canvas" id="outroWaveCanvas" aria-hidden="true"></canvas>
+      <div class="outro-next-scale">
+        <div class="next-header">
+          <span class="next-eyebrow">下一个项目</span>
+          <span class="next-title blend-difference">GTM视觉整合设计</span>
+          <a class="next-cta-arrow" href="#" aria-label="查看下一个项目" onclick="event.preventDefault()"></a>
+        </div>
+        <div class="next-bottom">
+          <div class="next-footer-bottom next-footer-anim delay-3">
+            <div class="next-footer-note-head">
+              <p class="next-footer-note-title">Design in Flow. Touch the World.</p>
+              <button class="footer-btn footer-btn--solid" type="button" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <span>Back to Top</span>
+              </button>
+            </div>
+            <p class="next-footer-note-desc">All visual works, design concepts, interface mockups, branding explorations, and original imagery presented on this website are the intellectual property of the author and are protected under copyright law.<br><br>© 2026. All rights reserved.</p>
+          </div>
+        </div>
+        <div class="next-thumb" role="link" aria-label="Next project preview">
+          <div class="thumb-placeholder" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
 
-    if (window.Shopify && window.Shopify.designMode) {
-      document.addEventListener('shopify:section:load', function(e) {
-        if (e.detail.sectionId === '{{ section.id }}') {
-          initKotoVisionJS();
-        }
-      });
-    }
-  })();
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{{ "fd-project-detail.js" | asset_url }}" defer></script>
 
 {% schema %}
 {
-  "name": "Vision Doc Final",
+  "name": "Project detail",
+  "tag": "section",
+  "class": "section-fd-project-detail",
   "settings": [
-    { "type": "color_scheme", "id": "color_scheme", "label": "配色方案" },
-    { "type": "header", "content": "--- 全局特性 ---" },
-    { "type": "checkbox", "id": "hide_scrollbar", "label": "隐藏页面与侧栏滚动条", "default": true, "info": "呈现App级沉浸体验" },
-    { "type": "range", "id": "text_max_width", "label": "右侧文本最大行宽", "min": 400, "max": 1200, "step": 10, "unit": "px", "default": 800, "info": "限制文本的最长阅读宽度（黄金行长），防止单行过长导致视觉疲劳" },
-
-    { "type": "header", "content": "--- 容器与宽度 ---" },
-    { "type": "checkbox", "id": "full_width", "label": "一键铺满全屏", "default": false },
-    { "type": "range", "id": "max_width", "label": "最大宽度限制 (px)", "min": 800, "max": 2500, "step": 50, "default": 1400 },
-    { "type": "header", "content": "--- 边距控制 (Padding) ---" },
-    { "type": "range", "id": "padding_top", "label": "上外边距", "min": 0, "max": 200, "step": 4, "default": 80 },
-    { "type": "range", "id": "padding_bottom", "label": "下外边距", "min": 0, "max": 200, "step": 4, "default": 80 },
-    { "type": "range", "id": "padding_left", "label": "左边距 (绝对位置)", "min": 0, "max": 200, "step": 4, "default": 40 },
-    { "type": "range", "id": "padding_right", "label": "右边距 (绝对位置)", "min": 0, "max": 200, "step": 4, "default": 40 },
-    { "type": "range", "id": "column_gap", "label": "左右双栏间距", "min": 20, "max": 200, "step": 4, "default": 100 },
-    { "type": "range", "id": "block_margin_bottom", "label": "各个内容结构之间的间距", "min": 0, "max": 200, "step": 4, "default": 100 },
-    { "type": "range", "id": "sticky_offset", "label": "目录吸顶偏移 (px)", "min": 0, "max": 300, "step": 5, "default": 120 },
-
-    { "type": "header", "content": "--- 圆角控制 (Border Radius) ---" },
-    { "type": "range", "id": "card_radius", "label": "内容大卡片整体圆角", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 8 },
-    { "type": "range", "id": "media_radius", "label": "内部图片与媒体圆角", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 4 },
-
-    { "type": "header", "content": "--- 1. 左侧大标题排版 ---" },
-    { "type": "text", "id": "sidebar_title", "label": "大标题文字", "default": "Contents" },
-    { "type": "color", "id": "sidebar_title_color", "label": "颜色", "default": "#000000" },
-    { "type": "range", "id": "sidebar_title_size", "label": "字号", "min": 12, "max": 80, "step": 1, "default": 14 },
-    { "type": "select", "id": "sidebar_title_weight", "label": "字重", "options": [{"value":"400","label":"常规"},{"value":"600","label":"半粗"},{"value":"800","label":"粗体"}], "default": "600" },
-    { "type": "range", "id": "sidebar_title_spacing", "label": "字间距", "min": -2, "max": 10, "step": 1, "default": 2 },
-    { "type": "range", "id": "title_line_height", "label": "行高", "min": 0.8, "max": 2.0, "step": 0.1, "default": 1.2 },
-    { "type": "select", "id": "sidebar_title_transform", "label": "大小写", "options": [{"value":"none","label":"原样"},{"value":"uppercase","label":"全大写"}], "default": "uppercase" },
-    { "type": "select", "id": "sidebar_title_style", "label": "斜体", "options": [{"value":"normal","label":"常规"},{"value":"italic","label":"斜体"}], "default": "normal" },
-    { "type": "range", "id": "sidebar_title_margin_bottom", "label": "与下方内容的距离", "min": 0, "max": 100, "step": 2, "default": 20 },
-
-    { "type": "header", "content": "--- 2. 大标题正文说明排版 ---" },
-    { "type": "richtext", "id": "sidebar_desc", "label": "说明文字内容" },
-    { "type": "color", "id": "sidebar_desc_color", "label": "颜色", "default": "#666666" },
-    { "type": "range", "id": "sidebar_desc_size", "label": "字号", "min": 12, "max": 30, "step": 1, "unit": "px", "default": 14 },
-    { "type": "select", "id": "sidebar_desc_weight", "label": "字重", "options": [{"value":"300","label":"细体"},{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "400" },
-    { "type": "range", "id": "sidebar_desc_spacing", "label": "字间距", "min": -2, "max": 10, "step": 1, "default": 0 },
-    { "type": "range", "id": "sidebar_desc_line_height", "label": "行高", "min": 1.0, "max": 2.5, "step": 0.1, "default": 1.6 },
-    { "type": "select", "id": "sidebar_desc_transform", "label": "大小写", "options": [{"value":"none","label":"原样"},{"value":"uppercase","label":"全大写"}], "default": "none" },
-    { "type": "select", "id": "sidebar_desc_style", "label": "斜体", "options": [{"value":"normal","label":"常规"},{"value":"italic","label":"斜体"}], "default": "normal" },
-    { "type": "range", "id": "sidebar_desc_margin_bottom", "label": "与下方目录的距离", "min": 0, "max": 100, "step": 2, "default": 30 },
-
-    { "type": "header", "content": "--- 3. 目录链接文字排版 ---" },
-    { "type": "range", "id": "toc_inactive_opacity", "label": "未选中时的整体透明度", "min": 20, "max": 100, "step": 5, "unit": "%", "default": 50 },
-    { "type": "color", "id": "toc_link_color", "label": "颜色", "default": "#000000" },
-    { "type": "range", "id": "toc_link_size", "label": "字号", "min": 12, "max": 30, "step": 1, "unit": "px", "default": 14 },
-    { "type": "select", "id": "toc_link_weight", "label": "字重", "options": [{"value":"300","label":"细体"},{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "400" },
-    { "type": "range", "id": "toc_link_spacing", "label": "字间距", "min": -2, "max": 10, "step": 1, "default": 0 },
-    { "type": "range", "id": "toc_link_line_height", "label": "行高", "min": 1.0, "max": 2.5, "step": 0.1, "default": 1.4 },
-    { "type": "select", "id": "toc_link_transform", "label": "大小写", "options": [{"value":"none","label":"原样"},{"value":"uppercase","label":"全大写"}], "default": "none" },
-    { "type": "select", "id": "toc_link_style", "label": "斜体", "options": [{"value":"normal","label":"常规"},{"value":"italic","label":"斜体"}], "default": "normal" },
-    { "type": "range", "id": "toc_item_gap", "label": "各个目录模块之间的间距", "min": 0, "max": 60, "step": 2, "default": 16 },
-
-    { "type": "header", "content": "--- 4. 目录项下方的正文说明排版 ---" },
-    { "type": "color", "id": "toc_desc_color", "label": "颜色", "default": "#888888" },
-    { "type": "range", "id": "toc_desc_size", "label": "字号", "min": 10, "max": 24, "step": 1, "unit": "px", "default": 12 },
-    { "type": "select", "id": "toc_desc_weight", "label": "字重", "options": [{"value":"300","label":"细体"},{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "400" },
-    { "type": "range", "id": "toc_desc_spacing", "label": "字间距", "min": -2, "max": 10, "step": 1, "default": 0 },
-    { "type": "range", "id": "toc_desc_line_height", "label": "行高", "min": 1.0, "max": 2.5, "step": 0.1, "default": 1.4 },
-    { "type": "select", "id": "toc_desc_transform", "label": "大小写", "options": [{"value":"none","label":"原样"},{"value":"uppercase","label":"全大写"}], "default": "none" },
-    { "type": "select", "id": "toc_desc_style", "label": "斜体", "options": [{"value":"normal","label":"常规"},{"value":"italic","label":"斜体"}], "default": "normal" },
-    { "type": "range", "id": "toc_desc_margin_top", "label": "与上方链接的距离", "min": 0, "max": 60, "step": 2, "default": 4 },
-
-    { "type": "header", "content": "--- 5. 左侧标签样式 (Tags) ---" },
-    { "type": "range", "id": "tag_margin_top", "label": "与上方说明文字的间距", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 8 },
-    { "type": "color", "id": "tag_bg_color", "label": "标签背景颜色", "default": "#000000" },
-    { "type": "range", "id": "tag_bg_opacity", "label": "背景透明度", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 10 },
-    { "type": "range", "id": "tag_radius", "label": "圆角参数", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 6 },
-    { "type": "color", "id": "tag_text_color", "label": "文字颜色", "default": "#333333" },
-    { "type": "range", "id": "tag_font_size", "label": "文字字号", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 12 },
-    { "type": "select", "id": "tag_font_weight", "label": "文字字重", "options": [{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "600" },
-
-    { "type": "header", "content": "--- 6. 右侧返回按钮 ---" },
-    { "type": "checkbox", "id": "show_back_btn", "label": "显示返回按钮", "default": true, "info": "显示在右侧内容区的最顶部，复用标签样式" },
-    { "type": "text", "id": "back_btn_text", "label": "按钮文案", "default": "返回上层" },
-    { "type": "url", "id": "back_btn_link", "label": "按钮跳转链接" },
-    { "type": "image_picker", "id": "back_btn_icon", "label": "按钮 Icon 图标" },
-    { "type": "range", "id": "back_btn_margin_bottom", "label": "与下方内容的间距", "min": 0, "max": 100, "step": 2, "unit": "px", "default": 40 }
-  ],
-  "blocks": [
     {
-      "type": "slider_bleed_box",
-      "name": "6: 左文右图滑动卡片 (贴边)",
-      "settings": [
-        { "type": "header", "content": "--- 目录与容器 ---" },
-        { "type": "text", "id": "toc_label", "label": "目录名" },
-        { "type": "richtext", "id": "toc_desc", "label": "目录下方说明文字" },
-        { "type": "text", "id": "tag_1", "label": "标签 1" },
-        { "type": "text", "id": "tag_2", "label": "标签 2" },
-        { "type": "text", "id": "tag_3", "label": "标签 3" },
-        { "type": "select", "id": "heading_level", "label": "层级", "options": [{"value":"h2","label":"主"},{"value":"h3","label":"次"}], "default": "h2" },
-        
-        { "type": "header", "content": "--- 卡片与排版设定 ---" },
-        { "type": "color", "id": "box_bg_color", "label": "背景色", "default": "#f4f4f4" },
-        { "type": "range", "id": "card_height", "label": "卡片最小高度", "min": 300, "max": 800, "step": 10, "default": 450 },
-        { "type": "range", "id": "box_padding_top", "label": "内上", "min": 0, "max": 100, "step": 2, "default": 60 },
-        { "type": "range", "id": "box_padding_bottom", "label": "内下", "min": 0, "max": 100, "step": 2, "default": 60 },
-        { "type": "range", "id": "box_padding_left", "label": "内左", "min": 0, "max": 100, "step": 2, "default": 60 },
-        { "type": "range", "id": "box_radius", "label": "卡片独立圆角", "min": 0, "max": 100, "step": 2, "default": 16, "info": "覆盖此轮播卡片的边框圆角，右侧图片会完美适配裁切" },
-        
-        { "type": "range", "id": "image_width", "label": "右侧图片宽度占比 (%)", "min": 30, "max": 80, "step": 1, "default": 50 },
-        { "type": "range", "id": "content_gap", "label": "文字与图片间距", "min": 0, "max": 100, "step": 2, "default": 60 },
-        
-        { "type": "header", "content": "--- 按钮自定义 ---" },
-        { "type": "image_picker", "id": "prev_btn_icon", "label": "左滑按钮图片", "info": "如果不上传，将显示默认线框箭头" },
-        { "type": "image_picker", "id": "next_btn_icon", "label": "右滑按钮图片" },
-        { "type": "range", "id": "btn_size", "label": "按钮尺寸", "min": 30, "max": 80, "step": 2, "default": 44 },
-
-        { "type": "header", "content": "--- 字体设定 ---" },
-        { "type": "color", "id": "title_color", "label": "标题颜色", "default": "#000000" },
-        { "type": "range", "id": "title_size", "label": "标题字号", "min": 16, "max": 60, "step": 1, "default": 32 },
-        { "type": "select", "id": "title_weight", "label": "标题字重", "options": [{"value":"400","label":"常规"},{"value":"600","label":"半粗"},{"value":"800","label":"粗体"}], "default": "800" },
-        { "type": "range", "id": "title_lh", "label": "标题行高", "min": 1.0, "max": 2.0, "step": 0.1, "default": 1.3 },
-        
-        { "type": "color", "id": "desc_color", "label": "正文颜色", "default": "#555555" },
-        { "type": "range", "id": "desc_size", "label": "正文字号", "min": 12, "max": 30, "step": 1, "default": 15 },
-        { "type": "select", "id": "desc_weight", "label": "正文字重", "options": [{"value":"300","label":"细体"},{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "400" },
-        { "type": "range", "id": "desc_lh", "label": "正文行高", "min": 1.0, "max": 2.5, "step": 0.1, "default": 1.6 },
-
-        { "type": "header", "content": "--- 轮播图 1 ---" },
-        { "type": "image_picker", "id": "image_1", "label": "右侧图片 1" },
-        { "type": "text", "id": "title_1", "label": "左侧标题 1" },
-        { "type": "richtext", "id": "text_1", "label": "左侧正文 1" },
-        
-        { "type": "header", "content": "--- 轮播图 2 ---" },
-        { "type": "image_picker", "id": "image_2", "label": "右侧图片 2" },
-        { "type": "text", "id": "title_2", "label": "左侧标题 2" },
-        { "type": "richtext", "id": "text_2", "label": "左侧正文 2" },
-
-        { "type": "header", "content": "--- 轮播图 3 ---" },
-        { "type": "image_picker", "id": "image_3", "label": "右侧图片 3" },
-        { "type": "text", "id": "title_3", "label": "左侧标题 3" },
-        { "type": "richtext", "id": "text_3", "label": "左侧正文 3" },
-
-        { "type": "header", "content": "--- 轮播图 4 ---" },
-        { "type": "image_picker", "id": "image_4", "label": "右侧图片 4" },
-        { "type": "text", "id": "title_4", "label": "左侧标题 4" },
-        { "type": "richtext", "id": "text_4", "label": "左侧正文 4" },
-
-        { "type": "header", "content": "--- 轮播图 5 ---" },
-        { "type": "image_picker", "id": "image_5", "label": "右侧图片 5" },
-        { "type": "text", "id": "title_5", "label": "左侧标题 5" },
-        { "type": "richtext", "id": "text_5", "label": "左侧正文 5" }
-      ]
-    },
-    {
-      "type": "content_unit",
-      "name": "1: 大媒体+三栏文案",
-      "settings": [
-        { "type": "header", "content": "--- 目录与容器 ---" },
-        { "type": "text", "id": "toc_label", "label": "目录显示名称" },
-        { "type": "richtext", "id": "toc_desc", "label": "目录下方说明文字" },
-        { "type": "header", "content": "--- 关键词标签 (最多3个) ---" },
-        { "type": "text", "id": "tag_1", "label": "标签 1" },
-        { "type": "text", "id": "tag_2", "label": "标签 2" },
-        { "type": "text", "id": "tag_3", "label": "标签 3" },
-        { "type": "select", "id": "heading_level", "label": "层级", "options": [{"value":"h2","label":"主"},{"value":"h3","label":"次"}], "default": "h2" },
-        { "type": "color", "id": "box_bg_color", "label": "卡片背景色", "default": "transparent" },
-        { "type": "range", "id": "box_padding_top", "label": "内上距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_bottom", "label": "内下距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_left", "label": "内左距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_right", "label": "内右距", "min": 0, "max": 100, "step": 2, "default": 40 },
-
-        { "type": "header", "content": "--- 排版与间距 ---" },
-        { "type": "range", "id": "media_bottom_margin", "label": "媒体与标题间距", "min": 0, "max": 100, "step": 2, "default": 30 },
-        { "type": "range", "id": "title_bottom_margin", "label": "标题与正文间距", "min": 0, "max": 100, "step": 2, "default": 20 },
-        { "type": "range", "id": "col_gap", "label": "三栏文案之间的间距", "min": 0, "max": 100, "step": 2, "default": 30 },
-        { "type": "select", "id": "text_alignment", "label": "文字对齐方式", "options": [{"value":"left","label":"左对齐"},{"value":"center","label":"居中"},{"value":"right","label":"右对齐"}], "default": "left" },
-
-        { "type": "header", "content": "--- 媒体 ---" },
-        { "type": "image_picker", "id": "image", "label": "大图" },
-        { "type": "video", "id": "video", "label": "视频" },
-
-        { "type": "header", "content": "--- 标题排版 ---" },
-        { "type": "text", "id": "title", "label": "区块标题" },
-        { "type": "color", "id": "title_color", "label": "标题颜色", "default": "#000000" },
-        { "type": "range", "id": "title_size", "label": "标题字号", "min": 16, "max": 80, "step": 1, "default": 28 },
-        { "type": "select", "id": "title_weight", "label": "标题字重", "options": [{"value":"400","label":"常规"},{"value":"600","label":"半粗"},{"value":"800","label":"粗体"}], "default": "800" },
-        { "type": "range", "id": "title_lh", "label": "标题行高", "min": 1.0, "max": 2.0, "step": 0.1, "default": 1.3 },
-
-        { "type": "header", "content": "--- 正文排版 ---" },
-        { "type": "color", "id": "desc_color", "label": "正文颜色", "default": "#333333" },
-        { "type": "range", "id": "desc_size", "label": "正文字号", "min": 12, "max": 24, "step": 1, "default": 15 },
-        { "type": "select", "id": "desc_weight", "label": "正文字重", "options": [{"value":"300","label":"细体"},{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "400" },
-        { "type": "range", "id": "desc_lh", "label": "正文行高", "min": 1.0, "max": 2.5, "step": 0.1, "default": 1.7 },
-
-        { "type": "header", "content": "--- 三栏正文内容 ---" },
-        { "type": "richtext", "id": "content", "label": "第一栏文字" },
-        { "type": "richtext", "id": "col_2_text", "label": "第二栏文字" },
-        { "type": "richtext", "id": "col_3_text", "label": "第三栏文字" }
-      ]
-    },
-    {
-      "type": "triple_bg_image_box",
-      "name": "2: 横排三图背景卡片",
-      "settings": [
-        { "type": "header", "content": "--- 目录与容器 ---" },
-        { "type": "text", "id": "toc_label", "label": "目录名" },
-        { "type": "richtext", "id": "toc_desc", "label": "目录下方说明文字" },
-        { "type": "header", "content": "--- 关键词标签 (最多3个) ---" },
-        { "type": "text", "id": "tag_1", "label": "标签 1" },
-        { "type": "text", "id": "tag_2", "label": "标签 2" },
-        { "type": "text", "id": "tag_3", "label": "标签 3" },
-        { "type": "select", "id": "heading_level", "label": "层级", "options": [{"value":"h2","label":"主"},{"value":"h3","label":"次"}], "default": "h2" },
-        { "type": "color", "id": "box_bg_color", "label": "大背景色", "default": "transparent" },
-        { "type": "range", "id": "box_padding_top", "label": "内上", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_bottom", "label": "内下", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_left", "label": "内左", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_right", "label": "内右", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "header", "content": "--- 卡片排版设置 ---" },
-        { "type": "range", "id": "card_height", "label": "卡片高度", "min": 200, "max": 800, "step": 10, "default": 400 },
-        { "type": "range", "id": "image_gap", "label": "图片间隙", "min": 0, "max": 100, "step": 2, "default": 30 },
-        { "type": "range", "id": "card_inner_padding", "label": "卡片内边距", "min": 0, "max": 100, "step": 2, "default": 30 },
-        { "type": "select", "id": "text_alignment", "label": "文字对齐方式", "options": [{"value":"left","label":"左对齐"},{"value":"center","label":"居中"},{"value":"right","label":"右对齐"}], "default": "left" },
-        { "type": "color", "id": "card_text_color", "label": "文字颜色", "default": "#ffffff" },
-        { "type": "range", "id": "card_title_size", "label": "标题字号", "min": 14, "max": 40, "step": 1, "default": 24 },
-        { "type": "select", "id": "card_title_weight", "label": "标题字重", "options": [{"value":"400","label":"常规"},{"value":"600","label":"半粗"},{"value":"800","label":"粗体"}], "default": "600" },
-        { "type": "range", "id": "card_desc_size", "label": "正文字号", "min": 12, "max": 24, "step": 1, "default": 14 },
-        { "type": "range", "id": "overlay_opacity", "label": "遮罩深度", "min": 0, "max": 100, "step": 2, "default": 40 },
-
-        { "type": "header", "content": "--- 卡片 1-3 ---" },
-        { "type": "image_picker", "id": "image_1", "label": "图1" }, { "type": "text", "id": "title_1", "label": "标题1" }, { "type": "richtext", "id": "text_1", "label": "文案1" },
-        { "type": "image_picker", "id": "image_2", "label": "图2" }, { "type": "text", "id": "title_2", "label": "标题2" }, { "type": "richtext", "id": "text_2", "label": "文案2" },
-        { "type": "image_picker", "id": "image_3", "label": "图3" }, { "type": "text", "id": "title_3", "label": "标题3" }, { "type": "richtext", "id": "text_3", "label": "文案3" }
-      ]
-    },
-    {
-      "type": "double_column_box",
-      "name": "3: 双栏正方形图文网格",
-      "settings": [
-        { "type": "header", "content": "--- 目录与容器 ---" },
-        { "type": "text", "id": "toc_label", "label": "目录名" },
-        { "type": "richtext", "id": "toc_desc", "label": "目录下方说明文字" },
-        { "type": "header", "content": "--- 关键词标签 (最多3个) ---" },
-        { "type": "text", "id": "tag_1", "label": "标签 1" },
-        { "type": "text", "id": "tag_2", "label": "标签 2" },
-        { "type": "text", "id": "tag_3", "label": "标签 3" },
-        { "type": "select", "id": "heading_level", "label": "层级", "options": [{"value":"h2","label":"主"},{"value":"h3","label":"次"}], "default": "h2" },
-        { "type": "color", "id": "box_bg_color", "label": "背景色", "default": "transparent" },
-        { "type": "range", "id": "box_padding_top", "label": "内上距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_bottom", "label": "内下距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_left", "label": "内左距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_right", "label": "内右距", "min": 0, "max": 100, "step": 2, "default": 40 },
-
-        { "type": "header", "content": "--- 排版与间距 ---" },
-        { "type": "range", "id": "grid_gap", "label": "网格间距", "min": 0, "max": 100, "step": 2, "default": 40 },
-
-        { "type": "select", "id": "img_size", "label": "图片尺寸 (px)", "options": [{"value":"100","label":"超小 (100px)"},{"value":"150","label":"特小 (150px)"},{"value":"200","label":"小 (200px)"},{"value":"300","label":"中 (300px)"},{"value":"400","label":"大 (400px)"},{"value":"500","label":"超大 (500px)"}], "default": "300" },
-
-        { "type": "range", "id": "media_bottom_margin", "label": "图片与标题间距", "min": 0, "max": 60, "step": 2, "default": 16 },
-        { "type": "select", "id": "text_alignment", "label": "图文对齐方式", "options": [{"value":"left","label":"左对齐"},{"value":"center","label":"居中"},{"value":"right","label":"右对齐"}], "default": "left" },
-
-        { "type": "header", "content": "--- 标题排版 ---" },
-        { "type": "color", "id": "title_color", "label": "标题颜色", "default": "#000000" },
-        { "type": "range", "id": "title_size", "label": "标题字号", "min": 14, "max": 40, "step": 1, "default": 17 },
-        { "type": "select", "id": "title_weight", "label": "标题字重", "options": [{"value":"400","label":"常规"},{"value":"600","label":"半粗"},{"value":"800","label":"粗体"}], "default": "800" },
-        { "type": "range", "id": "title_lh", "label": "标题行高", "min": 1.0, "max": 2.0, "step": 0.1, "default": 1.4 },
-        { "type": "range", "id": "title_bottom_margin", "label": "标题与正文间距", "min": 0, "max": 40, "step": 2, "default": 10 },
-
-        { "type": "header", "content": "--- 正文排版 ---" },
-        { "type": "color", "id": "desc_color", "label": "正文颜色", "default": "#555555" },
-        { "type": "range", "id": "desc_size", "label": "正文字号", "min": 12, "max": 24, "step": 1, "default": 14 },
-        { "type": "select", "id": "desc_weight", "label": "正文字重", "options": [{"value":"300","label":"细体"},{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "400" },
-        { "type": "range", "id": "desc_lh", "label": "正文行高", "min": 1.0, "max": 2.5, "step": 0.1, "default": 1.6 },
-
-        { "type": "header", "content": "--- 项目 1-6 ---" },
-        { "type": "image_picker", "id": "image_1", "label": "图1" }, { "type": "text", "id": "title_1", "label": "标1" }, { "type": "richtext", "id": "text_1", "label": "文1" },
-        { "type": "image_picker", "id": "image_2", "label": "图2" }, { "type": "text", "id": "title_2", "label": "标2" }, { "type": "richtext", "id": "text_2", "label": "文2" },
-        { "type": "image_picker", "id": "image_3", "label": "图3" }, { "type": "text", "id": "title_3", "label": "标3" }, { "type": "richtext", "id": "text_3", "label": "文3" },
-        { "type": "image_picker", "id": "image_4", "label": "图4" }, { "type": "text", "id": "title_4", "label": "标4" }, { "type": "richtext", "id": "text_4", "label": "文4" },
-        { "type": "image_picker", "id": "image_5", "label": "图5" }, { "type": "text", "id": "title_5", "label": "标5" }, { "type": "richtext", "id": "text_5", "label": "文5" },
-        { "type": "image_picker", "id": "image_6", "label": "图6" }, { "type": "text", "id": "title_6", "label": "标6" }, { "type": "richtext", "id": "text_6", "label": "文6" }
-      ]
-    },
-    {
-      "type": "split_content_box",
-      "name": "4: 左文字右图片 (50/50)",
-      "settings": [
-        { "type": "header", "content": "--- 目录与容器 ---" },
-        { "type": "text", "id": "toc_label", "label": "目录名" },
-        { "type": "richtext", "id": "toc_desc", "label": "目录下方说明文字" },
-        { "type": "header", "content": "--- 关键词标签 (最多3个) ---" },
-        { "type": "text", "id": "tag_1", "label": "标签 1" },
-        { "type": "text", "id": "tag_2", "label": "标签 2" },
-        { "type": "text", "id": "tag_3", "label": "标签 3" },
-        { "type": "select", "id": "heading_level", "label": "层级", "options": [{"value":"h2","label":"主"},{"value":"h3","label":"次"}], "default": "h2" },
-        { "type": "color", "id": "box_bg_color", "label": "背景色", "default": "transparent" },
-        { "type": "range", "id": "box_padding_top", "label": "内上", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_bottom", "label": "内下", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_left", "label": "内左", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_right", "label": "内右", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "content_gap", "label": "间距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "header", "content": "--- 内容 ---" },
-        { "type": "text", "id": "title", "label": "标题" }, { "type": "range", "id": "title_size", "label": "字号", "min": 16, "max": 60, "step": 1, "default": 28 },
-        { "type": "richtext", "id": "content", "label": "文字正文" }, { "type": "image_picker", "id": "image", "label": "大图" }
-      ]
-    },
-    {
-      "type": "media_hero_2col",
-      "name": "5: 大媒体+主文与双栏",
-      "settings": [
-        { "type": "header", "content": "--- 目录与容器 ---" },
-        { "type": "text", "id": "toc_label", "label": "目录显示名称" },
-        { "type": "richtext", "id": "toc_desc", "label": "目录下方说明文字" },
-        { "type": "header", "content": "--- 关键词标签 (最多3个) ---" },
-        { "type": "text", "id": "tag_1", "label": "标签 1" },
-        { "type": "text", "id": "tag_2", "label": "标签 2" },
-        { "type": "text", "id": "tag_3", "label": "标签 3" },
-        { "type": "select", "id": "heading_level", "label": "层级", "options": [{"value":"h2","label":"主"},{"value":"h3","label":"次"}], "default": "h2" },
-        { "type": "color", "id": "box_bg_color", "label": "卡片背景色", "default": "transparent" },
-        { "type": "range", "id": "box_padding_top", "label": "内上距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_bottom", "label": "内下距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_left", "label": "内左距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "box_padding_right", "label": "内右距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        
-        { "type": "header", "content": "--- 间距控制 (Spacing) ---" },
-        { "type": "range", "id": "media_bottom_margin", "label": "媒体与主文间距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "main_text_bottom_margin", "label": "主文与双栏间距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        { "type": "range", "id": "col_gap", "label": "双栏之间的间距", "min": 0, "max": 100, "step": 2, "default": 40 },
-
-        { "type": "header", "content": "--- 媒体 ---" },
-        { "type": "image_picker", "id": "image", "label": "大图" },
-        { "type": "video", "id": "video", "label": "视频" },
-        
-        { "type": "header", "content": "--- 主标题排版 ---" },
-        { "type": "text", "id": "main_title", "label": "大标题" },
-        { "type": "color", "id": "main_title_color", "label": "主标题颜色", "default": "#000000" },
-        { "type": "range", "id": "main_title_size", "label": "主标题字号", "min": 16, "max": 80, "step": 1, "default": 32 },
-        { "type": "select", "id": "main_title_weight", "label": "主标题字重", "options": [{"value":"400","label":"常规"},{"value":"600","label":"半粗"},{"value":"800","label":"粗体"}], "default": "800" },
-        { "type": "range", "id": "main_title_lh", "label": "主标题行高", "min": 1.0, "max": 2.0, "step": 0.1, "default": 1.3 },
-    
-        { "type": "header", "content": "--- 主正文排版 ---" },
-        { "type": "richtext", "id": "main_desc", "label": "主正文说明" },
-        { "type": "color", "id": "main_desc_color", "label": "主正文颜色", "default": "#333333" },
-        { "type": "range", "id": "main_desc_size", "label": "主正文字号", "min": 12, "max": 30, "step": 1, "default": 16 },
-        { "type": "select", "id": "main_desc_weight", "label": "主正文字重", "options": [{"value":"300","label":"细体"},{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "400" },
-        { "type": "range", "id": "main_desc_lh", "label": "主正文行高", "min": 1.0, "max": 2.5, "step": 0.1, "default": 1.7 },
-    
-        { "type": "header", "content": "--- 双栏标题排版 ---" },
-        { "type": "color", "id": "col_title_color", "label": "栏标题颜色", "default": "#000000" },
-        { "type": "range", "id": "col_title_size", "label": "栏标题字号", "min": 14, "max": 40, "step": 1, "default": 20 },
-        { "type": "select", "id": "col_title_weight", "label": "栏标题字重", "options": [{"value":"400","label":"常规"},{"value":"600","label":"半粗"},{"value":"800","label":"粗体"}], "default": "600" },
-        { "type": "range", "id": "col_title_lh", "label": "栏标题行高", "min": 1.0, "max": 2.0, "step": 0.1, "default": 1.4 },
-    
-        { "type": "header", "content": "--- 双栏正文排版 ---" },
-        { "type": "color", "id": "col_desc_color", "label": "栏正文颜色", "default": "#555555" },
-        { "type": "range", "id": "col_desc_size", "label": "栏正文字号", "min": 12, "max": 24, "step": 1, "default": 15 },
-        { "type": "select", "id": "col_desc_weight", "label": "栏正文字重", "options": [{"value":"300","label":"细体"},{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "400" },
-        { "type": "range", "id": "col_desc_lh", "label": "栏正文行高", "min": 1.0, "max": 2.5, "step": 0.1, "default": 1.7 },
-        
-        { "type": "header", "content": "--- 栏位内容 ---" },
-        { "type": "text", "id": "col_1_title", "label": "栏1-标题" },
-        { "type": "richtext", "id": "col_1_desc", "label": "栏1-正文" },
-        { "type": "text", "id": "col_2_title", "label": "栏2-标题" },
-        { "type": "richtext", "id": "col_2_desc", "label": "栏2-正文" }
-      ]
+      "type": "paragraph",
+      "content": "Generated from 项目详情.html. Edit local source and regenerate; do not hand-edit generated theme output."
     }
   ],
   "presets": [
-    { "name": "Vision Doc Final", "blocks": [{ "type": "content_unit" }] }
+    {
+      "name": "Project detail"
+    }
   ]
 }
 {% endschema %}
