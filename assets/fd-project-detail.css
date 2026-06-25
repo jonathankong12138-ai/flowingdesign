@@ -12254,4 +12254,247 @@
         line-height: 1.62 !important;
         color: rgba(0,0,0,.58) !important;
       }
+
+      .mobile-393 .m-stat:nth-child(3) {
+        border-top: 0 !important;
+      }
+
+      .mobile-393 #m-mobile-goals.m-media.m-structure-goals[data-bg-count] {
+        position: relative !important;
+        display: block !important;
+        height: 760px !important;
+        min-height: 760px !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        background: #d5e5f4 !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-card-label {
+        position: absolute !important;
+        left: 22px !important;
+        right: 22px !important;
+        top: 110px !important;
+        width: auto !important;
+        max-width: none !important;
+        text-align: left !important;
+        justify-items: start !important;
+        z-index: 6 !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-mobile-pillar-visual {
+        position: absolute !important;
+        left: 22px !important;
+        right: 22px !important;
+        top: 430px !important;
+        bottom: 84px !important;
+        display: block !important;
+        max-width: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        z-index: 4 !important;
+        overflow: hidden !important;
+        -webkit-mask-image: none !important;
+        mask-image: none !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-mobile-pillar-visual .pillar-ugc-wall,
+      .mobile-393 #m-mobile-goals .m-mobile-pillar-visual .pillar-component-wall {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+        width: 100% !important;
+        height: 100% !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        overflow: hidden !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-mobile-pillar-visual :is(.ugc-col, .component-col) {
+        display: block !important;
+        min-height: 0 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        overflow: hidden !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-mobile-pillar-visual :is(.ugc-col, .component-col):nth-child(n + 3) {
+        display: none !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-mobile-pillar-visual :is(.ugc-col, .component-col) .material-track {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        height: 100% !important;
+        gap: 16px !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-mobile-pillar-visual img {
+        display: block !important;
+        width: auto !important;
+        max-width: none !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        object-position: center !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+
+      .mobile-393 #m-mobile-challenges.m-media[data-bg-count] {
+        height: 1180px !important;
+        min-height: 1180px !important;
+        overflow: hidden !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-card-label {
+        position: absolute !important;
+        left: 22px !important;
+        right: 22px !important;
+        top: 220px !important;
+        bottom: 64px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        gap: 42px !important;
+        z-index: 5 !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-friction-intro {
+        max-width: 330px !important;
+        margin: 0 !important;
+        font-size: 14px !important;
+        line-height: 1.7 !important;
+        color: rgba(0,0,0,.58) !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-friction-list {
+        display: grid !important;
+        gap: 34px !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-friction-list.is-switching {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-friction-item {
+        display: grid !important;
+        gap: 12px !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-friction-item + .m-friction-item {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        border-top: 0 !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-friction-title,
+      .mobile-393 #m-mobile-challenges .m-friction-title.blend-difference {
+        max-width: 340px !important;
+        font-size: clamp(28px, 7.2vw, 34px) !important;
+        line-height: 1.12 !important;
+        font-weight: 500 !important;
+        white-space: pre-line !important;
+        color: #000 !important;
+        -webkit-text-fill-color: #000 !important;
+        mix-blend-mode: normal !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-friction-copy {
+        max-width: 340px !important;
+        margin-top: 0 !important;
+        font-size: 13px !important;
+        line-height: 1.66 !important;
+        color: rgba(0,0,0,.56) !important;
+      }
+
+      .mobile-393 .m-timeline .m-arrow::before {
+        filter: invert(1) !important;
+      }
+
+      .mobile-393 .m-timeline .m-arrow {
+        color: #fff !important;
+      }
+
+      .mobile-393 .m-org-overview {
+        position: relative !important;
+        padding-bottom: 170px !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-text {
+        padding-bottom: 0 !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-carousel-controls {
+        position: absolute !important;
+        left: 50% !important;
+        right: auto !important;
+        bottom: 96px !important;
+        width: 210px !important;
+        max-width: calc(100% - 88px) !important;
+        transform: translateX(-50%) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 0 !important;
+        margin: 0 !important;
+        z-index: 12 !important;
+        pointer-events: auto !important;
+      }
+
+      .mobile-393 #m-mobile-research .m-user-title {
+        color: #fff !important;
+        -webkit-text-fill-color: #fff !important;
+        mix-blend-mode: normal !important;
+        opacity: 1 !important;
+      }
+
+      .mobile-393 [data-mobile-persona].m-structure-decision .m-arrow::before {
+        filter: invert(1) !important;
+      }
+
+      .mobile-393 [data-mobile-persona].m-structure-decision .m-arrow {
+        color: #fff !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-shot,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-shot {
+        height: 165px !important;
+        overflow: hidden !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-shot img,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-shot img {
+        object-fit: contain !important;
+        object-position: center center !important;
+        background: transparent !important;
+      }
+
+      .mobile-393 #m-mobile-journey.m-structure-browse {
+        min-height: 1680px !important;
+        height: auto !important;
+        overflow: hidden !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-copy,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-copy {
+        top: 454px !important;
+        bottom: auto !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        padding-bottom: 190px !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-arrow-row,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-arrow-row {
+        bottom: 86px !important;
+      }
     }

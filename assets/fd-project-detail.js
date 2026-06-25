@@ -1925,19 +1925,21 @@ Key Features 前置与 A+ 实拍
         mobileList.classList.add('is-switching');
         mobileList.textContent = '';
         mobileList.setAttribute('aria-live', 'polite');
-        const item = items[next];
-        const title = item.querySelector('.friction-title');
-        const copy = item.querySelector('.friction-copy');
-        const mobileItem = document.createElement('div');
-        mobileItem.className = 'm-friction-item';
-        const mobileTitle = document.createElement('div');
-        mobileTitle.className = 'm-friction-title blend-difference';
-        mobileTitle.textContent = title ? title.textContent.trim() : '';
-        const mobileCopy = document.createElement('div');
-        mobileCopy.className = 'm-friction-copy';
-        mobileCopy.textContent = copy ? copy.textContent.trim() : '';
-        mobileItem.append(mobileTitle, mobileCopy);
-        mobileList.appendChild(mobileItem);
+        items.forEach((item, itemIndex) => {
+          const title = item.querySelector('.friction-title');
+          const copy = item.querySelector('.friction-copy');
+          const mobileItem = document.createElement('div');
+          mobileItem.className = 'm-friction-item';
+          mobileItem.classList.toggle('is-active', itemIndex === next);
+          const mobileTitle = document.createElement('div');
+          mobileTitle.className = 'm-friction-title blend-difference';
+          mobileTitle.textContent = title ? title.textContent.trim() : '';
+          const mobileCopy = document.createElement('div');
+          mobileCopy.className = 'm-friction-copy';
+          mobileCopy.textContent = copy ? copy.textContent.trim() : '';
+          mobileItem.append(mobileTitle, mobileCopy);
+          mobileList.appendChild(mobileItem);
+        });
         mobileList._frictionSwitchTimer = window.setTimeout(() => {
           mobileList.classList.remove('is-switching');
         }, 360);
