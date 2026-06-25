@@ -5,6 +5,13 @@
   {% endif %}
   lang="{{ request.locale.iso_code }}"
 >
+  {% liquid
+    assign hide_global_footer = false
+    if template == 'page.e-commerce-upgrade' or template.suffix == 'e-commerce-upgrade' or page.handle == 'e-commerce-upgrade'
+      assign hide_global_footer = true
+    endif
+  %}
+
   <head>
     {%- if settings.favicon != blank -%}
       <link
@@ -38,7 +45,7 @@
     {{ content_for_header }}
   </head>
 
-  <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
+  <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}{% if hide_global_footer %} template-project-detail template-project-detail--ecommerce-upgrade{% endif %}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
     <div id="header-group">
       {% sections 'header-group' %}
@@ -109,9 +116,11 @@
       {{ content_for_layout }}
     </main>
 
-    <footer>
-      {% sections 'footer-group' %}
-    </footer>
+    {% unless hide_global_footer %}
+      <footer>
+        {% sections 'footer-group' %}
+      </footer>
+    {% endunless %}
 
     {% render 'search-modal' %}
 
@@ -119,96 +128,5 @@
       {% render 'quick-add-modal' %}
     {% endif %}
 
-    {% comment %} 
-      ================================================================
-      🌊 进阶美学：毛玻璃色波浪转场引擎
-      ================================================================
-    {% endcomment %}
-    <div id="global-wave-transition">
-      <svg class="wave-svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
-        <path id="wave-path" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,197.3C960,213,1056,203,1152,181.3C1248,160,1344,128,1392,112L1440,96L1440,320L0,320Z"></path>
-      </svg>
-      <div class="wave-body"></div>
-    </div>
-
-    <style>
-      :root {
-        /* 👇 请在这里修改波浪的颜色！ */
-        /* 目前预设的是：深黑色 (RGB 20,20,20) 且拥有 95% 的不透明度 */
-        /* 如果你的 section.liquid 背景是其他颜色，请替换这里的 rgba 数值 */
-        --koto-wave-color: rgba(20, 20, 20, 0.95); 
-      }
-
-      /* 1. 全局转场遮罩：默认【全屏覆盖】状态 */
-      #global-wave-transition {
-        position: fixed; top: 0; left: 0; width: 100vw; height: 130vh;
-        z-index: 2147483647; pointer-events: none; display: flex; flex-direction: column;
-        transform: translateY(-30vh);
-        transition: none;
-      }
-      
-      .wave-svg { 
-        width: 100%; 
-        height: 200px; 
-        margin-bottom: -1px; 
-        fill: var(--koto-wave-color); 
-      }
-      
-      .wave-body { 
-        flex: 1; 
-        background: var(--koto-wave-color); 
-        width: 100%; 
-        /* 添加高级毛玻璃模糊质感 */
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-      }
-
-      /* 2. 出场效果：旧页面内容渐隐消失，背景不变 */
-      #MainContent { transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1); opacity: 1; }
-      body.is-exiting #MainContent { opacity: 0 !important; }
-
-      /* 3. 入场动画：波浪向下退去 */
-      #global-wave-transition.is-entering {
-        transform: translateY(100vh);
-        transition: transform 1.2s cubic-bezier(0.64, 0, 0.05, 1);
-      }
-      #global-wave-transition.is-idle { transform: translateY(100vh); transition: none; }
-    </style>
-
-    <script>
-      (function initSeamlessTransition() {
-        const wave = document.getElementById('global-wave-transition');
-        const path = document.getElementById('wave-path');
-        if (!wave) return;
-
-        // 有机波浪扰动逻辑
-        function updatePath(o) {
-          const p = (v) => Math.sin(o + v) * 15;
-          path.setAttribute('d', `M0,160 L48,${176+p(1)} C96,${192+p(2)},192,${224+p(3)},288,213.3 C384,203,480,${149+p(4)},576,144 C672,139,768,${181+p(5)},864,197.3 C960,213,1056,${203+p(6)},1152,181.3 C1248,160,1344,${128+p(7)},1392,112 L1440,96 L1440,320 L0,320 Z`);
-        }
-        let t = 0;
-        (function anim() { t += 0.04; updatePath(t); requestAnimationFrame(anim); })();
-
-        // 【入场】：新页面显示时，波浪退下
-        window.addEventListener('pageshow', (e) => {
-          wave.classList.remove('is-entering', 'is-idle');
-          void wave.offsetWidth;
-          setTimeout(() => {
-            wave.classList.add('is-entering');
-            setTimeout(() => { wave.classList.replace('is-entering', 'is-idle'); }, 1250);
-          }, 80);
-        });
-
-        // 【出场】：点击链接时，内容消失
-        document.body.addEventListener('click', (e) => {
-          const link = e.target.closest('a');
-          if (!link || !link.href.startsWith(window.location.origin) || link.hash || link.target === '_blank') return;
-          e.preventDefault();
-          
-          document.body.classList.add('is-exiting'); // 仅内容消失
-          setTimeout(() => { window.location.href = link.href; }, 500); // 消失后跳转
-        });
-      })();
-    </script>
   </body>
 </html>

@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shopify Page Transition Demos</title>
+    <style>
+      :root {
+        --ink: #151515;
+        --paper: #f6f3ee;
+        --muted: #74706a;
+        --line: rgba(21, 21, 21, 0.14);
+        --red: #c15045;
+        --green: #18483b;
+        --blue: #1e3557;
+        --gold: #c39a45;
+        --white: #ffffff;
+        --dark: #101010;
+        --ease: cubic-bezier(0.76, 0, 0.24, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--paper);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: minmax(260px, 340px) 1fr;
+        min-height: 100vh;
+      }
+
+      .rail {
+        border-right: 1px solid var(--line);
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.48);
+      }
+
+      .eyebrow {
+        color: var(--red);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 10px 0 10px;
+        max-width: 10ch;
+        font-size: clamp(34px, 6vw, 58px);
+        line-height: 0.95;
+      }
+
+      .intro {
+        margin: 0 0 22px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .demo-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .demo-button {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px 13px;
+        background: var(--white);
+        color: var(--ink);
+        text-align: left;
+        cursor: pointer;
+        transition:
+          border-color 180ms ease,
+          transform 180ms ease,
+          background 180ms ease;
+      }
+
+      .demo-button:hover,
+      .demo-button.is-active {
+        border-color: rgba(193, 80, 69, 0.7);
+        background: #fff8f6;
+        transform: translateY(-1px);
+      }
+
+      .demo-name {
+        display: block;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .demo-note {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .stage-wrap {
+        display: grid;
+        place-items: center;
+        min-width: 0;
+        padding: 28px;
+      }
+
+      .stage {
+        position: relative;
+        overflow: hidden;
+        width: min(100%, 1120px);
+        min-height: min(760px, calc(100vh - 56px));
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--white);
+        box-shadow: 0 24px 80px rgba(21, 21, 21, 0.08);
+        isolation: isolate;
+      }
+
+      .shop-shell {
+        min-height: inherit;
+        background:
+          linear-gradient(90deg, rgba(21, 21, 21, 0.035) 1px, transparent 1px) 0 0 / 72px 72px,
+          linear-gradient(0deg, rgba(21, 21, 21, 0.035) 1px, transparent 1px) 0 0 / 72px 72px,
+          var(--white);
+      }
+
+      .shop-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        min-height: 74px;
+        padding: 0 34px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        font-size: 20px;
+        font-weight: 900;
+      }
+
+      .nav {
+        display: flex;
+        gap: 18px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .cart-pill {
+        border: 1px solid var(--ink);
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .page {
+        display: grid;
+        grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+        gap: 42px;
+        padding: 46px 46px 52px;
+      }
+
+      .media-card {
+        position: relative;
+        overflow: hidden;
+        min-height: 520px;
+        border-radius: 8px;
+        background: var(--product-bg, #ded8cd);
+      }
+
+      .media-card::before {
+        content: "";
+        position: absolute;
+        inset: 12%;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0) 54%);
+        opacity: 0.75;
+      }
+
+      .shoe {
+        position: absolute;
+        left: 50%;
+        top: 51%;
+        width: min(72%, 460px);
+        aspect-ratio: 2.25 / 1;
+        border-radius: 999px 46px 80px 999px;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 42%),
+          var(--product-color, #151515);
+        transform: translate(-50%, -50%) rotate(-11deg);
+        box-shadow: 0 26px 46px rgba(0, 0, 0, 0.18);
+      }
+
+      .shoe::before {
+        content: "";
+        position: absolute;
+        right: 8%;
+        bottom: -18%;
+        width: 76%;
+        height: 34%;
+        border-radius: 999px;
+        background: #f2f0ec;
+        box-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.1);
+      }
+
+      .shoe::after {
+        content: "";
+        position: absolute;
+        left: 18%;
+        top: 24%;
+        width: 28%;
+        height: 14%;
+        border-top: 3px solid rgba(255, 255, 255, 0.72);
+        border-bottom: 3px solid rgba(255, 255, 255, 0.72);
+        transform: rotate(12deg);
+      }
+
+      .copy {
+        align-self: center;
+      }
+
+      .tag {
+        display: inline-flex;
+        margin-bottom: 18px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 12px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .copy h2 {
+        margin: 0;
+        max-width: 9ch;
+        font-size: clamp(46px, 7vw, 108px);
+        line-height: 0.88;
+      }
+
+      .price {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: 900;
+      }
+
+      .desc {
+        max-width: 48ch;
+        margin: 22px 0 26px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .primary,
+      .secondary {
+        min-height: 46px;
+        border-radius: 4px;
+        padding: 0 18px;
+        font-weight: 900;
+      }
+
+      .primary {
+        border: 1px solid var(--ink);
+        background: var(--ink);
+        color: var(--white);
+      }
+
+      .secondary {
+        border: 1px solid var(--line);
+        background: var(--white);
+        color: var(--ink);
+      }
+
+      .thumbs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 36px;
+      }
+
+      .thumb {
+        min-height: 88px;
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--product-color, #151515) 22%, white);
+      }
+
+      .overlay,
+      .transition-layer {
+        pointer-events: none;
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+      }
+
+      .demo-label {
+        position: absolute;
+        left: 22px;
+        bottom: 20px;
+        z-index: 30;
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        border-radius: 999px;
+        padding: 9px 13px;
+        background: rgba(16, 16, 16, 0.58);
+        color: var(--white);
+        font-size: 12px;
+        font-weight: 800;
+        backdrop-filter: blur(14px);
+      }
+
+      .stage.is-busy .shop-shell {
+        pointer-events: none;
+      }
+
+      .fade-native .shop-shell {
+        animation: fadeNative 720ms var(--ease);
+      }
+
+      @keyframes fadeNative {
+        0% {
+          opacity: 0.08;
+          transform: translateY(10px);
+          filter: blur(8px);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+          filter: blur(0);
+        }
+      }
+
+      .shared-ghost {
+        position: absolute;
+        left: var(--ghost-left);
+        top: var(--ghost-top);
+        width: var(--ghost-width);
+        height: var(--ghost-height);
+        border-radius: 8px;
+        background: var(--product-bg);
+        z-index: 24;
+        animation: sharedGhost 850ms var(--ease) forwards;
+      }
+
+      .shared-ghost::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 51%;
+        width: 62%;
+        aspect-ratio: 2.25 / 1;
+        border-radius: 999px 46px 80px 999px;
+        background: var(--product-color);
+        transform: translate(-50%, -50%) rotate(-11deg);
+      }
+
+      @keyframes sharedGhost {
+        0% {
+          clip-path: inset(72% 58% 10% 10% round 8px);
+          transform: scale(0.72) translate(-18%, 18%);
+        }
+
+        54% {
+          clip-path: inset(0 0 0 0 round 8px);
+          transform: scale(1);
+        }
+
+        100% {
+          opacity: 0;
+          transform: scale(1.015);
+        }
+      }
+
+      .brand-cover {
+        background: var(--dark);
+        transform: translateY(100%);
+        animation: brandCover 980ms var(--ease) forwards;
+      }
+
+      .brand-cover::after {
+        content: attr(data-word);
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        color: var(--white);
+        font-size: clamp(48px, 10vw, 150px);
+        font-weight: 950;
+        letter-spacing: 0;
+        transform: translate(-50%, -50%);
+      }
+
+      @keyframes brandCover {
+        0% {
+          transform: translateY(100%);
+        }
+
+        42%,
+        62% {
+          transform: translateY(0);
+        }
+
+        100% {
+          transform: translateY(-100%);
+        }
+      }
+
+      .panel-stack {
+        overflow: hidden;
+      }
+
+      .panel-stack span {
+        position: absolute;
+        inset: 0;
+        transform: translateX(-101%);
+      }
+
+      .panel-stack span:nth-child(1) {
+        background: var(--green);
+        animation: panelSlide 940ms var(--ease) 0ms forwards;
+      }
+
+      .panel-stack span:nth-child(2) {
+        background: var(--red);
+        animation: panelSlide 940ms var(--ease) 90ms forwards;
+      }
+
+      .panel-stack span:nth-child(3) {
+        background: var(--paper);
+        animation: panelSlide 940ms var(--ease) 180ms forwards;
+      }
+
+      @keyframes panelSlide {
+        0% {
+          transform: translateX(-101%);
+        }
+
+        45%,
+        65% {
+          transform: translateX(0);
+        }
+
+        100% {
+          transform: translateX(101%);
+        }
+      }
+
+      .menu-wipe {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+      }
+
+      .menu-wipe span {
+        background: var(--dark);
+        transform: scaleY(0);
+        transform-origin: bottom;
+        animation: menuWipe 880ms var(--ease) forwards;
+      }
+
+      .menu-wipe span:nth-child(2) {
+        animation-delay: 55ms;
+      }
+
+      .menu-wipe span:nth-child(3) {
+        animation-delay: 110ms;
+      }
+
+      .menu-wipe span:nth-child(4) {
+        animation-delay: 165ms;
+      }
+
+      .menu-wipe span:nth-child(5) {
+        animation-delay: 220ms;
+      }
+
+      @keyframes menuWipe {
+        0% {
+          transform: scaleY(0);
+          transform-origin: bottom;
+        }
+
+        46% {
+          transform: scaleY(1);
+          transform-origin: bottom;
+        }
+
+        54% {
+          transform: scaleY(1);
+          transform-origin: top;
+        }
+
+        100% {
+          transform: scaleY(0);
+          transform-origin: top;
+        }
+      }
+
+      .smooth-swap {
+        display: grid;
+        place-items: center;
+        background: rgba(246, 243, 238, 0.94);
+        backdrop-filter: blur(18px);
+        animation: smoothSwap 760ms var(--ease) forwards;
+      }
+
+      .smooth-swap::before {
+        content: "";
+        width: 120px;
+        height: 120px;
+        border: 2px solid var(--ink);
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 760ms linear infinite;
+      }
+
+      @keyframes smoothSwap {
+        0%,
+        100% {
+          opacity: 0;
+          transform: scale(1.04);
+        }
+
+        34%,
+        68% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .content-fade-out .shop-shell {
+        animation: contentFadeOut 360ms ease forwards;
+      }
+
+      .content-fade-in .shop-shell {
+        animation: contentFadeIn 520ms var(--ease) forwards;
+      }
+
+      @keyframes contentFadeOut {
+        to {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+      }
+
+      @keyframes contentFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .grid-zoom {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        padding: 34px;
+        background: var(--white);
+      }
+
+      .grid-zoom span {
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--product-color) 24%, white);
+        opacity: 0;
+        transform: scale(0.8);
+        animation: gridZoom 720ms var(--ease) forwards;
+      }
+
+      .grid-zoom span:nth-child(5) {
+        background: var(--product-bg);
+        animation-name: heroTile;
+      }
+
+      @keyframes gridZoom {
+        0% {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+
+        35%,
+        60% {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        100% {
+          opacity: 0;
+          transform: scale(1.12);
+        }
+      }
+
+      @keyframes heroTile {
+        0% {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        50% {
+          opacity: 1;
+          transform: scale(4.6);
+        }
+
+        100% {
+          opacity: 0;
+          transform: scale(6);
+        }
+      }
+
+      .type-transition {
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background: var(--dark);
+      }
+
+      .type-transition span {
+        color: var(--white);
+        font-size: clamp(56px, 11vw, 172px);
+        font-weight: 950;
+        line-height: 0.86;
+        text-transform: uppercase;
+        transform: translateY(120%);
+        animation: typeRise 900ms var(--ease) forwards;
+      }
+
+      @keyframes typeRise {
+        0% {
+          transform: translateY(120%);
+        }
+
+        42%,
+        62% {
+          transform: translateY(0);
+        }
+
+        100% {
+          transform: translateY(-120%);
+        }
+      }
+
+      .distortion {
+        overflow: hidden;
+        background: var(--product-bg);
+      }
+
+      .distortion::before,
+      .distortion::after {
+        content: "";
+        position: absolute;
+        inset: -12%;
+        background:
+          radial-gradient(circle at 35% 42%, rgba(255, 255, 255, 0.82), transparent 22%),
+          repeating-linear-gradient(
+            112deg,
+            color-mix(in srgb, var(--product-color) 68%, transparent),
+            color-mix(in srgb, var(--product-color) 68%, transparent) 18px,
+            transparent 18px,
+            transparent 36px
+          );
+        filter: url("#goo");
+        transform: translateX(-100%) skewX(-14deg);
+        animation: distortionMove 980ms var(--ease) forwards;
+      }
+
+      .distortion::after {
+        background: rgba(255, 255, 255, 0.82);
+        mix-blend-mode: overlay;
+        animation-delay: 90ms;
+      }
+
+      @keyframes distortionMove {
+        0% {
+          transform: translateX(-100%) skewX(-16deg) scale(1.05);
+        }
+
+        44%,
+        62% {
+          transform: translateX(0) skewX(-7deg) scale(1.05);
+        }
+
+        100% {
+          transform: translateX(112%) skewX(-16deg) scale(1.05);
+        }
+      }
+
+      .status-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .replay {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: var(--white);
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      @media (max-width: 900px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .rail {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        h1 {
+          max-width: 100%;
+        }
+
+        .demo-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .stage-wrap {
+          padding: 18px;
+        }
+
+        .page {
+          grid-template-columns: 1fr;
+          padding: 26px;
+        }
+
+        .media-card {
+          min-height: 340px;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .rail {
+          padding: 18px;
+        }
+
+        .demo-list {
+          grid-template-columns: 1fr;
+        }
+
+        .stage {
+          min-height: 720px;
+        }
+
+        .shop-header {
+          padding: 0 18px;
+        }
+
+        .nav {
+          display: none;
+        }
+
+        .copy h2 {
+          font-size: 48px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" aria-hidden="true" focusable="false">
+      <filter id="goo">
+        <feTurbulence baseFrequency="0.015 0.035" numOctaves="2" seed="8"></feTurbulence>
+        <feDisplacementMap in="SourceGraphic" scale="34"></feDisplacementMap>
+      </filter>
+    </svg>
+
+    <main class="app">
+      <aside class="rail">
+        <div class="eyebrow">Shopify transition lab</div>
+        <h1>10 个转场 demo</h1>
+        <p class="intro">每个按钮都会模拟一次页面切换。画布里用商品页结构做参考，方便判断哪种效果更适合落到主题里。</p>
+        <div class="demo-list" id="demoList"></div>
+        <div class="status-row">
+          <span id="status">当前：原生轻淡入淡出</span>
+          <button class="replay" type="button" id="replay">重播</button>
+        </div>
+      </aside>
+
+      <section class="stage-wrap">
+        <div class="stage" id="stage">
+          <div class="shop-shell" id="shopShell"></div>
+          <div class="demo-label" id="demoLabel">原生 View Transition 微调</div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const products = [
+        {
+          tag: "Trail Running",
+          title: "OpenRun Pro",
+          price: "$179.95",
+          desc: "轻量开放式聆听，适合长距离训练、城市通勤和高频产品浏览路径。",
+          color: "#151515",
+          bg: "#ded8cd",
+        },
+        {
+          tag: "Daily Training",
+          title: "Aero Pace",
+          price: "$142.00",
+          desc: "更明亮的商品故事页，用大图和稳定导航承载快速购买决策。",
+          color: "#c15045",
+          bg: "#ead8d3",
+        },
+        {
+          tag: "Race Kit",
+          title: "Pulse Elite",
+          price: "$218.00",
+          desc: "适合做商品图共享元素、列表到详情和品牌幕布转场的高对比页面。",
+          color: "#18483b",
+          bg: "#dce7df",
+        },
+        {
+          tag: "City Pack",
+          title: "Metro Flex",
+          price: "$128.00",
+          desc: "保持购物链路清爽，强调流畅但不抢过商品本身的页面切换。",
+          color: "#1e3557",
+          bg: "#dce3ef",
+        },
+      ];
+
+      const demos = [
+        {
+          id: "fade-native",
+          name: "原生轻淡入淡出",
+          note: "低风险，适合全站",
+          label: "原生 View Transition 微调",
+          run: runFadeNative,
+        },
+        {
+          id: "shared",
+          name: "商品图共享元素",
+          note: "集合页到商品页",
+          label: "商品图共享元素转场",
+          run: runSharedElement,
+        },
+        {
+          id: "brand-cover",
+          name: "品牌幕布覆盖",
+          note: "高端、克制、稳定",
+          label: "黑白品牌幕布 Cover",
+          run: runBrandCover,
+        },
+        {
+          id: "panel",
+          name: "双层 Panel Slide",
+          note: "潮流/运动感强",
+          label: "双层 Panel Slide",
+          run: runPanelSlide,
+        },
+        {
+          id: "menu",
+          name: "菜单导航专属",
+          note: "只用于主导航",
+          label: "菜单导航专属转场",
+          run: runMenuWipe,
+        },
+        {
+          id: "smooth",
+          name: "Smooth Swap",
+          note: "Barba/GSAP 风格",
+          label: "Barba + GSAP Smooth Swap",
+          run: runSmoothSwap,
+        },
+        {
+          id: "content",
+          name: "局部内容淡入",
+          note: "Header/Footer 稳定",
+          label: "局部内容 Fade",
+          run: runContentFade,
+        },
+        {
+          id: "grid",
+          name: "Grid Zoom",
+          note: "商品列表到详情",
+          label: "产品网格 Zoom",
+          run: runGridZoom,
+        },
+        {
+          id: "type",
+          name: "Kinetic Typography",
+          note: "系列/活动页适合",
+          label: "Typography Kinetic",
+          run: runTypeTransition,
+        },
+        {
+          id: "distortion",
+          name: "WebGL 感扭曲",
+          note: "活动页/首页慎用",
+          label: "Texture Distortion",
+          run: runDistortion,
+        },
+      ];
+
+      const stage = document.querySelector("#stage");
+      const shell = document.querySelector("#shopShell");
+      const list = document.querySelector("#demoList");
+      const label = document.querySelector("#demoLabel");
+      const status = document.querySelector("#status");
+      const replay = document.querySelector("#replay");
+      let activeDemo = 0;
+      let productIndex = 0;
+      let busy = false;
+
+      function renderButtons() {
+        list.innerHTML = demos
+          .map(
+            (demo, index) => `
+              <button class="demo-button ${index === activeDemo ? "is-active" : ""}" type="button" data-index="${index}">
+                <span class="demo-name">${index + 1}. ${demo.name}</span>
+                <span class="demo-note">${demo.note}</span>
+              </button>
+            `
+          )
+          .join("");
+      }
+
+      function renderProduct(index) {
+        const product = products[index % products.length];
+        shell.style.setProperty("--product-color", product.color);
+        shell.style.setProperty("--product-bg", product.bg);
+        shell.innerHTML = `
+          <header class="shop-header">
+            <div class="brand">FLOWING</div>
+            <nav class="nav" aria-label="Demo navigation">
+              <span>Shop</span>
+              <span>Stories</span>
+              <span>Support</span>
+            </nav>
+            <div class="cart-pill">Cart 02</div>
+          </header>
+          <article class="page">
+            <div class="media-card" id="mediaCard">
+              <div class="shoe"></div>
+            </div>
+            <div class="copy">
+              <span class="tag">${product.tag}</span>
+              <h2>${product.title}</h2>
+              <div class="price">${product.price}</div>
+              <p class="desc">${product.desc}</p>
+              <div class="actions">
+                <button class="primary" type="button">Add to cart</button>
+                <button class="secondary" type="button">View details</button>
+              </div>
+              <div class="thumbs">
+                <div class="thumb"></div>
+                <div class="thumb"></div>
+                <div class="thumb"></div>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function nextProduct() {
+        productIndex = (productIndex + 1) % products.length;
+        renderProduct(productIndex);
+      }
+
+      function setActive(index) {
+        activeDemo = index;
+        renderButtons();
+        label.textContent = demos[index].label;
+        status.textContent = `当前：${demos[index].name}`;
+      }
+
+      function makeLayer(className, html = "") {
+        const layer = document.createElement("div");
+        layer.className = `transition-layer ${className}`;
+        layer.innerHTML = html;
+        stage.append(layer);
+        return layer;
+      }
+
+      function wait(ms) {
+        return new Promise((resolve) => {
+          window.setTimeout(resolve, ms);
+        });
+      }
+
+      async function play(index = activeDemo) {
+        if (busy) return;
+        busy = true;
+        setActive(index);
+        stage.className = "stage is-busy";
+        await demos[index].run();
+        stage.querySelectorAll(".transition-layer").forEach((node) => node.remove());
+        stage.className = "stage";
+        busy = false;
+      }
+
+      async function runFadeNative() {
+        nextProduct();
+        stage.classList.add("fade-native");
+        await wait(760);
+      }
+
+      async function runSharedElement() {
+        const media = document.querySelector("#mediaCard");
+        const rect = media.getBoundingClientRect();
+        const stageRect = stage.getBoundingClientRect();
+        const product = products[(productIndex + 1) % products.length];
+        const ghost = makeLayer("shared-ghost");
+        ghost.style.setProperty("--ghost-left", `${rect.left - stageRect.left}px`);
+        ghost.style.setProperty("--ghost-top", `${rect.top - stageRect.top}px`);
+        ghost.style.setProperty("--ghost-width", `${rect.width}px`);
+        ghost.style.setProperty("--ghost-height", `${rect.height}px`);
+        ghost.style.setProperty("--product-color", product.color);
+        ghost.style.setProperty("--product-bg", product.bg);
+        await wait(340);
+        nextProduct();
+        await wait(560);
+      }
+
+      async function runBrandCover() {
+        const layer = makeLayer("brand-cover");
+        layer.dataset.word = "FLOWING";
+        await wait(470);
+        nextProduct();
+        await wait(560);
+      }
+
+      async function runPanelSlide() {
+        makeLayer("panel-stack", "<span></span><span></span><span></span>");
+        await wait(500);
+        nextProduct();
+        await wait(620);
+      }
+
+      async function runMenuWipe() {
+        makeLayer("menu-wipe", "<span></span><span></span><span></span><span></span><span></span>");
+        await wait(500);
+        nextProduct();
+        await wait(620);
+      }
+
+      async function runSmoothSwap() {
+        makeLayer("smooth-swap");
+        await wait(350);
+        nextProduct();
+        await wait(520);
+      }
+
+      async function runContentFade() {
+        stage.classList.add("content-fade-out");
+        await wait(370);
+        stage.classList.remove("content-fade-out");
+        nextProduct();
+        stage.classList.add("content-fade-in");
+        await wait(550);
+      }
+
+      async function runGridZoom() {
+        makeLayer(
+          "grid-zoom",
+          "<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>"
+        );
+        await wait(430);
+        nextProduct();
+        await wait(520);
+      }
+
+      async function runTypeTransition() {
+        const product = products[(productIndex + 1) % products.length];
+        makeLayer("type-transition", `<span>${product.tag.split(" ")[0]}</span>`);
+        await wait(470);
+        nextProduct();
+        await wait(560);
+      }
+
+      async function runDistortion() {
+        const product = products[(productIndex + 1) % products.length];
+        const layer = makeLayer("distortion");
+        layer.style.setProperty("--product-color", product.color);
+        layer.style.setProperty("--product-bg", product.bg);
+        await wait(480);
+        nextProduct();
+        await wait(620);
+      }
+
+      list.addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-index]");
+        if (!button) return;
+        play(Number(button.dataset.index));
+      });
+
+      replay.addEventListener("click", () => play(activeDemo));
+
+      renderButtons();
+      renderProduct(productIndex);
+      play(0);
+    </script>
+  </body>
+</html>

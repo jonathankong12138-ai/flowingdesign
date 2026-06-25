@@ -9,6 +9,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Urbanist:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
 {{ "fd-project-detail.css" | asset_url | stylesheet_tag }}
 
+<style>
+  .template-project-detail--ecommerce-upgrade .contact-form,
+  .template-project-detail--ecommerce-upgrade .shopify-section:has(.contact-form) {
+    display: none !important;
+  }
+</style>
+
 <script>
   window.projectDetailAssetMap = {
     "电脑端素材/产研概念导入.webp": {{ "fd-project-detail-3c191f2ed4-asset.webp" | asset_url | json }},
