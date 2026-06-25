@@ -76,6 +76,48 @@
   window.projectDetailAssetUrl = function projectDetailAssetUrl(path) {
     return window.projectDetailAssetMap[path] || path;
   };
+  window.projectDetailMobileFinalImages = [
+    {%- assign mobile_final_separator = '' -%}
+    {%- if section.settings.mobile_final_image_1 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_1 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_1.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_2 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_2 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_2.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_3 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_3 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_3.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_4 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_4 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_4.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_5 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_5 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_5.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_6 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_6 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_6.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_7 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_7 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_7.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_8 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_8 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_8.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_9 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_9 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_9.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_10 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_10 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_10.alt | default: '页面浏览图片' | json }} }
+    {%- endif -%}
+  ];
 </script>
 
 <div class="fd-project-detail-section" data-section-id="{{ section.id }}">
@@ -684,7 +726,7 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
       <div class="m-card-label__sub"></div>
     </div>
   </section>
-  <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" aria-label="页面浏览预览">
+  <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" data-mobile-final-count="{{ section.settings.mobile_final_image_count | default: 3 }}" aria-label="页面浏览预览">
     <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
     <div class="m-final-mobile__head">
       <div class="m-final-mobile__controls">
@@ -708,6 +750,17 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
           <span class="next-title blend-difference">GTM视觉整合设计</span>
           <a class="next-cta-arrow" href="#" aria-label="查看下一个项目" onclick="event.preventDefault()"></a>
         </div>
+        <div class="next-bottom">
+          <div class="next-footer-bottom next-footer-anim delay-3">
+            <div class="next-footer-note-head">
+              <p class="next-footer-note-title">Design in Flow. Touch the World.</p>
+              <button class="footer-btn footer-btn--solid" type="button" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <span>Back to Top</span>
+              </button>
+            </div>
+            <p class="next-footer-note-desc">All visual works, design concepts, interface mockups, branding explorations, and original imagery presented on this website are the intellectual property of the author and are protected under copyright law.<br><br>© 2026. All rights reserved.</p>
+          </div>
+        </div>
         <div class="next-thumb" role="link" aria-label="Next project preview">
           <div class="thumb-placeholder" aria-hidden="true"></div>
         </div>
@@ -729,6 +782,69 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
     {
       "type": "paragraph",
       "content": "Generated from 项目详情.html. Edit local source and regenerate; do not hand-edit generated theme output."
+    },
+    {
+      "type": "header",
+      "content": "移动端最后板块"
+    },
+    {
+      "type": "range",
+      "id": "mobile_final_image_count",
+      "label": "展示图片数量",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_1",
+      "label": "移动端图片 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_2",
+      "label": "移动端图片 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_3",
+      "label": "移动端图片 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_4",
+      "label": "移动端图片 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_5",
+      "label": "移动端图片 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_6",
+      "label": "移动端图片 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_7",
+      "label": "移动端图片 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_8",
+      "label": "移动端图片 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_9",
+      "label": "移动端图片 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_10",
+      "label": "移动端图片 10"
     }
   ],
   "presets": [

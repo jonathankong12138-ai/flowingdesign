@@ -137,20 +137,32 @@
     const quotes = Array.from(document.querySelectorAll('#c5 .quote, .m-research-intro .m-research-quote'));
     if (!quotes.length || !window.researchQuotes.length) return;
     let index = parseInt(quotes[0].dataset.quoteIndex || '0', 10) || 0;
+    const animateQuoteChange = (quote, nextIndex) => {
+      window.clearTimeout(quote._researchQuoteOutTimer);
+      window.clearTimeout(quote._researchQuoteInTimer);
+      quote.dataset.quoteIndex = String(nextIndex);
+      quote.classList.remove('is-entering', 'is-switching');
+      quote.classList.add('is-leaving');
+      quote._researchQuoteOutTimer = window.setTimeout(() => {
+        quote.textContent = window.researchQuotes[nextIndex];
+        quote.classList.remove('is-leaving');
+        quote.classList.add('is-entering');
+        quote._researchQuoteInTimer = window.setTimeout(() => {
+          quote.classList.remove('is-entering');
+        }, 560);
+      }, 180);
+    };
     quotes.forEach((quote) => {
       quote.dataset.quoteIndex = String(index);
       quote.textContent = window.researchQuotes[index];
+      quote.classList.remove('is-leaving', 'is-entering', 'is-switching');
     });
     window.clearInterval(window.researchQuoteTimer);
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     window.researchQuoteTimer = window.setInterval(() => {
       index = (index + 1) % window.researchQuotes.length;
       quotes.forEach((quote) => {
-        quote.dataset.quoteIndex = String(index);
-        quote.classList.remove('is-switching');
-        void quote.offsetWidth;
-        quote.textContent = window.researchQuotes[index];
-        quote.classList.add('is-switching');
+        animateQuoteChange(quote, index);
       });
     }, 3200);
   };
@@ -1907,21 +1919,28 @@ Key Features 前置与 A+ 实拍
       mobileRootEl.dataset.bgCount = String(items.length);
       if (mobileIntro && intro) mobileIntro.textContent = intro.textContent.trim();
       if (mobileList) {
+        window.clearTimeout(mobileList._frictionSwitchTimer);
+        mobileList.classList.remove('is-switching');
+        void mobileList.offsetWidth;
+        mobileList.classList.add('is-switching');
         mobileList.textContent = '';
-        items.forEach((item) => {
-          const title = item.querySelector('.friction-title');
-          const copy = item.querySelector('.friction-copy');
-          const mobileItem = document.createElement('div');
-          mobileItem.className = 'm-friction-item';
-          const mobileTitle = document.createElement('div');
-          mobileTitle.className = 'm-friction-title blend-difference';
-          mobileTitle.textContent = title ? title.textContent.trim() : '';
-          const mobileCopy = document.createElement('div');
-          mobileCopy.className = 'm-friction-copy';
-          mobileCopy.textContent = copy ? copy.textContent.trim() : '';
-          mobileItem.append(mobileTitle, mobileCopy);
-          mobileList.appendChild(mobileItem);
-        });
+        mobileList.setAttribute('aria-live', 'polite');
+        const item = items[next];
+        const title = item.querySelector('.friction-title');
+        const copy = item.querySelector('.friction-copy');
+        const mobileItem = document.createElement('div');
+        mobileItem.className = 'm-friction-item';
+        const mobileTitle = document.createElement('div');
+        mobileTitle.className = 'm-friction-title blend-difference';
+        mobileTitle.textContent = title ? title.textContent.trim() : '';
+        const mobileCopy = document.createElement('div');
+        mobileCopy.className = 'm-friction-copy';
+        mobileCopy.textContent = copy ? copy.textContent.trim() : '';
+        mobileItem.append(mobileTitle, mobileCopy);
+        mobileList.appendChild(mobileItem);
+        mobileList._frictionSwitchTimer = window.setTimeout(() => {
+          mobileList.classList.remove('is-switching');
+        }, 360);
       }
       if (count) count.textContent = counterText(next, items.length);
       applyTextProtection(mobileRootEl);
@@ -2026,33 +2045,107 @@ Key Features 前置与 A+ 实拍
       const mobileWorkflow = mobileRoot.querySelector('.m-org-workflow');
       const bodyText = desktopRoot.querySelector('.c-org-l .body-text');
       const teamChips = Array.from(desktopRoot.querySelectorAll('.org-team-chip'));
-      if (mobileOverview) {
+      const desktopGoalsTitle = desktopRoot.querySelector('.org-left-top .org-title');
+      const desktopGoalsSub = desktopRoot.querySelector('.org-left-top .org-sub');
+      const desktopWorkflowTitle = desktopRoot.querySelector('.org-left-bottom .org-title');
+      const desktopWorkflowList = desktopRoot.querySelector('.org-left-bottom .org-list');
+      const orgSlides = [
+        {
+          type: 'team',
+          nodes: teamChips.map((chip) => chip.textContent.trim()).filter(Boolean),
+          copy: bodyText ? bodyText.textContent.trim() : ''
+        },
+        {
+          type: 'goals',
+          title: desktopGoalsTitle ? desktopGoalsTitle.textContent.trim() : '',
+          copy: desktopGoalsSub ? desktopGoalsSub.textContent.trim() : ''
+        },
+        {
+          type: 'workflow',
+          title: desktopWorkflowTitle ? desktopWorkflowTitle.textContent.trim() : '',
+          copy: desktopWorkflowList ? desktopWorkflowList.textContent.trim() : ''
+        }
+      ];
+      function renderMobileOrgSlide(index = 0) {
+        if (!mobileOverview || !orgSlides.length) return;
+        const next = ((index % orgSlides.length) + orgSlides.length) % orgSlides.length;
+        const slide = orgSlides[next];
         const text = mobileOverview.querySelector('.m-org-text');
-        const nodes = Array.from(mobileOverview.querySelectorAll('.m-org-node'));
-        if (text && bodyText) text.textContent = bodyText.textContent.trim();
-        teamChips.forEach((chip, index) => {
-          if (nodes[index]) nodes[index].textContent = chip.textContent.trim();
-        });
+        const nodes = mobileOverview.querySelector('.m-org-nodes');
+        if (!text || !nodes) return;
+        mobileOverview.dataset.mobileOrgIndex = String(next);
+        mobileOverview.dataset.mobileOrgCount = String(orgSlides.length);
+        nodes.textContent = '';
+        text.textContent = '';
+        text.className = 'm-org-text';
+        text.classList.add(`m-org-text--${slide.type}`);
+        if (slide.type === 'team') {
+          slide.nodes.forEach((label) => {
+            const node = document.createElement('span');
+            node.className = 'm-org-node';
+            node.textContent = label;
+            nodes.appendChild(node);
+          });
+          text.textContent = slide.copy;
+        } else {
+          const title = document.createElement('div');
+          title.className = 'm-org-slide-title';
+          title.textContent = slide.title;
+          const copy = document.createElement('div');
+          copy.className = 'm-org-slide-copy';
+          copy.textContent = slide.copy;
+          text.append(title, copy);
+        }
+        let controls = mobileOverview.querySelector('.m-org-carousel-controls');
+        if (!controls) {
+          controls = document.createElement('div');
+          controls.className = 'm-org-carousel-controls';
+          controls.innerHTML = [
+            '<button class="m-arrow m-arrow--dark" type="button" aria-label="上一个团队内容" data-mobile-org-step="-1"></button>',
+            '<button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一个团队内容" data-mobile-org-step="1"></button>'
+          ].join('');
+          mobileOverview.appendChild(controls);
+          controls.querySelectorAll('[data-mobile-org-step]').forEach((button) => {
+            button.addEventListener('click', () => {
+              const current = parseInt(mobileOverview.dataset.mobileOrgIndex || '0', 10) || 0;
+              const step = parseInt(button.dataset.mobileOrgStep || '0', 10) || 0;
+              renderMobileOrgSlide(current + step);
+            });
+          });
+        }
+        applyTextProtection(mobileOverview);
+      }
+      if (mobileOverview) {
+        renderMobileOrgSlide(parseInt(mobileOverview.dataset.mobileOrgIndex || '0', 10) || 0);
+        if (!mobileOverview._mobileOrgSwipeBound) {
+          mobileOverview._mobileOrgSwipeBound = true;
+          mobileOverview.addEventListener('touchstart', (event) => {
+            mobileOverview._mobileOrgTouchX = event.touches && event.touches[0] ? event.touches[0].clientX : 0;
+          }, { passive: true });
+          mobileOverview.addEventListener('touchend', (event) => {
+            const touch = event.changedTouches && event.changedTouches[0];
+            if (!touch || !Number.isFinite(mobileOverview._mobileOrgTouchX)) return;
+            const delta = touch.clientX - mobileOverview._mobileOrgTouchX;
+            if (Math.abs(delta) < 42) return;
+            const current = parseInt(mobileOverview.dataset.mobileOrgIndex || '0', 10) || 0;
+            renderMobileOrgSlide(current + (delta < 0 ? 1 : -1));
+          }, { passive: true });
+        }
       }
       if (mobileGoals) {
         const title = mobileGoals.querySelector('.m-card-label__title');
         const sub = mobileGoals.querySelector('.m-card-label__sub');
-        const desktopTitle = desktopRoot.querySelector('.org-left-top .org-title');
-        const desktopSub = desktopRoot.querySelector('.org-left-top .org-sub');
-        if (title && desktopTitle) title.textContent = desktopTitle.textContent.trim();
-        if (sub && desktopSub) sub.textContent = desktopSub.textContent.trim();
+        if (title && desktopGoalsTitle) title.textContent = desktopGoalsTitle.textContent.trim();
+        if (sub && desktopGoalsSub) sub.textContent = desktopGoalsSub.textContent.trim();
       }
       if (mobileWorkflow) {
         const value = mobileWorkflow.querySelector('.m-workflow-value');
         const title = mobileWorkflow.querySelector('.m-workflow-title');
         const list = mobileWorkflow.querySelector('.m-workflow-list');
-        const desktopTitle = desktopRoot.querySelector('.org-left-bottom .org-title');
-        const desktopList = desktopRoot.querySelector('.org-left-bottom .org-list');
         if (value) value.textContent = '';
-        if (title && desktopTitle) title.textContent = desktopTitle.textContent.trim();
-        if (list && desktopList) list.textContent = desktopList.textContent.trim();
+        if (title && desktopWorkflowTitle) title.textContent = desktopWorkflowTitle.textContent.trim();
+        if (list && desktopWorkflowList) list.textContent = desktopWorkflowList.textContent.trim();
       }
-      applyTextProtection(mobileOverview);
       applyTextProtection(mobileGoals);
       applyTextProtection(mobileWorkflow);
     }
@@ -2125,7 +2218,7 @@ Key Features 前置与 A+ 实拍
       if (img && slide.image) {
         img.style.setProperty(
           'background',
-          `linear-gradient(180deg, rgba(0,0,0,.2) 0%, rgba(0,0,0,.18) 42%, rgba(0,0,0,.54) 100%), url("${window.projectDetailAssetUrl(slide.image)}") center / cover no-repeat`,
+          `url("${window.projectDetailAssetUrl(slide.image)}") center / cover no-repeat`,
           'important'
         );
       }
@@ -2340,16 +2433,35 @@ Key Features 前置与 A+ 实拍
       const root = mobileRoot.querySelector('.m-final-mobile');
       const frame = root && root.querySelector('.m-final-mobile__frame');
       const desktopShots = Array.from(document.querySelectorAll('#c11 .final-shot'));
-      if (!root || !frame || !desktopShots.length) return;
-      const desktopSrcs = desktopShots.map((shot) => shot.getAttribute('src') || '');
+      if (!root || !frame) return;
+      const maxCount = Math.max(1, parseInt(root.dataset.mobileFinalCount || '0', 10) || desktopShots.length || 1);
+      const configuredShots = Array.isArray(window.projectDetailMobileFinalImages)
+        ? window.projectDetailMobileFinalImages
+            .filter((shot) => shot && shot.src)
+            .slice(0, maxCount)
+            .map((shot, index) => ({
+              src: shot.src,
+              alt: shot.alt || `页面浏览素材 ${index + 1}`
+            }))
+        : [];
+      const fallbackShots = desktopShots
+        .slice(0, maxCount)
+        .map((shot, index) => ({
+          src: shot.getAttribute('src') || '',
+          alt: shot.getAttribute('alt') || `页面浏览素材 ${index + 1}`
+        }))
+        .filter((shot) => shot.src);
+      const sourceShots = configuredShots.length ? configuredShots : fallbackShots;
+      if (!sourceShots.length) return;
+      const desktopSrcs = sourceShots.map((shot) => shot.src);
       const currentSrcs = Array.from(frame.querySelectorAll('.m-final-mobile__shot')).map((shot) => shot.getAttribute('src') || '');
       if (desktopSrcs.join('|') === currentSrcs.join('|')) return;
       frame.textContent = '';
-      desktopShots.forEach((shot, index) => {
+      sourceShots.forEach((shot, index) => {
         const img = document.createElement('img');
         img.className = `m-final-mobile__shot${index === 0 ? ' is-active' : ''}`;
-        img.src = shot.getAttribute('src') || '';
-        img.alt = shot.getAttribute('alt') || `页面浏览素材 ${index + 1}`;
+        img.src = shot.src;
+        img.alt = shot.alt;
         img.loading = index === 0 ? 'eager' : 'lazy';
         frame.appendChild(img);
       });
@@ -2364,6 +2476,27 @@ Key Features 前置与 A+ 实拍
       });
     }
 
+    function scrollMobileFinalFrame(frame, targetTop) {
+      const duration = 220;
+      const startTop = frame.scrollTop;
+      const distance = targetTop - startTop;
+      const startTime = window.performance.now();
+      if (frame._mobileFinalScrollRaf) {
+        window.cancelAnimationFrame(frame._mobileFinalScrollRaf);
+      }
+      const tick = (now) => {
+        const progress = Math.min(1, (now - startTime) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        frame.scrollTop = startTop + distance * eased;
+        if (progress < 1) {
+          frame._mobileFinalScrollRaf = window.requestAnimationFrame(tick);
+          return;
+        }
+        frame._mobileFinalScrollRaf = null;
+      };
+      frame._mobileFinalScrollRaf = window.requestAnimationFrame(tick);
+    }
+
     function setMobileFinal(index) {
       const root = mobileRoot.querySelector('.m-final-mobile');
       if (!root) return;
@@ -2376,7 +2509,7 @@ Key Features 前置与 A+ 实拍
       const frameStyle = window.getComputedStyle(frame);
       const framePaddingTop = parseFloat(frameStyle.paddingTop) || 0;
       const targetTop = Math.max(0, shots[next].offsetTop - framePaddingTop);
-      frame.scrollTo({ top: targetTop, behavior: 'smooth' });
+      scrollMobileFinalFrame(frame, targetTop);
     }
 
     mobileRoot.querySelectorAll('[data-mobile-final-step]').forEach((button) => {
