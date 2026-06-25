@@ -6,9 +6,14 @@
   lang="{{ request.locale.iso_code }}"
 >
   {% liquid
-    assign hide_global_footer = false
+    assign is_ecommerce_upgrade = false
     if template == 'page.e-commerce-upgrade' or template.suffix == 'e-commerce-upgrade' or page.handle == 'e-commerce-upgrade'
-      assign hide_global_footer = true
+      assign is_ecommerce_upgrade = true
+    endif
+
+    assign show_home_footer = false
+    if request.page_type == 'index' or template.name == 'index'
+      assign show_home_footer = true
     endif
   %}
 
@@ -45,7 +50,7 @@
     {{ content_for_header }}
   </head>
 
-  <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}{% if hide_global_footer %} template-project-detail template-project-detail--ecommerce-upgrade{% endif %}">
+  <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}{% if is_ecommerce_upgrade %} template-project-detail template-project-detail--ecommerce-upgrade{% endif %}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
     <div id="header-group">
       {% sections 'header-group' %}
@@ -116,11 +121,11 @@
       {{ content_for_layout }}
     </main>
 
-    {% unless hide_global_footer %}
+    {% if show_home_footer %}
       <footer>
         {% sections 'footer-group' %}
       </footer>
-    {% endunless %}
+    {% endif %}
 
     {% render 'search-modal' %}
 
