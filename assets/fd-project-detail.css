@@ -2777,6 +2777,19 @@
       color: rgba(255,255,255,0.78);
     }
 
+    .m-state-text {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0 0 0 0) !important;
+      clip-path: inset(50%) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
     .m-timeline {
       background: #2c4359;
       color: #fff;
@@ -11114,6 +11127,7 @@
       }
     }
 
+    /* Narrow tablet projection: keep the mobile narrative shell until the desktop canvas has enough room. */
     @media (min-width: 768px) and (max-width: 899px) {
       body {
         overflow-x: clip;
@@ -11193,6 +11207,43 @@
       .mobile-393 #m-mobile-research .m-user-stats,
       .mobile-393 .m-user-research .m-user-stats {
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      }
+
+      .mobile-393 img,
+      .mobile-393 video,
+      .mobile-393 canvas {
+        max-width: 100% !important;
+      }
+
+      .mobile-393 .mobile-hero-video {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-mobile-pillar-visual .is-mobile-clone,
+      .mobile-393 #m-mobile-goals .m-mobile-pillar-visual .pillar-ugc-wall,
+      .mobile-393 #m-mobile-goals .m-mobile-pillar-visual .pillar-component-wall {
+        left: 0 !important;
+        right: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        transform: none !important;
+      }
+
+      .mobile-393 .m-final-mobile__frame {
+        overflow-x: hidden !important;
+      }
+
+      .mobile-393 .m-final-mobile__shot {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        object-fit: contain !important;
+      }
+
+      .outro {
+        display: none !important;
       }
     }
 
@@ -11609,7 +11660,7 @@
       }
     }
 
-    /* Mobile arrow unification: final override. */
+    /* Mobile governance: the consolidated final layer for touch controls, status, and narrow-phone layout. */
     @media (max-width: 767px) {
       .mobile-393 :is(.m-arrow-row, .m-final-mobile__controls, .nav-arrows--row) {
         display: flex !important;
@@ -11625,7 +11676,16 @@
       }
 
       .mobile-393 :is(.m-switch-count, .switch-count) {
-        display: none !important;
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0 0 0 0) !important;
+        clip-path: inset(50%) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
       }
 
       .mobile-393 :is(.m-arrow, .nav-btn) {
@@ -12496,5 +12556,30 @@
       .mobile-393 #m-mobile-journey .m-arrow-row,
       .mobile-393 #m-mobile-journey.m-structure-browse .m-arrow-row {
         bottom: 86px !important;
+      }
+    }
+
+    @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+      .mobile-393 *,
+      .mobile-393 *::before,
+      .mobile-393 *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      .mobile-393 .material-track,
+      .mobile-393 .c-libs-marquee-track,
+      .mobile-393 .glacier-wave-bg {
+        animation: none !important;
+        transform: none !important;
+      }
+
+      .mobile-393 .m-journey-shot img,
+      .mobile-393 .m-final-mobile__shot,
+      .mobile-393 .m-research-quote {
+        transition: none !important;
+        filter: none !important;
       }
     }

@@ -1,7 +1,7 @@
 {% comment %}
-  Generated from 项目详情.html by scripts/project-detail-shopify-export.mjs.
-  Keep local edits in the source file, then regenerate this Shopify package.
-  Local source map: output/shopify/project-detail/source-map.md
+  Shopify source of truth for the e-commerce-upgrade project detail page.
+  The original 项目详情.html export source is not present in this repository.
+  Keep local edits here together with assets/fd-project-detail.css and assets/fd-project-detail.js.
 {% endcomment %}
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -520,7 +520,7 @@ Challenges</div>
       <span class="m-switch-count" aria-live="polite">01 / 03</span>
     </div>
     <div class="m-overlay m-card-label">
-      <div class="m-card-label__title blend-difference m-mobile-pillar-tabs" role="tablist" aria-label="三个整体目标"></div>
+      <div class="m-card-label__title blend-difference m-mobile-pillar-tabs" role="group" aria-label="三个整体目标"></div>
       <div class="m-card-label__sub"></div>
     </div>
     <div class="m-overlay m-structure-target">Target</div>
@@ -685,11 +685,11 @@ Challenges</div>
       <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
       <span class="m-switch-count" aria-live="polite">01 / 04</span>
     </div>
-    <div class="m-overlay m-journey-tabs" role="tablist" aria-label="用户旅程阶段">
-      <button class="m-journey-tab is-active" type="button" role="tab" aria-selected="true" data-mobile-journey-index="0">认知与入站</button>
-      <button class="m-journey-tab" type="button" role="tab" aria-selected="false" data-mobile-journey-index="1">浏览与定位</button>
-      <button class="m-journey-tab" type="button" role="tab" aria-selected="false" data-mobile-journey-index="2">评估与对比</button>
-      <button class="m-journey-tab" type="button" role="tab" aria-selected="false" data-mobile-journey-index="3">转化与加购</button>
+    <div class="m-overlay m-journey-tabs" role="group" aria-label="用户旅程阶段">
+      <button class="m-journey-tab is-active" type="button" aria-pressed="true" data-mobile-journey-index="0">认知与入站</button>
+      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="1">浏览与定位</button>
+      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="2">评估与对比</button>
+      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="3">转化与加购</button>
     </div>
     <div class="m-overlay m-journey-copy">用户通过 Google 搜索品牌词进入，快速扫视首屏，试图寻找官方背书与核心科技解释。期望立刻了解品牌核心价值、官方购物保障（DTC优势）。
 "Technical language feel foreign." - Olfa Fdhila

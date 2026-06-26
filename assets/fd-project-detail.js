@@ -1,3 +1,50 @@
+  const fdReducedMotionQuery = window.matchMedia
+    ? window.matchMedia('(prefers-reduced-motion: reduce)')
+    : null;
+  window.fdProjectPrefersReducedMotion = function fdProjectPrefersReducedMotion() {
+    return !!(fdReducedMotionQuery && fdReducedMotionQuery.matches);
+  };
+
+  window.fdProjectSetStatusText = function fdProjectSetStatusText(root, text) {
+    if (!root || !text) return;
+    let status = root.querySelector(':scope > .m-state-text');
+    if (!status) {
+      status = document.createElement('span');
+      status.className = 'm-state-text';
+      status.setAttribute('aria-live', 'polite');
+      status.setAttribute('aria-atomic', 'true');
+      root.appendChild(status);
+    }
+    status.textContent = text;
+  };
+
+  window.fdProjectStopContinuousMotion = function fdProjectStopContinuousMotion() {
+    window.clearInterval(window.flowNodeTimer);
+    window.flowNodeTimer = null;
+    window.clearInterval(window.researchQuoteTimer);
+    window.researchQuoteTimer = null;
+    document.querySelectorAll('[data-mobile-journey] .m-journey-shot').forEach((shot) => {
+      if (shot._mobileJourneyShotTimer) {
+        window.clearInterval(shot._mobileJourneyShotTimer);
+        shot._mobileJourneyShotTimer = null;
+      }
+    });
+    document.querySelectorAll('#c9').forEach((root) => {
+      if (root._journeyShotTimer) {
+        window.clearInterval(root._journeyShotTimer);
+        root._journeyShotTimer = null;
+      }
+    });
+    document.querySelectorAll('video[autoplay]').forEach((video) => {
+      if (video.closest('.mobile-393')) video.pause();
+    });
+  };
+
+  if (fdReducedMotionQuery && fdReducedMotionQuery.addEventListener) {
+    fdReducedMotionQuery.addEventListener('change', () => {
+      if (window.fdProjectPrefersReducedMotion()) window.fdProjectStopContinuousMotion();
+    });
+  }
 
   window.ugcImagePool = [
     '250427_Shokz_London_Marathon_01533 1.webp',
@@ -109,7 +156,7 @@
     wall.classList.add('is-running');
     wall.dataset.flowIndex = '-1';
     window.setPillarFlowNode(0);
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.fdProjectPrefersReducedMotion && window.fdProjectPrefersReducedMotion()) return;
     window.flowNodeTimer = window.setInterval(() => {
       const current = parseInt(wall.dataset.flowIndex || '0', 10) || 0;
       window.setPillarFlowNode(current + 1);
@@ -158,7 +205,7 @@
       quote.classList.remove('is-leaving', 'is-entering', 'is-switching');
     });
     window.clearInterval(window.researchQuoteTimer);
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.fdProjectPrefersReducedMotion && window.fdProjectPrefersReducedMotion()) return;
     window.researchQuoteTimer = window.setInterval(() => {
       index = (index + 1) % window.researchQuotes.length;
       quotes.forEach((quote) => {
@@ -542,6 +589,17 @@
       }
     }
 
+    if (window.fdProjectPrefersReducedMotion && window.fdProjectPrefersReducedMotion()) {
+      instances.forEach((instance) => {
+        resizeInstance(instance);
+        instance.uniforms.uScroll.value = 0;
+        instance.uniforms.uTime.value = 0;
+        instance.renderer.render(instance.scene, instance.camera);
+      });
+      window.addEventListener('resize', () => instances.forEach(resizeInstance), { passive: true });
+      return;
+    }
+
     function animate(time) {
       requestAnimationFrame(animate);
       if (document.hidden) return;
@@ -729,6 +787,17 @@
         gl.uniform1f(uniforms.mobileVertical, window.matchMedia('(max-width: 767px)').matches ? 1.0 : 0.0);
       }
 
+      if (window.fdProjectPrefersReducedMotion && window.fdProjectPrefersReducedMotion()) {
+        resizeRaw();
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform1f(uniforms.progress, 0);
+        gl.uniform1f(uniforms.time, 0);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        window.addEventListener('resize', resizeRaw, { passive: true });
+        return;
+      }
+
       function animateRaw(time) {
         requestAnimationFrame(animateRaw);
         if (document.hidden) return;
@@ -903,6 +972,15 @@
     window.__setOutroWaveProgress = (progress) => {
       targetProgress = Math.max(0, Math.min(1, progress || 0));
     };
+
+    if (window.fdProjectPrefersReducedMotion && window.fdProjectPrefersReducedMotion()) {
+      resize();
+      uniforms.uProgress.value = 0;
+      uniforms.uTime.value = 0;
+      renderer.render(scene, camera);
+      window.addEventListener('resize', resize, { passive: true });
+      return;
+    }
 
     function animate(time) {
       requestAnimationFrame(animate);
@@ -1443,7 +1521,7 @@ Key Features 前置与 A+ 实拍
         img.addEventListener('load', () => applyJourneyShotDesignSize(img));
         if (img.complete) applyJourneyShotDesignSize(img);
       }
-      if (images.length > 1) {
+      if (images.length > 1 && !(window.fdProjectPrefersReducedMotion && window.fdProjectPrefersReducedMotion())) {
         root._journeyShotTimer = window.setInterval(() => {
           const current = parseInt(shot.dataset.imageIndex || '0', 10) || 0;
           setJourneyShotImage(shot, current + 1);
@@ -1855,6 +1933,10 @@ Key Features 前置与 A+ 实拍
       if (window.applyCjkLineProtection && root) window.applyCjkLineProtection(root);
     };
     const counterText = (index, count) => `${String(index + 1).padStart(2, '0')} / ${String(count).padStart(2, '0')}`;
+    const updateMobileStatus = (root, label, index, count) => {
+      const text = `${label}，第 ${index + 1} 项，共 ${count} 项`;
+      if (window.fdProjectSetStatusText) window.fdProjectSetStatusText(root, text);
+    };
 
     function syncMobileProjectHeader() {
       const desktopHeader = document.querySelector('.canvas-wrap .header') || document.querySelector('.header');
@@ -1945,6 +2027,7 @@ Key Features 前置与 A+ 实拍
         }, 360);
       }
       if (count) count.textContent = counterText(next, items.length);
+      updateMobileStatus(mobileRootEl, '系统性挑战', next, items.length);
       applyTextProtection(mobileRootEl);
     }
 
@@ -1998,13 +2081,11 @@ Key Features 前置与 A+ 实拍
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'm-mobile-pillar-tab';
-        button.setAttribute('role', 'tab');
-        button.setAttribute('aria-controls', 'm-mobile-goals');
+        button.setAttribute('aria-pressed', index === activeIndex ? 'true' : 'false');
         button.dataset.mobilePillarIndex = String(index);
         button.textContent = item.title;
         const active = index === activeIndex;
         button.classList.toggle('is-active', active);
-        button.setAttribute('aria-selected', active ? 'true' : 'false');
         button.addEventListener('click', () => setMobilePillar(index));
         tabsHost.appendChild(button);
       });
@@ -2026,6 +2107,7 @@ Key Features 前置与 A+ 实拍
       root.querySelectorAll('.m-switch-count').forEach((node) => {
         node.textContent = counterText(next, data.length);
       });
+      updateMobileStatus(root, `整体目标：${item.title}`, next, data.length);
       renderMobilePillarVisual(root, next);
       applyTextProtection(root);
     }
@@ -2104,7 +2186,8 @@ Key Features 前置与 A+ 实拍
           controls.className = 'm-org-carousel-controls';
           controls.innerHTML = [
             '<button class="m-arrow m-arrow--dark" type="button" aria-label="上一个团队内容" data-mobile-org-step="-1"></button>',
-            '<button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一个团队内容" data-mobile-org-step="1"></button>'
+            '<button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一个团队内容" data-mobile-org-step="1"></button>',
+            '<span class="m-state-text" aria-live="polite" aria-atomic="true"></span>'
           ].join('');
           mobileOverview.appendChild(controls);
           controls.querySelectorAll('[data-mobile-org-step]').forEach((button) => {
@@ -2115,6 +2198,8 @@ Key Features 前置与 A+ 实拍
             });
           });
         }
+        const status = mobileOverview.querySelector('.m-org-carousel-controls .m-state-text');
+        if (status) status.textContent = `团队与流程，第 ${next + 1} 项，共 ${orgSlides.length} 项`;
         applyTextProtection(mobileOverview);
       }
       if (mobileOverview) {
@@ -2225,6 +2310,7 @@ Key Features 前置与 A+ 实拍
         );
       }
       if (count) count.textContent = counterText(next, slides.length);
+      updateMobileStatus(root, `项目阶段：${slide.name}`, next, slides.length);
       applyTextProtection(root);
     }
 
@@ -2270,6 +2356,7 @@ Key Features 前置与 A+ 实拍
         quotes.innerHTML = slide.quotes.map((quote) => `<div>${escapeMobileHtml(quote)}</div>`).join('');
       }
       if (count) count.textContent = counterText(next, slides.length);
+      updateMobileStatus(root, `用户画像：${slide.title}`, next, slides.length);
       applyTextProtection(root);
     }
 
@@ -2281,12 +2368,11 @@ Key Features 前置与 A+ 实拍
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'm-journey-tab';
-        button.setAttribute('role', 'tab');
         button.dataset.mobileJourneyIndex = String(index);
         button.textContent = slide.title;
         const active = index === activeIndex;
         button.classList.toggle('is-active', active);
-        button.setAttribute('aria-selected', active ? 'true' : 'false');
+        button.setAttribute('aria-pressed', active ? 'true' : 'false');
         button.addEventListener('click', () => setMobileJourney(index));
         tabsHost.appendChild(button);
       });
@@ -2312,7 +2398,7 @@ Key Features 前置与 A+ 实拍
         shot.appendChild(img);
       });
       shot.scrollLeft = 0;
-      if (images.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (images.length > 1 && !(window.fdProjectPrefersReducedMotion && window.fdProjectPrefersReducedMotion())) {
         shot._mobileJourneyShotTimer = window.setInterval(() => {
           const rendered = Array.from(shot.querySelectorAll('img'));
           if (rendered.length < 2) return;
@@ -2391,6 +2477,7 @@ Key Features 前置与 A+ 实拍
       root.querySelectorAll('.m-switch-count').forEach((node) => {
         node.textContent = counterText(next, slides.length);
       });
+      updateMobileStatus(root, `用户旅程：${slide.title}`, next, slides.length);
       renderMobileJourneyTabs(root, slides, next);
       renderMobileJourneyShot(root, slide);
       const copy = root.querySelector('.m-journey-copy');
@@ -2476,6 +2563,7 @@ Key Features 前置与 A+ 实拍
       root.querySelectorAll('.m-switch-count').forEach((node) => {
         node.textContent = counterText(index, shots.length);
       });
+      updateMobileStatus(root, '页面浏览预览', index, shots.length);
     }
 
     function scrollMobileFinalFrame(frame, targetTop) {
@@ -2511,7 +2599,11 @@ Key Features 前置与 A+ 实拍
       const frameStyle = window.getComputedStyle(frame);
       const framePaddingTop = parseFloat(frameStyle.paddingTop) || 0;
       const targetTop = Math.max(0, shots[next].offsetTop - framePaddingTop);
-      scrollMobileFinalFrame(frame, targetTop);
+      if (window.fdProjectPrefersReducedMotion && window.fdProjectPrefersReducedMotion()) {
+        frame.scrollTop = targetTop;
+      } else {
+        scrollMobileFinalFrame(frame, targetTop);
+      }
     }
 
     mobileRoot.querySelectorAll('[data-mobile-final-step]').forEach((button) => {
@@ -2578,6 +2670,9 @@ Key Features 前置与 A+ 实拍
         setMobileJourney(parseInt(mobileRoot.querySelector('[data-mobile-journey]')?.dataset.bgIndex || '0', 10) || 0);
       };
       if (query.addEventListener) query.addEventListener('change', refresh);
+    }
+    if (window.fdProjectPrefersReducedMotion && window.fdProjectPrefersReducedMotion()) {
+      window.fdProjectStopContinuousMotion();
     }
   })();
 
