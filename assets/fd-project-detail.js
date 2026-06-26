@@ -187,17 +187,17 @@
     const animateQuoteChange = (quote, nextIndex) => {
       window.clearTimeout(quote._researchQuoteOutTimer);
       window.clearTimeout(quote._researchQuoteInTimer);
-      quote.dataset.quoteIndex = String(nextIndex);
       quote.classList.remove('is-entering', 'is-switching');
       quote.classList.add('is-leaving');
       quote._researchQuoteOutTimer = window.setTimeout(() => {
+        quote.dataset.quoteIndex = String(nextIndex);
         quote.textContent = window.researchQuotes[nextIndex];
         quote.classList.remove('is-leaving');
         quote.classList.add('is-entering');
         quote._researchQuoteInTimer = window.setTimeout(() => {
           quote.classList.remove('is-entering');
-        }, 560);
-      }, 180);
+        }, 480);
+      }, 220);
     };
     quotes.forEach((quote) => {
       quote.dataset.quoteIndex = String(index);
@@ -2282,7 +2282,7 @@ Key Features 前置与 A+ 实拍
       applyTextProtection(mobileRootEl);
     }
 
-    function setMobileTimeline(index) {
+    function setMobileTimeline(index, direction = 0) {
       const root = mobileRoot.querySelector('.m-timeline');
       const slides = window.timelineSlides || [];
       if (!root || !slides.length) return;
@@ -2292,26 +2292,58 @@ Key Features 前置与 A+ 实拍
       const text = root.querySelector('.m-timeline__phase-text');
       const img = root.querySelector('.m-img');
       const count = root.querySelector('.m-switch-count');
-      root.dataset.mobileTimelineIndex = String(next);
-      root.dataset.bgIndex = String(next);
-      if (title) title.textContent = slide.title;
-      if (text) {
-        text.innerHTML = `
-          <span class="m-timeline__phase-date">${escapeMobileHtml(slide.date)}</span>
-          <span class="m-timeline__phase-name">${escapeMobileHtml(slide.name)}</span>
-          <span class="m-timeline__phase-copy">${escapeMobileHtml(slide.copy)}</span>
-        `;
+      const current = parseInt(root.dataset.mobileTimelineIndex || '0', 10) || 0;
+      const shouldAnimate = direction && next !== current && !window.fdProjectPrefersReducedMotion();
+
+      const applySlide = () => {
+        root.dataset.mobileTimelineIndex = String(next);
+        root.dataset.bgIndex = String(next);
+        if (title) title.textContent = slide.title;
+        if (text) {
+          text.innerHTML = `
+            <span class="m-timeline__phase-date">${escapeMobileHtml(slide.date)}</span>
+            <span class="m-timeline__phase-name">${escapeMobileHtml(slide.name)}</span>
+            <span class="m-timeline__phase-copy">${escapeMobileHtml(slide.copy)}</span>
+          `;
+        }
+        if (img && slide.image) {
+          img.style.setProperty(
+            'background',
+            `url("${window.projectDetailAssetUrl(slide.image)}") center / cover no-repeat`,
+            'important'
+          );
+        }
+        if (count) count.textContent = counterText(next, slides.length);
+        updateMobileStatus(root, `项目阶段：${slide.name}`, next, slides.length);
+        applyTextProtection(root);
+      };
+
+      window.clearTimeout(root._mobileTimelineLeaveTimer);
+      window.clearTimeout(root._mobileTimelineEnterTimer);
+      window.clearTimeout(root._mobileTimelineDoneTimer);
+
+      if (!shouldAnimate) {
+        root.classList.remove('is-mobile-timeline-leaving', 'is-mobile-timeline-entering');
+        root._mobileTimelineAnimating = false;
+        applySlide();
+        return;
       }
-      if (img && slide.image) {
-        img.style.setProperty(
-          'background',
-          `url("${window.projectDetailAssetUrl(slide.image)}") center / cover no-repeat`,
-          'important'
-        );
-      }
-      if (count) count.textContent = counterText(next, slides.length);
-      updateMobileStatus(root, `项目阶段：${slide.name}`, next, slides.length);
-      applyTextProtection(root);
+
+      if (root._mobileTimelineAnimating) return;
+      root._mobileTimelineAnimating = true;
+      root.dataset.mobileTimelineDirection = direction > 0 ? 'next' : 'prev';
+      root.classList.remove('is-mobile-timeline-entering');
+      root.classList.add('is-mobile-timeline-leaving');
+
+      root._mobileTimelineLeaveTimer = window.setTimeout(() => {
+        applySlide();
+        root.classList.remove('is-mobile-timeline-leaving');
+        root.classList.add('is-mobile-timeline-entering');
+        root._mobileTimelineDoneTimer = window.setTimeout(() => {
+          root.classList.remove('is-mobile-timeline-entering');
+          root._mobileTimelineAnimating = false;
+        }, 430);
+      }, 150);
     }
 
     mobileRoot.querySelectorAll('[data-mobile-timeline-step]').forEach((button) => {
@@ -2319,7 +2351,7 @@ Key Features 前置与 A+ 实拍
         const root = button.closest('.m-timeline');
         const current = parseInt(root && root.dataset.mobileTimelineIndex || '0', 10) || 0;
         const step = parseInt(button.dataset.mobileTimelineStep || '0', 10) || 0;
-        setMobileTimeline(current + step);
+        setMobileTimeline(current + step, step);
       });
     });
 
@@ -2333,31 +2365,61 @@ Key Features 前置与 A+ 实拍
       })[ch]);
     }
 
-    function setMobilePersona(index) {
+    function setMobilePersona(index, direction = 0) {
       const root = mobileRoot.querySelector('[data-mobile-persona]');
       const slides = window.personaSlides || [];
       if (!root || !slides.length) return;
       const next = ((index % slides.length) + slides.length) % slides.length;
       const slide = slides[next];
-      root.dataset.bgIndex = String(next);
       const title = root.querySelector('.m-persona-title');
       const lede = root.querySelector('.m-persona-lede');
       const name = root.querySelector('.m-persona-name');
       const chipRow = root.querySelector('.m-chip-row');
       const quotes = root.querySelector('.m-quote-stack');
       const count = root.querySelector('.m-switch-count');
-      if (title) title.textContent = slide.title;
-      if (lede) lede.textContent = slide.lede;
-      if (name) name.textContent = slide.name;
-      if (chipRow) {
-        chipRow.innerHTML = slide.chips.map((chip) => `<span class="m-chip">${escapeMobileHtml(chip)}</span>`).join('');
+      const shouldAnimate = direction && !window.fdProjectPrefersReducedMotion();
+
+      const applySlide = () => {
+        root.dataset.bgIndex = String(next);
+        if (title) title.textContent = slide.title;
+        if (lede) lede.textContent = slide.lede;
+        if (name) name.textContent = slide.name;
+        if (chipRow) {
+          chipRow.innerHTML = slide.chips.map((chip) => `<span class="m-chip">${escapeMobileHtml(chip)}</span>`).join('');
+        }
+        if (quotes) {
+          quotes.innerHTML = slide.quotes.map((quote) => `<div>${escapeMobileHtml(quote)}</div>`).join('');
+        }
+        if (count) count.textContent = counterText(next, slides.length);
+        updateMobileStatus(root, `用户画像：${slide.title}`, next, slides.length);
+        applyTextProtection(root);
+      };
+
+      window.clearTimeout(root._mobilePersonaLeaveTimer);
+      window.clearTimeout(root._mobilePersonaDoneTimer);
+
+      if (!shouldAnimate) {
+        root.classList.remove('is-mobile-persona-leaving', 'is-mobile-persona-entering');
+        root._mobilePersonaAnimating = false;
+        applySlide();
+        return;
       }
-      if (quotes) {
-        quotes.innerHTML = slide.quotes.map((quote) => `<div>${escapeMobileHtml(quote)}</div>`).join('');
-      }
-      if (count) count.textContent = counterText(next, slides.length);
-      updateMobileStatus(root, `用户画像：${slide.title}`, next, slides.length);
-      applyTextProtection(root);
+
+      if (root._mobilePersonaAnimating) return;
+      root._mobilePersonaAnimating = true;
+      root.dataset.mobilePersonaDirection = direction > 0 ? 'next' : 'prev';
+      root.classList.remove('is-mobile-persona-entering');
+      root.classList.add('is-mobile-persona-leaving');
+
+      root._mobilePersonaLeaveTimer = window.setTimeout(() => {
+        applySlide();
+        root.classList.remove('is-mobile-persona-leaving');
+        root.classList.add('is-mobile-persona-entering');
+        root._mobilePersonaDoneTimer = window.setTimeout(() => {
+          root.classList.remove('is-mobile-persona-entering');
+          root._mobilePersonaAnimating = false;
+        }, 460);
+      }, 170);
     }
 
     function renderMobileJourneyTabs(root, slides, activeIndex) {
@@ -2512,7 +2574,10 @@ Key Features 前置与 A+ 实拍
           if (!target) return;
           const index = parseInt(target.dataset.bgIndex || '0', 10) || 0;
           if (target.id === 'm-mobile-challenges') syncMobileFriction(index);
-          if (target.matches('[data-mobile-persona]')) setMobilePersona(index);
+          if (target.matches('[data-mobile-persona]')) {
+            const step = parseInt(button.dataset.bgStep || '0', 10) || 0;
+            setMobilePersona(index, step);
+          }
           if (target.matches('[data-mobile-journey]')) setMobileJourney(index);
         });
       });
