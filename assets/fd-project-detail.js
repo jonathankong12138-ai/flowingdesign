@@ -2378,12 +2378,16 @@ Key Features 前置与 A+ 实拍
       const quotes = root.querySelector('.m-quote-stack');
       const count = root.querySelector('.m-switch-count');
       const shouldAnimate = direction && !window.fdProjectPrefersReducedMotion();
+      const getMobilePersonaName = (value) => String(value || '')
+        .replace(/\s*·\s*占盘\s*\d+(?:\.\d+)?%/g, '')
+        .replace(/\s*·\s*不可忽视的长尾群体/g, '')
+        .trim();
 
       const applySlide = () => {
         root.dataset.bgIndex = String(next);
         if (title) title.textContent = slide.title;
         if (lede) lede.textContent = slide.lede;
-        if (name) name.textContent = slide.name;
+        if (name) name.textContent = getMobilePersonaName(slide.name);
         if (chipRow) {
           chipRow.innerHTML = slide.chips.map((chip) => `<span class="m-chip">${escapeMobileHtml(chip)}</span>`).join('');
         }
@@ -2552,6 +2556,13 @@ Key Features 前置与 A+ 实拍
         });
       }
       applyTextProtection(root);
+      if (copy) {
+        const syncJourneyCopyHeight = () => {
+          root.style.setProperty('--mobile-journey-copy-height', `${copy.scrollHeight}px`);
+        };
+        syncJourneyCopyHeight();
+        window.requestAnimationFrame(syncJourneyCopyHeight);
+      }
     }
 
     mobileRoot.querySelectorAll('[data-mobile-journey-index]').forEach((button) => {
