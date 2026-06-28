@@ -12593,12 +12593,26 @@
         width: auto !important;
       }
 
+      .mobile-393 #m-mobile-goals .m-card-label__sub {
+        margin-top: 30px !important;
+      }
+
       .mobile-393 #m-mobile-goals .m-mobile-pillar-visual {
         left: 30px !important;
         right: 30px !important;
-        top: 390px !important;
-        bottom: 86px !important;
+        top: 288px !important;
+        bottom: 104px !important;
         overflow: hidden !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-structure-target {
+        left: 30px !important;
+        bottom: 30px !important;
+      }
+
+      .mobile-393 #m-mobile-goals.m-media.m-structure-goals[data-bg-count] .m-arrow-row.m-pillar-controls {
+        right: 30px !important;
+        bottom: 30px !important;
       }
 
       .mobile-393 #m-mobile-goals .m-mobile-pillar-visual .pillar-ugc-wall,
@@ -12953,6 +12967,306 @@
         opacity: 1;
         transform: scale(1);
         filter: none;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .mobile-393 .m-title,
+      .mobile-393 .m-title.blend-difference {
+        width: min(100%, 360px) !important;
+        max-width: calc(100vw - 40px) !important;
+        font-size: clamp(38px, 10.2vw, 42px) !important;
+        line-height: 1.08 !important;
+        word-break: keep-all !important;
+        overflow-wrap: normal !important;
+        text-wrap: balance !important;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .mobile-393 {
+        gap: 0 !important;
+      }
+
+      .mobile-393 .m-state-text {
+        overflow: hidden !important;
+        white-space: nowrap !important;
+      }
+
+      .mobile-393 #m-mobile-goals.m-media.m-structure-goals[data-bg-count] {
+        height: 706px !important;
+        min-height: 706px !important;
+        padding: 0 !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-card-label {
+        left: 16px !important;
+        right: 16px !important;
+        top: 24px !important;
+        bottom: auto !important;
+        width: auto !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-card-label__sub {
+        margin-top: 26px !important;
+        max-width: 295px !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-mobile-pillar-visual {
+        left: 16px !important;
+        right: 16px !important;
+        top: 287px !important;
+        bottom: 96px !important;
+      }
+
+      .mobile-393 #m-mobile-goals .m-structure-target {
+        left: 16px !important;
+        bottom: 24px !important;
+      }
+
+      .mobile-393 #m-mobile-goals.m-media.m-structure-goals[data-bg-count] .m-arrow-row.m-pillar-controls {
+        right: 16px !important;
+        bottom: 24px !important;
+      }
+
+      .mobile-393 #m-mobile-challenges.m-media[data-bg-count] {
+        height: 869px !important;
+        min-height: 869px !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-structure-kicker {
+        right: 16px !important;
+        top: 24px !important;
+        width: min(100% - 32px, 329px) !important;
+        max-width: calc(100% - 32px) !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-card-label {
+        left: 16px !important;
+        right: 16px !important;
+        top: 152px !important;
+        bottom: 24px !important;
+        gap: 35px !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-friction-list {
+        gap: 29px !important;
+      }
+
+      .mobile-393 .m-timeline {
+        height: 741px !important;
+        min-height: 741px !important;
+        overflow: hidden !important;
+      }
+
+      .mobile-393 .m-timeline .m-img {
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        transform: none !important;
+      }
+
+      .mobile-393 .m-timeline__phase {
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 24px !important;
+        width: auto !important;
+        max-width: none !important;
+      }
+
+      .mobile-393 .m-timeline__phase-title {
+        max-width: 329px !important;
+      }
+
+      .mobile-393 .m-timeline__phase-text {
+        max-height: none !important;
+      }
+
+      .mobile-393 .m-timeline .m-timeline-controls {
+        right: 16px !important;
+        left: auto !important;
+        top: auto !important;
+        bottom: 56px !important;
+        transform: none !important;
+      }
+
+      .mobile-393 .m-research-intro {
+        height: 741px !important;
+        min-height: 741px !important;
+      }
+
+      .mobile-393 .m-research-intro .m-card-label {
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 120px !important;
+        width: auto !important;
+      }
+
+      .mobile-393 .m-research-intro .m-research-quote-eyebrow {
+        left: 16px !important;
+        right: 16px !important;
+        top: auto !important;
+        bottom: 68px !important;
+      }
+
+      .mobile-393 .m-research-intro .m-research-quote {
+        left: 16px !important;
+        right: 16px !important;
+        top: auto !important;
+        bottom: 24px !important;
+        min-height: 0 !important;
+      }
+
+      .mobile-393 .m-org-overview {
+        height: 431px !important;
+        min-height: 431px !important;
+        padding: 72px 16px 0 !important;
+        overflow: hidden !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-nodes {
+        width: 329px !important;
+        max-width: 100% !important;
+        height: 89px !important;
+        margin: 0 auto 30px !important;
+        gap: 10px !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-node {
+        min-height: 39px !important;
+        padding: 0 12px !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-text {
+        width: 329px !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        height: 100px !important;
+        max-height: 100px !important;
+        overflow: hidden !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-carousel-controls {
+        bottom: 72px !important;
+      }
+
+      .mobile-393 #m-mobile-research.m-user-research {
+        height: 741px !important;
+        min-height: 741px !important;
+      }
+
+      .mobile-393 #m-mobile-research .m-user-title {
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 202px !important;
+      }
+
+      .mobile-393 #m-mobile-research .m-user-stats,
+      .mobile-393 .m-user-research .m-user-stats {
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 24px !important;
+      }
+
+      .mobile-393 [data-mobile-persona].m-structure-decision {
+        height: 706px !important;
+        min-height: 706px !important;
+      }
+
+      .mobile-393 [data-mobile-persona].m-structure-decision .m-persona-lede {
+        left: 16px !important;
+        right: 50px !important;
+        top: 314px !important;
+      }
+
+      .mobile-393 [data-mobile-persona].m-structure-decision .m-persona-title {
+        left: 16px !important;
+        right: 16px !important;
+        top: 356px !important;
+        height: auto !important;
+        max-height: none !important;
+        min-height: 92px !important;
+        white-space: pre-line !important;
+      }
+
+      .mobile-393 [data-mobile-persona].m-structure-decision .m-persona-info {
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 86px !important;
+      }
+
+      .mobile-393 [data-mobile-persona].m-structure-decision > .m-arrow-row {
+        right: 16px !important;
+        bottom: 24px !important;
+      }
+
+      .mobile-393 #m-mobile-journey.m-structure-browse {
+        height: 741px !important;
+        min-height: 741px !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-tabs,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-tabs {
+        left: 16px !important;
+        right: 16px !important;
+        top: 24px !important;
+        width: auto !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-shot,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-shot {
+        left: 34px !important;
+        right: 34px !important;
+        top: 70px !important;
+        height: 281px !important;
+        aspect-ratio: auto !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-copy,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-copy {
+        left: 16px !important;
+        right: 16px !important;
+        top: 424px !important;
+        bottom: 26px !important;
+        height: 291px !important;
+        max-height: none !important;
+        overflow: auto !important;
+        padding-bottom: 0 !important;
+        overscroll-behavior: contain !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-arrow-row,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-arrow-row {
+        right: 16px !important;
+        bottom: 24px !important;
+      }
+
+      .mobile-393 .m-structure-components {
+        height: 706px !important;
+        min-height: 706px !important;
+      }
+
+      .mobile-393 .m-structure-components .m-component-preview {
+        left: 16px !important;
+        right: 16px !important;
+        top: 70px !important;
+        bottom: 184px !important;
+        width: auto !important;
+        height: auto !important;
+        overflow: hidden !important;
+      }
+
+      .mobile-393 .m-structure-components .m-card-label {
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 24px !important;
+      }
+
+      .mobile-393 .m-structure-components .m-arrow-row {
+        right: 16px !important;
+        left: auto !important;
+        bottom: 24px !important;
+        transform: none !important;
       }
     }
 
