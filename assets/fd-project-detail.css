@@ -13270,6 +13270,234 @@
       }
     }
 
+    @media (max-width: 767px) {
+      .mobile-393 #m-mobile-challenges > .m-arrow-row,
+      .mobile-393 .m-structure-components > .m-arrow-row {
+        display: none !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-friction-list {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .mobile-393 #m-mobile-challenges .m-friction-item {
+        display: grid !important;
+      }
+
+      .mobile-393 .m-org-goals,
+      .mobile-393 .m-org-workflow {
+        display: none !important;
+      }
+
+      .mobile-393 .m-org-overview {
+        height: 431px !important;
+        min-height: 431px !important;
+        max-height: 431px !important;
+        padding: 72px 16px 72px !important;
+        display: grid !important;
+        align-content: start !important;
+        justify-items: center !important;
+        gap: 24px !important;
+        overflow: hidden !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-legend {
+        display: none !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-nodes,
+      .mobile-393 .m-org-overview .m-org-text,
+      .mobile-393 .m-org-overview .m-org-carousel-controls {
+        position: relative !important;
+        inset: auto !important;
+        width: 329px !important;
+        max-width: 100% !important;
+        z-index: 5 !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-nodes {
+        order: 1 !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+        height: auto !important;
+        margin: 0 !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-nodes:empty {
+        display: none !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-node {
+        min-height: 39px !important;
+        padding: 0 12px !important;
+        display: grid !important;
+        place-items: center !important;
+        font-size: 14px !important;
+        line-height: 1.25 !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-text {
+        order: 2 !important;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        margin: 0 !important;
+        display: grid !important;
+        align-content: start !important;
+        text-align: left !important;
+        overflow: visible !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-text--team {
+        font-size: 13px !important;
+        line-height: 1.66 !important;
+        white-space: pre-line !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-slide-title {
+        font-size: 46px !important;
+        line-height: 1 !important;
+        font-weight: 500 !important;
+        text-align: left !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-slide-copy {
+        margin-top: 10px !important;
+        font-size: 13px !important;
+        line-height: 1.66 !important;
+        text-align: left !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-carousel-controls {
+        order: 3 !important;
+        width: 94px !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin: 0 auto !important;
+        pointer-events: auto !important;
+      }
+
+      .mobile-393 .m-org-overview .m-org-carousel-controls .m-state-text {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        overflow: hidden !important;
+        clip: rect(0 0 0 0) !important;
+        white-space: nowrap !important;
+      }
+
+      .mobile-393 #m-mobile-journey.m-structure-browse {
+        height: 741px !important;
+        min-height: 741px !important;
+        max-height: 741px !important;
+        overflow: hidden !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-shot,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-shot {
+        left: 34px !important;
+        right: 34px !important;
+        top: 70px !important;
+        width: auto !important;
+        height: 281px !important;
+        max-height: none !important;
+        aspect-ratio: auto !important;
+        border-radius: 0 !important;
+        overflow: hidden !important;
+        z-index: 5 !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-shot img,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-shot img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: top center !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-tabs,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-tabs {
+        left: 16px !important;
+        right: 112px !important;
+        top: 424px !important;
+        min-height: 22px !important;
+        max-width: none !important;
+        padding: 0 !important;
+        display: block !important;
+        overflow: visible !important;
+        white-space: normal !important;
+        color: #fff !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        z-index: 18 !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-current-title,
+      .mobile-393 #m-mobile-journey .m-journey-current-title.blend-difference {
+        font-size: 18px !important;
+        line-height: 1.22 !important;
+        font-weight: 500 !important;
+        color: #fff !important;
+        -webkit-text-fill-color: #fff !important;
+        mix-blend-mode: normal !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-arrow-row,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-arrow-row {
+        left: auto !important;
+        right: 16px !important;
+        top: 413px !important;
+        bottom: auto !important;
+        width: 94px !important;
+        min-width: 0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        gap: 6px !important;
+        transform: none !important;
+        z-index: 24 !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-arrow-row .m-switch-count {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        overflow: hidden !important;
+        clip: rect(0 0 0 0) !important;
+        white-space: nowrap !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-copy,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-copy {
+        left: 16px !important;
+        right: 16px !important;
+        top: 478px !important;
+        bottom: 26px !important;
+        width: auto !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: auto !important;
+        padding-bottom: 0 !important;
+        color: #fff !important;
+        overscroll-behavior: contain !important;
+        z-index: 8 !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-quote,
+      .mobile-393 #m-mobile-journey .m-journey-pains {
+        display: none !important;
+      }
+
+      .mobile-393 .m-structure-components {
+        height: 706px !important;
+        min-height: 706px !important;
+        max-height: 706px !important;
+      }
+    }
+
     @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
       .mobile-393 *,
       .mobile-393 *::before,

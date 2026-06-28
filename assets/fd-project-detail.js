@@ -2135,11 +2135,6 @@ Key Features 前置与 A+ 实拍
       const desktopWorkflowList = desktopRoot.querySelector('.org-left-bottom .org-list');
       const orgSlides = [
         {
-          type: 'team',
-          nodes: teamChips.map((chip) => chip.textContent.trim()).filter(Boolean),
-          copy: bodyText ? bodyText.textContent.trim() : ''
-        },
-        {
           type: 'goals',
           title: desktopGoalsTitle ? desktopGoalsTitle.textContent.trim() : '',
           copy: desktopGoalsSub ? desktopGoalsSub.textContent.trim() : ''
@@ -2148,6 +2143,11 @@ Key Features 前置与 A+ 实拍
           type: 'workflow',
           title: desktopWorkflowTitle ? desktopWorkflowTitle.textContent.trim() : '',
           copy: desktopWorkflowList ? desktopWorkflowList.textContent.trim() : ''
+        },
+        {
+          type: 'team',
+          nodes: teamChips.map((chip) => chip.textContent.trim()).filter(Boolean),
+          copy: bodyText ? bodyText.textContent.trim() : ''
         }
       ];
       function renderMobileOrgSlide(index = 0) {
@@ -2426,18 +2426,11 @@ Key Features 前置与 A+ 实拍
       const tabsHost = root.querySelector('.m-journey-tabs');
       if (!tabsHost) return;
       tabsHost.textContent = '';
-      slides.forEach((slide, index) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'm-journey-tab';
-        button.dataset.mobileJourneyIndex = String(index);
-        button.textContent = slide.title;
-        const active = index === activeIndex;
-        button.classList.toggle('is-active', active);
-        button.setAttribute('aria-pressed', active ? 'true' : 'false');
-        button.addEventListener('click', () => setMobileJourney(index));
-        tabsHost.appendChild(button);
-      });
+      const current = slides[activeIndex];
+      const title = document.createElement('div');
+      title.className = 'm-journey-current-title blend-difference';
+      title.textContent = current ? current.title : '';
+      tabsHost.appendChild(title);
     }
 
     function renderMobileJourneyShot(root, slide) {
