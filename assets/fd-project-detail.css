@@ -15046,8 +15046,9 @@
         margin-top: 0 !important;
       }
 
-      .mobile-393 .outro-next .next-cta-arrow {
-        top: var(--fd-space-4) !important;
+      .mobile-393 .outro-next .next-cta-arrow,
+      .outro-next .next-cta-arrow {
+        top: 0 !important;
       }
     }
 
@@ -15083,21 +15084,21 @@
       .mobile-393 [data-mobile-persona].m-structure-decision .m-persona-lede {
         left: var(--fd-space-7) !important;
         right: var(--fd-space-7) !important;
-        top: 180px !important;
+        top: 224px !important;
         bottom: auto !important;
       }
 
       .mobile-393 [data-mobile-persona].m-structure-decision .m-persona-title {
         left: var(--fd-space-7) !important;
         right: var(--fd-space-7) !important;
-        top: 236px !important;
+        top: 280px !important;
         bottom: auto !important;
       }
 
       .mobile-393 [data-mobile-persona].m-structure-decision .m-persona-info {
         left: var(--fd-space-7) !important;
         right: var(--fd-space-7) !important;
-        top: 340px !important;
+        top: 384px !important;
         bottom: auto !important;
       }
 
@@ -15170,6 +15171,10 @@
         left: var(--fd-space-4) !important;
         right: var(--fd-space-4) !important;
         width: auto !important;
+      }
+
+      .mobile-393 .m-hero-caption {
+        max-width: none !important;
       }
 
       .mobile-393 .m-hero-stats {
@@ -15351,6 +15356,12 @@
       .mobile-393 #m-mobile-journey.m-structure-browse {
         height: calc(var(--mobile-journey-copy-top) + var(--mobile-journey-copy-height, 237px) + var(--fd-space-4)) !important;
         min-height: calc(var(--mobile-journey-copy-top) + var(--mobile-journey-copy-height, 237px) + var(--fd-space-4)) !important;
+      }
+
+      .mobile-393 .m-structure-components {
+        height: 568px !important;
+        min-height: 568px !important;
+        max-height: 568px !important;
       }
 
       .mobile-393 .m-structure-components .m-component-preview {
