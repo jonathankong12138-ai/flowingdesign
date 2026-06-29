@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Design"
+  short_description: "Guide design-stage web handoff work"
+  default_prompt: "Use $web-design to prepare this design-stage handoff for development."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build"
+  short_description: "Build web app code from prototypes and visual QA."
+  default_prompt: "Use $build to build or update the web app code to match the approved prototype, visual QA, and measured screenshot refinements."

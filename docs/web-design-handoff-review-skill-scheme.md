@@ -1,6 +1,6 @@
 # Web Design 设计阶段与设计稿交付审查 Skill 方案
 
-状态：方案稿  
+状态：MVP 已落地  
 适用范围：Codex Web Design 流程中的设计阶段  
 关联文档：[设计开发流程 Skill 制作方案](./design-development-flow-skill-making-plan.md)、[Figma 设计图网页开发 Skill 体系方案](./figma-web-build-skill-scheme.md)  
 最后更新：2026-06-29
@@ -1171,3 +1171,63 @@ web-design-handoff-review
 3. 它让开发阶段减少猜测，把不完整设计挡在 build 之前。
 4. 它保留了渐进演进空间，不会一开始就拆成过多微 skill。
 5. 它和现有 `figma-web-build` 方案自然衔接。
+
+## 15. Phase 1 落地结果
+
+本方案的 Phase 1 已按推荐目录落地到：
+
+```txt
+~/.codex/skills/
+```
+
+### 15.1 已创建的 MVP skills
+
+```txt
+web-design
+web-design-handoff-review
+```
+
+每个 skill 都已包含：
+
+```txt
+SKILL.md
+agents/openai.yaml
+references/
+```
+
+### 15.2 已创建的 references
+
+```txt
+web-design/references/design-stage-gates.md
+web-design/references/designer-submission-guide.md
+web-design-handoff-review/references/handoff-checklist-template.md
+web-design-handoff-review/references/developer-input-requirements.md
+web-design-handoff-review/references/designer-fix-guide.md
+web-design-handoff-review/references/designer-q-and-a.md
+```
+
+### 15.3 当前边界
+
+Phase 1 没有创建以下微 skill：
+
+```txt
+web-design-breakpoint-review
+web-design-state-review
+web-design-asset-review
+web-design-token-review
+web-design-interaction-review
+```
+
+这些仍作为 Phase 3 候选。只有真实任务中反复出现、造成返工、输入输出稳定并可独立验证时，才升级为独立 skill。
+
+### 15.4 完成判定
+
+本方案现在满足 Phase 1 完成条件：
+
+```txt
+1. design 阶段入口 skill 已创建。
+2. handoff review 审查 skill 已创建。
+3. 设计师提交、设计阶段闸门、开发输入要求、审查输出、修改指引和 Q&A 已拆入 references。
+4. 审查 skill 明确只输出 Design Handoff Checklist。
+5. 可与 figma-web-build 的开发阶段入口衔接。
+```
