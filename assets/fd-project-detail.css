@@ -15340,6 +15340,18 @@
       }
     }
 
+    @media (min-width: 768px) {
+      #c1.c-hero .c-hero-caption,
+      #c1.c-hero .c-hero-stats {
+        right: calc(var(--fd-space-4) / var(--scale)) !important;
+      }
+
+      #c1.c-hero .c-hero-stats {
+        top: auto !important;
+        bottom: calc(var(--fd-space-4) / var(--scale)) !important;
+      }
+    }
+
     @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
       .mobile-393 *,
       .mobile-393 *::before,
