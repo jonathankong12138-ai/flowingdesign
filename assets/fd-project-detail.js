@@ -2295,6 +2295,12 @@ Key Features 前置与 A+ 实拍
           clone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id'));
           mobilePreview.replaceChildren(clone);
         }
+        const mobileTrack = mobilePreview.querySelector('.c-libs-marquee-track');
+        if (mobileTrack && mobileTrack.children.length === 1) {
+          const clone = mobileTrack.children[0].cloneNode(true);
+          clone.removeAttribute('id');
+          mobileTrack.appendChild(clone);
+        }
       }
       applyTextProtection(mobileRootEl);
     }

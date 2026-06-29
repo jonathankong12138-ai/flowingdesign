@@ -14617,6 +14617,62 @@
       }
     }
 
+    @media (max-width: 767px) {
+      .mobile-393 .m-structure-components .m-component-preview {
+        position: absolute !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: 28px !important;
+        bottom: auto !important;
+        width: 100% !important;
+        height: min(430px, 72vw) !important;
+        display: block !important;
+        overflow: hidden !important;
+        border-radius: 0 !important;
+        pointer-events: none !important;
+        -webkit-mask-image: none !important;
+        mask-image: none !important;
+      }
+
+      .mobile-393 .m-structure-components .m-component-preview .c-libs-marquee-track {
+        position: absolute !important;
+        inset: 0 auto 0 0 !important;
+        width: max-content !important;
+        min-width: max-content !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        gap: 0 !important;
+        animation: libsMarqueeRight 22s linear infinite !important;
+        transform: translate3d(-50%, 0, 0);
+        will-change: transform;
+      }
+
+      .mobile-393 .m-structure-components .m-component-preview .c-libs-marquee-track img,
+      .mobile-393 .m-structure-components .m-component-preview .c-libs-marquee-track img:nth-child(n + 2) {
+        position: relative !important;
+        inset: auto !important;
+        display: block !important;
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        height: 100% !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        object-fit: contain !important;
+        object-position: center center !important;
+        transform: none !important;
+        box-shadow: none !important;
+        filter: none !important;
+      }
+    }
+
     @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
       .mobile-393 *,
       .mobile-393 *::before,
