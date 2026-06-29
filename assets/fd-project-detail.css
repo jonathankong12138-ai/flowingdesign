@@ -14459,9 +14459,11 @@
         grid-template-columns: minmax(0, 1fr) 56px !important;
         grid-template-rows: auto auto !important;
         align-items: start !important;
+        align-content: start !important;
         column-gap: 16px !important;
-        row-gap: 80px !important;
-        min-height: 260px !important;
+        row-gap: 20px !important;
+        height: auto !important;
+        min-height: 0 !important;
       }
 
       .outro-next .next-eyebrow {
@@ -14562,7 +14564,7 @@
         width: max-content !important;
         height: 100% !important;
         gap: 0 !important;
-        animation: mobilePillarHorizontal 26s linear infinite !important;
+        animation: mobilePillarHorizontal 13s linear infinite !important;
       }
 
       .mobile-393 #m-mobile-goals .m-mobile-pillar-visual--component img {
@@ -15036,9 +15038,11 @@
       }
 
       .mobile-393 .outro-next .next-title,
-      .mobile-393 .outro-next .next-title.blend-difference {
-        font-size: 28px !important;
-        line-height: 40px !important;
+      .mobile-393 .outro-next .next-title.blend-difference,
+      .outro-next .next-title,
+      .outro-next .next-title.blend-difference {
+        font-size: 24px !important;
+        line-height: 34px !important;
         margin-top: 0 !important;
       }
 
@@ -15252,9 +15256,9 @@
       }
 
       .mobile-393 .m-research-intro .m-card-label {
-        top: var(--fd-space-4) !important;
+        top: 50% !important;
         bottom: auto !important;
-        transform: none !important;
+        transform: translateY(-50%) !important;
       }
 
       .mobile-393 .m-research-intro .m-research-quote-eyebrow {
@@ -15270,12 +15274,14 @@
       }
 
       .mobile-393 .m-org-overview .m-org-carousel-controls {
-        position: relative !important;
-        inset: auto !important;
+        position: absolute !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: var(--fd-space-4) !important;
+        left: 50% !important;
         margin-bottom: 0 !important;
         margin-top: 0 !important;
-        bottom: auto !important;
-        transform: none !important;
+        transform: translateX(-50%) !important;
       }
 
       .mobile-393 #m-mobile-research .m-user-title {
@@ -15297,7 +15303,7 @@
 
       .mobile-393 [data-mobile-persona].m-structure-decision > .m-arrow-row {
         top: auto !important;
-        bottom: 78px !important;
+        bottom: var(--fd-space-4) !important;
       }
 
       .mobile-393 [data-mobile-persona].m-structure-decision .m-persona-lede,
@@ -15330,8 +15336,21 @@
 
       .mobile-393 #m-mobile-journey .m-journey-tabs,
       .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-tabs {
+        left: var(--fd-space-4) !important;
         min-height: 48px !important;
         height: 48px !important;
+      }
+
+      .mobile-393 #m-mobile-journey .m-journey-copy,
+      .mobile-393 #m-mobile-journey.m-structure-browse .m-journey-copy {
+        left: var(--fd-space-4) !important;
+        right: var(--fd-space-4) !important;
+        bottom: var(--fd-space-4) !important;
+      }
+
+      .mobile-393 #m-mobile-journey.m-structure-browse {
+        height: calc(var(--mobile-journey-copy-top) + var(--mobile-journey-copy-height, 237px) + var(--fd-space-4)) !important;
+        min-height: calc(var(--mobile-journey-copy-top) + var(--mobile-journey-copy-height, 237px) + var(--fd-space-4)) !important;
       }
 
       .mobile-393 .m-structure-components .m-component-preview {
@@ -15340,6 +15359,23 @@
         right: 0 !important;
         width: auto !important;
         max-width: none !important;
+      }
+
+      .mobile-393 .m-structure-components .m-card-label {
+        left: var(--fd-space-4) !important;
+        right: var(--fd-space-4) !important;
+        bottom: var(--fd-space-4) !important;
+      }
+
+      .mobile-393 #m-mobile-final::before,
+      .mobile-393 #m-mobile-final::after {
+        opacity: 1 !important;
+        transition: opacity .16s ease !important;
+      }
+
+      .mobile-393 #m-mobile-final.is-final-scrolling::before,
+      .mobile-393 #m-mobile-final.is-final-scrolling::after {
+        opacity: 0 !important;
       }
     }
 

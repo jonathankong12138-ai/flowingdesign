@@ -2678,11 +2678,31 @@ Key Features 前置与 A+ 实拍
       updateMobileStatus(root, '页面浏览预览', index, shots.length);
     }
 
+    function scheduleMobileFinalScrollIdle(root, frame) {
+      if (!root || !frame) return;
+      window.clearTimeout(root._mobileFinalScrollIdleTimer);
+      const lastTop = frame.scrollTop;
+      root._mobileFinalScrollIdleTimer = window.setTimeout(() => {
+        window.requestAnimationFrame(() => {
+          if (Math.abs(frame.scrollTop - lastTop) > 1) {
+            scheduleMobileFinalScrollIdle(root, frame);
+            return;
+          }
+          root.classList.remove('is-final-scrolling');
+        });
+      }, 180);
+    }
+
     function scrollMobileFinalFrame(frame, targetTop) {
       const duration = 220;
       const startTop = frame.scrollTop;
       const distance = targetTop - startTop;
       const startTime = window.performance.now();
+      const root = frame.closest('.m-final-mobile');
+      if (root) {
+        root.classList.add('is-final-scrolling');
+        window.clearTimeout(root._mobileFinalScrollIdleTimer);
+      }
       if (frame._mobileFinalScrollRaf) {
         window.cancelAnimationFrame(frame._mobileFinalScrollRaf);
       }
@@ -2695,6 +2715,7 @@ Key Features 前置与 A+ 实拍
           return;
         }
         frame._mobileFinalScrollRaf = null;
+        scheduleMobileFinalScrollIdle(root, frame);
       };
       frame._mobileFinalScrollRaf = window.requestAnimationFrame(tick);
     }
@@ -2732,6 +2753,8 @@ Key Features 前置与 A+ 实拍
     if (mobileFinalRoot && mobileFinalFrame) {
       let finalScrollRaf = null;
       mobileFinalFrame.addEventListener('scroll', () => {
+        mobileFinalRoot.classList.add('is-final-scrolling');
+        scheduleMobileFinalScrollIdle(mobileFinalRoot, mobileFinalFrame);
         if (finalScrollRaf) return;
         finalScrollRaf = window.requestAnimationFrame(() => {
           finalScrollRaf = null;
