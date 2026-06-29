@@ -15141,6 +15141,26 @@
       .mobile-393 #m-mobile-final::after {
         bottom: var(--fd-space-9) !important;
       }
+
+      .mobile-393 {
+        padding-left: var(--fd-space-4) !important;
+        padding-right: var(--fd-space-4) !important;
+      }
+
+      .mobile-393 .m-hero-media {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
+
+      .mobile-393 .m-hero-caption,
+      .mobile-393 .m-hero-stats {
+        right: var(--fd-space-4) !important;
+      }
+
+      .mobile-393 .m-hero-stats {
+        bottom: var(--fd-space-4) !important;
+      }
     }
 
     @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
