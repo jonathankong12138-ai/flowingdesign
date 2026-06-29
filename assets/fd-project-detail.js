@@ -2059,6 +2059,25 @@ Key Features 前置与 A+ 实拍
       clone.removeAttribute('style');
       clone.setAttribute('aria-hidden', 'true');
       clone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id'));
+      if (variant === 'component') {
+        const images = Array.from(clone.querySelectorAll('img'));
+        const wall = document.createElement('div');
+        const col = document.createElement('div');
+        const track = document.createElement('div');
+        wall.className = 'pillar-component-wall is-mobile-clone';
+        col.className = 'component-col';
+        track.className = 'material-track';
+        images.forEach((img) => {
+          img.removeAttribute('style');
+          img.loading = 'eager';
+          img.decoding = 'async';
+          track.appendChild(img);
+        });
+        col.appendChild(track);
+        wall.appendChild(col);
+        visual.appendChild(wall);
+        return;
+      }
       if (variant === 'flow') {
         const sourceSteps = Array.from(source.querySelectorAll('.flow-step'));
         clone.querySelectorAll('.flow-step').forEach((step, stepIndex) => {
@@ -2270,12 +2289,10 @@ Key Features 前置与 A+ 实拍
       if (desktopTitle && mobileTitle) mobileTitle.textContent = desktopTitle.textContent.trim();
       if (desktopCopy && mobileCopy) mobileCopy.textContent = desktopCopy.textContent.trim();
       if (mobilePreview) {
-        if (window.randomizeComponentWall) window.randomizeComponentWall();
-        const componentWall = document.querySelector('#c2 .pillar-component-wall');
-        if (componentWall && !mobilePreview.querySelector('.pillar-component-wall')) {
-          const clone = componentWall.cloneNode(true);
+        const desktopTrack = desktopRoot.querySelector('.c-libs-marquee-track');
+        if (desktopTrack && !mobilePreview.querySelector('.c-libs-marquee-track')) {
+          const clone = desktopTrack.cloneNode(true);
           clone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id'));
-          clone.querySelectorAll('.component-col:nth-child(n + 2)').forEach((node) => node.remove());
           mobilePreview.replaceChildren(clone);
         }
       }
@@ -2397,6 +2414,26 @@ Key Features 前置与 A+ 实拍
         if (count) count.textContent = counterText(next, slides.length);
         updateMobileStatus(root, `用户画像：${slide.title}`, next, slides.length);
         applyTextProtection(root);
+        syncMobilePersonaSpacing();
+        window.requestAnimationFrame(syncMobilePersonaSpacing);
+      };
+
+      const syncMobilePersonaSpacing = () => {
+        const lede = root.querySelector('.m-persona-lede');
+        const title = root.querySelector('.m-persona-title');
+        const info = root.querySelector('.m-persona-info');
+        const arrows = root.querySelector(':scope > .m-arrow-row');
+        if (!info || !arrows) return;
+        const targetGap = 20;
+        if (lede && title) {
+          const titleTop = Math.round(lede.offsetTop + lede.offsetHeight + targetGap);
+          root.style.setProperty('--mobile-persona-title-top', `${titleTop}px`);
+        }
+        const rootHeight = root.getBoundingClientRect().height;
+        const infoBottom = info.offsetTop + info.offsetHeight;
+        const arrowHeight = arrows.offsetHeight || 44;
+        const arrowBottom = Math.max(30, Math.round(rootHeight - infoBottom - targetGap - arrowHeight));
+        root.style.setProperty('--mobile-persona-arrow-bottom', `${arrowBottom}px`);
       };
 
       window.clearTimeout(root._mobilePersonaLeaveTimer);
