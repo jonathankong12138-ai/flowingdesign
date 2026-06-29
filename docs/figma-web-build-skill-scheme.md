@@ -1,6 +1,6 @@
 # Figma 设计图网页开发 Skill 体系方案
 
-状态：方案稿  
+状态：MVP 已落地  
 适用范围：Codex Web Design 流程中的开发阶段  
 目标读者：维护 `prototype`、`build`、`check`、`retro` 以及 Figma 到网页开发相关 skill 的设计者和执行者  
 最后更新：2026-06-29
@@ -1103,3 +1103,130 @@ extract-css-vars.mjs
 4. 后续可以按真实失败点演进，而不是凭想象过度拆分。
 5. 和现有 `prototype -> build -> check -> retro` 流程兼容。
 
+## 19. Phase 1 落地结果
+
+本方案的 Phase 1 已按推荐目录落地到：
+
+```txt
+~/.codex/skills/
+```
+
+### 19.1 已创建的 MVP skills
+
+```txt
+figma-web-build
+figma-web-design-analysis
+figma-web-repo-analysis
+figma-web-implementation-map
+figma-web-code-implementation
+figma-web-interaction-states
+figma-web-visual-alignment
+figma-web-browser-verification
+figma-web-quality-finish
+```
+
+每个 skill 都已包含：
+
+```txt
+SKILL.md
+agents/openai.yaml
+```
+
+其中 `SKILL.md` 已按以下契约编写：
+
+```txt
+Purpose / Output Contract
+Inputs
+Workflow
+Stage Gate
+Stop Conditions
+Validation
+```
+
+说明：不是每个 skill 都需要完整使用这些标题；但每个 skill 都已覆盖对应含义，保证下一阶段可执行。
+
+### 19.2 已创建的 references
+
+```txt
+figma-web-build/references/pipeline.md
+figma-web-build/references/stage-gates.md
+figma-web-design-analysis/references/design-analysis-template.md
+figma-web-repo-analysis/references/repo-scan-patterns.md
+figma-web-implementation-map/references/mapping-template.md
+figma-web-interaction-states/references/interaction-state-checklist.md
+figma-web-visual-alignment/references/visual-alignment-ledger.md
+figma-web-browser-verification/references/browser-verification-template.md
+figma-web-quality-finish/references/quality-finish-checklist.md
+```
+
+references 的定位是短模板和检查清单，而不是长篇说明。第一版避免把细节散成大量文档，只保留真实执行时会复用的材料。
+
+### 19.3 已创建的脚本
+
+```txt
+figma-web-browser-verification/scripts/capture-viewports.mjs
+```
+
+用途：
+
+```txt
+在 Playwright 可用时，对同一 URL 批量捕获 mobile / tablet / desktop / wide desktop 截图，
+同时输出 summary.json，记录 viewport、截图路径、console warning/error、page error 和横向 overflow 指标。
+```
+
+示例：
+
+```bash
+node ~/.codex/skills/figma-web-browser-verification/scripts/capture-viewports.mjs http://localhost:5173 ./tmp/figma-web-shots
+```
+
+该脚本是辅助验证工具，不强制替代项目已有 Playwright 测试、浏览器插件或人工交互检查。
+
+### 19.4 当前边界
+
+Phase 1 没有创建以下微 skill：
+
+```txt
+figma-web-mobile-align
+figma-web-media-fit
+figma-web-token-reading
+figma-web-dom-measure
+figma-web-overflow-check
+```
+
+这些仍按原方案保留为 Phase 3 候选。只有真实任务中反复出现、可独立验证、且造成返工时，才升级为独立 skill。
+
+### 19.5 Phase 2 试运行建议
+
+下一阶段应用 3-5 个真实任务验证：
+
+```txt
+1. 单张 screenshot -> 当前项目页面实现。
+2. Figma desktop + mobile -> 响应式页面实现。
+3. 已有页面 -> 按 Figma 修改 UI。
+4. 视觉 QA 截图 -> 修复 spacing / typography / media fit。
+5. Figma 不可访问 -> 使用导出图片作为基准实现。
+```
+
+每次试运行记录：
+
+```txt
+使用了哪些 figma-web-* skills
+哪些 references 被读取
+是否需要 capture-viewports.mjs
+check 或用户反馈的问题
+问题归属到哪个环节
+是否满足子 skill 升级条件
+```
+
+### 19.6 完成判定
+
+本方案现在满足 Phase 1 完成条件：
+
+```txt
+1. MVP skill 目录已创建。
+2. 总控 skill 和 8 个环节 skill 已有可执行工作流。
+3. 每个环节都有输入、输出、闸门、停止条件和验证规则。
+4. 子动作以 checklist / references 形式保留，没有过早拆成微 skill。
+5. 浏览器验证阶段已有可选脚本支撑。
+```
