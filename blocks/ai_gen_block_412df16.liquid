@@ -44,7 +44,13 @@
   }
 {% endstyle %}
 
-<div class="ai-text-block-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+<div
+  class="ai-text-block-{{ ai_gen_id }}"
+  {% if block.settings.text contains '循流而进' %}
+    data-fd-ambient-trigger
+  {% endif %}
+  {{ block.shopify_attributes }}
+>
   <div class="ai-text-block__content-{{ ai_gen_id }}">
     {{ block.settings.text }}
   </div>
