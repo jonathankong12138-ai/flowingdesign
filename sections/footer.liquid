@@ -189,6 +189,10 @@
   }
 
   .footer-bottom-row {
+    position: absolute;
+    left: {{ section.settings.padding_left }}px;
+    right: {{ section.settings.padding_right }}px;
+    bottom: {{ section.settings.padding-block-end }}px;
     border-top: 1px solid rgba(128, 128, 128, 0.2);
     padding-top: 40px;
     display: flex;
@@ -232,6 +236,12 @@
     .footer-actions { width: 100%; flex-direction: column; align-items: stretch; }
     .footer-btn { width: 100%; }
     .footer-btn.btn-icon-only { width: max-content; margin-left: auto; } /* 手机端独立圆按钮靠右 */
+    .footer-bottom-row {
+      position: relative;
+      left: auto;
+      right: auto;
+      bottom: auto;
+    }
   }
 {%- endstyle -%}
 
@@ -414,6 +424,7 @@
     const previousWorksSection = previousWorksWrapper?.closest('.shopify-section') || previousWorksWrapper;
     const ctaPin = footerElement.querySelector('.footer-top-pin');
     const ctaRow = footerElement.querySelector('.footer-top-row');
+    let footerRiseProgress = 0;
     const resetPreviousWorks = () => {
       if (!previousWorksSection) return;
       previousWorksSection.style.transform = '';
@@ -439,6 +450,7 @@
       const start = windowHeight;
       const end = Math.max(60, windowHeight - rect.height);
       const progress = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
+      footerRiseProgress = progress;
       const pinRect = ctaPin.getBoundingClientRect();
       const naturalCtaTop = pinRect.top;
       const targetTop = 60;
@@ -512,15 +524,8 @@
 
       const animate = () => {
           requestAnimationFrame(animate);
-          const rect = footerElement.getBoundingClientRect();
-          const windowHeight = window.innerHeight;
-          
-          if (rect.top < windowHeight && rect.bottom > 0) {
-              const waveTravel = windowHeight * 1.45;
-              targetScroll = Math.max(0, Math.min(1, (windowHeight - rect.top) / waveTravel));
-          }
-          
-          currentScroll += (targetScroll - currentScroll) * 0.045;
+          targetScroll = footerRiseProgress;
+          currentScroll += (targetScroll - currentScroll) * 0.16;
           shaderMaterial.uniforms.uScroll.value = currentScroll;
           
           const delta = clock.getDelta(); 
