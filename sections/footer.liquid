@@ -28,6 +28,7 @@
     overflow: hidden;
     z-index: 1;
     isolation: isolate; 
+    --footer-rise-progress: 0;
   }
 
   .footer-glacier-canvas-{{ section.id }} {
@@ -63,12 +64,17 @@
      基础排版与布局
   ========================================================= */
   .footer-top-row {
+    position: sticky;
+    top: 60px;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     flex-wrap: wrap;
     gap: 40px;
     margin-bottom: 80px;
+    transform: translateY(calc((1 - var(--footer-rise-progress)) * 120px));
+    transition: transform 0.1s linear;
+    z-index: 20;
   }
 
   .footer-title {
@@ -198,7 +204,7 @@
       padding-left: {{ section.settings.padding_left | divided_by: 2 }}px;
       padding-right: {{ section.settings.padding_right | divided_by: 2 }}px;
     }
-    .footer-top-row { flex-direction: column; align-items: flex-start; gap: 30px; margin-bottom: 40px; }
+    .footer-top-row { flex-direction: column; align-items: flex-start; gap: 30px; margin-bottom: 40px; top: 32px; transform: none; }
     .footer-actions { width: 100%; flex-direction: column; align-items: stretch; }
     .footer-btn { width: 100%; }
     .footer-btn.btn-icon-only { width: max-content; margin-left: auto; } /* 手机端独立圆按钮靠右 */
@@ -383,6 +389,35 @@
     };
     window.addEventListener('scroll', checkVisibility, { passive: true });
     checkVisibility();
+
+    const previousSection = footerElement.closest('.shopify-section')?.previousElementSibling;
+    const syncFooterRise = () => {
+      const rect = footerElement.getBoundingClientRect();
+      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+      const start = windowHeight;
+      const end = 60;
+      const progress = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
+
+      footerElement.style.setProperty('--footer-rise-progress', progress.toFixed(4));
+
+      if (previousSection && window.innerWidth >= 768) {
+        const upwardOffset = -140 * progress;
+        const opacity = Math.max(0, 1 - progress * 1.15);
+        previousSection.style.transform = `translateY(${upwardOffset}px)`;
+        previousSection.style.opacity = opacity.toFixed(4);
+        previousSection.style.willChange = 'transform, opacity';
+        previousSection.style.pointerEvents = progress > 0.98 ? 'none' : '';
+      } else if (previousSection) {
+        previousSection.style.transform = '';
+        previousSection.style.opacity = '';
+        previousSection.style.willChange = '';
+        previousSection.style.pointerEvents = '';
+      }
+    };
+
+    window.addEventListener('scroll', syncFooterRise, { passive: true });
+    window.addEventListener('resize', syncFooterRise);
+    syncFooterRise();
 
     function initFooterWebGL() {
       const canvas = document.getElementById('footer-canvas-{{ section.id }}');

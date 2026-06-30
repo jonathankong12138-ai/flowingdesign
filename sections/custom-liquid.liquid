@@ -36,6 +36,7 @@
     --award-color: {{ section.settings.award_color }};
     --award-size-pc: {{ section.settings.award_size_pc }}px;
     --award-size-mb: {{ section.settings.award_size_mb }}px;
+    --first-media-height: calc(100vh - {{ section.settings.padding_top_desktop | plus: section.settings.padding_bottom_desktop }}px);
   }
 
   /* --- 容器全局重置 --- */
@@ -87,7 +88,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    flex-grow: 1;
+    flex: 0 0 var(--first-media-height);
+    min-height: 320px;
   }
 
   .koto-works-title-{{ section_id }} {
@@ -375,7 +377,6 @@
   uniform float uSaturation;
   
   uniform float uHoverProgress; 
-  uniform vec2 uOrigin; 
 
   varying vec2 vUv;
   
@@ -439,12 +440,6 @@
   }
   
   void main() {
-      // 屏幕宽高比校正：确保中心向外扩散是正圆
-      vec2 aspectUv = vUv;
-      aspectUv.x *= uResolution.x / uResolution.y;
-      vec2 aspectOrigin = uOrigin;
-      aspectOrigin.x *= uResolution.x / uResolution.y;
-
       float time = uTime * 0.254;
       
       // 流体高度图计算
@@ -465,22 +460,10 @@
       hsl.y = clamp(hsl.y * uSaturation, 0.0, 1.0);
       color = hsl2rgb(hsl);
       
-      // 【核心复刻】：中心向四周涟漪扩散逻辑
-      float dist = length(aspectUv - aspectOrigin);
-      float maxRadius = length(vec2(uResolution.x/uResolution.y, 1.0)) * 1.2;
-      float wavePos = uHoverProgress * maxRadius;
-      
-      // 波形起伏，让圆形涟漪边缘有真实的液体海浪感
-      float waveOffset = h * 0.3 + sin(dist * 10.0 - time * 2.0) * 0.05;
-      float frontDist = wavePos - (dist + waveOffset);
-      
-      float fluidMask = smoothstep(0.0, 0.15, frontDist);
-      fluidMask *= smoothstep(0.0, 0.05, uHoverProgress);
-      
-      // 浪尖高光 
-      float waveCrest = smoothstep(-0.05, 0.1, frontDist) * smoothstep(0.2, 0.05, frontDist);
-      
-      vec3 finalColor = mix(color, vec3(0.98, 0.99, 1.0), waveCrest * 0.8);
+      // 悬浮时全屏直接渐变替换背景，不再从图片中心向外扩散。
+      float fluidMask = smoothstep(0.0, 1.0, uHoverProgress);
+
+      vec3 finalColor = color;
       float subtleBump = (light - 0.5) * 0.03 * fluidMask;
       finalColor += subtleBump;
       
@@ -502,6 +485,27 @@
         shopifySection.style.position = 'relative';
         shopifySection.style.zIndex = '50';
     }
+
+    const syncFirstMediaHeight = () => {
+      const firstMediaCard = wrapper.querySelector('.koto-media-card-' + sectionId);
+      if (!firstMediaCard) return;
+
+      const firstMediaHeight = firstMediaCard.getBoundingClientRect().height;
+      if (firstMediaHeight > 0) {
+        wrapper.style.setProperty('--first-media-height', firstMediaHeight + 'px');
+      }
+    };
+
+    syncFirstMediaHeight();
+    window.addEventListener('load', syncFirstMediaHeight, { once: true });
+    window.addEventListener('resize', syncFirstMediaHeight);
+    wrapper.querySelectorAll('.koto-media-card-' + sectionId + ' img').forEach(image => {
+      if (image.complete) {
+        syncFirstMediaHeight();
+      } else {
+        image.addEventListener('load', syncFirstMediaHeight, { once: true });
+      }
+    });
 
     // 1. 左侧文本联动逻辑
     if (window.innerWidth >= 990) {
@@ -543,8 +547,7 @@
               uBrightness: { value: {{ section.settings.fluid_brightness | default: 0.0 }} },
               uHueShift: { value: {{ section.settings.fluid_hue | default: 0 }} / 360.0 },
               uSaturation: { value: {{ section.settings.fluid_saturation | default: 1.0 }} },
-              uHoverProgress: { value: 0.0 },
-              uOrigin: { value: new THREE.Vector2(0.5, 0.5) }
+              uHoverProgress: { value: 0.0 }
           }
       });
       scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), shaderMaterial));
@@ -558,18 +561,15 @@
 
       let targetHover = 0;
       let currentHover = 0;
-      let activeCard = null;
       const hoverCards = wrapper.querySelectorAll('.js-hover-card');
 
       hoverCards.forEach(card => {
         card.addEventListener('mouseenter', () => {
           if (window.innerWidth < 990) return; 
-          activeCard = card;
           targetHover = 1.0;
         });
         card.addEventListener('mouseleave', () => {
           if (window.innerWidth < 990) return;
-          activeCard = null;
           targetHover = 0.0;
         });
       });
@@ -579,13 +579,6 @@
 
       const animate = () => {
           requestAnimationFrame(animate);
-          
-          if (activeCard) {
-            const rect = activeCard.getBoundingClientRect();
-            const originX = (rect.left + rect.width / 2) / window.innerWidth;
-            const originY = 1.0 - ((rect.top + rect.height / 2) / window.innerHeight); 
-            shaderMaterial.uniforms.uOrigin.value.set(originX, originY);
-          }
 
           currentHover += (targetHover - currentHover) * 0.08;
           shaderMaterial.uniforms.uHoverProgress.value = currentHover;
