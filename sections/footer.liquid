@@ -26,6 +26,7 @@
     color: rgb(var(--color-foreground));
     position: relative;
     overflow: hidden;
+    min-height: 100vh;
     z-index: 1;
     isolation: isolate; 
   }
@@ -72,7 +73,7 @@
   .footer-top-row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
     flex-wrap: wrap;
     gap: 40px;
     width: 100%;
@@ -248,19 +249,10 @@
         </a>
         
         {%- assign btt_text = section.settings.back_to_top_text -%}
-        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="footer-btn btn-solid {% if btt_text == blank %}btn-icon-only{% endif %}">
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="footer-btn btn-solid">
           
           {%- if btt_text != blank -%}
             <span>{{ btt_text }}</span>
-          {%- endif -%}
-          
-          {%- if section.settings.back_to_top_icon != blank -%}
-            <img src="{{ section.settings.back_to_top_icon | image_url: width: 40 }}" 
-                 alt="Back to top" 
-                 class="btn-icon"
-                 loading="lazy">
-          {%- else -%}
-            <span class="btn-icon">&uarr;</span>
           {%- endif -%}
         </button>
         
@@ -429,6 +421,7 @@
       previousWorksSection.style.willChange = '';
       previousWorksSection.style.pointerEvents = '';
       previousWorksSection.style.transition = '';
+      previousWorksSection.style.zIndex = '';
     };
     const resetCtaPin = () => {
       if (!ctaRow || !ctaPin) return;
@@ -462,12 +455,14 @@
       }
 
       if (previousWorksSection && window.innerWidth >= 768 && progress > 0) {
-        const upwardOffset = -180 * progress;
-        const opacity = Math.max(0, 1 - progress);
+        const fastProgress = Math.min(1, progress * 1.85);
+        const upwardOffset = -windowHeight * 0.72 * fastProgress;
+        const opacity = Math.max(0, 1 - fastProgress * 1.15);
         previousWorksSection.style.transform = `translate3d(0, ${upwardOffset}px, 0)`;
         previousWorksSection.style.opacity = opacity.toFixed(4);
         previousWorksSection.style.willChange = 'transform, opacity';
-        previousWorksSection.style.pointerEvents = progress > 0.98 ? 'none' : '';
+        previousWorksSection.style.zIndex = '0';
+        previousWorksSection.style.pointerEvents = fastProgress > 0.62 ? 'none' : '';
       } else {
         resetPreviousWorks();
       }
@@ -521,12 +516,11 @@
           const windowHeight = window.innerHeight;
           
           if (rect.top < windowHeight && rect.bottom > 0) {
-              let visibleHeight = windowHeight - rect.top;
-              let scrollPercent = visibleHeight / rect.height;
-              targetScroll = Math.max(0, Math.min(1, scrollPercent * 1.2));
+              const waveTravel = windowHeight * 1.45;
+              targetScroll = Math.max(0, Math.min(1, (windowHeight - rect.top) / waveTravel));
           }
           
-          currentScroll += (targetScroll - currentScroll) * 0.1;
+          currentScroll += (targetScroll - currentScroll) * 0.045;
           shaderMaterial.uniforms.uScroll.value = currentScroll;
           
           const delta = clock.getDelta(); 

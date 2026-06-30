@@ -124,11 +124,12 @@
         vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
         float light = dot(normal, normalize(vec3(-0.6, 0.5, 0.4))) * 0.5 + 0.5;
 
-        vec3 color = mix(vec3(1.0), vec3(0.949), smoothstep(0.0, 0.24, light));
-        color = mix(color, vec3(0.980), smoothstep(0.24, 0.44, light));
+        vec3 color = mix(vec3(1.0), vec3(0.880), smoothstep(0.0, 0.24, light));
+        color = mix(color, vec3(0.960), smoothstep(0.24, 0.44, light));
         color = mix(color, vec3(1.0), smoothstep(0.44, 0.52, light));
-        color = mix(color, vec3(0.961), smoothstep(0.52, 0.83, light));
-        color = mix(color, vec3(0.780), smoothstep(0.83, 1.0, light));
+        color = mix(color, vec3(0.910), smoothstep(0.52, 0.83, light));
+        color = mix(color, vec3(0.700), smoothstep(0.83, 1.0, light));
+        color = clamp((color - 0.5) * 1.12 + 0.5, 0.0, 1.0);
 
         float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
         gl_FragColor = vec4(clamp(color + baseDither, 0.0, 1.0), 1.0);
@@ -143,11 +144,12 @@
         if (document.body.classList.contains(activeClass)) return;
 
         const rect = trigger.getBoundingClientRect();
-        const triggerCenter = rect.top + rect.height / 2;
-        const viewportCenter = window.innerHeight / 2;
-        const threshold = Math.max(80, window.innerHeight * 0.18);
+        const triggerTop = rect.top;
+        const triggerBottom = rect.bottom;
+        const activeTop = window.innerHeight * 0.82;
+        const activeBottom = window.innerHeight * 0.18;
 
-        if (Math.abs(triggerCenter - viewportCenter) <= threshold) {
+        if (triggerTop <= activeTop && triggerBottom >= activeBottom) {
           document.body.classList.add(activeClass);
           window.removeEventListener('scroll', update);
           window.removeEventListener('resize', update);
