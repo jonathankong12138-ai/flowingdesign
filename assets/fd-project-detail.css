@@ -15041,14 +15041,14 @@
       .mobile-393 .outro-next .next-title.blend-difference,
       .outro-next .next-title,
       .outro-next .next-title.blend-difference {
-        font-size: 24px !important;
-        line-height: 34px !important;
+        font-size: 28px !important;
+        line-height: 40px !important;
         margin-top: 0 !important;
       }
 
       .mobile-393 .outro-next .next-cta-arrow,
       .outro-next .next-cta-arrow {
-        top: 0 !important;
+        top: -2px !important;
       }
     }
 
@@ -15375,7 +15375,8 @@
       .mobile-393 .m-structure-components .m-card-label {
         left: var(--fd-space-4) !important;
         right: var(--fd-space-4) !important;
-        bottom: var(--fd-space-4) !important;
+        top: calc(var(--fd-space-7) + min(538px, 90vw) + var(--fd-space-5)) !important;
+        bottom: auto !important;
       }
 
       .mobile-393 #m-mobile-final::before,
