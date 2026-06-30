@@ -18,6 +18,28 @@
     status.textContent = text;
   };
 
+  window.fdProjectBackToTop = function fdProjectBackToTop(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const root = document.documentElement;
+    const previousScrollBehavior = root ? root.style.scrollBehavior : '';
+    if (root) root.style.scrollBehavior = 'auto';
+    const scrollTop = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      if (root) root.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    };
+    scrollTop();
+    window.requestAnimationFrame(scrollTop);
+    window.setTimeout(() => {
+      scrollTop();
+      if (root) root.style.scrollBehavior = previousScrollBehavior;
+    }, 120);
+    return false;
+  };
+
   window.fdProjectStopContinuousMotion = function fdProjectStopContinuousMotion() {
     window.clearInterval(window.flowNodeTimer);
     window.flowNodeTimer = null;

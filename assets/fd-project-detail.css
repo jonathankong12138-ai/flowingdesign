@@ -2028,6 +2028,12 @@
     color: #000;
     margin: 0;
   }
+  .next-footer-back-link {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
   .next-footer-note-head {
     display: flex;
     align-items: center;
@@ -15359,9 +15365,9 @@
       }
 
       .mobile-393 .m-structure-components {
-        height: 568px !important;
-        min-height: 568px !important;
-        max-height: 568px !important;
+        height: 572px !important;
+        min-height: 572px !important;
+        max-height: 572px !important;
       }
 
       .mobile-393 .m-structure-components .m-component-preview {
@@ -15377,6 +15383,37 @@
         right: var(--fd-space-4) !important;
         top: calc(var(--fd-space-7) + min(538px, 90vw) + var(--fd-space-5)) !important;
         bottom: auto !important;
+      }
+
+      .mobile-393 .m-org-goals .m-card-label {
+        position: absolute !important;
+        top: 50% !important;
+        bottom: auto !important;
+        transform: translateY(-50%) !important;
+      }
+
+      .mobile-393 .m-org-workflow {
+        display: grid !important;
+        height: 420px !important;
+        min-height: 420px !important;
+        max-height: 420px !important;
+        padding: 0 28px !important;
+        align-content: center !important;
+        justify-items: center !important;
+        gap: 18px !important;
+      }
+
+      .mobile-393 .m-org-workflow .m-workflow-title,
+      .mobile-393 .m-org-workflow .m-workflow-list {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        max-width: 360px !important;
+        margin: 0 !important;
+        text-align: center !important;
       }
 
       .mobile-393 #m-mobile-final::before,
