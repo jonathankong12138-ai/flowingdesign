@@ -2024,8 +2024,8 @@
   }
   .next-footer-note-title {
     font-size: 18px;
-    font-weight: 500;
-    color: #000;
+    font-weight: 400;
+    color: #666666;
     margin: 0;
   }
   .next-footer-back-link {
@@ -3911,11 +3911,15 @@
     background: transparent !important;
   }
   .outro-next .next-footer-note-title {
-    color: #000 !important;
-    -webkit-text-fill-color: #000 !important;
+    color: #666666 !important;
+    -webkit-text-fill-color: #666666 !important;
     mix-blend-mode: normal !important;
     position: relative !important;
     z-index: 30 !important;
+  }
+  .outro-next .next-footer-back-link {
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
   }
   .h-title,
   .pillar-target,
