@@ -465,7 +465,7 @@
     };
 
     const syncFooterRise = () => {
-      if (!ctaRow || !ctaPin) return;
+      if (!ctaRow || !ctaPin || !bottomRow) return;
       const rect = footerElement.getBoundingClientRect();
       const windowHeight = window.innerHeight || document.documentElement.clientHeight;
       const start = windowHeight;
@@ -485,8 +485,13 @@
         footerElement.style.setProperty('--footer-cta-left', `${pinRect.left}px`);
         footerElement.style.setProperty('--footer-cta-width', `${pinRect.width}px`);
         const ctaExitOffset = Math.max(0, fixedTop - targetTop);
-        const bottomOffset = ctaExitOffset;
-        const bottomOpacity = Math.max(0, 1 - ctaExitOffset / (windowHeight * 0.32));
+        const footerBottomInset = {{ section.settings.padding-block-end }};
+        const safeGap = Math.max(40, windowHeight * 0.045);
+        const bottomNaturalTop = windowHeight - footerBottomInset - bottomRow.offsetHeight;
+        const ctaBottom = fixedTop + ctaRow.offsetHeight;
+        const collisionOffset = Math.max(0, ctaBottom + safeGap - bottomNaturalTop);
+        const bottomOffset = Math.max(ctaExitOffset, collisionOffset);
+        const bottomOpacity = Math.max(0, 1 - bottomOffset / (windowHeight * 0.32));
         footerElement.style.setProperty('--footer-bottom-y', `${bottomOffset}px`);
         footerElement.style.setProperty('--footer-bottom-opacity', `${bottomOpacity.toFixed(4)}`);
         ctaRow.classList.add('is-scroll-pinned');
