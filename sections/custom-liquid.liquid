@@ -72,7 +72,7 @@
 
   .koto-inner-{{ section_id }} {
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
     justify-content: space-between;
     width: 100%;
     max-width: 1800px;
@@ -85,6 +85,7 @@
     width: 38%;
     position: relative;
     min-height: 100vh;
+    align-self: stretch;
     display: flex;
     flex-direction: column;
     padding-right: 40px;
@@ -149,7 +150,7 @@
     margin-top: auto;
     margin-bottom: 40px;
     position: sticky;
-    bottom: 40px;
+    top: calc(100vh - var(--left-footer-space) - 40px);
     min-height: 150px; 
   }
 
@@ -870,7 +871,7 @@
       "type": "range",
       "id": "main_title_size_mb",
       "min": 12, "max": 80, "step": 1, "unit": "px",
-      "label": "手机端字号", "default": 28
+      "label": "手机端字号", "default": 20
     },
     {
       "type": "select",
@@ -904,7 +905,7 @@
       "type": "range",
       "id": "project_title_size_pc",
       "min": 20, "max": 150, "step": 2, "unit": "px",
-      "label": "电脑端字号", "default": 42
+      "label": "电脑端字号", "default": 48
     },
     {
       "type": "range",
