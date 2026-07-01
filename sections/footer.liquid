@@ -95,10 +95,10 @@
 
   .footer-bottom-row.is-scroll-pinned {
     position: fixed;
-    top: var(--footer-bottom-top, auto);
+    top: auto;
     left: var(--footer-cta-left, {{ section.settings.padding_left }}px);
     right: auto;
-    bottom: auto;
+    bottom: {{ section.settings.padding-block-end }}px;
     width: var(--footer-cta-width, calc(100vw - {{ section.settings.padding_left | plus: section.settings.padding_right }}px));
     z-index: 55;
   }
@@ -458,7 +458,6 @@
       footerElement.style.removeProperty('--footer-cta-left');
       footerElement.style.removeProperty('--footer-cta-width');
       footerElement.style.removeProperty('--footer-top-row-height');
-      footerElement.style.removeProperty('--footer-bottom-top');
     };
 
     const syncFooterRise = () => {
@@ -475,23 +474,10 @@
       const fixedTop = Math.max(targetTop, targetTop + (naturalCtaTop - targetTop) * (1 - progress));
 
       if (window.innerWidth >= 768 && progress > 0) {
-        const bottomOffset = {{ section.settings.padding-block-end | default: 60 }};
-        const bottomStartTop = fixedTop + ctaRow.offsetHeight + 90;
-        const bottomStickyTop = bottomRow ? windowHeight - bottomRow.offsetHeight - bottomOffset : bottomStartTop;
-        const bottomEndTop = bottomRow
-          ? Math.max(targetTop + ctaRow.offsetHeight + 40, bottomStickyTop)
-          : bottomStartTop;
-        const bottomProgress = Math.min(1, progress * 1.35);
-        const interpolatedBottomTop = bottomStartTop + (bottomEndTop - bottomStartTop) * bottomProgress;
-        const bottomTop = bottomStartTop < bottomEndTop
-          ? Math.min(bottomEndTop, interpolatedBottomTop)
-          : Math.max(bottomEndTop, interpolatedBottomTop);
-
         footerElement.style.setProperty('--footer-top-row-height', `${ctaRow.offsetHeight}px`);
         footerElement.style.setProperty('--footer-cta-top', `${fixedTop}px`);
         footerElement.style.setProperty('--footer-cta-left', `${pinRect.left}px`);
         footerElement.style.setProperty('--footer-cta-width', `${pinRect.width}px`);
-        footerElement.style.setProperty('--footer-bottom-top', `${bottomTop}px`);
         ctaRow.classList.add('is-scroll-pinned');
         bottomRow?.classList.add('is-scroll-pinned');
       } else {
