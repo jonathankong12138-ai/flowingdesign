@@ -426,7 +426,7 @@
       finalColor += subtleBump;
 
       finalColor = clamp(finalColor, 0.0, 1.0);
-      gl_FragColor = vec4(finalColor, 1.0);
+      gl_FragColor = vec4(finalColor, fluidMask);
   }
 </script>
 
