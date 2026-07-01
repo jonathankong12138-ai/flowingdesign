@@ -38,6 +38,7 @@
     --first-media-height: calc(100vh - {{ section.settings.padding_top_desktop | plus: section.settings.padding_bottom_desktop }}px);
     --title-start-offset: 0px;
     --left-footer-space: 190px;
+    --heatmap-bleed-y: 0px;
   }
 
   /* --- 容器全局重置 --- */
@@ -56,12 +57,15 @@
   .koto-heatmap-canvas-{{ section_id }} {
     position: sticky;
     top: 0;
-    width: 100%;
-    height: 100vh;
-    height: 100dvh;
+    left: 50%;
+    width: 100vw;
+    height: calc(100vh + var(--heatmap-bleed-y));
+    height: calc(100dvh + var(--heatmap-bleed-y));
     display: block;
-    margin-bottom: -100vh;
-    margin-bottom: -100dvh;
+    margin-left: -50vw;
+    margin-bottom: calc(-100vh - var(--heatmap-bleed-y));
+    margin-bottom: calc(-100dvh - var(--heatmap-bleed-y));
+    transform: translateY(calc(var(--heatmap-bleed-y) * -1));
     z-index: 1;
     pointer-events: none;
   }
@@ -261,6 +265,7 @@
       padding-bottom: {{ section.settings.padding_bottom_desktop }}px !important;
       padding-left: {{ section.settings.padding_left_desktop }}px !important;
       padding-right: {{ section.settings.padding_right_desktop }}px !important;
+      --heatmap-bleed-y: {{ section.settings.padding_top_desktop }}px;
     }
   }
 
@@ -270,6 +275,7 @@
       padding-bottom: {{ section.settings.padding_bottom_mobile }}px !important;
       padding-left: {{ section.settings.padding_left_mobile }}px !important;
       padding-right: {{ section.settings.padding_right_mobile }}px !important;
+      --heatmap-bleed-y: {{ section.settings.padding_top_mobile }}px;
     }
     .koto-inner-{{ section_id }} { flex-direction: column; }
     .koto-left-{{ section_id }} {
@@ -460,6 +466,22 @@
           vec3 g; g.x = a0.x * x0.x + h.x * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
           return 130.0 * dot(m, g);
         }
+        vec3 rgb2hsl(vec3 c){
+          float maxC = max(c.r, max(c.g, c.b)); float minC = min(c.r, min(c.g, c.b)); float h, s, l = (maxC + minC) / 2.0;
+          if(maxC == minC){ h = s = 0.0; } else{ float d = maxC - minC; s = l > 0.5 ? d / (2.0 - maxC - minC) : d / (maxC + minC);
+            if(maxC == c.r) h = (c.g - c.b) / d + (c.g < c.b ? 6.0 : 0.0); else if(maxC == c.g) h = (c.b - c.r) / d + 2.0; else h = (c.r - c.g) / d + 4.0; h /= 6.0;
+          } return vec3(h, s, l);
+        }
+        float hue2rgb(float p, float q, float t){
+          if(t < 0.0) t += 1.0; if(t > 1.0) t -= 1.0; if(t < 1.0/6.0) return p + (q - p) * 6.0 * t;
+          if(t < 1.0/2.0) return q; if(t < 2.0/3.0) return p + (q - p) * (2.0/3.0 - t) * 6.0; return p;
+        }
+        vec3 hsl2rgb(vec3 c){
+          vec3 rgb; if(c.y == 0.0){ rgb = vec3(c.z); } else{
+            float q = c.z < 0.5 ? c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y; float p = 2.0 * c.z - q;
+            rgb.r = hue2rgb(p, q, c.x + 1.0/3.0); rgb.g = hue2rgb(p, q, c.x); rgb.b = hue2rgb(p, q, c.x - 1.0/3.0);
+          } return rgb;
+        }
         float getHeight(vec2 uv, float time, float scroll, float seed) {
           vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
           vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.2);
@@ -472,10 +494,19 @@
           float wave = sin(rotUV.y * 0.6 + distortion.x * 1.7 + flowTime);
           return pow(max(wave * 0.5 + 0.5, 0.0), 0.8) + detail;
         }
-        float deepHaloMask(float lightValue, float center, float width, float featherValue) {
-          float halfWidth = max(width, 0.001);
-          float feather = max(featherValue * halfWidth, 0.001);
-          return smoothstep(center - halfWidth - feather, center - halfWidth, lightValue) * (1.0 - smoothstep(center + halfWidth, center + halfWidth + feather, lightValue));
+        float deepHaloMask(float lightValue, float rangeValue, float featherValue) {
+          float stopGap = max(0.06 - 0.59, 0.001);
+          float halfWidth = stopGap * mix(0.04, 0.50, clamp(rangeValue, 0.0, 1.0));
+          float feather = max(featherValue * halfWidth * 1.4, 0.001);
+          float innerEdge = 0.59 - halfWidth;
+          float outerEdge = 0.59 + halfWidth;
+          float innerFade = smoothstep(innerEdge - feather, innerEdge, lightValue);
+          float outerFade = 1.0 - smoothstep(outerEdge, outerEdge + feather, lightValue);
+          return innerFade * outerFade;
+        }
+        float deepHaloShape(float flowValue, float featherValue) {
+          float feather = clamp(featherValue, 0.01, 0.95);
+          return smoothstep(1.0 - feather, 1.0, flowValue);
         }
         void main() {
           vec2 uv = vUv;
@@ -490,24 +521,43 @@
           vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
           float light = dot(normal, normalize(vec3(-0.5, 0.5, 0.4))) * 0.5 + 0.5;
 
-          vec3 color = mix(vec3(0.792, 0.341, 1.0), vec3(0.078, 0.463, 1.0), smoothstep(0.0, 0.28, light));
-          color = mix(color, vec3(1.0, 0.502, 0.502), smoothstep(0.28, 0.62, light));
-          color = mix(color, vec3(1.0), smoothstep(0.62, 1.0, light));
-          float halo1 = deepHaloMask(light, 0.42, 0.18, 0.95) * smoothstep(0.05, 1.0, snoise(uv * 0.5 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5) * 0.77;
-          float halo2 = deepHaloMask(light, 0.56, 0.08, 0.29) * smoothstep(0.71, 1.0, snoise(uv * 2.5 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5) * 1.5;
-          vec3 deepHalo = vec3(0.0, 0.898, 0.659) * halo1 + vec3(1.0, 0.506, 0.239) * halo2;
+          vec3 color = mix(vec3(0.792, 0.341, 1.0), vec3(0.078, 0.463, 1.0), smoothstep(0.0, 0.591, light));
+          color = mix(color, vec3(1.0, 0.502, 0.502), smoothstep(0.59, 0.061, light));
+          color = mix(color, vec3(1.0), smoothstep(0.06, 1.001, light));
+          color = mix(color, vec3(1.0), smoothstep(1.0, 1.001, light));
+          color = mix(color, vec3(1.0), smoothstep(1.0, 1.001, light));
+          float deepHaloBand1 = deepHaloMask(light, 1.0, 0.95);
+          float deepHaloBand2 = deepHaloMask(light, 0.0, 0.29);
+          float deepFlow1 = snoise((uv / 6.0) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
+          float deepFlow2 = snoise((uv / 1.2) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
+          vec3 deepHalo = vec3(0.0, 0.898, 0.659) * deepHaloBand1 * deepHaloShape(deepFlow1, 0.95) * 0.77;
+          deepHalo += vec3(1.0, 0.506, 0.239) * deepHaloBand2 * deepHaloShape(deepFlow2, 0.29) * 1.5;
           color = 1.0 - (1.0 - color) * (1.0 - clamp(deepHalo, 0.0, 1.0));
-          color = clamp((color - 0.5) * 1.5 + 0.35, 0.0, 1.0);
+          color = (color - 0.5) * 1.5 + 0.35;
+          color = clamp(color, 0.0, 1.0);
+          vec3 hsl = rgb2hsl(color);
+          hsl.y = clamp(hsl.y, 0.0, 1.0);
+          color = hsl2rgb(hsl);
 
           float p = clamp(uScroll, 0.0, 1.0);
           float easedScroll = 1.0 - pow(max(1.0 - p, 0.0), 2.0);
           float wavePos = easedScroll * 2.8 - 0.2;
           float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
           float dist = wavePos - (vUv.y + waveOffset);
-          float mask = smoothstep(0.0, 0.15, dist);
+          float whiteMask = smoothstep(0.0, 0.15, dist);
           float crest = smoothstep(-0.05, 0.1, dist) * smoothstep(0.2, 0.05, dist);
-          vec3 finalColor = color + vec3(1.0, 0.878, 0.961) * crest * 0.6;
-          gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), mask);
+          vec3 finalColor = mix(color, vec3(1.0), whiteMask);
+          finalColor += vec3(1.0, 0.878, 0.961) * crest * 0.6;
+          finalColor += (light - 0.5) * 0.03 * whiteMask;
+
+          vec2 grainUv = floor(vUv * uResolution * 0.55);
+          float grainTime = uTime * 0.3;
+          float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + grainTime) * 43758.5453);
+          float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
+          finalColor += baseDither + (dither - 0.5) * 0.1;
+
+          float revealAlpha = smoothstep(-0.08, 0.03, dist);
+          gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), revealAlpha);
         }
       `;
 
@@ -543,7 +593,7 @@
         } else {
           activeHeatmapTargets.delete(event.currentTarget);
         }
-        targetScroll = activeHeatmapTargets.size > 0 ? 1 : 0;
+        targetScroll = activeHeatmapTargets.size > 0 ? 0.2 : 0;
         wrapper.classList.toggle('is-heatmap-active', activeHeatmapTargets.size > 0);
       };
       hoverTargets.forEach((target) => {
