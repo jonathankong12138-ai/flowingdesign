@@ -372,7 +372,6 @@
     width: 100vw;
     height: 100vh;
     border: 0;
-    filter: contrast(2.15) brightness(0.96);
   }
 
   body.fd-ambient-home-bg-active,
@@ -400,48 +399,3 @@
     z-index: 1;
   }
 </style>
-
-<script>
-  (() => {
-    const activeClass = 'fd-ambient-home-bg-active';
-
-    function mountAmbientFrame() {
-      const frame = document.getElementById('fd-ambient-background-frame');
-      const source = document.getElementById('fd-ambient-background-srcdoc');
-      if (!frame || !source || frame.dataset.mounted === 'true') return;
-
-      frame.srcdoc = source.innerHTML.trim();
-      frame.dataset.mounted = 'true';
-    }
-
-    function activateWhenIntroIsVisible() {
-      const trigger = document.querySelector('[data-fd-ambient-trigger]');
-      if (!trigger) return;
-
-      const update = () => {
-        if (document.body.classList.contains(activeClass)) return;
-
-        const rect = trigger.getBoundingClientRect();
-        const triggerTop = rect.top;
-        const triggerBottom = rect.bottom;
-        const activeTop = window.innerHeight * 0.82;
-        const activeBottom = window.innerHeight * 0.18;
-
-        if (triggerTop <= activeTop && triggerBottom >= activeBottom) {
-          mountAmbientFrame();
-          document.body.classList.add(activeClass);
-          window.removeEventListener('scroll', update);
-          window.removeEventListener('resize', update);
-        }
-      };
-
-      update();
-      window.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
-    }
-
-    mountAmbientFrame();
-    activateWhenIntroIsVisible();
-    document.addEventListener('shopify:section:load', activateWhenIntroIsVisible);
-  })();
-</script>
