@@ -455,7 +455,7 @@
     const triggers = Array.from(wrapper.querySelectorAll('.js-trigger-bg'));
     const totalItems = {{ block.settings.visible_columns | default: 4 }};
     let currentActiveIdx = 1; 
-    let baseInterval = {{ block.settings.autoplay_interval | default: 4 | times: 1000 }};
+    let baseInterval = {{ block.settings.autoplay_interval | default: 10 | times: 1000 }};
     let currentInterval = baseInterval;
     let autoPlayTimer = null;
     let panelSwitchTimer = null;
@@ -589,7 +589,7 @@
   "settings": [
     { "type": "header", "content": "全局佈局控制" },
     { "type": "range", "id": "scroll_fade_speed", "label": "向下滚动消失速度", "min": 0, "max": 10, "step": 1, "default": 5, "info": "数值越大消失越快。0 为不消失。" },
-    { "type": "range", "id": "autoplay_interval", "label": "自動輪播間隔 (秒)", "min": 2, "max": 10, "step": 1, "default": 4 },
+    { "type": "range", "id": "autoplay_interval", "label": "自動輪播間隔 (秒)", "min": 2, "max": 10, "step": 1, "default": 10 },
     { "type": "range", "id": "visible_columns", "label": "顯示欄數", "min": 1, "max": 4, "step": 1, "default": 4 },
     { "type": "select", "id": "desktop_layout", "label": "桌面端排列方式", "options": [{"value":"row","label":"橫向排列 (Row)"},{"value":"column","label":"縱向排列 (Column)"}], "default": "row" },
     { "type": "select", "id": "container_width_mode", "label": "容器寬度模式", "options": [{"value":"full","label":"佔據全寬 (100%)"},{"value":"fit","label":"緊湊模式"}], "default": "full" },
