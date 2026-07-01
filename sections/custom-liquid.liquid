@@ -83,8 +83,8 @@
   .koto-left-{{ section_id }} {
     width: 38%;
     position: sticky;
-    top: 0; 
-    height: 100vh;
+    top: 60px; 
+    height: calc(100vh - 60px);
     display: flex;
     flex-direction: column;
     padding-right: 40px;
@@ -93,12 +93,12 @@
   .koto-title-group-{{ section_id }} {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     position: absolute;
     top: 0;
     left: 0;
     right: 40px;
-    bottom: var(--left-footer-space);
+    height: var(--first-media-height);
     min-height: 0;
   }
 
