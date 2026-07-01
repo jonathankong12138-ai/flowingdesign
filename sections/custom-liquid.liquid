@@ -300,7 +300,7 @@
   <div class="koto-inner-{{ section_id }}">
     
     <div class="koto-left-{{ section_id }}">
-      <div class="koto-title-group-{{ section_id }}">
+      <div class="koto-title-group-{{ section_id }}" data-heatmap-hover="true">
         {%- if section.settings.main_title != blank -%}
           <h2 class="koto-works-title-{{ section_id }}">{{ section.settings.main_title }}</h2>
         {%- endif -%}
@@ -535,24 +535,30 @@
 
       let targetScroll = 0;
       let currentScroll = 0;
-      let hoverCount = 0;
-      const setActive = (active) => {
-        hoverCount = Math.max(0, hoverCount + (active ? 1 : -1));
-        targetScroll = hoverCount > 0 ? 1 : 0;
-        wrapper.classList.toggle('is-heatmap-active', hoverCount > 0);
+      const activeHeatmapTargets = new Set();
+      const setActive = (active, event) => {
+        if (!event?.currentTarget) return;
+        if (active) {
+          activeHeatmapTargets.add(event.currentTarget);
+        } else {
+          activeHeatmapTargets.delete(event.currentTarget);
+        }
+        targetScroll = activeHeatmapTargets.size > 0 ? 1 : 0;
+        wrapper.classList.toggle('is-heatmap-active', activeHeatmapTargets.size > 0);
       };
       hoverTargets.forEach((target) => {
-        target.addEventListener('mouseenter', () => setActive(true));
-        target.addEventListener('mouseleave', () => setActive(false));
-        target.addEventListener('focus', () => setActive(true));
-        target.addEventListener('blur', () => setActive(false));
+        target.addEventListener('mouseenter', setActive.bind(null, true));
+        target.addEventListener('mouseleave', setActive.bind(null, false));
+        target.addEventListener('focus', setActive.bind(null, true));
+        target.addEventListener('blur', setActive.bind(null, false));
       });
 
       const clock = new THREE.Clock();
       let customTime = 0;
       const animate = () => {
         requestAnimationFrame(animate);
-        currentScroll += (targetScroll - currentScroll) * 0.12;
+        const waveEase = targetScroll > currentScroll ? 0.22 : 0.18;
+        currentScroll += (targetScroll - currentScroll) * waveEase;
         uniforms.uScroll.value = currentScroll;
         const delta = Math.min(clock.getDelta(), 0.05);
         const elapsed = clock.getElapsedTime();

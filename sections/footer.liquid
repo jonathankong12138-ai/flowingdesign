@@ -217,6 +217,10 @@
     gap: 16px;
   }
 
+  .footer-bottom-row.animate-up {
+    transition: opacity 0.35s ease-out, transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
   .footer-note-title {
     font-size: 18px;
     font-weight: 500;
@@ -491,7 +495,7 @@
         const ctaBottom = fixedTop + ctaRow.offsetHeight;
         const collisionOffset = Math.max(0, ctaBottom + safeGap - bottomNaturalTop);
         const bottomOffset = Math.max(ctaExitOffset, collisionOffset);
-        const bottomOpacity = Math.max(0, 1 - bottomOffset / (windowHeight * 0.32));
+        const bottomOpacity = Math.max(0, 1 - bottomOffset / (windowHeight * 0.18));
         footerElement.style.setProperty('--footer-bottom-y', `${bottomOffset}px`);
         footerElement.style.setProperty('--footer-bottom-opacity', `${bottomOpacity.toFixed(4)}`);
         ctaRow.classList.add('is-scroll-pinned');
