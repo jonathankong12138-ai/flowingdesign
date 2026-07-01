@@ -159,6 +159,14 @@
     position: relative;
     top: auto;
     min-height: 150px; 
+    opacity: 0;
+    transform: translateY(28px);
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+  }
+
+  .koto-left-footer-{{ section_id }}.is-visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .koto-project-footer-item-{{ section_id }} {
@@ -246,6 +254,8 @@
 
   @media (prefers-reduced-motion: reduce) {
     .koto-title-group-{{ section_id }},
+    .koto-left-footer-{{ section_id }},
+    .koto-mobile-text-{{ section_id }},
     .koto-media-card-{{ section_id }} {
       opacity: 1;
       transform: none;
@@ -257,7 +267,17 @@
   .koto-media-card-{{ section_id }} video {
     width: 100% !important; height: auto !important; display: block; object-fit: cover;
   }
-  .koto-mobile-text-{{ section_id }} { display: none; }
+  .koto-mobile-text-{{ section_id }} {
+    display: none;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: transform 0.72s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.72s ease;
+  }
+
+  .koto-mobile-text-{{ section_id }}.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   @media screen and (min-width: 990px) {
     .koto-wrapper-{{ section_id }} {
@@ -669,8 +689,12 @@
 
     const revealCards = wrapper.querySelectorAll('.koto-media-card-' + sectionId);
     const titleGroup = wrapper.querySelector('.koto-title-group-' + sectionId);
+    const leftFooterReveal = wrapper.querySelector('.koto-left-footer-' + sectionId);
+    const mobileTextReveals = wrapper.querySelectorAll('.koto-mobile-text-' + sectionId);
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       if (titleGroup) titleGroup.classList.add('is-visible');
+      if (leftFooterReveal) leftFooterReveal.classList.add('is-visible');
+      mobileTextReveals.forEach(text => text.classList.add('is-visible'));
       revealCards.forEach(card => card.classList.add('is-visible'));
     } else if ('IntersectionObserver' in window) {
       const revealObserver = new IntersectionObserver((entries) => {
@@ -690,8 +714,18 @@
         titleGroup.style.transitionDelay = '80ms';
         revealObserver.observe(titleGroup);
       }
+      if (leftFooterReveal) {
+        leftFooterReveal.style.transitionDelay = '180ms';
+        revealObserver.observe(leftFooterReveal);
+      }
+      mobileTextReveals.forEach((text, index) => {
+        text.style.transitionDelay = Math.min(index * 60, 180) + 'ms';
+        revealObserver.observe(text);
+      });
     } else {
       if (titleGroup) titleGroup.classList.add('is-visible');
+      if (leftFooterReveal) leftFooterReveal.classList.add('is-visible');
+      mobileTextReveals.forEach(text => text.classList.add('is-visible'));
       revealCards.forEach(card => card.classList.add('is-visible'));
     }
 
