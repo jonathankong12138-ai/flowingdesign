@@ -18,6 +18,10 @@
     background-color: {{ block.settings.background_color }};
   }
 
+  .ai-text-block-{{ ai_gen_id }}[data-fd-ambient-trigger] {
+    margin-bottom: 160px;
+  }
+
   .ai-text-block__content-{{ ai_gen_id }} {
     color: {{ block.settings.text_color }};
     font-family: 'Noto Sans SC', sans-serif;
@@ -36,6 +40,10 @@
       padding-bottom: {{ block.settings.mobile_padding_bottom }}px;
       padding-left: {{ block.settings.mobile_padding_left }}px;
       padding-right: {{ block.settings.mobile_padding_right }}px;
+    }
+
+    .ai-text-block-{{ ai_gen_id }}[data-fd-ambient-trigger] {
+      margin-bottom: 96px;
     }
 
     .ai-text-block__content-{{ ai_gen_id }} {
