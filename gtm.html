@@ -1,36 +1,22 @@
-{% doc %}
-  Renders the fixed ambient fluid iframe used as the home page background.
-  The iframe srcdoc is copied verbatim from 常规背景.html so its saved parameters remain unchanged.
-{% enddoc %}
-
-<div class="fd-ambient-background" aria-hidden="true">
-  <iframe
-    id="fd-ambient-background-frame"
-    title=""
-    tabindex="-1"
-    loading="eager"
-  ></iframe>
-</div>
-
-<template id="fd-ambient-background-srcdoc">
 <!DOCTYPE html>
 <html lang="zh-CN"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluid Canvas</title>
-    <script id="saved-state">window.SAVED_STATE = {"theme":"original","texture":"none","values":{"cAmbient":"#ffffff","cDeep":"#f2f2f2","cMid":"#fafafa","cSoft":"#ffffff","cHigh":"#f5f5f5","cSpec":"#c7c7c7","pStop1":"0.24","pStop2":"0.44","pStop3":"0.52","pStop4":"0.83","pLightX":"-0.6","pLightY":"0.5","pSpeed":"0.1","pFreq":"1.5","pDist":"5","pDetail":"0.8","pTex1":"0","pTex2":"0","pTex3":"0","cWave":"#ffffff","cCrest":"#fafcff","pMask":"0.15","pCrest":"0.1","gContrast":"1","gBright":"0","gSat":"0","gGrainInt":"0","gGrainScale":"0.1","gGrainSpeed":"0"}};</script>
+    <title>Fluid Canvas - Pro Parameter Studio</title>
+    <script id="saved-state">window.SAVED_STATE = {"theme":"original","texture":"none","values":{"cAmbient":"#ffffff","cDeep":"#ffffff","cDeepGlow1":"#ff9500","pDeepGlow1Range":"0.52","pDeepGlow1Size":"3.9","pDeepGlow1Feather":"0.77","pDeepGlow1Intensity":"0.98","cDeepGlow2":"#ffa200","pDeepGlow2Range":"1","pDeepGlow2Size":"6","pDeepGlow2Feather":"0.4","pDeepGlow2Intensity":"0.97","cMid":"#ddcfbb","cSoft":"#ffffff","cHigh":"#baaf9c","cSpec":"#ffffff","pStop1":"0","pStop2":"1","pStop3":"0.24","pStop4":"0.59","pLightX":"-0.6","pLightY":"0.5","pSpeed":"0.9","pFreq":"5","pDist":"3.1","pDetail":"0.75","pTex1":"0","pTex2":"0","pTex3":"0","cWave":"#ffffff","cCrest":"#fafcff","pMask":"0.15","pCrest":"0.1","gContrast":"1.25","gBright":"-0.05","gSat":"1","gGrainInt":"0.03","gGrainScale":"1","gGrainSpeed":"2"}};</script>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #080808; overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #080808; color: #fff; overflow: hidden;
         }
 
-        #bg-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; }
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
+    <canvas id="bg-canvas" width="3420" height="1840" style="width: 1710px; height: 920px;"></canvas>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -92,6 +78,9 @@
             original: {
                 defaultTexture: 'none', // 改为 none 默认无纹理
                 cAmbient: "#292520", cDeep: "#403b33", cMid: "#948c80", cSoft: "#e0d9cc", cHigh: "#faf7f2", cSpec: "#ffffff",
+                cDeepGlow1: "#000000", cDeepGlow2: "#000000",
+                pDeepGlow1Range: 1.0, pDeepGlow1Size: 2.2, pDeepGlow1Feather: 0.88, pDeepGlow1Intensity: 0.38,
+                pDeepGlow2Range: 1.0, pDeepGlow2Size: 2.6, pDeepGlow2Feather: 0.82, pDeepGlow2Intensity: 0.30,
                 cWave: "#ffffff", cCrest: "#fafcff",
                 pStop1: 0.15, pStop2: 0.45, pStop3: 0.75, pStop4: 0.90, pLightX: -0.6, pLightY: 0.5,
                 pSpeed: 1.0, pFreq: 1.2, pDist: 2.2, pDetail: 1.0, pMask: 0.15, pCrest: 0.1
@@ -99,6 +88,9 @@
             glacier: {
                 defaultTexture: 'frost',
                 cAmbient: "#1a2633", cDeep: "#334c66", cMid: "#99b3cc", cSoft: "#e0ebeb", cHigh: "#fafcfc", cSpec: "#ffffff",
+                cDeepGlow1: "#006cff", cDeepGlow2: "#ffd16a",
+                pDeepGlow1Range: 1.0, pDeepGlow1Size: 2.2, pDeepGlow1Feather: 0.88, pDeepGlow1Intensity: 0.38,
+                pDeepGlow2Range: 1.0, pDeepGlow2Size: 2.6, pDeepGlow2Feather: 0.82, pDeepGlow2Intensity: 0.30,
                 cWave: "#ffffff", cCrest: "#e6f2ff",
                 pStop1: 0.2, pStop2: 0.5, pStop3: 0.8, pStop4: 0.95, pLightX: -0.6, pLightY: 0.5,
                 pSpeed: 1.0, pFreq: 1.0, pDist: 1.5, pDetail: 1.2, pMask: 0.15, pCrest: 0.1
@@ -106,6 +98,9 @@
             obsidian: {
                 defaultTexture: 'glow',
                 cAmbient: "#0a0000", cDeep: "#1f0000", cMid: "#a60d00", cSoft: "#f24d00", cHigh: "#ff9900", cSpec: "#ffcc66",
+                cDeepGlow1: "#000000", cDeepGlow2: "#000000",
+                pDeepGlow1Range: 1.0, pDeepGlow1Size: 2.2, pDeepGlow1Feather: 0.88, pDeepGlow1Intensity: 0.38,
+                pDeepGlow2Range: 1.0, pDeepGlow2Size: 2.6, pDeepGlow2Feather: 0.82, pDeepGlow2Intensity: 0.30,
                 cWave: "#800000", cCrest: "#ff8000",
                 pStop1: 0.1, pStop2: 0.35, pStop3: 0.65, pStop4: 0.85, pLightX: -0.4, pLightY: 0.6,
                 pSpeed: 0.3, pFreq: 0.4, pDist: 1.2, pDetail: 0.5, pMask: 0.4, pCrest: 0.25
@@ -113,6 +108,9 @@
             sandgold: {
                 defaultTexture: 'sand',
                 cAmbient: "#332006", cDeep: "#66400d", cMid: "#b38033", cSoft: "#d9b366", cHigh: "#f2d999", cSpec: "#ffffff",
+                cDeepGlow1: "#000000", cDeepGlow2: "#000000",
+                pDeepGlow1Range: 1.0, pDeepGlow1Size: 2.2, pDeepGlow1Feather: 0.88, pDeepGlow1Intensity: 0.38,
+                pDeepGlow2Range: 1.0, pDeepGlow2Size: 2.6, pDeepGlow2Feather: 0.82, pDeepGlow2Intensity: 0.30,
                 cWave: "#e6b34d", cCrest: "#fff2cc",
                 pStop1: 0.2, pStop2: 0.5, pStop3: 0.75, pStop4: 0.9, pLightX: -0.6, pLightY: 0.5,
                 pSpeed: 0.4, pFreq: 2.5, pDist: 1.5, pDetail: 3.0, pMask: 0.2, pCrest: 0.1
@@ -129,8 +127,10 @@
                 uniform float uContrast; uniform float uBrightness; uniform float uSaturation; uniform float uHueShift;
                 uniform float uThemeSpeed; uniform float uThemeDetail; uniform float uWaveFreq; uniform float uDistortion;
                 uniform float uMaskSmooth; uniform float uCrestSize;
-                uniform vec3 uColorAmbient; uniform vec3 uColorDeep; uniform vec3 uColorMid; 
+                uniform vec3 uColorAmbient; uniform vec3 uColorDeep; uniform vec3 uColorDeepGlow1; uniform vec3 uColorDeepGlow2; uniform vec3 uColorMid; 
                 uniform vec3 uColorSoft; uniform vec3 uColorHigh; uniform vec3 uColorSpec;
+                uniform float uDeepGlow1Range; uniform float uDeepGlow1Size; uniform float uDeepGlow1Feather; uniform float uDeepGlow1Intensity;
+                uniform float uDeepGlow2Range; uniform float uDeepGlow2Size; uniform float uDeepGlow2Feather; uniform float uDeepGlow2Intensity;
                 uniform float uStop1; uniform float uStop2; uniform float uStop3; uniform float uStop4;
                 uniform vec3 uWaveColor; uniform vec3 uCrestColor;
                 uniform float uLightX; uniform float uLightY;
@@ -167,6 +167,20 @@
                         float q = c.z < 0.5 ? c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y; float p = 2.0 * c.z - q;
                         rgb.r = hue2rgb(p, q, c.x + 1.0/3.0); rgb.g = hue2rgb(p, q, c.x); rgb.b = hue2rgb(p, q, c.x - 1.0/3.0);
                     } return rgb;
+                }
+                float deepHaloMask(float lightValue, float rangeValue, float featherValue) {
+                    float stopGap = max(uStop2 - uStop1, 0.001);
+                    float halfWidth = stopGap * mix(0.04, 0.50, clamp(rangeValue, 0.0, 1.0));
+                    float feather = max(featherValue * halfWidth * 1.4, 0.001);
+                    float innerEdge = uStop1 - halfWidth;
+                    float outerEdge = uStop1 + halfWidth;
+                    float innerFade = smoothstep(innerEdge - feather, innerEdge, lightValue);
+                    float outerFade = 1.0 - smoothstep(outerEdge, outerEdge + feather, lightValue);
+                    return innerFade * outerFade;
+                }
+                float deepHaloShape(float flowValue, float featherValue) {
+                    float feather = clamp(featherValue, 0.01, 0.95);
+                    return smoothstep(1.0 - feather, 1.0, flowValue);
                 }
 
                 ${textureGLSL}
@@ -214,6 +228,14 @@
                     color = mix(color, uColorSoft, smoothstep(uStop2, uStop3 + 0.001, light));
                     color = mix(color, uColorHigh, smoothstep(uStop3, uStop4 + 0.001, light));
                     color = mix(color, uColorSpec, smoothstep(uStop4, 1.001, light));
+
+                    float deepHaloBand1 = deepHaloMask(light, uDeepGlow1Range, uDeepGlow1Feather);
+                    float deepHaloBand2 = deepHaloMask(light, uDeepGlow2Range, uDeepGlow2Feather);
+                    float deepFlow1 = snoise((uv / max(uDeepGlow1Size, 0.01)) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
+                    float deepFlow2 = snoise((uv / max(uDeepGlow2Size, 0.01)) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
+                    vec3 deepHalo = uColorDeepGlow1 * deepHaloBand1 * deepHaloShape(deepFlow1, uDeepGlow1Feather) * uDeepGlow1Intensity;
+                    deepHalo += uColorDeepGlow2 * deepHaloBand2 * deepHaloShape(deepFlow2, uDeepGlow2Feather) * uDeepGlow2Intensity;
+                    color = 1.0 - (1.0 - color) * (1.0 - clamp(deepHalo, 0.0, 1.0));
                     
                     color = (color - 0.5) * uContrast + 0.5 + uBrightness;
                     color = clamp(color, 0.0, 1.0);
@@ -224,7 +246,20 @@
 
                     color = applyTexture(color, light, uv, normal, time, h);
                     
-                    vec3 finalColor = color;
+                    float p = clamp(uScroll, 0.0, 1.0);
+                    float easedScroll = 1.0 - pow(max(1.0 - p, 0.0), 2.0);
+                    
+                    float wavePos = easedScroll * 2.8 - 0.2;
+                    float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
+                    float dist = wavePos - (vUv.y + waveOffset);
+                    
+                    float whiteMask = smoothstep(0.0, max(uMaskSmooth, 0.01), dist);
+                    float waveCrest = smoothstep(-0.05, max(uCrestSize, 0.01), dist) * smoothstep(uCrestSize * 2.0, 0.05, dist);
+                    
+                    vec3 finalColor = mix(color, uWaveColor, whiteMask);
+                    finalColor += uCrestColor * waveCrest * 0.6;
+                    float subtleBump = (light - 0.5) * 0.03 * whiteMask;
+                    finalColor += subtleBump;
 
                     // 动态噪点 (Film Grain) 与 防色阶断层抖动 (Dithering)
                     vec2 grainUv = floor(vUv * uResolution * uGrainScale);
@@ -257,7 +292,10 @@
                 uLightX: { value: -0.6 }, uLightY: { value: 0.5 },
                 uTexScale: { value: 1.0 }, uTexIntensity: { value: 1.0 }, uTexExtra: { value: 1.0 },
                 uGrainIntensity: { value: 0.03 }, uGrainScale: { value: 1.0 }, uGrainSpeed: { value: 2.0 },
+                uDeepGlow1Range: { value: 1.0 }, uDeepGlow1Size: { value: 2.2 }, uDeepGlow1Feather: { value: 0.88 }, uDeepGlow1Intensity: { value: 0.38 },
+                uDeepGlow2Range: { value: 1.0 }, uDeepGlow2Size: { value: 2.6 }, uDeepGlow2Feather: { value: 0.82 }, uDeepGlow2Intensity: { value: 0.30 },
                 uColorAmbient: { value: new THREE.Color() }, uColorDeep: { value: new THREE.Color() }, uColorMid: { value: new THREE.Color() }, 
+                uColorDeepGlow1: { value: new THREE.Color() }, uColorDeepGlow2: { value: new THREE.Color() },
                 uColorSoft: { value: new THREE.Color() }, uColorHigh: { value: new THREE.Color() }, uColorSpec: { value: new THREE.Color() },
                 uWaveColor: { value: new THREE.Color() }, uCrestColor: { value: new THREE.Color() }
             };
@@ -278,8 +316,11 @@
             });
             resize();
 
-            const uniformMap = {
-                cAmbient: 'uColorAmbient', cDeep: 'uColorDeep', cMid: 'uColorMid', cSoft: 'uColorSoft', cHigh: 'uColorHigh', cSpec: 'uColorSpec',
+            const uniformBindings = {
+                cAmbient: 'uColorAmbient', cDeep: 'uColorDeep', cDeepGlow1: 'uColorDeepGlow1', cDeepGlow2: 'uColorDeepGlow2',
+                cMid: 'uColorMid', cSoft: 'uColorSoft', cHigh: 'uColorHigh', cSpec: 'uColorSpec',
+                pDeepGlow1Range: 'uDeepGlow1Range', pDeepGlow1Size: 'uDeepGlow1Size', pDeepGlow1Feather: 'uDeepGlow1Feather', pDeepGlow1Intensity: 'uDeepGlow1Intensity',
+                pDeepGlow2Range: 'uDeepGlow2Range', pDeepGlow2Size: 'uDeepGlow2Size', pDeepGlow2Feather: 'uDeepGlow2Feather', pDeepGlow2Intensity: 'uDeepGlow2Intensity',
                 pStop1: 'uStop1', pStop2: 'uStop2', pStop3: 'uStop3', pStop4: 'uStop4',
                 pLightX: 'uLightX', pLightY: 'uLightY', pSpeed: 'uThemeSpeed', pFreq: 'uWaveFreq', pDist: 'uDistortion', pDetail: 'uThemeDetail',
                 pTex1: 'uTexScale', pTex2: 'uTexIntensity', pTex3: 'uTexExtra',
@@ -288,27 +329,30 @@
                 gGrainInt: 'uGrainIntensity', gGrainScale: 'uGrainScale', gGrainSpeed: 'uGrainSpeed'
             };
 
-            function applyValues(valuesObj) {
-                Object.keys(valuesObj).forEach(id => {
-                    const uName = uniformMap[id];
+            function applyValuesToUniforms(valuesObj) {
+                Object.keys(valuesObj || {}).forEach(id => {
+                    const uName = uniformBindings[id];
                     if (!uName || !uniforms[uName]) return;
-                    const value = valuesObj[id];
-                    if (uniforms[uName].value && uniforms[uName].value.isColor) {
-                        uniforms[uName].value.set(value);
+                    if (id.charAt(0) === 'c') {
+                        uniforms[uName].value.set(valuesObj[id]);
                     } else {
-                        uniforms[uName].value = parseFloat(value);
+                        uniforms[uName].value = parseFloat(valuesObj[id]);
                     }
                 });
             }
 
+            function loadTextureConfig(texKey) {
+                const preset = texturePresets[texKey] || texturePresets.none;
+                shaderMaterial.fragmentShader = getFragmentShader(preset.glsl);
+                shaderMaterial.needsUpdate = true;
+            }
+
             const savedState = window.SAVED_STATE || { theme: 'original', texture: 'none', values: {} };
-            const theme = themePresets[savedState.theme] || themePresets.original;
-            const textureKey = savedState.texture || theme.defaultTexture || 'none';
-            shaderMaterial.fragmentShader = getFragmentShader(texturePresets[textureKey].glsl);
-            shaderMaterial.needsUpdate = true;
-            applyValues(globalDefaults);
-            applyValues(theme);
-            applyValues(savedState.values || {});
+            const savedTheme = themePresets[savedState.theme] || themePresets.original;
+            loadTextureConfig(savedState.texture || savedTheme.defaultTexture || 'none');
+            applyValuesToUniforms(globalDefaults);
+            applyValuesToUniforms(savedTheme);
+            applyValuesToUniforms(savedState.values);
 
             const clock = new THREE.Clock(); let customTime = 0;
             let targetScroll = 0; let currentScroll = 0;
@@ -353,92 +397,5 @@
         };
     </script>
 
+
 </body></html>
-
-</template>
-
-<style>
-  .fd-ambient-background {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 900ms ease;
-  }
-
-  .fd-ambient-background iframe {
-    display: block;
-    width: 100vw;
-    height: 100vh;
-    border: 0;
-  }
-
-  body.fd-ambient-home-bg-active .fd-ambient-background {
-    opacity: 1;
-  }
-
-  body.fd-ambient-home-bg-active,
-  body.fd-ambient-home-bg-active #MainContent,
-  body.fd-ambient-home-bg-active .shopify-section,
-  body.fd-ambient-home-bg-active .section,
-  body.fd-ambient-home-bg-active .section-background,
-  body.fd-ambient-home-bg-active .custom-section-background,
-  body.fd-ambient-home-bg-active [class*="koto-wrapper-"] {
-    background: transparent !important;
-    background-color: transparent !important;
-  }
-
-  #header-group,
-  #MainContent,
-  body > footer,
-  body > .shopify-section {
-    position: relative;
-    z-index: 1;
-  }
-</style>
-
-<script>
-  (() => {
-    const activeClass = 'fd-ambient-home-bg-active';
-
-    function mountAmbientFrame() {
-      const frame = document.getElementById('fd-ambient-background-frame');
-      const source = document.getElementById('fd-ambient-background-srcdoc');
-      if (!frame || !source || frame.dataset.mounted === 'true') return;
-
-      frame.srcdoc = source.innerHTML.trim();
-      frame.dataset.mounted = 'true';
-    }
-
-    function activateWhenIntroIsVisible() {
-      const trigger = document.querySelector('[data-fd-ambient-trigger]');
-      if (!trigger) return;
-
-      const update = () => {
-        if (document.body.classList.contains(activeClass)) return;
-
-        const rect = trigger.getBoundingClientRect();
-        const triggerTop = rect.top;
-        const triggerBottom = rect.bottom;
-        const activeTop = window.innerHeight * 0.82;
-        const activeBottom = window.innerHeight * 0.18;
-
-        if (triggerTop <= activeTop && triggerBottom >= activeBottom) {
-          mountAmbientFrame();
-          document.body.classList.add(activeClass);
-          window.removeEventListener('scroll', update);
-          window.removeEventListener('resize', update);
-        }
-      };
-
-      update();
-      window.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
-    }
-
-    mountAmbientFrame();
-    activateWhenIntroIsVisible();
-    document.addEventListener('shopify:section:load', activateWhenIntroIsVisible);
-  })();
-</script>

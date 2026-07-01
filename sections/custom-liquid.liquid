@@ -37,6 +37,7 @@
     --award-size-pc: {{ section.settings.award_size_pc }}px;
     --award-size-mb: {{ section.settings.award_size_mb }}px;
     --first-media-height: calc(100vh - {{ section.settings.padding_top_desktop | plus: section.settings.padding_bottom_desktop }}px);
+    --left-footer-space: 190px;
   }
 
   /* --- 容器全局重置 --- */
@@ -89,10 +90,10 @@
     flex-direction: column;
     justify-content: center;
     position: absolute;
-    top: 50%;
+    top: 0;
     left: 0;
     right: 40px;
-    transform: translateY(-50%);
+    bottom: var(--left-footer-space);
     min-height: 0;
   }
 
@@ -205,8 +206,28 @@
 
   .koto-media-card-{{ section_id }} {
     width: 100%; border-radius: 12px; overflow: hidden; background: #f4f4f4;
-    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+    transform: scale(0.94);
+    transform-origin: center center;
+    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.9s ease;
     display: block; position: relative; z-index: 5;
+  }
+
+  .koto-media-card-{{ section_id }}.is-visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .koto-right-{{ section_id }}:hover .koto-media-card-{{ section_id }}:not(.is-visible) {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .koto-media-card-{{ section_id }} {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   .koto-media-card-{{ section_id }} img,
@@ -295,7 +316,7 @@
                   {%- assign current_text = block.settings[txt_key] -%}
                   {%- if current_image != blank -%}
                     <div class="koto-award-item-{{ section_id }}">
-                      <img src="{{ current_image | image_url: width: 80 }}" class="koto-award-img-{{ section_id }}" alt="Award Logo">
+                      <img src="{{ current_image | image_url: width: 80 }}" class="koto-award-img-{{ section_id }}" width="40" height="40" alt="Award Logo">
                       {%- if current_text != blank -%}
                         <span class="koto-award-tooltip-{{ section_id }}">{{ current_text }}</span>
                       {%- endif -%}
@@ -310,6 +331,7 @@
     </div>
 
     <div class="koto-right-{{ section_id }}">
+      {%- assign heatmap_media_index = 0 -%}
       {%- for block in section.blocks -%}
         <div class="koto-project-group-{{ section_id }}" {{ block.shopify_attributes }}>
           <div class="koto-mobile-text-{{ section_id }}">
@@ -330,7 +352,7 @@
                   {%- assign current_text = block.settings[txt_key] -%}
                   {%- if current_image != blank -%}
                     <div class="koto-award-item-{{ section_id }}">
-                      <img src="{{ current_image | image_url: width: 60 }}" style="width: 30px; height: 30px; object-fit: contain; transition: transform 0.3s ease;">
+                      <img src="{{ current_image | image_url: width: 60 }}" width="30" height="30" alt="Award Logo" style="width: 30px; height: 30px; object-fit: contain; transition: transform 0.3s ease;">
                       {%- if current_text != blank -%}
                         <span class="koto-award-tooltip-{{ section_id }}">{{ current_text }}</span>
                        {%- endif -%}
@@ -341,7 +363,6 @@
             {%- endif -%}
           </div>
 
-          {%- assign has_rendered_media = false -%}
           {%- for i in (1..5) -%}
             {%- assign image_key = 'image_' | append: i -%}
             {%- assign video_key = 'video_url_' | append: i -%}
@@ -349,9 +370,9 @@
             {%- assign current_video = block.settings[video_key] -%}
 
             {%- if current_image != blank or current_video != blank -%}
-              {%- assign has_rendered_media = true -%}
+              {%- assign heatmap_media_index = heatmap_media_index | plus: 1 -%}
               <div class="koto-media-item-{{ section_id }}" data-index="{{ forloop.parentloop.index0 }}">
-                <a href="{{ block.settings.link | default: '#' }}" class="koto-media-card-{{ section_id }} js-hover-card">
+                <a href="{{ block.settings.link | default: '#' }}" class="koto-media-card-{{ section_id }} js-hover-card"{% if heatmap_media_index <= 3 %} data-heatmap-hover="true"{% endif %}>
                   {%- if current_video != blank -%}
                     <video src="{{ current_video }}" autoplay loop muted playsinline style="width: 100%; height: auto; display: block;"></video>
                   {%- elsif current_image != blank -%}
@@ -373,107 +394,178 @@
 </script>
 
 <script id="works-fs-{{ section_id }}" type="x-shader/x-fragment">
-  uniform float uTime; 
+  uniform float uTime;
   uniform vec2 uResolution;
   uniform float uRandomSeed;
-  uniform float uContrast; 
+  uniform float uHoverProgress;
+  uniform float uContrast;
   uniform float uBrightness;
-  uniform float uHueShift; 
   uniform float uSaturation;
-  
-  uniform float uHoverProgress; 
-
+  uniform float uHueShift;
+  uniform float uThemeSpeed;
+  uniform float uThemeDetail;
+  uniform float uWaveFreq;
+  uniform float uDistortion;
+  uniform float uMaskSmooth;
+  uniform float uCrestSize;
+  uniform vec3 uColorAmbient;
+  uniform vec3 uColorDeep;
+  uniform vec3 uColorDeepGlow1;
+  uniform vec3 uColorDeepGlow2;
+  uniform vec3 uColorMid;
+  uniform vec3 uColorSoft;
+  uniform vec3 uColorHigh;
+  uniform vec3 uColorSpec;
+  uniform float uDeepGlow1Range;
+  uniform float uDeepGlow1Size;
+  uniform float uDeepGlow1Feather;
+  uniform float uDeepGlow1Intensity;
+  uniform float uDeepGlow2Range;
+  uniform float uDeepGlow2Size;
+  uniform float uDeepGlow2Feather;
+  uniform float uDeepGlow2Intensity;
+  uniform float uStop1;
+  uniform float uStop2;
+  uniform float uStop3;
+  uniform float uStop4;
+  uniform vec3 uWaveColor;
+  uniform vec3 uCrestColor;
+  uniform float uLightX;
+  uniform float uLightY;
+  uniform float uGrainIntensity;
+  uniform float uGrainScale;
+  uniform float uGrainSpeed;
   varying vec2 vUv;
-  
+
   mat2 rotate2d(float angle){ return mat2(cos(angle), -sin(angle), sin(angle), cos(angle)); }
   vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
   float snoise(vec2 v){
-      const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-      vec2 i = floor(v + dot(v, C.yy)); vec2 x0 = v - i + dot(i, C.xx);
-      vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-      vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1; i = mod(i, 289.0);
-      vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
-      vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-      m = m*m; m = m*m;
-      vec3 x = 2.0 * fract(p * C.www) - 1.0; vec3 h = abs(x) - 0.5;
-      vec3 ox = floor(x + 0.5); vec3 a0 = x - ox;
-      m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-      vec3 g; g.x = a0.x * x0.x + h.x * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-      return 130.0 * dot(m, g);
+    const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+    vec2 i = floor(v + dot(v, C.yy)); vec2 x0 = v - i + dot(i, C.xx);
+    vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+    vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1; i = mod(i, 289.0);
+    vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+    vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+    m = m*m; m = m*m;
+    vec3 x = 2.0 * fract(p * C.www) - 1.0; vec3 h = abs(x) - 0.5;
+    vec3 ox = floor(x + 0.5); vec3 a0 = x - ox;
+    m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+    vec3 g; g.x = a0.x * x0.x + h.x * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+    return 130.0 * dot(m, g);
   }
-  
-  float getHeight(vec2 uv, float time, float seed) {
-      vec2 baseUV = uv + vec2(seed * 10.3, seed * 4.2); 
-      vec2 rotUV = rotate2d(-0.5) * baseUV;
-      vec2 distortion = vec2(0.0);
-      distortion.x = snoise(rotUV * 0.5 + vec2(time * 0.15, time * 0.1));
-      distortion.y = snoise(rotUV * 0.5 - vec2(time * 0.1, time * 0.1));
-      float detail = snoise(rotUV * 1.5 + distortion + time * 0.1) * 0.1;
-      float wave = sin(rotUV.y * 1.2 + distortion.x * 2.2 + time);
-      return pow(wave * 0.5 + 0.5, 0.8) + detail;
-  }
-  
-  vec3 rgb2hsl(vec3 c){
-      float maxC = max(c.r, max(c.g, c.b)); float minC = min(c.r, min(c.g, c.b));
-      float h, s, l = (maxC + minC) / 2.0;
-      if(maxC == minC){ h = s = 0.0; } else {
-          float d = maxC - minC;
-          s = l > 0.5 ? d / (2.0 - maxC - minC) : d / (maxC + minC);
-          if(maxC == c.r) h = (c.g - c.b) / d + (c.g < c.b ? 6.0 : 0.0);
-          else if(maxC == c.g) h = (c.b - c.r) / d + 2.0; else h = (c.r - c.g) / d + 4.0;
-          h /= 6.0;
-      }
-      return vec3(h, s, l);
-  }
-  
-  float hue2rgb(float p, float q, float t){
-      if(t < 0.0) t += 1.0; if(t > 1.0) t -= 1.0;
-      if(t < 1.0/6.0) return p + (q - p) * 6.0 * t;
-      if(t < 1.0/2.0) return q;
-      if(t < 2.0/3.0) return p + (q - p) * (2.0/3.0 - t) * 6.0;
-      return p;
-  }
-  
-  vec3 hsl2rgb(vec3 c){
-      vec3 rgb;
-      if(c.y == 0.0){ rgb = vec3(c.z); } else {
-          float q = c.z < 0.5 ? c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y;
-          float p = 2.0 * c.z - q;
-          rgb.r = hue2rgb(p, q, c.x + 1.0/3.0); rgb.g = hue2rgb(p, q, c.x); rgb.b = hue2rgb(p, q, c.x - 1.0/3.0);
-      }
-      return rgb;
-  }
-  
-  void main() {
-      float time = uTime * 0.254;
-      
-      // 流体高度图计算
-      float h = getHeight(vUv, time, uRandomSeed);
-      float hx = getHeight(vUv + vec2(0.005, 0.0), time, uRandomSeed);
-      float hy = getHeight(vUv + vec2(0.0, 0.005), time, uRandomSeed);
-      vec3 normal = normalize(vec3(h - hx, h - hy, 0.008));
-      float light = dot(normal, normalize(vec3(-0.6, 0.5, 0.4))) * 0.5 + 0.5;
-      
-      vec3 colDeep = vec3(0.25, 0.23, 0.20);
-      vec3 colMid = vec3(0.58, 0.55, 0.50); vec3 colSoft = vec3(0.88, 0.85, 0.80); vec3 colHigh = vec3(0.98, 0.97, 0.95);
-      vec3 color = mix(mix(mix(colDeep, colMid, smoothstep(0.1, 0.65, light)), colSoft, smoothstep(0.45, 0.9, light)), colHigh, smoothstep(0.88, 1.0, light));
-      
-      color = (color - 0.5) * uContrast + 0.5 + uBrightness;
-      color = clamp(color, 0.0, 1.0);
-      vec3 hsl = rgb2hsl(color);
-      hsl.x = mod(hsl.x + uHueShift, 1.0);
-      hsl.y = clamp(hsl.y * uSaturation, 0.0, 1.0);
-      color = hsl2rgb(hsl);
-      
-      // 悬浮时全屏直接渐变替换背景，不再从图片中心向外扩散。
-      float fluidMask = smoothstep(0.0, 1.0, uHoverProgress);
 
-      vec3 finalColor = color;
-      float subtleBump = (light - 0.5) * 0.03 * fluidMask;
-      finalColor += subtleBump;
-      
-      finalColor = clamp(finalColor, 0.0, 1.0);
-      gl_FragColor = vec4(finalColor, fluidMask);
+  vec3 rgb2hsl(vec3 c){
+    float maxC = max(c.r, max(c.g, c.b)); float minC = min(c.r, min(c.g, c.b)); float h, s, l = (maxC + minC) / 2.0;
+    if(maxC == minC){ h = s = 0.0; } else {
+      float d = maxC - minC; s = l > 0.5 ? d / (2.0 - maxC - minC) : d / (maxC + minC);
+      if(maxC == c.r) h = (c.g - c.b) / d + (c.g < c.b ? 6.0 : 0.0);
+      else if(maxC == c.g) h = (c.b - c.r) / d + 2.0;
+      else h = (c.r - c.g) / d + 4.0;
+      h /= 6.0;
+    }
+    return vec3(h, s, l);
+  }
+
+  float hue2rgb(float p, float q, float t){
+    if(t < 0.0) t += 1.0; if(t > 1.0) t -= 1.0;
+    if(t < 1.0/6.0) return p + (q - p) * 6.0 * t;
+    if(t < 1.0/2.0) return q;
+    if(t < 2.0/3.0) return p + (q - p) * (2.0/3.0 - t) * 6.0;
+    return p;
+  }
+
+  vec3 hsl2rgb(vec3 c){
+    vec3 rgb;
+    if(c.y == 0.0){ rgb = vec3(c.z); } else {
+      float q = c.z < 0.5 ? c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y;
+      float p = 2.0 * c.z - q;
+      rgb.r = hue2rgb(p, q, c.x + 1.0/3.0); rgb.g = hue2rgb(p, q, c.x); rgb.b = hue2rgb(p, q, c.x - 1.0/3.0);
+    }
+    return rgb;
+  }
+
+  float deepHaloMask(float lightValue, float rangeValue, float featherValue) {
+    float stopGap = max(uStop2 - uStop1, 0.001);
+    float halfWidth = stopGap * mix(0.04, 0.50, clamp(rangeValue, 0.0, 1.0));
+    float feather = max(featherValue * halfWidth * 1.4, 0.001);
+    float innerEdge = uStop1 - halfWidth;
+    float outerEdge = uStop1 + halfWidth;
+    float innerFade = smoothstep(innerEdge - feather, innerEdge, lightValue);
+    float outerFade = 1.0 - smoothstep(outerEdge, outerEdge + feather, lightValue);
+    return innerFade * outerFade;
+  }
+
+  float deepHaloShape(float flowValue, float featherValue) {
+    float feather = clamp(featherValue, 0.01, 0.95);
+    return smoothstep(1.0 - feather, 1.0, flowValue);
+  }
+
+  float getHeight(vec2 uv, float time, float seed) {
+    vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
+    vec2 baseUV = uv + seedOffset;
+    float flowTime = time * uThemeSpeed;
+    vec2 rotUV = rotate2d(-0.5) * baseUV;
+    vec2 distortion = vec2(0.0);
+    distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
+    distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
+    float detail = snoise(rotUV * (1.5 * uThemeDetail) + distortion + flowTime * 0.1) * (0.1 * uThemeDetail);
+    float wave = sin(rotUV.y * uWaveFreq + distortion.x * uDistortion + flowTime);
+    return pow(max(wave * 0.5 + 0.5, 0.0), 0.8) + detail;
+  }
+
+  void main() {
+    vec2 uv = vUv;
+    uv.x *= uResolution.x / uResolution.y;
+    float time = uTime * 0.254;
+    float h = getHeight(uv, time, uRandomSeed);
+    float eps = 0.01;
+    float hx1 = getHeight(uv + vec2(eps, 0.0), time, uRandomSeed);
+    float hx2 = getHeight(uv - vec2(eps, 0.0), time, uRandomSeed);
+    float hy1 = getHeight(uv + vec2(0.0, eps), time, uRandomSeed);
+    float hy2 = getHeight(uv - vec2(0.0, eps), time, uRandomSeed);
+    vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
+    vec3 lightDir = normalize(vec3(uLightX, uLightY, 0.4));
+    float light = dot(normal, lightDir) * 0.5 + 0.5;
+
+    vec3 color = mix(uColorAmbient, uColorDeep, smoothstep(0.0, uStop1 + 0.001, light));
+    color = mix(color, uColorMid, smoothstep(uStop1, uStop2 + 0.001, light));
+    color = mix(color, uColorSoft, smoothstep(uStop2, uStop3 + 0.001, light));
+    color = mix(color, uColorHigh, smoothstep(uStop3, uStop4 + 0.001, light));
+    color = mix(color, uColorSpec, smoothstep(uStop4, 1.001, light));
+
+    float deepHaloBand1 = deepHaloMask(light, uDeepGlow1Range, uDeepGlow1Feather);
+    float deepHaloBand2 = deepHaloMask(light, uDeepGlow2Range, uDeepGlow2Feather);
+    float deepFlow1 = snoise((uv / max(uDeepGlow1Size, 0.01)) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
+    float deepFlow2 = snoise((uv / max(uDeepGlow2Size, 0.01)) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
+    vec3 deepHalo = uColorDeepGlow1 * deepHaloBand1 * deepHaloShape(deepFlow1, uDeepGlow1Feather) * uDeepGlow1Intensity;
+    deepHalo += uColorDeepGlow2 * deepHaloBand2 * deepHaloShape(deepFlow2, uDeepGlow2Feather) * uDeepGlow2Intensity;
+    color = 1.0 - (1.0 - color) * (1.0 - clamp(deepHalo, 0.0, 1.0));
+
+    color = (color - 0.5) * uContrast + 0.5 + uBrightness;
+    color = clamp(color, 0.0, 1.0);
+    vec3 hsl = rgb2hsl(color);
+    hsl.x = mod(hsl.x + uHueShift, 1.0);
+    hsl.y = clamp(hsl.y * uSaturation, 0.0, 1.0);
+    color = hsl2rgb(hsl);
+
+    float p = clamp(uHoverProgress, 0.0, 1.0);
+    float wavePos = p * 2.8 - 0.2;
+    float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
+    float dist = wavePos - (vUv.y + waveOffset);
+    float whiteMask = smoothstep(0.0, max(uMaskSmooth, 0.01), dist);
+    float waveCrest = smoothstep(-0.05, max(uCrestSize, 0.01), dist) * smoothstep(uCrestSize * 2.0, 0.05, dist);
+    vec3 finalColor = mix(color, uWaveColor, whiteMask);
+    finalColor += uCrestColor * waveCrest * 0.6;
+    finalColor += (light - 0.5) * 0.03 * whiteMask;
+
+    vec2 grainUv = floor(vUv * uResolution * uGrainScale);
+    float grainTime = uTime * uGrainSpeed;
+    float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + grainTime) * 43758.5453);
+    float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
+    finalColor += baseDither + (dither - 0.5) * uGrainIntensity;
+
+    float alpha = smoothstep(0.0, 1.0, p);
+    gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), alpha);
   }
 </script>
 
@@ -501,9 +593,24 @@
       }
     };
 
+    const syncLeftFooterSpace = () => {
+      const leftFooter = wrapper.querySelector('.koto-left-footer-' + sectionId);
+      if (!leftFooter) return;
+
+      const styles = window.getComputedStyle(leftFooter);
+      const marginBottom = parseFloat(styles.marginBottom) || 0;
+      const footerSpace = leftFooter.offsetHeight + marginBottom;
+      if (footerSpace > 0) {
+        wrapper.style.setProperty('--left-footer-space', footerSpace + 'px');
+      }
+    };
+
     syncFirstMediaHeight();
+    syncLeftFooterSpace();
     window.addEventListener('load', syncFirstMediaHeight, { once: true });
+    window.addEventListener('load', syncLeftFooterSpace, { once: true });
     window.addEventListener('resize', syncFirstMediaHeight);
+    window.addEventListener('resize', syncLeftFooterSpace);
     wrapper.querySelectorAll('.koto-media-card-' + sectionId + ' img').forEach(image => {
       if (image.complete) {
         syncFirstMediaHeight();
@@ -511,6 +618,27 @@
         image.addEventListener('load', syncFirstMediaHeight, { once: true });
       }
     });
+
+    const revealCards = wrapper.querySelectorAll('.koto-media-card-' + sectionId);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      revealCards.forEach(card => card.classList.add('is-visible'));
+    } else if ('IntersectionObserver' in window) {
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.18 });
+
+      revealCards.forEach((card, index) => {
+        card.style.transitionDelay = Math.min(index * 70, 280) + 'ms';
+        revealObserver.observe(card);
+      });
+    } else {
+      revealCards.forEach(card => card.classList.add('is-visible'));
+    }
 
     // 1. 左侧文本联动逻辑
     if (window.innerWidth >= 990) {
@@ -547,12 +675,45 @@
           uniforms: {
               uTime: { value: 0 },
               uResolution: { value: new THREE.Vector2() },
-              uRandomSeed: { value: 42.0 }, 
-              uContrast: { value: {{ section.settings.fluid_contrast | default: 1.0 }} },
-              uBrightness: { value: {{ section.settings.fluid_brightness | default: 0.0 }} },
-              uHueShift: { value: {{ section.settings.fluid_hue | default: 0 }} / 360.0 },
-              uSaturation: { value: {{ section.settings.fluid_saturation | default: 1.0 }} },
-              uHoverProgress: { value: 0.0 }
+              uRandomSeed: { value: 42.0 },
+              uHoverProgress: { value: 0.0 },
+              uContrast: { value: 1.5 },
+              uBrightness: { value: -0.15 },
+              uSaturation: { value: 1.0 },
+              uHueShift: { value: 0.0 },
+              uThemeSpeed: { value: 0.8 },
+              uThemeDetail: { value: 0.65 },
+              uWaveFreq: { value: 0.6 },
+              uDistortion: { value: 1.7 },
+              uMaskSmooth: { value: 0.15 },
+              uCrestSize: { value: 0.1 },
+              uStop1: { value: 0.59 },
+              uStop2: { value: 0.06 },
+              uStop3: { value: 1.0 },
+              uStop4: { value: 1.0 },
+              uLightX: { value: -0.5 },
+              uLightY: { value: 0.5 },
+              uGrainIntensity: { value: 0.1 },
+              uGrainScale: { value: 0.55 },
+              uGrainSpeed: { value: 0.3 },
+              uDeepGlow1Range: { value: 1.0 },
+              uDeepGlow1Size: { value: 6.0 },
+              uDeepGlow1Feather: { value: 0.95 },
+              uDeepGlow1Intensity: { value: 0.77 },
+              uDeepGlow2Range: { value: 0.0 },
+              uDeepGlow2Size: { value: 1.2 },
+              uDeepGlow2Feather: { value: 0.29 },
+              uDeepGlow2Intensity: { value: 1.5 },
+              uColorAmbient: { value: new THREE.Color('#ca57ff') },
+              uColorDeep: { value: new THREE.Color('#1476ff') },
+              uColorDeepGlow1: { value: new THREE.Color('#00e5a8') },
+              uColorDeepGlow2: { value: new THREE.Color('#ff813d') },
+              uColorMid: { value: new THREE.Color('#ff8080') },
+              uColorSoft: { value: new THREE.Color('#ffffff') },
+              uColorHigh: { value: new THREE.Color('#ffffff') },
+              uColorSpec: { value: new THREE.Color('#ffffff') },
+              uWaveColor: { value: new THREE.Color('#ffffff') },
+              uCrestColor: { value: new THREE.Color('#ffe0f5') }
           }
       });
       scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), shaderMaterial));
@@ -566,7 +727,7 @@
 
       let targetHover = 0;
       let currentHover = 0;
-      const hoverCards = wrapper.querySelectorAll('.js-hover-card');
+      const hoverCards = wrapper.querySelectorAll('.js-hover-card[data-heatmap-hover="true"]');
 
       hoverCards.forEach(card => {
         card.addEventListener('mouseenter', () => {
@@ -591,7 +752,7 @@
           if (currentHover > 0.005 || targetHover > 0) {
             const delta = clock.getDelta();
             const elapsedTime = clock.getElapsedTime();
-            const configBaseSpeed = {{ section.settings.base_fluid_speed | default: 2.5 }};
+            const configBaseSpeed = 2.5;
             const rhythm = Math.sin(elapsedTime * 1.8) * 0.9;
             customTime += delta * (configBaseSpeed + rhythm);
             
