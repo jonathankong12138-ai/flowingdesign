@@ -21,8 +21,7 @@
     /* 将百分比边距替换为后台设置的 px 单位 */
     padding-left: {{ section.settings.padding_left }}px;
     padding-right: {{ section.settings.padding_right }}px;
-    /* 必须有实色背景，为差值模式提供计算基础 */
-    background-color: #ffffff !important; 
+    background-color: transparent !important; 
     color: rgb(var(--color-foreground));
     position: relative;
     overflow: hidden;
@@ -211,7 +210,7 @@
     left: {{ section.settings.padding_left }}px;
     right: {{ section.settings.padding_right }}px;
     bottom: {{ section.settings.padding-block-end }}px;
-    border-top: 1px solid rgba(128, 128, 128, 0.2);
+    border-top: 0;
     padding-top: 40px;
     display: flex;
     flex-direction: column;
@@ -485,10 +484,11 @@
         footerElement.style.setProperty('--footer-cta-top', `${fixedTop}px`);
         footerElement.style.setProperty('--footer-cta-left', `${pinRect.left}px`);
         footerElement.style.setProperty('--footer-cta-width', `${pinRect.width}px`);
-        const bottomExitProgress = Math.min(1, progress / 0.24);
-        const bottomOffset = (1 - bottomExitProgress) * windowHeight * 0.18;
+        const ctaExitOffset = Math.max(0, fixedTop - targetTop);
+        const bottomOffset = ctaExitOffset;
+        const bottomOpacity = Math.max(0, 1 - ctaExitOffset / (windowHeight * 0.32));
         footerElement.style.setProperty('--footer-bottom-y', `${bottomOffset}px`);
-        footerElement.style.setProperty('--footer-bottom-opacity', `${bottomExitProgress.toFixed(4)}`);
+        footerElement.style.setProperty('--footer-bottom-opacity', `${bottomOpacity.toFixed(4)}`);
         ctaRow.classList.add('is-scroll-pinned');
         bottomRow?.classList.add('is-scroll-pinned');
       } else {

@@ -66,6 +66,10 @@
     pointer-events: none;
   }
 
+  .koto-wrapper-{{ section_id }}.is-heatmap-active .koto-heatmap-canvas-{{ section_id }} {
+    z-index: 10;
+  }
+
   .koto-inner-{{ section_id }} {
     display: flex;
     align-items: stretch;
@@ -414,13 +418,23 @@
     }
 
     const initHeatmapWave = () => {
+      if (wrapper.dataset.heatmapReady === 'true') return;
       const canvas = wrapper.querySelector('[data-koto-heatmap-canvas]');
       const hoverTargets = wrapper.querySelectorAll('[data-heatmap-hover="true"]');
       if (!canvas || !hoverTargets.length || typeof THREE === 'undefined') return;
+      wrapper.dataset.heatmapReady = 'true';
+
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      } catch (error) {
+        wrapper.dataset.heatmapReady = 'false';
+        console.warn('Koto heatmap wave failed to initialize:', error);
+        return;
+      }
 
       const scene = new THREE.Scene();
       const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
       const vertexShader = `
@@ -492,7 +506,7 @@
           float dist = wavePos - (vUv.y + waveOffset);
           float mask = smoothstep(0.0, 0.15, dist);
           float crest = smoothstep(-0.05, 0.1, dist) * smoothstep(0.2, 0.05, dist);
-          vec3 finalColor = mix(color, vec3(1.0), mask) + vec3(1.0, 0.878, 0.961) * crest * 0.6;
+          vec3 finalColor = color + vec3(1.0, 0.878, 0.961) * crest * 0.6;
           gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), mask);
         }
       `;
@@ -525,6 +539,7 @@
       const setActive = (active) => {
         hoverCount = Math.max(0, hoverCount + (active ? 1 : -1));
         targetScroll = hoverCount > 0 ? 1 : 0;
+        wrapper.classList.toggle('is-heatmap-active', hoverCount > 0);
       };
       hoverTargets.forEach((target) => {
         target.addEventListener('mouseenter', () => setActive(true));
