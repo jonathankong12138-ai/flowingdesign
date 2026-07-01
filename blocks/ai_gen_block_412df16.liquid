@@ -20,6 +20,8 @@
 
   .ai-text-block-{{ ai_gen_id }}[data-fd-ambient-trigger] {
     margin-bottom: 160px;
+    transform: translate3d(0, var(--fd-intro-rise-offset, 0px), 0);
+    will-change: transform;
   }
 
   .ai-text-block__content-{{ ai_gen_id }} {
@@ -50,6 +52,13 @@
       font-size: {{ block.settings.mobile_font_size }}px;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-text-block-{{ ai_gen_id }}[data-fd-ambient-trigger] {
+      transform: none;
+      will-change: auto;
+    }
+  }
 {% endstyle %}
 
 <div
@@ -63,6 +72,41 @@
     {{ block.settings.text }}
   </div>
 </div>
+
+{% if block.settings.text contains '循流而进' %}
+  <script>
+    (() => {
+      const block = document.currentScript.previousElementSibling;
+      if (!block || !block.matches('[data-fd-ambient-trigger]')) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      let ticking = false;
+
+      const updateRise = () => {
+        ticking = false;
+        const rect = block.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+        const progress = Math.min(
+          Math.max((viewportHeight * 0.86 - rect.top) / (viewportHeight * 0.72), 0),
+          1
+        );
+        const offset = -Math.round(progress * 140);
+        block.style.setProperty('--fd-intro-rise-offset', offset + 'px');
+      };
+
+      const requestUpdate = () => {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(updateRise);
+      };
+
+      updateRise();
+      window.addEventListener('scroll', requestUpdate, { passive: true });
+      window.addEventListener('resize', requestUpdate);
+      document.addEventListener('shopify:section:load', requestUpdate);
+    })();
+  </script>
+{% endif %}
 
 {% schema %}
 {

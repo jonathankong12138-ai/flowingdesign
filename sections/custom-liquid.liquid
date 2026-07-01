@@ -83,9 +83,10 @@
 
   .koto-left-{{ section_id }} {
     width: 38%;
-    position: relative;
-    min-height: 100vh;
-    align-self: stretch;
+    position: sticky;
+    top: 60px;
+    min-height: 0;
+    align-self: flex-start;
     display: flex;
     flex-direction: column;
     padding-right: 40px;
@@ -95,8 +96,8 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    position: sticky;
-    top: 60px;
+    position: relative;
+    top: auto;
     width: 100%;
     margin-top: 0;
     min-height: 0;
@@ -124,7 +125,7 @@
   .koto-project-title-wrapper-{{ section_id }} {
     position: relative;
     width: 100%;
-    min-height: calc(var(--project-title-size-pc) * 1.5); 
+    min-height: calc(var(--project-title-size-pc) * 1.1); 
   }
 
   .koto-project-title-item-{{ section_id }} {
@@ -147,15 +148,15 @@
   }
 
   .koto-left-footer-{{ section_id }} {
-    margin-top: auto;
-    margin-bottom: 40px;
-    position: sticky;
-    bottom: 40px;
+    margin-top: 60px;
+    margin-bottom: 0;
+    position: relative;
+    top: auto;
     min-height: 150px; 
   }
 
   .koto-project-footer-item-{{ section_id }} {
-    position: absolute; bottom: 0; left: 0; width: 100%;
+    position: absolute; top: 0; left: 0; width: 100%;
     opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
   }
 
