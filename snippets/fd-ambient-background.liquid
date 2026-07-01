@@ -363,7 +363,8 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    opacity: 1;
+    opacity: 0;
+    transition: opacity 900ms ease;
   }
 
   .fd-ambient-background iframe {
@@ -386,12 +387,8 @@
     background-color: transparent !important;
   }
 
-  body.fd-ambient-home-bg-active [id^="glacier-global-bg-"],
-  body.fd-ambient-home-bg-active [class^="glacier-global-bg-"],
-  body.fd-ambient-home-bg-active [class*=" glacier-global-bg-"] {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
+  body.fd-ambient-home-bg-active .fd-ambient-background {
+    opacity: 1;
   }
 
   #header-group,
@@ -416,13 +413,34 @@
       frame.dataset.mounted = 'true';
     }
 
-    function activateAmbientBackground() {
-      mountAmbientFrame();
-      document.body.classList.add(activeClass);
+    function activateWhenIntroIsVisible() {
+      const trigger = document.querySelector('[data-fd-ambient-trigger]');
+      if (!trigger) return;
+
+      const update = () => {
+        if (document.body.classList.contains(activeClass)) return;
+
+        const rect = trigger.getBoundingClientRect();
+        const triggerTop = rect.top;
+        const triggerBottom = rect.bottom;
+        const activeTop = window.innerHeight * 0.82;
+        const activeBottom = window.innerHeight * 0.18;
+
+        if (triggerTop <= activeTop && triggerBottom >= activeBottom) {
+          mountAmbientFrame();
+          document.body.classList.add(activeClass);
+          window.removeEventListener('scroll', update);
+          window.removeEventListener('resize', update);
+        }
+      };
+
+      update();
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
     }
 
     mountAmbientFrame();
-    activateAmbientBackground();
-    document.addEventListener('shopify:section:load', activateAmbientBackground);
+    activateWhenIntroIsVisible();
+    document.addEventListener('shopify:section:load', activateWhenIntroIsVisible);
   })();
 </script>
