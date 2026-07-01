@@ -125,7 +125,9 @@
   .koto-project-title-wrapper-{{ section_id }} {
     position: relative;
     width: 100%;
-    min-height: calc(var(--project-title-size-pc) * 1.1); 
+    min-height: calc(var(--project-title-size-pc) * 1.1);
+    height: var(--active-title-height, calc(var(--project-title-size-pc) * 1.1));
+    transition: height 0.35s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .koto-project-title-item-{{ section_id }} {
@@ -677,6 +679,25 @@
       const mediaItems = wrapper.querySelectorAll('.koto-media-item-' + sectionId);
       const titleItems = wrapper.querySelectorAll('.koto-project-title-item-' + sectionId);
       const footerItems = wrapper.querySelectorAll('.koto-project-footer-item-' + sectionId);
+      const titleWrapper = wrapper.querySelector('.koto-project-title-wrapper-' + sectionId);
+
+      const syncActiveTitleHeight = () => {
+        if (!titleWrapper) return;
+
+        const activeTitle = wrapper.querySelector('.koto-project-title-item-' + sectionId + '.is-active');
+        if (!activeTitle) return;
+
+        const height = Math.ceil(activeTitle.getBoundingClientRect().height);
+        if (height > 0) {
+          titleWrapper.style.setProperty('--active-title-height', height + 'px');
+        }
+      };
+
+      syncActiveTitleHeight();
+      window.addEventListener('resize', syncActiveTitleHeight);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(syncActiveTitleHeight);
+      }
 
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -684,6 +705,7 @@
             const activeIndex = entry.target.getAttribute('data-index');
             titleItems.forEach(text => { text.classList.toggle('is-active', text.getAttribute('data-index') === activeIndex); });
             footerItems.forEach(footer => { footer.classList.toggle('is-active', footer.getAttribute('data-index') === activeIndex); });
+            syncActiveTitleHeight();
           }
         });
       }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
