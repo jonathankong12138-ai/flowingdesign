@@ -705,6 +705,7 @@
       }
     };
 
+    let leftStickyReleaseTop = null;
     const syncLeftStickyRelease = () => {
       const leftColumn = wrapper.querySelector('.koto-left-' + sectionId);
       const leftSticky = wrapper.querySelector('.koto-left-sticky-' + sectionId);
@@ -712,17 +713,28 @@
       const lastMediaCard = mediaCards[mediaCards.length - 1];
       if (!leftColumn || !leftSticky || !lastMediaCard || window.innerWidth < 990) {
         if (leftSticky) leftSticky.classList.remove('is-released');
+        leftStickyReleaseTop = null;
         return;
       }
 
       const scrollY = window.scrollY || window.pageYOffset;
-      const stickyOffset = parseFloat(window.getComputedStyle(wrapper).getPropertyValue('--koto-left-sticky-offset')) || 0;
       const leftColumnTop = leftColumn.getBoundingClientRect().top + scrollY;
       const releaseScrollY = lastMediaCard.getBoundingClientRect().top + scrollY;
-      const releaseTop = Math.max(releaseScrollY - leftColumnTop + stickyOffset, 0);
+      const shouldRelease = scrollY >= releaseScrollY;
 
-      wrapper.style.setProperty('--koto-left-release-top', releaseTop + 'px');
-      leftSticky.classList.toggle('is-released', scrollY >= releaseScrollY);
+      if (!shouldRelease) {
+        leftSticky.classList.remove('is-released');
+        leftStickyReleaseTop = null;
+        return;
+      }
+
+      if (leftStickyReleaseTop === null || !leftSticky.classList.contains('is-released')) {
+        const stickyTop = leftSticky.getBoundingClientRect().top + scrollY;
+        leftStickyReleaseTop = Math.max(stickyTop - leftColumnTop, 0);
+        wrapper.style.setProperty('--koto-left-release-top', leftStickyReleaseTop + 'px');
+      }
+
+      leftSticky.classList.add('is-released');
     };
 
     syncTitlePosition();
