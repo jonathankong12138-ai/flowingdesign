@@ -302,7 +302,7 @@
                 if (speed > 0.01) { 
                     const configSlowBoost = {{ section.settings.slow_mouse_boost | default: 15.0 }};
                     let boost = configSlowBoost / (1.0 + speed * 2.0); 
-                    targetSpeedOffset = Math.min(targetSpeedOffset + boost * 0.03, configSlowBoost);
+                    targetSpeedOffset = Math.min(targetSpeedOffset + boost * 0.01, configSlowBoost);
                 }
             }
             lastMouseX = e.clientX; 
@@ -405,8 +405,8 @@
     { "type": "range", "id": "wave_curve", "label": "起步爆发指数 (Ease-Out)", "min": 1.0, "max": 4.0, "step": 0.1, "default": 2.0, "info": "1.0为匀速。数值越大，一开始滚动的瞬间波浪上升越快，后段逐渐变柔和。" },
     
     { "type": "header", "content": "🖱️ 鼠标交互与惯性" },
-    { "type": "range", "id": "slow_mouse_boost", "label": "扰动动能上限", "min": 1, "max": 50, "step": 1, "default": 3, "info": "反复滑动鼠标时，液体翻滚能达到的最高剧烈程度。" },
-    { "type": "range", "id": "mouse_inertia", "label": "滑动惯性 (衰减)", "min": 70, "max": 99, "step": 1, "default": 88, "info": "数值越大，鼠标停止后液体继续翻滚的时间越长、降速越优雅。" },
+    { "type": "range", "id": "slow_mouse_boost", "label": "扰动动能上限", "min": 0, "max": 50, "step": 1, "default": 1, "info": "反复滑动鼠标时，液体翻滚能达到的最高剧烈程度。" },
+    { "type": "range", "id": "mouse_inertia", "label": "滑动惯性 (衰减)", "min": 60, "max": 99, "step": 1, "default": 80, "info": "数值越大，鼠标停止后液体继续翻滚的时间越长、降速越优雅。" },
     { "type": "range", "id": "base_fluid_speed", "label": "静止基础流速", "min": 0.5, "max": 10.0, "step": 0.5, "default": 2.5, "info": "不移动鼠标时，液体的自然呼吸流速。" },
 
     { "type": "header", "content": "液体流动色彩调解 (WebGL)" },

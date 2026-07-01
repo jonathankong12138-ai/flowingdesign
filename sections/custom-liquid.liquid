@@ -37,6 +37,7 @@
     --award-size-pc: {{ section.settings.award_size_pc }}px;
     --award-size-mb: {{ section.settings.award_size_mb }}px;
     --first-media-height: calc(100vh - {{ section.settings.padding_top_desktop | plus: section.settings.padding_bottom_desktop }}px);
+    --title-start-offset: 0px;
     --left-footer-space: 190px;
   }
 
@@ -82,9 +83,8 @@
 
   .koto-left-{{ section_id }} {
     width: 38%;
-    position: sticky;
-    top: 60px; 
-    height: calc(100vh - 60px);
+    position: relative;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     padding-right: 40px;
@@ -94,12 +94,20 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 40px;
-    height: var(--first-media-height);
+    position: sticky;
+    top: 60px;
+    width: 100%;
+    margin-top: var(--title-start-offset);
     min-height: 0;
+    opacity: 0;
+    transform: translateY(32px) scale(0.98);
+    transform-origin: center center;
+    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.9s ease;
+  }
+
+  .koto-title-group-{{ section_id }}.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 
   .koto-works-title-{{ section_id }} {
@@ -228,6 +236,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .koto-title-group-{{ section_id }},
     .koto-media-card-{{ section_id }} {
       opacity: 1;
       transform: none;
@@ -589,13 +598,20 @@
         shopifySection.style.zIndex = '50';
     }
 
-    const syncFirstMediaHeight = () => {
+    const syncTitlePosition = () => {
       const firstMediaCard = wrapper.querySelector('.koto-media-card-' + sectionId);
+      const titleGroup = wrapper.querySelector('.koto-title-group-' + sectionId);
       if (!firstMediaCard) return;
 
       const firstMediaHeight = firstMediaCard.getBoundingClientRect().height;
       if (firstMediaHeight > 0) {
         wrapper.style.setProperty('--first-media-height', firstMediaHeight + 'px');
+      }
+
+      if (firstMediaHeight > 0 && titleGroup) {
+        const titleHeight = titleGroup.getBoundingClientRect().height;
+        const offset = Math.max((firstMediaHeight - titleHeight) / 2, 0);
+        wrapper.style.setProperty('--title-start-offset', offset + 'px');
       }
     };
 
@@ -611,22 +627,24 @@
       }
     };
 
-    syncFirstMediaHeight();
+    syncTitlePosition();
     syncLeftFooterSpace();
-    window.addEventListener('load', syncFirstMediaHeight, { once: true });
+    window.addEventListener('load', syncTitlePosition, { once: true });
     window.addEventListener('load', syncLeftFooterSpace, { once: true });
-    window.addEventListener('resize', syncFirstMediaHeight);
+    window.addEventListener('resize', syncTitlePosition);
     window.addEventListener('resize', syncLeftFooterSpace);
     wrapper.querySelectorAll('.koto-media-card-' + sectionId + ' img').forEach(image => {
       if (image.complete) {
-        syncFirstMediaHeight();
+        syncTitlePosition();
       } else {
-        image.addEventListener('load', syncFirstMediaHeight, { once: true });
+        image.addEventListener('load', syncTitlePosition, { once: true });
       }
     });
 
     const revealCards = wrapper.querySelectorAll('.koto-media-card-' + sectionId);
+    const titleGroup = wrapper.querySelector('.koto-title-group-' + sectionId);
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (titleGroup) titleGroup.classList.add('is-visible');
       revealCards.forEach(card => card.classList.add('is-visible'));
     } else if ('IntersectionObserver' in window) {
       const revealObserver = new IntersectionObserver((entries) => {
@@ -642,7 +660,12 @@
         card.style.transitionDelay = Math.min(index * 70, 280) + 'ms';
         revealObserver.observe(card);
       });
+      if (titleGroup) {
+        titleGroup.style.transitionDelay = '80ms';
+        revealObserver.observe(titleGroup);
+      }
     } else {
+      if (titleGroup) titleGroup.classList.add('is-visible');
       revealCards.forEach(card => card.classList.add('is-visible'));
     }
 
