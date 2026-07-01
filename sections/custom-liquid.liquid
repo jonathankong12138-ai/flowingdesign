@@ -53,6 +53,19 @@
     z-index: 50 !important; 
   }
 
+  .koto-heatmap-canvas-{{ section_id }} {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    display: block;
+    margin-bottom: -100vh;
+    margin-bottom: -100dvh;
+    z-index: 1;
+    pointer-events: none;
+  }
+
   .koto-inner-{{ section_id }} {
     display: flex;
     align-items: stretch;
@@ -279,6 +292,7 @@
 {%- endstyle -%}
 
 <div id="koto-{{ section_id }}" class="koto-wrapper-{{ section_id }}">
+  <canvas class="koto-heatmap-canvas-{{ section_id }}" data-koto-heatmap-canvas aria-hidden="true"></canvas>
   <div class="koto-inner-{{ section_id }}">
     
     <div class="koto-left-{{ section_id }}">
@@ -289,7 +303,7 @@
         
         <div class="koto-project-title-wrapper-{{ section_id }}">
           {%- for block in section.blocks -%}
-            <h3 class="koto-project-title-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}">
+            <h3 class="koto-project-title-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}"{% if forloop.first %} data-heatmap-hover="true"{% endif %}>
               {{ block.settings.title }}
             </h3>
           {%- endfor -%}
@@ -397,6 +411,150 @@
     if (shopifySection) {
         shopifySection.style.position = 'relative';
         shopifySection.style.zIndex = '50';
+    }
+
+    const initHeatmapWave = () => {
+      const canvas = wrapper.querySelector('[data-koto-heatmap-canvas]');
+      const hoverTargets = wrapper.querySelectorAll('[data-heatmap-hover="true"]');
+      if (!canvas || !hoverTargets.length || typeof THREE === 'undefined') return;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+      const vertexShader = `
+        varying vec2 vUv;
+        void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+      `;
+      const fragmentShader = `
+        uniform float uTime; uniform vec2 uResolution; uniform float uScroll; uniform float uRandomSeed;
+        varying vec2 vUv;
+        mat2 rotate2d(float angle){ return mat2(cos(angle), -sin(angle), sin(angle), cos(angle)); }
+        vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+        float snoise(vec2 v){
+          const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+          vec2 i = floor(v + dot(v, C.yy)); vec2 x0 = v - i + dot(i, C.xx);
+          vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+          vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1; i = mod(i, 289.0);
+          vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+          vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+          m = m*m; m = m*m;
+          vec3 x = 2.0 * fract(p * C.www) - 1.0; vec3 h = abs(x) - 0.5;
+          vec3 ox = floor(x + 0.5); vec3 a0 = x - ox;
+          m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+          vec3 g; g.x = a0.x * x0.x + h.x * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+          return 130.0 * dot(m, g);
+        }
+        float getHeight(vec2 uv, float time, float scroll, float seed) {
+          vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
+          vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.2);
+          float flowTime = time * 0.8 + scroll * 0.5;
+          vec2 rotUV = rotate2d(-0.5) * baseUV;
+          vec2 distortion = vec2(0.0);
+          distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
+          distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
+          float detail = snoise(rotUV * 0.975 + distortion + flowTime * 0.1) * 0.065;
+          float wave = sin(rotUV.y * 0.6 + distortion.x * 1.7 + flowTime);
+          return pow(max(wave * 0.5 + 0.5, 0.0), 0.8) + detail;
+        }
+        float deepHaloMask(float lightValue, float center, float width, float featherValue) {
+          float halfWidth = max(width, 0.001);
+          float feather = max(featherValue * halfWidth, 0.001);
+          return smoothstep(center - halfWidth - feather, center - halfWidth, lightValue) * (1.0 - smoothstep(center + halfWidth, center + halfWidth + feather, lightValue));
+        }
+        void main() {
+          vec2 uv = vUv;
+          uv.x *= uResolution.x / uResolution.y;
+          float time = uTime * 0.254;
+          float h = getHeight(uv, time, uScroll, uRandomSeed);
+          float eps = 0.01;
+          float hx1 = getHeight(uv + vec2(eps, 0.0), time, uScroll, uRandomSeed);
+          float hx2 = getHeight(uv - vec2(eps, 0.0), time, uScroll, uRandomSeed);
+          float hy1 = getHeight(uv + vec2(0.0, eps), time, uScroll, uRandomSeed);
+          float hy2 = getHeight(uv - vec2(0.0, eps), time, uScroll, uRandomSeed);
+          vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
+          float light = dot(normal, normalize(vec3(-0.5, 0.5, 0.4))) * 0.5 + 0.5;
+
+          vec3 color = mix(vec3(0.792, 0.341, 1.0), vec3(0.078, 0.463, 1.0), smoothstep(0.0, 0.28, light));
+          color = mix(color, vec3(1.0, 0.502, 0.502), smoothstep(0.28, 0.62, light));
+          color = mix(color, vec3(1.0), smoothstep(0.62, 1.0, light));
+          float halo1 = deepHaloMask(light, 0.42, 0.18, 0.95) * smoothstep(0.05, 1.0, snoise(uv * 0.5 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5) * 0.77;
+          float halo2 = deepHaloMask(light, 0.56, 0.08, 0.29) * smoothstep(0.71, 1.0, snoise(uv * 2.5 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5) * 1.5;
+          vec3 deepHalo = vec3(0.0, 0.898, 0.659) * halo1 + vec3(1.0, 0.506, 0.239) * halo2;
+          color = 1.0 - (1.0 - color) * (1.0 - clamp(deepHalo, 0.0, 1.0));
+          color = clamp((color - 0.5) * 1.5 + 0.35, 0.0, 1.0);
+
+          float p = clamp(uScroll, 0.0, 1.0);
+          float easedScroll = 1.0 - pow(max(1.0 - p, 0.0), 2.0);
+          float wavePos = easedScroll * 2.8 - 0.2;
+          float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
+          float dist = wavePos - (vUv.y + waveOffset);
+          float mask = smoothstep(0.0, 0.15, dist);
+          float crest = smoothstep(-0.05, 0.1, dist) * smoothstep(0.2, 0.05, dist);
+          vec3 finalColor = mix(color, vec3(1.0), mask) + vec3(1.0, 0.878, 0.961) * crest * 0.6;
+          gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), mask);
+        }
+      `;
+
+      const uniforms = {
+        uTime: { value: 0 },
+        uResolution: { value: new THREE.Vector2() },
+        uScroll: { value: 0 },
+        uRandomSeed: { value: 42.0 }
+      };
+      const material = new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms,
+        transparent: true
+      });
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
+
+      const resize = () => {
+        const rect = canvas.getBoundingClientRect();
+        renderer.setSize(Math.max(1, rect.width), Math.max(1, rect.height));
+        uniforms.uResolution.value.set(Math.max(1, rect.width), Math.max(1, rect.height));
+      };
+      resize();
+      window.addEventListener('resize', resize);
+
+      let targetScroll = 0;
+      let currentScroll = 0;
+      let hoverCount = 0;
+      const setActive = (active) => {
+        hoverCount = Math.max(0, hoverCount + (active ? 1 : -1));
+        targetScroll = hoverCount > 0 ? 1 : 0;
+      };
+      hoverTargets.forEach((target) => {
+        target.addEventListener('mouseenter', () => setActive(true));
+        target.addEventListener('mouseleave', () => setActive(false));
+        target.addEventListener('focus', () => setActive(true));
+        target.addEventListener('blur', () => setActive(false));
+      });
+
+      const clock = new THREE.Clock();
+      let customTime = 0;
+      const animate = () => {
+        requestAnimationFrame(animate);
+        currentScroll += (targetScroll - currentScroll) * 0.12;
+        uniforms.uScroll.value = currentScroll;
+        const delta = Math.min(clock.getDelta(), 0.05);
+        const elapsed = clock.getElapsedTime();
+        customTime += delta * (2.5 + Math.sin(elapsed * 1.8) * 0.9);
+        uniforms.uTime.value = customTime;
+        renderer.render(scene, camera);
+      };
+      animate();
+    };
+
+    if (typeof THREE === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      script.onload = initHeatmapWave;
+      document.head.appendChild(script);
+    } else {
+      initHeatmapWave();
     }
 
     const syncTitlePosition = () => {

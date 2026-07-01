@@ -213,16 +213,6 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 0.18s ease-out, transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
-    pointer-events: none;
-  }
-
-  .footer-bottom-row.is-revealed {
-    opacity: 1;
-    transform: none;
-    pointer-events: auto;
   }
 
   .footer-note-title {
@@ -267,9 +257,6 @@
       left: auto;
       right: auto;
       bottom: auto;
-      opacity: 1;
-      transform: none;
-      pointer-events: auto;
     }
   }
 {%- endstyle -%}
@@ -299,7 +286,7 @@
     </div>
   </div>
 
-  <div class="footer-bottom-row">
+  <div class="footer-bottom-row animate-up delay-3">
     <p class="footer-note-title">Design in Flow. Touch the World.</p>
     <p class="footer-note-desc">
       All visual works, design concepts, interface mockups, branding explorations, and original imagery presented on this website are the intellectual property of the author and are protected under copyright law.<br><br>
@@ -401,9 +388,9 @@
       vec3 normal = normalize(vec3(h - hx, h - hy, 0.008));
       float light = dot(normal, normalize(vec3(-0.6, 0.5, 0.4))) * 0.5 + 0.5;
       
-      vec3 colDeep = vec3(0.25, 0.23, 0.20);
-      vec3 colMid = vec3(0.58, 0.55, 0.50); vec3 colSoft = vec3(0.88, 0.85, 0.80); vec3 colHigh = vec3(0.98, 0.97, 0.95);
-      vec3 color = mix(mix(mix(colDeep, colMid, smoothstep(0.1, 0.65, light)), colSoft, smoothstep(0.45, 0.9, light)), colHigh, smoothstep(0.88, 1.0, light));
+      vec3 colDeep = vec3(0.95, 0.95, 0.95);
+      vec3 colMid = vec3(0.98, 0.98, 0.98); vec3 colSoft = vec3(1.0, 1.0, 1.0); vec3 colHigh = vec3(0.78, 0.78, 0.78);
+      vec3 color = mix(mix(mix(colDeep, colMid, smoothstep(0.24, 0.44, light)), colSoft, smoothstep(0.44, 0.52, light)), colHigh, smoothstep(0.83, 1.0, light));
       color = (color - 0.5) * uContrast + 0.5 + uBrightness;
       color = clamp(color, 0.0, 1.0);
       vec3 hsl = rgb2hsl(color);
@@ -495,14 +482,6 @@
         bottomRow?.classList.add('is-scroll-pinned');
       } else {
         resetCtaPin();
-      }
-
-      if (bottomRow) {
-        const title = ctaRow.querySelector('.footer-title');
-        const titleRect = title?.getBoundingClientRect();
-        const titleCenter = titleRect ? titleRect.top + titleRect.height / 2 : windowHeight;
-        const revealPoint = windowHeight * 0.55;
-        bottomRow.classList.toggle('is-revealed', window.innerWidth < 768 || titleCenter <= revealPoint);
       }
 
       if (previousWorksSection && window.innerWidth >= 768 && progress > 0) {
