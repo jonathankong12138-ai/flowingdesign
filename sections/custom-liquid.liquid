@@ -545,18 +545,14 @@
           float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
           float dist = wavePos - (vUv.y + waveOffset);
           float whiteMask = smoothstep(0.0, 0.15, dist);
-          float crest = smoothstep(-0.05, 0.1, dist) * smoothstep(0.2, 0.05, dist);
+          float crest = smoothstep(-0.08, 0.16, dist) * smoothstep(0.32, 0.04, dist);
           vec3 finalColor = mix(color, vec3(1.0), whiteMask);
-          finalColor += vec3(1.0, 0.878, 0.961) * crest * 0.6;
+          finalColor += vec3(1.0, 0.878, 0.961) * crest * 0.28;
           finalColor += (light - 0.5) * 0.03 * whiteMask;
 
-          vec2 grainUv = floor(vUv * uResolution * 0.55);
-          float grainTime = uTime * 0.3;
-          float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + grainTime) * 43758.5453);
-          float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
-          finalColor += baseDither + (dither - 0.5) * 0.1;
-
-          float revealAlpha = smoothstep(-0.08, 0.03, dist);
+          float revealTop = clamp(wavePos, 0.0, 0.52);
+          float revealStrength = smoothstep(0.02, 0.10, p);
+          float revealAlpha = (1.0 - smoothstep(revealTop - 0.30, revealTop + 0.24, vUv.y)) * revealStrength;
           gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), revealAlpha);
         }
       `;
@@ -593,7 +589,7 @@
         } else {
           activeHeatmapTargets.delete(event.currentTarget);
         }
-        targetScroll = activeHeatmapTargets.size > 0 ? 0.2 : 0;
+        targetScroll = activeHeatmapTargets.size > 0 ? 0.13 : 0;
         wrapper.classList.toggle('is-heatmap-active', activeHeatmapTargets.size > 0);
       };
       hoverTargets.forEach((target) => {
