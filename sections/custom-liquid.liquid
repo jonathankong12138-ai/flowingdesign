@@ -57,12 +57,12 @@
   .koto-heatmap-canvas-{{ section_id }} {
     position: sticky;
     top: 0;
-    left: 50%;
     width: 100vw;
+    max-width: none;
     height: calc(100vh + var(--heatmap-bleed-y));
     height: calc(100dvh + var(--heatmap-bleed-y));
     display: block;
-    margin-left: -50vw;
+    margin-left: calc(50% - 50vw);
     margin-bottom: calc(-100vh - var(--heatmap-bleed-y));
     margin-bottom: calc(-100dvh - var(--heatmap-bleed-y));
     transform: translateY(calc(var(--heatmap-bleed-y) * -1));
