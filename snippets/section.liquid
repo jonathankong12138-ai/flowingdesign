@@ -5,6 +5,178 @@
   @param {string} children - The children of the section
 {%- enddoc -%}
 
+{%- liquid
+  assign show_center_fluid = false
+  if template.name == 'index' and section.id contains '1774868082ca178295'
+    assign show_center_fluid = true
+  endif
+-%}
+
+{%- if show_center_fluid -%}
+  <div class="fd-center-fluid-bg fd-center-fluid-bg-{{ section.id }}" aria-hidden="true">
+    <canvas id="fd-center-fluid-canvas-{{ section.id }}"></canvas>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+
+  <script id="fd-center-fluid-vs-{{ section.id }}" type="x-shader/x-vertex">
+    varying vec2 vUv;
+    void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+  </script>
+
+  <script id="fd-center-fluid-fs-{{ section.id }}" type="x-shader/x-fragment">
+    uniform float uTime; uniform vec2 uResolution; uniform float uScroll; uniform float uRandomSeed;
+    uniform float uContrast; uniform float uBrightness; uniform float uSaturation; uniform float uHueShift;
+    uniform float uThemeSpeed; uniform float uThemeDetail; uniform float uWaveFreq; uniform float uDistortion;
+    uniform float uMaskSmooth; uniform float uCrestSize;
+    uniform vec3 uColorAmbient; uniform vec3 uColorDeep; uniform vec3 uColorMid; uniform vec3 uColorSoft; uniform vec3 uColorHigh; uniform vec3 uColorSpec;
+    uniform float uStop1; uniform float uStop2; uniform float uStop3; uniform float uStop4;
+    uniform vec3 uWaveColor; uniform vec3 uCrestColor; uniform float uLightX; uniform float uLightY;
+    uniform float uGrainIntensity; uniform float uGrainScale; uniform float uGrainSpeed;
+    varying vec2 vUv;
+    mat2 rotate2d(float a){ return mat2(cos(a), -sin(a), sin(a), cos(a)); }
+    vec3 permute(vec3 x){ return mod(((x*34.0)+1.0)*x, 289.0); }
+    float snoise(vec2 v){
+      const vec4 C = vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);
+      vec2 i = floor(v + dot(v, C.yy)); vec2 x0 = v - i + dot(i, C.xx);
+      vec2 i1 = (x0.x > x0.y) ? vec2(1.0,0.0) : vec2(0.0,1.0);
+      vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1; i = mod(i, 289.0);
+      vec3 p = permute(permute(i.y + vec3(0.0,i1.y,1.0)) + i.x + vec3(0.0,i1.x,1.0));
+      vec3 m = max(0.5 - vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)), 0.0);
+      m = m*m; m = m*m; vec3 x = 2.0 * fract(p * C.www) - 1.0; vec3 h = abs(x) - 0.5;
+      vec3 ox = floor(x + 0.5); vec3 a0 = x - ox; m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+      vec3 g; g.x = a0.x * x0.x + h.x * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+      return 130.0 * dot(m, g);
+    }
+    vec3 rgb2hsl(vec3 c){
+      float maxC = max(c.r, max(c.g, c.b)); float minC = min(c.r, min(c.g, c.b)); float h; float s; float l = (maxC + minC) / 2.0;
+      if(maxC == minC){ h = 0.0; s = 0.0; } else { float d = maxC - minC; s = l > 0.5 ? d / (2.0 - maxC - minC) : d / (maxC + minC); if(maxC == c.r) h = (c.g - c.b) / d + (c.g < c.b ? 6.0 : 0.0); else if(maxC == c.g) h = (c.b - c.r) / d + 2.0; else h = (c.r - c.g) / d + 4.0; h /= 6.0; }
+      return vec3(h, s, l);
+    }
+    float hue2rgb(float p, float q, float t){ if(t < 0.0) t += 1.0; if(t > 1.0) t -= 1.0; if(t < 1.0/6.0) return p + (q-p)*6.0*t; if(t < 0.5) return q; if(t < 2.0/3.0) return p + (q-p)*(2.0/3.0-t)*6.0; return p; }
+    vec3 hsl2rgb(vec3 c){
+      if(c.y == 0.0) return vec3(c.z);
+      float q = c.z < 0.5 ? c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y; float p = 2.0 * c.z - q;
+      return vec3(hue2rgb(p,q,c.x+1.0/3.0), hue2rgb(p,q,c.x), hue2rgb(p,q,c.x-1.0/3.0));
+    }
+    float getHeight(vec2 uv, float time, float scroll, float seed){
+      vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
+      vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.2);
+      float flowTime = time * uThemeSpeed + scroll * 0.5;
+      vec2 rotUV = rotate2d(-0.5) * baseUV;
+      vec2 distortion = vec2(snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1)), snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1)));
+      float detail = snoise(rotUV * (1.5 * uThemeDetail) + distortion + flowTime * 0.1) * (0.1 * uThemeDetail);
+      float wave = sin(rotUV.y * uWaveFreq + distortion.x * uDistortion + flowTime);
+      return pow(max(wave * 0.5 + 0.5, 0.0), 0.8) + detail;
+    }
+    void main(){
+      vec2 uv = vUv; uv.x *= uResolution.x / uResolution.y;
+      float time = uTime * 0.254; float h = getHeight(uv, time, uScroll, uRandomSeed);
+      float eps = 0.01;
+      float hx1 = getHeight(uv + vec2(eps,0.0), time, uScroll, uRandomSeed);
+      float hx2 = getHeight(uv - vec2(eps,0.0), time, uScroll, uRandomSeed);
+      float hy1 = getHeight(uv + vec2(0.0,eps), time, uScroll, uRandomSeed);
+      float hy2 = getHeight(uv - vec2(0.0,eps), time, uScroll, uRandomSeed);
+      vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
+      float light = dot(normal, normalize(vec3(uLightX, uLightY, 0.4))) * 0.5 + 0.5;
+      vec3 color = mix(uColorAmbient, uColorDeep, smoothstep(0.0, uStop1 + 0.001, light));
+      color = mix(color, uColorMid, smoothstep(uStop1, uStop2 + 0.001, light));
+      color = mix(color, uColorSoft, smoothstep(uStop2, uStop3 + 0.001, light));
+      color = mix(color, uColorHigh, smoothstep(uStop3, uStop4 + 0.001, light));
+      color = mix(color, uColorSpec, smoothstep(uStop4, 1.001, light));
+      color = clamp((color - 0.5) * uContrast + 0.5 + uBrightness, 0.0, 1.0);
+      vec3 hsl = rgb2hsl(color); hsl.x = mod(hsl.x + uHueShift, 1.0); hsl.y = clamp(hsl.y * uSaturation, 0.0, 1.0); color = hsl2rgb(hsl);
+      float easedScroll = 1.0 - pow(max(1.0 - clamp(uScroll, 0.0, 1.0), 0.0), 2.0);
+      float dist = easedScroll * 2.8 - 0.2 - (vUv.y + h * 0.4 + sin(uv.x * 4.0 + time) * 0.05);
+      float whiteMask = smoothstep(0.0, max(uMaskSmooth, 0.01), dist);
+      float waveCrest = smoothstep(-0.05, max(uCrestSize, 0.01), dist) * smoothstep(uCrestSize * 2.0, 0.05, dist);
+      vec3 finalColor = mix(color, uWaveColor, whiteMask) + uCrestColor * waveCrest * 0.6 + (light - 0.5) * 0.03 * whiteMask;
+      vec2 grainUv = floor(vUv * uResolution * uGrainScale);
+      float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * uGrainSpeed) * 43758.5453);
+      float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898,78.233)))) - 0.5) * (2.0 / 255.0);
+      gl_FragColor = vec4(clamp(finalColor + baseDither + (dither - 0.5) * uGrainIntensity, 0.0, 1.0), 1.0);
+    }
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const sectionId = '{{ section.id }}';
+      const target = document.getElementById('shopify-section-' + sectionId);
+      const layer = document.querySelector('.fd-center-fluid-bg-' + sectionId);
+      const canvas = document.getElementById('fd-center-fluid-canvas-' + sectionId);
+      if (!target || !layer || !canvas) return;
+      const textTrigger = Array.from(target.querySelectorAll('p')).find(function(element) {
+        return element.textContent && element.textContent.indexOf('循流而进') !== -1;
+      }) || Array.from(target.querySelectorAll('div, .shopify-block')).find(function(element) {
+        return element.textContent && element.textContent.indexOf('循流而进') !== -1;
+      }) || target;
+
+      function initCenteredFluid() {
+        if (typeof THREE === 'undefined') {
+          setTimeout(initCenteredFluid, 50);
+          return;
+        }
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        const uniforms = {
+          uTime: { value: 0 }, uResolution: { value: new THREE.Vector2() }, uScroll: { value: 0 }, uRandomSeed: { value: Math.random() * 100 },
+          uContrast: { value: 1 }, uBrightness: { value: 0 }, uSaturation: { value: 0 }, uHueShift: { value: 0 },
+          uThemeSpeed: { value: 0.4 }, uThemeDetail: { value: 1.3 }, uWaveFreq: { value: 1.5 }, uDistortion: { value: 5 },
+          uMaskSmooth: { value: 0.15 }, uCrestSize: { value: 0.1 },
+          uColorAmbient: { value: new THREE.Color('#ffffff') }, uColorDeep: { value: new THREE.Color('#f2f2f2') }, uColorMid: { value: new THREE.Color('#fafafa') },
+          uColorSoft: { value: new THREE.Color('#ffffff') }, uColorHigh: { value: new THREE.Color('#f5f5f5') }, uColorSpec: { value: new THREE.Color('#c7c7c7') },
+          uStop1: { value: 0.24 }, uStop2: { value: 0.44 }, uStop3: { value: 0.52 }, uStop4: { value: 0.83 },
+          uWaveColor: { value: new THREE.Color('#ffffff') }, uCrestColor: { value: new THREE.Color('#fafcff') }, uLightX: { value: -0.6 }, uLightY: { value: 0.5 },
+          uGrainIntensity: { value: 0 }, uGrainScale: { value: 0.1 }, uGrainSpeed: { value: 0 }
+        };
+        const material = new THREE.ShaderMaterial({
+          vertexShader: document.getElementById('fd-center-fluid-vs-' + sectionId).textContent,
+          fragmentShader: document.getElementById('fd-center-fluid-fs-' + sectionId).textContent,
+          uniforms: uniforms
+        });
+        scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
+
+        function resize() {
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        const clock = new THREE.Clock();
+        let customTime = 0;
+        let currentActivation = 0;
+
+        function getActivation() {
+          const rect = textTrigger.getBoundingClientRect();
+          const textCenter = rect.top + rect.height / 2;
+          const distance = Math.abs(textCenter - window.innerHeight / 2);
+          return Math.max(0, Math.min(1, 1 - distance / (window.innerHeight * 0.42)));
+        }
+
+        function animate() {
+          requestAnimationFrame(animate);
+          const activation = getActivation();
+          currentActivation += (activation - currentActivation) * 0.08;
+          layer.style.opacity = currentActivation.toFixed(3);
+          uniforms.uScroll.value = currentActivation;
+          const delta = Math.min(clock.getDelta(), 0.05);
+          const elapsedTime = clock.getElapsedTime();
+          customTime += delta * (2.5 + Math.sin(elapsedTime * 1.8) * 0.9);
+          uniforms.uTime.value = customTime;
+          renderer.render(scene, camera);
+        }
+        animate();
+      }
+
+      initCenteredFluid();
+    });
+  </script>
+{%- endif -%}
+
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
   class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
@@ -66,6 +238,35 @@
 </div>
 
 {% stylesheet %}
+  .fd-center-fluid-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s linear;
+  }
+
+  .fd-center-fluid-bg canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  [id$="__1774868082ca178295"] {
+    position: relative;
+  }
+
+  [id$="__1774868082ca178295"] .section-background,
+  [id$="__1774868082ca178295"] .section {
+    background: transparent;
+  }
+
+  [id$="__1774868082ca178295"] .custom-section-content {
+    position: relative;
+    z-index: 2;
+  }
+
   .section-wrapper {
     --section-height-offset: 0px;
   }
