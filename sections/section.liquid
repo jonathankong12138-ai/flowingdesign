@@ -394,29 +394,38 @@
 
       initGlacierWebGL();
 
-      document.body.addEventListener('click', function(e) {
-        const trigger = e.target.closest('.js-trigger-bg');
-        if (!trigger || !wrapper.contains(trigger)) return;
-        const url = trigger.getAttribute('data-bg-url');
-        const type = trigger.getAttribute('data-bg-type');
-        
+      const setGlacierMedia = (url, type, toggleIfSame = false) => {
         if (!url || type === "none") {
           globalBgContainer.classList.remove('is-media-mode-' + sectionId);
           mediaLayer.classList.remove('active');
+          mediaContent.setAttribute('data-active-url', '');
           return;
         }
-        if (mediaLayer.classList.contains('active') && mediaContent.getAttribute('data-active-url') === url) {
+        if (toggleIfSame && mediaLayer.classList.contains('active') && mediaContent.getAttribute('data-active-url') === url) {
            globalBgContainer.classList.remove('is-media-mode-' + sectionId);
            mediaLayer.classList.remove('active');
            mediaContent.setAttribute('data-active-url', '');
            return;
         }
+        if (mediaLayer.classList.contains('active') && mediaContent.getAttribute('data-active-url') === url) return;
         let html = (type === 'video') ?
         `<video src="${url}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>` : `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" />`;
         mediaContent.innerHTML = html;
         mediaContent.setAttribute('data-active-url', url);
         globalBgContainer.classList.add('is-media-mode-' + sectionId);
         mediaLayer.classList.add('active');
+      };
+
+      document.body.addEventListener('click', function(e) {
+        const trigger = e.target.closest('.js-trigger-bg');
+        if (!trigger || !wrapper.contains(trigger)) return;
+        setGlacierMedia(trigger.getAttribute('data-bg-url'), trigger.getAttribute('data-bg-type'), true);
+      });
+
+      window.addEventListener('glacier:activate-media', function(e) {
+        const sourceWrapper = e.detail?.wrapper;
+        if (sourceWrapper && sourceWrapper.closest('.glacier-wrapper-' + sectionId) !== wrapper) return;
+        setGlacierMedia(e.detail?.url, e.detail?.type, false);
       });
 
       document.addEventListener('shopify:section:unload', function(e) {

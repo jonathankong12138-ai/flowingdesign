@@ -133,6 +133,12 @@
   .ai-text-container-{{ block_id }} > .ai-column-1-{{ block_id }} {
     {% if block.settings.desktop_layout == 'row' %} margin-right: {{ block.settings.margin_after_1 }}px !important;
     {% else %} margin-bottom: {{ block.settings.margin_after_1 }}px !important; {% endif %}
+    mix-blend-mode: difference !important;
+  }
+
+  .ai-item-1-{{ block_id }} {
+    color: #ffffff !important;
+    mix-blend-mode: difference !important;
   }
 
   @supports (-webkit-hyphens:none) {
@@ -141,13 +147,90 @@
     .char-span-{{ block_id }}, .char-span-{{ block_id }} * { overflow: visible !important; }
   }
 
-  .ai-info-panel-{{ block_id }} { grid-area: 1 / 1; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; row-gap: 24px; column-gap: 40px; visibility: hidden; pointer-events: none; }
-  .ai-info-panel-{{ block_id }}.is-active { visibility: visible; pointer-events: auto; z-index: 2; }
-  .ai-info-text-{{ block_id }} { color: {{ block.settings.info_text_color }}; font-family: 'Urbanist', sans-serif; font-size: 18px; font-weight: 300; line-height: 1.5; max-width: 640px; flex: 1 1 auto; margin: 0; opacity: 0; transition: opacity 0.3s ease; }
-  .ai-info-panel-{{ block_id }}.is-active .ai-info-text-{{ block_id }} { opacity: 1; }
-  .ai-info-btn-{{ block_id }} { background-color: {{ btn_bg_rgba }}; color: {{ block.settings.info_btn_text_color }}; padding: {{ block.settings.info_btn_padding_y }}px {{ block.settings.info_btn_padding_x }}px; border-radius: 50px; font-size: {{ block.settings.info_btn_font_size }}px; text-decoration: none; font-family: 'Urbanist', sans-serif; font-weight: 400; backdrop-filter: blur({{ block.settings.info_btn_blur }}px); -webkit-backdrop-filter: blur({{ block.settings.info_btn_blur }}px); white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease, background-color 0.2s ease, transform 0.2s ease; }
-  .ai-info-panel-{{ block_id }}.is-active .ai-info-btn-{{ block_id }} { opacity: 1; }
+  .ai-info-panel-{{ block_id }} {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    row-gap: 24px;
+    column-gap: 40px;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.28s;
+    will-change: opacity, transform;
+  }
+  .ai-info-panel-{{ block_id }}.is-active,
+  .ai-info-panel-{{ block_id }}.is-exiting {
+    visibility: visible;
+    z-index: 2;
+  }
+  .ai-info-panel-{{ block_id }}.is-active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+  .ai-info-panel-{{ block_id }}.is-exiting {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition-duration: 0.16s;
+    transition-delay: 0s;
+  }
+  .ai-info-text-{{ block_id }} {
+    color: {{ block.settings.info_text_color }};
+    font-family: 'Urbanist', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.5;
+    max-width: 640px;
+    flex: 1 1 auto;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.24s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .ai-info-panel-{{ block_id }}.is-active .ai-info-text-{{ block_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .ai-info-btn-{{ block_id }} {
+    background-color: {{ btn_bg_rgba }};
+    color: {{ block.settings.info_btn_text_color }};
+    padding: {{ block.settings.info_btn_padding_y }}px {{ block.settings.info_btn_padding_x }}px;
+    border-radius: 50px;
+    font-size: {{ block.settings.info_btn_font_size }}px;
+    text-decoration: none;
+    font-family: 'Urbanist', sans-serif;
+    font-weight: 400;
+    backdrop-filter: blur({{ block.settings.info_btn_blur }}px);
+    -webkit-backdrop-filter: blur({{ block.settings.info_btn_blur }}px);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.24s ease, background-color 0.2s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .ai-info-panel-{{ block_id }}.is-active .ai-info-btn-{{ block_id }} {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.04s, 0s, 0.04s;
+  }
   .ai-info-btn-{{ block_id }}:hover { background-color: {{ block.settings.info_btn_bg | color_modify: 'alpha', 1.0 }}; transform: scale(1.02); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-info-panel-{{ block_id }},
+    .ai-info-text-{{ block_id }},
+    .ai-info-btn-{{ block_id }} {
+      transition: none;
+      transform: none;
+    }
+  }
 
   @media screen and (max-width: 767px) {
     .ai-text-wrapper-{{ block_id }} { padding-top: {{ block.settings.padding_top_mobile }}px !important; padding-bottom: {{ block.settings.padding_bottom_mobile }}px !important; padding-left: {{ block.settings.padding_left_mobile }}px !important; padding-right: {{ block.settings.padding_right_mobile }}px !important; }
@@ -182,6 +265,10 @@
         elsif block.settings[s_img] != blank
           assign media_url = block.settings[s_img] | image_url: width: 2000
           assign media_type = "image"
+        endif
+        if i == 4 and media_url == blank
+          assign media_url = "fd-project-detail-9abdb01102-shokz-user.mp4" | asset_url
+          assign media_type = "video"
         endif
       -%}
       <div class="ai-column-{{ block_id }} ai-column-{{ i }}-{{ block_id }} js-trigger-bg {% if i == 1 %}is-active{% endif %}" data-index="{{ i }}" data-bg-url="{{ media_url }}" data-bg-type="{{ media_type }}" data-link="{{ block.settings[s_btn_link] }}">
@@ -339,19 +426,59 @@
     let baseInterval = {{ block.settings.autoplay_interval | default: 4 | times: 1000 }};
     let currentInterval = baseInterval;
     let autoPlayTimer = null;
+    let panelSwitchTimer = null;
+    let panelSwitchToken = 0;
+
+    const activateBackgroundMedia = (trigger) => {
+      if (!trigger) return;
+      window.dispatchEvent(new CustomEvent('glacier:activate-media', {
+        detail: {
+          wrapper,
+          url: trigger.getAttribute('data-bg-url'),
+          type: trigger.getAttribute('data-bg-type')
+        }
+      }));
+    };
 
     const activateTab = (targetIndex, isHumanClick = false) => {
+      targetIndex = parseInt(targetIndex, 10);
+      if (targetIndex === currentActiveIdx) {
+        activateBackgroundMedia(wrapper.querySelector(`.js-trigger-bg[data-index="${targetIndex}"]`));
+        startAutoPlay();
+        return;
+      }
+
       if (isHumanClick) { currentInterval = baseInterval + 2000; } else { currentInterval = baseInterval; }
       triggers.forEach(el => el.classList.remove('is-active'));
-      wrapper.querySelectorAll('.ai-info-panel-item-{{ block_id }}').forEach(el => el.classList.remove('is-active'));
       
       const trigger = wrapper.querySelector(`.js-trigger-bg[data-index="${targetIndex}"]`);
       if (trigger) trigger.classList.add('is-active');
 
+      const panels = wrapper.querySelectorAll('.ai-info-panel-item-{{ block_id }}');
+      const currentPanel = wrapper.querySelector(`.ai-info-panel-item-{{ block_id }}.is-active`);
       const targetPanel = wrapper.querySelector(`.ai-info-panel-item-{{ block_id }}[data-target-index="${targetIndex}"]`);
-      if (targetPanel) targetPanel.classList.add('is-active');
+      const switchToken = ++panelSwitchToken;
+      clearTimeout(panelSwitchTimer);
+
+      panels.forEach(panel => panel.classList.remove('is-exiting'));
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const activateTargetPanel = () => {
+        if (switchToken !== panelSwitchToken) return;
+        panels.forEach(panel => panel.classList.remove('is-active', 'is-exiting'));
+        if (targetPanel) targetPanel.classList.add('is-active');
+      };
+
+      if (prefersReducedMotion || !currentPanel || currentPanel === targetPanel) {
+        activateTargetPanel();
+      } else {
+        currentPanel.classList.remove('is-active');
+        currentPanel.classList.add('is-exiting');
+        panelSwitchTimer = setTimeout(activateTargetPanel, 160);
+      }
       
-      currentActiveIdx = parseInt(targetIndex);
+      currentActiveIdx = targetIndex;
+      activateBackgroundMedia(trigger);
       if (trigger && !isHumanClick) { trigger.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true })); }
       startAutoPlay();
     };
@@ -386,6 +513,8 @@
           return; 
         }
         activateTab(targetIndex, e.isTrusted);
+        e.preventDefault();
+        e.stopPropagation();
         if (e.isTrusted) { trigger.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true })); }
       });
     });
@@ -447,7 +576,7 @@
     { "type": "checkbox", "id": "show_info_text_1", "label": "显示详情文案", "default": true },
     { "type": "textarea", "id": "info_text_1", "label": "详情文案", "default": "End-to-end visual design for product launches." },
     { "type": "checkbox", "id": "show_btn_1", "label": "显示按钮", "default": true },
-    { "type": "text", "id": "btn_text_1", "label": "按钮文字", "default": "Learn More" },
+    { "type": "text", "id": "btn_text_1", "label": "按钮文字", "default": "了解更多" },
     { "type": "url", "id": "btn_link_1", "label": "按钮链接" },
     { "type": "image_picker", "id": "img_1", "label": "背景图" },
     { "type": "video", "id": "vid_1", "label": "背景视频" },
@@ -468,7 +597,7 @@
     { "type": "checkbox", "id": "show_info_text_2", "label": "显示详情文案", "default": true },
     { "type": "textarea", "id": "info_text_2", "label": "详情文案", "default": "Your custom insight text here." },
     { "type": "checkbox", "id": "show_btn_2", "label": "显示按钮", "default": true },
-    { "type": "text", "id": "btn_text_2", "label": "按钮文字", "default": "Learn More" },
+    { "type": "text", "id": "btn_text_2", "label": "按钮文字", "default": "了解更多" },
     { "type": "url", "id": "btn_link_2", "label": "按钮链接" },
     { "type": "image_picker", "id": "img_2", "label": "背景图" },
     { "type": "video", "id": "vid_2", "label": "背景视频" },
@@ -484,7 +613,7 @@
     { "type": "checkbox", "id": "show_info_text_3", "label": "显示详情文案", "default": true },
     { "type": "textarea", "id": "info_text_3", "label": "详情文案", "default": "Your custom insight text here." },
     { "type": "checkbox", "id": "show_btn_3", "label": "显示按钮", "default": true },
-    { "type": "text", "id": "btn_text_3", "label": "按钮文字", "default": "Learn More" },
+    { "type": "text", "id": "btn_text_3", "label": "按钮文字", "default": "了解更多" },
     { "type": "url", "id": "btn_link_3", "label": "按钮链接" },
     { "type": "image_picker", "id": "img_3", "label": "背景图" },
     { "type": "video", "id": "vid_3", "label": "背景视频" },
@@ -500,7 +629,7 @@
     { "type": "checkbox", "id": "show_info_text_4", "label": "显示详情文案", "default": true },
     { "type": "textarea", "id": "info_text_4", "label": "详情文案", "default": "Your custom insight text here." },
     { "type": "checkbox", "id": "show_btn_4", "label": "显示按钮", "default": true },
-    { "type": "text", "id": "btn_text_4", "label": "按钮文字", "default": "Learn More" },
+    { "type": "text", "id": "btn_text_4", "label": "按钮文字", "default": "了解更多" },
     { "type": "url", "id": "btn_link_4", "label": "按钮链接" },
     { "type": "image_picker", "id": "img_4", "label": "背景图" },
     { "type": "video", "id": "vid_4", "label": "背景视频" },
