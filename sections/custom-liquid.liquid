@@ -192,7 +192,17 @@
   }
 
   .koto-award-item-{{ section_id }} {
-    position: relative; display: inline-flex; justify-content: center; cursor: help;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 52px;
+    min-height: 52px;
+    padding: 6px;
+    box-sizing: border-box;
+    background: #f8f8f8;
+    border-radius: 10px;
+    cursor: help;
   }
 
   .koto-award-img-{{ section_id }} {
@@ -317,6 +327,12 @@
     }
     .koto-award-list-mobile-{{ section_id }} {
       display: flex; align-items: center; gap: 12px; padding-top: 8px;
+    }
+    .koto-award-item-{{ section_id }} {
+      min-width: 40px;
+      min-height: 40px;
+      padding: 5px;
+      border-radius: 8px;
     }
   }
 {%- endstyle -%}
