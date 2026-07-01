@@ -39,6 +39,7 @@
     --title-start-offset: 0px;
     --left-footer-space: 190px;
     --heatmap-bleed-y: 0px;
+    --koto-left-sticky-offset: 60px;
   }
 
   /* --- 容器全局重置 --- */
@@ -87,13 +88,26 @@
 
   .koto-left-{{ section_id }} {
     width: 38%;
-    position: sticky;
-    top: 60px;
+    position: relative;
+    top: auto;
     min-height: 0;
-    align-self: flex-start;
+    align-self: stretch;
+    display: block;
+    padding-right: 40px;
+  }
+
+  .koto-left-sticky-{{ section_id }} {
+    position: sticky;
+    top: var(--koto-left-sticky-offset);
     display: flex;
     flex-direction: column;
-    padding-right: 40px;
+  }
+
+  .koto-left-sticky-{{ section_id }}.is-released {
+    position: absolute;
+    top: var(--koto-left-release-top, 0px);
+    left: 0;
+    right: 40px;
   }
 
   .koto-title-group-{{ section_id }} {
@@ -342,6 +356,7 @@
   <div class="koto-inner-{{ section_id }}">
     
     <div class="koto-left-{{ section_id }}">
+      <div class="koto-left-sticky-{{ section_id }}">
       <div class="koto-title-group-{{ section_id }}" data-heatmap-hover="true">
         {%- if section.settings.main_title != blank -%}
           <h2 class="koto-works-title-{{ section_id }}">{{ section.settings.main_title }}</h2>
@@ -386,6 +401,7 @@
             {%- endif -%}
           </div>
         {%- endfor -%}
+      </div>
       </div>
     </div>
 
@@ -689,17 +705,43 @@
       }
     };
 
+    const syncLeftStickyRelease = () => {
+      const leftColumn = wrapper.querySelector('.koto-left-' + sectionId);
+      const leftSticky = wrapper.querySelector('.koto-left-sticky-' + sectionId);
+      const mediaCards = wrapper.querySelectorAll('.koto-media-card-' + sectionId);
+      const lastMediaCard = mediaCards[mediaCards.length - 1];
+      if (!leftColumn || !leftSticky || !lastMediaCard || window.innerWidth < 990) {
+        if (leftSticky) leftSticky.classList.remove('is-released');
+        return;
+      }
+
+      const scrollY = window.scrollY || window.pageYOffset;
+      const stickyOffset = parseFloat(window.getComputedStyle(wrapper).getPropertyValue('--koto-left-sticky-offset')) || 0;
+      const leftColumnTop = leftColumn.getBoundingClientRect().top + scrollY;
+      const releaseScrollY = lastMediaCard.getBoundingClientRect().top + scrollY;
+      const releaseTop = Math.max(releaseScrollY - leftColumnTop + stickyOffset, 0);
+
+      wrapper.style.setProperty('--koto-left-release-top', releaseTop + 'px');
+      leftSticky.classList.toggle('is-released', scrollY >= releaseScrollY);
+    };
+
     syncTitlePosition();
     syncLeftFooterSpace();
+    syncLeftStickyRelease();
     window.addEventListener('load', syncTitlePosition, { once: true });
     window.addEventListener('load', syncLeftFooterSpace, { once: true });
+    window.addEventListener('load', syncLeftStickyRelease, { once: true });
     window.addEventListener('resize', syncTitlePosition);
     window.addEventListener('resize', syncLeftFooterSpace);
+    window.addEventListener('resize', syncLeftStickyRelease);
+    window.addEventListener('scroll', syncLeftStickyRelease, { passive: true });
     wrapper.querySelectorAll('.koto-media-card-' + sectionId + ' img').forEach(image => {
       if (image.complete) {
         syncTitlePosition();
+        syncLeftStickyRelease();
       } else {
         image.addEventListener('load', syncTitlePosition, { once: true });
+        image.addEventListener('load', syncLeftStickyRelease, { once: true });
       }
     });
 
