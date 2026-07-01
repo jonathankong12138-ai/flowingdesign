@@ -1393,6 +1393,10 @@ button.shopify-payment-button__button--unbranded {
   text-transform: var(--button-text-case-primary);
 }
 
+:where(a, button):is(.button, .button-secondary, .footer-btn, [class*='btn'], [class*='button']):not(.button-unstyled, .btn-icon-only) {
+  border-radius: 50px;
+}
+
 textarea,
 input:not([type='checkbox'], [type='radio']) {
   background-color: var(--color-input-background);

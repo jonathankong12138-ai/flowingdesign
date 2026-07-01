@@ -31,6 +31,11 @@
     isolation: isolate; 
   }
 
+  body.fd-ambient-home-bg-active .custom-footer-{{ section.id }} {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
   .footer-glacier-canvas-{{ section.id }} {
     position: absolute;
     top: 0;
@@ -472,11 +477,15 @@
       if (window.innerWidth >= 768 && progress > 0) {
         const bottomOffset = {{ section.settings.padding-block-end | default: 60 }};
         const bottomStartTop = fixedTop + ctaRow.offsetHeight + 90;
+        const bottomStickyTop = bottomRow ? windowHeight - bottomRow.offsetHeight - bottomOffset : bottomStartTop;
         const bottomEndTop = bottomRow
-          ? Math.max(targetTop + ctaRow.offsetHeight + 40, windowHeight - bottomRow.offsetHeight - bottomOffset)
+          ? Math.max(targetTop + ctaRow.offsetHeight + 40, bottomStickyTop)
           : bottomStartTop;
         const bottomProgress = Math.min(1, progress * 1.35);
-        const bottomTop = bottomStartTop + (bottomEndTop - bottomStartTop) * bottomProgress;
+        const interpolatedBottomTop = bottomStartTop + (bottomEndTop - bottomStartTop) * bottomProgress;
+        const bottomTop = bottomStartTop < bottomEndTop
+          ? Math.min(bottomEndTop, interpolatedBottomTop)
+          : Math.max(bottomEndTop, interpolatedBottomTop);
 
         footerElement.style.setProperty('--footer-top-row-height', `${ctaRow.offsetHeight}px`);
         footerElement.style.setProperty('--footer-cta-top', `${fixedTop}px`);

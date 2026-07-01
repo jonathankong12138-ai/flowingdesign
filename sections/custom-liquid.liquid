@@ -53,6 +53,11 @@
     z-index: 50 !important; 
   }
 
+  body.fd-ambient-home-bg-active .koto-wrapper-{{ section_id }} {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
   /* 悬浮全屏 WebGL 画布 */
   .works-glacier-canvas-{{ section_id }} {
     position: fixed;
@@ -549,14 +554,15 @@
     color = hsl2rgb(hsl);
 
     float p = clamp(uHoverProgress, 0.0, 1.0);
-    float wavePos = p * 2.8 - 0.2;
+    float wavePos = 0.65 + sin(time * 0.7) * 0.12;
     float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
-    float dist = wavePos - (vUv.y + waveOffset);
-    float whiteMask = smoothstep(0.0, max(uMaskSmooth, 0.01), dist);
-    float waveCrest = smoothstep(-0.05, max(uCrestSize, 0.01), dist) * smoothstep(uCrestSize * 2.0, 0.05, dist);
-    vec3 finalColor = mix(color, uWaveColor, whiteMask);
-    finalColor += uCrestColor * waveCrest * 0.6;
-    finalColor += (light - 0.5) * 0.03 * whiteMask;
+    float dist = abs((vUv.y + waveOffset) - wavePos);
+    float waveBand = 1.0 - smoothstep(0.0, max(uMaskSmooth * 2.2, 0.01), dist);
+    float waveCrest = 1.0 - smoothstep(0.0, max(uCrestSize, 0.01), dist);
+    vec3 finalColor = color;
+    finalColor = mix(finalColor, uWaveColor, waveBand * 0.16 * p);
+    finalColor += uCrestColor * waveCrest * 0.28 * p;
+    finalColor += (light - 0.5) * 0.08 * p;
 
     vec2 grainUv = floor(vUv * uResolution * uGrainScale);
     float grainTime = uTime * uGrainSpeed;
