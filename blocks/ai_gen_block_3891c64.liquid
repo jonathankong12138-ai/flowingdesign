@@ -460,7 +460,10 @@
     let autoPlayTimer = null;
     let panelSwitchTimer = null;
     let panelSwitchToken = 0;
+    let wasAtTopState = true;
     const stableInfoButton = wrapper.querySelector('[data-stable-info-button]');
+
+    const isAtTopState = () => wrapper.getBoundingClientRect().top >= -2;
 
     const syncStableInfoButton = (panel) => {
       if (!stableInfoButton || !panel) return;
@@ -490,6 +493,7 @@
 
     const activateTab = (targetIndex, isHumanClick = false) => {
       targetIndex = parseInt(targetIndex, 10);
+      if (!isAtTopState() && targetIndex !== 1) targetIndex = 1;
       if (targetIndex === currentActiveIdx) {
         const activeTrigger = wrapper.querySelector(`.js-trigger-bg[data-index="${targetIndex}"]`);
         activateBackgroundMedia(activeTrigger, shouldReplayFullscreenVideo(activeTrigger));
@@ -534,15 +538,34 @@
     };
 
     const playNext = () => {
+      if (!isAtTopState()) {
+        clearTimeout(autoPlayTimer);
+        return;
+      }
       let nextIdx = currentActiveIdx + 1;
       if (nextIdx > totalItems) nextIdx = 1;
       activateTab(nextIdx, false); 
     };
 
     const startAutoPlay = () => { 
-      clearTimeout(autoPlayTimer); 
+      clearTimeout(autoPlayTimer);
+      if (!isAtTopState()) return;
       autoPlayTimer = setTimeout(playNext, currentInterval); 
     };
+
+    const enforceTopOnlyPlayback = () => {
+      const atTop = isAtTopState();
+      if (!atTop) {
+        clearTimeout(autoPlayTimer);
+        if (currentActiveIdx !== 1) activateTab(1, false);
+      } else if (!wasAtTopState) {
+        startAutoPlay();
+      }
+      wasAtTopState = atTop;
+    };
+
+    window.addEventListener('scroll', enforceTopOnlyPlayback, { passive: true });
+    enforceTopOnlyPlayback();
     setTimeout(() => { startAutoPlay(); }, 100);
 
     document.addEventListener('visibilitychange', () => {
