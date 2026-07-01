@@ -101,6 +101,9 @@
     bottom: {{ section.settings.padding-block-end }}px;
     width: var(--footer-cta-width, calc(100vw - {{ section.settings.padding_left | plus: section.settings.padding_right }}px));
     z-index: 55;
+    opacity: var(--footer-bottom-opacity, 1) !important;
+    transform: translate3d(0, var(--footer-bottom-y, 0px), 0) !important;
+    will-change: transform, opacity;
   }
 
   .footer-title {
@@ -458,6 +461,8 @@
       footerElement.style.removeProperty('--footer-cta-left');
       footerElement.style.removeProperty('--footer-cta-width');
       footerElement.style.removeProperty('--footer-top-row-height');
+      footerElement.style.removeProperty('--footer-bottom-y');
+      footerElement.style.removeProperty('--footer-bottom-opacity');
     };
 
     const syncFooterRise = () => {
@@ -467,17 +472,23 @@
       const start = windowHeight;
       const end = Math.max(60, windowHeight - rect.height);
       const progress = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
-      footerRiseProgress = progress;
       const pinRect = ctaPin.getBoundingClientRect();
       const naturalCtaTop = pinRect.top;
       const targetTop = 60;
       const fixedTop = Math.max(targetTop, targetTop + (naturalCtaTop - targetTop) * (1 - progress));
+      const waveStartTop = windowHeight * (2 / 3);
+      const waveRange = Math.max(1, waveStartTop - targetTop);
+      footerRiseProgress = fixedTop <= waveStartTop ? Math.max(0, Math.min(1, (waveStartTop - fixedTop) / waveRange)) : 0;
 
       if (window.innerWidth >= 768 && progress > 0) {
         footerElement.style.setProperty('--footer-top-row-height', `${ctaRow.offsetHeight}px`);
         footerElement.style.setProperty('--footer-cta-top', `${fixedTop}px`);
         footerElement.style.setProperty('--footer-cta-left', `${pinRect.left}px`);
         footerElement.style.setProperty('--footer-cta-width', `${pinRect.width}px`);
+        const bottomExitProgress = Math.min(1, progress / 0.24);
+        const bottomOffset = (1 - bottomExitProgress) * windowHeight * 0.18;
+        footerElement.style.setProperty('--footer-bottom-y', `${bottomOffset}px`);
+        footerElement.style.setProperty('--footer-bottom-opacity', `${bottomExitProgress.toFixed(4)}`);
         ctaRow.classList.add('is-scroll-pinned');
         bottomRow?.classList.add('is-scroll-pinned');
       } else {
