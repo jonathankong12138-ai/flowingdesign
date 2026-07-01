@@ -394,7 +394,15 @@
 
       initGlacierWebGL();
 
-      const setGlacierMedia = (url, type, toggleIfSame = false) => {
+      const replayActiveVideo = () => {
+        const activeVideo = mediaContent.querySelector('video');
+        if (!activeVideo) return;
+        try { activeVideo.currentTime = 0; } catch (error) {}
+        const playPromise = activeVideo.play();
+        if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(() => {});
+      };
+
+      const setGlacierMedia = (url, type, toggleIfSame = false, restartIfSame = false) => {
         if (!url || type === "none") {
           globalBgContainer.classList.remove('is-media-mode-' + sectionId);
           mediaLayer.classList.remove('active');
@@ -407,13 +415,17 @@
            mediaContent.setAttribute('data-active-url', '');
            return;
         }
-        if (mediaLayer.classList.contains('active') && mediaContent.getAttribute('data-active-url') === url) return;
+        if (mediaLayer.classList.contains('active') && mediaContent.getAttribute('data-active-url') === url) {
+          if (restartIfSame && type === 'video') replayActiveVideo();
+          return;
+        }
         let html = (type === 'video') ?
-        `<video src="${url}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;"></video>` : `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" />`;
+        `<video src="${url}" autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover;"></video>` : `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" />`;
         mediaContent.innerHTML = html;
         mediaContent.setAttribute('data-active-url', url);
         globalBgContainer.classList.add('is-media-mode-' + sectionId);
         mediaLayer.classList.add('active');
+        if (type === 'video') replayActiveVideo();
       };
 
       document.body.addEventListener('click', function(e) {
@@ -425,7 +437,7 @@
       window.addEventListener('glacier:activate-media', function(e) {
         const sourceWrapper = e.detail?.wrapper;
         if (sourceWrapper && sourceWrapper.closest('.glacier-wrapper-' + sectionId) !== wrapper) return;
-        setGlacierMedia(e.detail?.url, e.detail?.type, false);
+        setGlacierMedia(e.detail?.url, e.detail?.type, false, Boolean(e.detail?.restart));
       });
 
       document.addEventListener('shopify:section:unload', function(e) {

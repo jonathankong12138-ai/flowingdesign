@@ -70,10 +70,22 @@
   /* 底部按钮详情容器 */
   .ai-info-panels-container-{{ block_id }} {
     pointer-events: auto;
-    display: grid; width: 100%; box-sizing: border-box; mix-blend-mode: normal !important;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: 40px;
+    row-gap: 24px;
+    width: 100%;
+    box-sizing: border-box;
+    mix-blend-mode: normal !important;
     opacity: var(--scroll-fade, 1);
     transition: opacity 0.1s linear;
     will-change: opacity;
+  }
+
+  .ai-info-panels-stack-{{ block_id }} {
+    display: grid;
+    min-width: 0;
   }
 
   .mobile-line-break-{{ block_id }} { display: none !important; }
@@ -151,7 +163,7 @@
     grid-area: 1 / 1;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: flex-end;
     row-gap: 24px;
     column-gap: 40px;
@@ -212,14 +224,17 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.24s ease, background-color 0.2s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .ai-info-panel-{{ block_id }}.is-active .ai-info-btn-{{ block_id }} {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 0.04s, 0s, 0.04s;
+    transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.12s linear, visibility 0s linear 0s;
+    align-self: end;
+    justify-self: end;
+  }
+  .ai-info-btn-{{ block_id }}.is-hidden {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition-delay: 0s, 0s, 0s, 0.12s;
   }
   .ai-info-btn-{{ block_id }}:hover { background-color: {{ block.settings.info_btn_bg | color_modify: 'alpha', 1.0 }}; transform: scale(1.02); }
 
@@ -244,7 +259,9 @@
         {%- else -%} font-size: {{ block.settings[s_size] | times: mob_scale | at_least: 12 }}px; {%- endif -%}
       } 
     {%- endfor -%}
+    .ai-info-panels-container-{{ block_id }} { grid-template-columns: 1fr; align-items: start; row-gap: 20px; }
     .ai-info-panel-{{ block_id }} { flex-direction: column; align-items: flex-start; row-gap: 20px; }
+    .ai-info-btn-{{ block_id }} { justify-self: start; }
     .ai-info-text-{{ block_id }} { max-width: 100%; font-size: 15px; }
   }
 {%- endstyle -%}
@@ -271,7 +288,7 @@
           assign media_type = "video"
         endif
       -%}
-      <div class="ai-column-{{ block_id }} ai-column-{{ i }}-{{ block_id }} js-trigger-bg {% if i == 1 %}is-active{% endif %}" data-index="{{ i }}" data-bg-url="{{ media_url }}" data-bg-type="{{ media_type }}" data-link="{{ block.settings[s_btn_link] }}">
+      <div class="ai-column-{{ block_id }} ai-column-{{ i }}-{{ block_id }} js-trigger-bg {% if i == 1 %}is-active{% endif %}" data-index="{{ i }}" data-bg-url="{{ media_url }}" data-bg-type="{{ media_type }}" data-link="{{ block.settings[s_btn_link] }}" data-play-fullscreen-video="{% if i == 4 %}true{% else %}false{% endif %}">
         <div class="ai-item-wrapper-{{ block_id }}">
           <div class="ai-item-{{ i }}-{{ block_id }} split-text-target-{{ block_id }}"
                {% if i == 1 %}
@@ -288,6 +305,7 @@
   </div>
 
   <div class="ai-info-panels-container-{{ block_id }}">
+    <div class="ai-info-panels-stack-{{ block_id }}">
     {%- for i in (1..block.settings.visible_columns) -%}
       {%- liquid
         assign info_text_id = "info_text_" | append: i
@@ -301,13 +319,27 @@
         assign show_info = block.settings[show_info_id]
         assign show_btn = block.settings[show_btn_id]
       -%}
-      <div class="ai-info-panel-{{ block_id }} ai-info-panel-item-{{ block_id }} {% if i == 1 %}is-active{% endif %}" data-target-index="{{ i }}">
+      <div
+        class="ai-info-panel-{{ block_id }} ai-info-panel-item-{{ block_id }} {% if i == 1 %}is-active{% endif %}"
+        data-target-index="{{ i }}"
+        data-button-visible="{% if show_btn and current_btn_text != blank %}true{% else %}false{% endif %}"
+        data-button-text="{{ current_btn_text | escape }}"
+        data-button-link="{{ current_btn_link | default: '#' | escape }}"
+      >
         {%- if show_info -%}<p class="ai-info-text-{{ block_id }}">{{ current_info_text | newline_to_br }}</p>{%- endif -%}
-        {%- if show_btn and current_btn_text != blank -%}
-          <a href="{{ current_btn_link | default: '#' }}" class="ai-info-btn-{{ block_id }}">{{ current_btn_text }}</a>
-        {%- endif -%}
       </div>
     {%- endfor -%}
+    </div>
+    {%- liquid
+      assign initial_btn_text = block.settings.btn_text_1
+      assign initial_btn_link = block.settings.btn_link_1
+      assign initial_show_btn = block.settings.show_btn_1
+    -%}
+    <a
+      href="{{ initial_btn_link | default: '#' | escape }}"
+      class="ai-info-btn-{{ block_id }} {% unless initial_show_btn and initial_btn_text != blank %}is-hidden{% endunless %}"
+      data-stable-info-button
+    >{{ initial_btn_text }}</a>
   </div>
 </div>
 
@@ -428,14 +460,30 @@
     let autoPlayTimer = null;
     let panelSwitchTimer = null;
     let panelSwitchToken = 0;
+    const stableInfoButton = wrapper.querySelector('[data-stable-info-button]');
 
-    const activateBackgroundMedia = (trigger) => {
+    const syncStableInfoButton = (panel) => {
+      if (!stableInfoButton || !panel) return;
+      const shouldShow = panel.getAttribute('data-button-visible') === 'true';
+      const buttonText = panel.getAttribute('data-button-text') || '';
+      const buttonLink = panel.getAttribute('data-button-link') || '#';
+      stableInfoButton.textContent = buttonText;
+      stableInfoButton.setAttribute('href', buttonLink);
+      stableInfoButton.classList.toggle('is-hidden', !shouldShow);
+    };
+
+    const shouldReplayFullscreenVideo = (trigger) => {
+      return trigger?.getAttribute('data-play-fullscreen-video') === 'true' && trigger?.getAttribute('data-bg-type') === 'video';
+    };
+
+    const activateBackgroundMedia = (trigger, restartVideo = false) => {
       if (!trigger) return;
       window.dispatchEvent(new CustomEvent('glacier:activate-media', {
         detail: {
           wrapper,
           url: trigger.getAttribute('data-bg-url'),
-          type: trigger.getAttribute('data-bg-type')
+          type: trigger.getAttribute('data-bg-type'),
+          restart: restartVideo
         }
       }));
     };
@@ -443,7 +491,8 @@
     const activateTab = (targetIndex, isHumanClick = false) => {
       targetIndex = parseInt(targetIndex, 10);
       if (targetIndex === currentActiveIdx) {
-        activateBackgroundMedia(wrapper.querySelector(`.js-trigger-bg[data-index="${targetIndex}"]`));
+        const activeTrigger = wrapper.querySelector(`.js-trigger-bg[data-index="${targetIndex}"]`);
+        activateBackgroundMedia(activeTrigger, shouldReplayFullscreenVideo(activeTrigger));
         startAutoPlay();
         return;
       }
@@ -459,6 +508,7 @@
       const targetPanel = wrapper.querySelector(`.ai-info-panel-item-{{ block_id }}[data-target-index="${targetIndex}"]`);
       const switchToken = ++panelSwitchToken;
       clearTimeout(panelSwitchTimer);
+      syncStableInfoButton(targetPanel);
 
       panels.forEach(panel => panel.classList.remove('is-exiting'));
 
@@ -478,7 +528,7 @@
       }
       
       currentActiveIdx = targetIndex;
-      activateBackgroundMedia(trigger);
+      activateBackgroundMedia(trigger, shouldReplayFullscreenVideo(trigger));
       if (trigger && !isHumanClick) { trigger.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true })); }
       startAutoPlay();
     };
@@ -506,6 +556,8 @@
         const targetIndex = trigger.getAttribute('data-index');
         if (trigger.classList.contains('is-active')) {
           e.preventDefault(); e.stopPropagation();
+          activateTab(targetIndex, e.isTrusted);
+          if (shouldReplayFullscreenVideo(trigger)) return;
           if (e.isTrusted) { 
              const targetLink = trigger.getAttribute('data-link'); 
              if (targetLink && targetLink !== "" && targetLink !== "#") window.location.href = targetLink; 
