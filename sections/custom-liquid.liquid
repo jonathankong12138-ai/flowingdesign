@@ -1,9 +1,8 @@
 {% comment %}
-  Section: Koto-Style 'Our Work' Sticky Scroll (排版大师版 + 真正全屏无边界涟漪)
+  Section: Koto-Style 'Our Work' Sticky Scroll
   1. 支持首字母大写 (Capitalize)
   2. 支持多达 5 个独立媒体流 & 3 个悬浮奖项
   3. 悬浮图片时，其余图片透明度降至50%
-  4. 【核心修复】：强行突破 Shopify Section 层级限制，波浪涟漪真正全屏覆盖，告别底部边界切割！
 {% endcomment %}
 
 {%- liquid
@@ -52,22 +51,6 @@
     isolation: isolate; 
     /* 【CSS 修复】：提升内部容器层级，压制后面的 Footer */
     z-index: 50 !important; 
-  }
-
-  body.fd-ambient-home-bg-active .koto-wrapper-{{ section_id }} {
-    background: transparent !important;
-    background-color: transparent !important;
-  }
-
-  /* 悬浮全屏 WebGL 画布 */
-  .works-glacier-canvas-{{ section_id }} {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 10; 
-    pointer-events: none;
   }
 
   .koto-inner-{{ section_id }} {
@@ -296,9 +279,6 @@
 {%- endstyle -%}
 
 <div id="koto-{{ section_id }}" class="koto-wrapper-{{ section_id }}">
-  
-  <canvas id="works-canvas-{{ section_id }}" class="works-glacier-canvas-{{ section_id }}"></canvas>
-
   <div class="koto-inner-{{ section_id }}">
     
     <div class="koto-left-{{ section_id }}">
@@ -407,196 +387,12 @@
   </div>
 </div>
 
-<script id="works-vs-{{ section_id }}" type="x-shader/x-vertex">
-  varying vec2 vUv;
-  void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
-</script>
-
-<script id="works-fs-{{ section_id }}" type="x-shader/x-fragment">
-  uniform float uTime;
-  uniform vec2 uResolution;
-  uniform float uRandomSeed;
-  uniform float uHoverProgress;
-  uniform float uContrast;
-  uniform float uBrightness;
-  uniform float uSaturation;
-  uniform float uHueShift;
-  uniform float uThemeSpeed;
-  uniform float uThemeDetail;
-  uniform float uWaveFreq;
-  uniform float uDistortion;
-  uniform float uMaskSmooth;
-  uniform float uCrestSize;
-  uniform vec3 uColorAmbient;
-  uniform vec3 uColorDeep;
-  uniform vec3 uColorDeepGlow1;
-  uniform vec3 uColorDeepGlow2;
-  uniform vec3 uColorMid;
-  uniform vec3 uColorSoft;
-  uniform vec3 uColorHigh;
-  uniform vec3 uColorSpec;
-  uniform float uDeepGlow1Range;
-  uniform float uDeepGlow1Size;
-  uniform float uDeepGlow1Feather;
-  uniform float uDeepGlow1Intensity;
-  uniform float uDeepGlow2Range;
-  uniform float uDeepGlow2Size;
-  uniform float uDeepGlow2Feather;
-  uniform float uDeepGlow2Intensity;
-  uniform float uStop1;
-  uniform float uStop2;
-  uniform float uStop3;
-  uniform float uStop4;
-  uniform vec3 uWaveColor;
-  uniform vec3 uCrestColor;
-  uniform float uLightX;
-  uniform float uLightY;
-  uniform float uGrainIntensity;
-  uniform float uGrainScale;
-  uniform float uGrainSpeed;
-  varying vec2 vUv;
-
-  mat2 rotate2d(float angle){ return mat2(cos(angle), -sin(angle), sin(angle), cos(angle)); }
-  vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-  float snoise(vec2 v){
-    const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-    vec2 i = floor(v + dot(v, C.yy)); vec2 x0 = v - i + dot(i, C.xx);
-    vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-    vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1; i = mod(i, 289.0);
-    vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
-    vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-    m = m*m; m = m*m;
-    vec3 x = 2.0 * fract(p * C.www) - 1.0; vec3 h = abs(x) - 0.5;
-    vec3 ox = floor(x + 0.5); vec3 a0 = x - ox;
-    m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
-    vec3 g; g.x = a0.x * x0.x + h.x * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-    return 130.0 * dot(m, g);
-  }
-
-  vec3 rgb2hsl(vec3 c){
-    float maxC = max(c.r, max(c.g, c.b)); float minC = min(c.r, min(c.g, c.b)); float h, s, l = (maxC + minC) / 2.0;
-    if(maxC == minC){ h = s = 0.0; } else {
-      float d = maxC - minC; s = l > 0.5 ? d / (2.0 - maxC - minC) : d / (maxC + minC);
-      if(maxC == c.r) h = (c.g - c.b) / d + (c.g < c.b ? 6.0 : 0.0);
-      else if(maxC == c.g) h = (c.b - c.r) / d + 2.0;
-      else h = (c.r - c.g) / d + 4.0;
-      h /= 6.0;
-    }
-    return vec3(h, s, l);
-  }
-
-  float hue2rgb(float p, float q, float t){
-    if(t < 0.0) t += 1.0; if(t > 1.0) t -= 1.0;
-    if(t < 1.0/6.0) return p + (q - p) * 6.0 * t;
-    if(t < 1.0/2.0) return q;
-    if(t < 2.0/3.0) return p + (q - p) * (2.0/3.0 - t) * 6.0;
-    return p;
-  }
-
-  vec3 hsl2rgb(vec3 c){
-    vec3 rgb;
-    if(c.y == 0.0){ rgb = vec3(c.z); } else {
-      float q = c.z < 0.5 ? c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y;
-      float p = 2.0 * c.z - q;
-      rgb.r = hue2rgb(p, q, c.x + 1.0/3.0); rgb.g = hue2rgb(p, q, c.x); rgb.b = hue2rgb(p, q, c.x - 1.0/3.0);
-    }
-    return rgb;
-  }
-
-  float deepHaloMask(float lightValue, float rangeValue, float featherValue) {
-    float stopGap = max(uStop2 - uStop1, 0.001);
-    float halfWidth = stopGap * mix(0.04, 0.50, clamp(rangeValue, 0.0, 1.0));
-    float feather = max(featherValue * halfWidth * 1.4, 0.001);
-    float innerEdge = uStop1 - halfWidth;
-    float outerEdge = uStop1 + halfWidth;
-    float innerFade = smoothstep(innerEdge - feather, innerEdge, lightValue);
-    float outerFade = 1.0 - smoothstep(outerEdge, outerEdge + feather, lightValue);
-    return innerFade * outerFade;
-  }
-
-  float deepHaloShape(float flowValue, float featherValue) {
-    float feather = clamp(featherValue, 0.01, 0.95);
-    return smoothstep(1.0 - feather, 1.0, flowValue);
-  }
-
-  float getHeight(vec2 uv, float time, float seed) {
-    vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
-    vec2 baseUV = uv + seedOffset;
-    float flowTime = time * uThemeSpeed;
-    vec2 rotUV = rotate2d(-0.5) * baseUV;
-    vec2 distortion = vec2(0.0);
-    distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
-    distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
-    float detail = snoise(rotUV * (1.5 * uThemeDetail) + distortion + flowTime * 0.1) * (0.1 * uThemeDetail);
-    float wave = sin(rotUV.y * uWaveFreq + distortion.x * uDistortion + flowTime);
-    return pow(max(wave * 0.5 + 0.5, 0.0), 0.8) + detail;
-  }
-
-  void main() {
-    vec2 uv = vUv;
-    uv.x *= uResolution.x / uResolution.y;
-    float time = uTime * 0.254;
-    float h = getHeight(uv, time, uRandomSeed);
-    float eps = 0.01;
-    float hx1 = getHeight(uv + vec2(eps, 0.0), time, uRandomSeed);
-    float hx2 = getHeight(uv - vec2(eps, 0.0), time, uRandomSeed);
-    float hy1 = getHeight(uv + vec2(0.0, eps), time, uRandomSeed);
-    float hy2 = getHeight(uv - vec2(0.0, eps), time, uRandomSeed);
-    vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
-    vec3 lightDir = normalize(vec3(uLightX, uLightY, 0.4));
-    float light = dot(normal, lightDir) * 0.5 + 0.5;
-
-    vec3 color = mix(uColorAmbient, uColorDeep, smoothstep(0.0, uStop1 + 0.001, light));
-    color = mix(color, uColorMid, smoothstep(uStop1, uStop2 + 0.001, light));
-    color = mix(color, uColorSoft, smoothstep(uStop2, uStop3 + 0.001, light));
-    color = mix(color, uColorHigh, smoothstep(uStop3, uStop4 + 0.001, light));
-    color = mix(color, uColorSpec, smoothstep(uStop4, 1.001, light));
-
-    float deepHaloBand1 = deepHaloMask(light, uDeepGlow1Range, uDeepGlow1Feather);
-    float deepHaloBand2 = deepHaloMask(light, uDeepGlow2Range, uDeepGlow2Feather);
-    float deepFlow1 = snoise((uv / max(uDeepGlow1Size, 0.01)) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
-    float deepFlow2 = snoise((uv / max(uDeepGlow2Size, 0.01)) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
-    vec3 deepHalo = uColorDeepGlow1 * deepHaloBand1 * deepHaloShape(deepFlow1, uDeepGlow1Feather) * uDeepGlow1Intensity;
-    deepHalo += uColorDeepGlow2 * deepHaloBand2 * deepHaloShape(deepFlow2, uDeepGlow2Feather) * uDeepGlow2Intensity;
-    color = 1.0 - (1.0 - color) * (1.0 - clamp(deepHalo, 0.0, 1.0));
-
-    color = (color - 0.5) * uContrast + 0.5 + uBrightness;
-    color = clamp(color, 0.0, 1.0);
-    vec3 hsl = rgb2hsl(color);
-    hsl.x = mod(hsl.x + uHueShift, 1.0);
-    hsl.y = clamp(hsl.y * uSaturation, 0.0, 1.0);
-    color = hsl2rgb(hsl);
-
-    float p = clamp(uHoverProgress, 0.0, 1.0);
-    float wavePos = 0.65 + sin(time * 0.7) * 0.12;
-    float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
-    float dist = abs((vUv.y + waveOffset) - wavePos);
-    float waveBand = 1.0 - smoothstep(0.0, max(uMaskSmooth * 2.2, 0.01), dist);
-    float waveCrest = 1.0 - smoothstep(0.0, max(uCrestSize, 0.01), dist);
-    vec3 finalColor = color;
-    finalColor = mix(finalColor, uWaveColor, waveBand * 0.16 * p);
-    finalColor += uCrestColor * waveCrest * 0.28 * p;
-    finalColor += (light - 0.5) * 0.08 * p;
-
-    vec2 grainUv = floor(vUv * uResolution * uGrainScale);
-    float grainTime = uTime * uGrainSpeed;
-    float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + grainTime) * 43758.5453);
-    float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
-    finalColor += baseDither + (dither - 0.5) * uGrainIntensity;
-
-    float alpha = smoothstep(0.0, 1.0, p);
-    gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), alpha);
-  }
-</script>
-
 <script>
   function initKotoWorks() {
     const sectionId = '{{ section_id }}';
     const wrapper = document.getElementById('koto-' + sectionId);
     if (!wrapper) return;
 
-    // 【JS 提权修复】：主动寻找 Shopify 外层包裹的 Section，并赋予它高层级
-    // 这将彻底打破 Footer 遮挡波浪涟漪的边界问题
     const shopifySection = wrapper.closest('.shopify-section');
     if (shopifySection) {
         shopifySection.style.position = 'relative';
@@ -713,120 +509,6 @@
       mediaItems.forEach(item => observer.observe(item));
     }
 
-    // 2. WebGL 悬浮波浪扩散逻辑
-    function initHoverWebGL() {
-      const canvas = document.getElementById('works-canvas-' + sectionId);
-      if (!canvas) return;
-      
-      const scene = new THREE.Scene();
-      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: true });
-      
-      const shaderMaterial = new THREE.ShaderMaterial({
-          vertexShader: document.getElementById('works-vs-' + sectionId).textContent,
-          fragmentShader: document.getElementById('works-fs-' + sectionId).textContent,
-          transparent: true,
-          uniforms: {
-              uTime: { value: 0 },
-              uResolution: { value: new THREE.Vector2() },
-              uRandomSeed: { value: 42.0 },
-              uHoverProgress: { value: 0.0 },
-              uContrast: { value: 1.5 },
-              uBrightness: { value: -0.15 },
-              uSaturation: { value: 1.0 },
-              uHueShift: { value: 0.0 },
-              uThemeSpeed: { value: 0.8 },
-              uThemeDetail: { value: 0.65 },
-              uWaveFreq: { value: 0.6 },
-              uDistortion: { value: 1.7 },
-              uMaskSmooth: { value: 0.15 },
-              uCrestSize: { value: 0.1 },
-              uStop1: { value: 0.59 },
-              uStop2: { value: 0.06 },
-              uStop3: { value: 1.0 },
-              uStop4: { value: 1.0 },
-              uLightX: { value: -0.5 },
-              uLightY: { value: 0.5 },
-              uGrainIntensity: { value: 0.1 },
-              uGrainScale: { value: 0.55 },
-              uGrainSpeed: { value: 0.3 },
-              uDeepGlow1Range: { value: 1.0 },
-              uDeepGlow1Size: { value: 6.0 },
-              uDeepGlow1Feather: { value: 0.95 },
-              uDeepGlow1Intensity: { value: 0.77 },
-              uDeepGlow2Range: { value: 0.0 },
-              uDeepGlow2Size: { value: 1.2 },
-              uDeepGlow2Feather: { value: 0.29 },
-              uDeepGlow2Intensity: { value: 1.5 },
-              uColorAmbient: { value: new THREE.Color('#ca57ff') },
-              uColorDeep: { value: new THREE.Color('#1476ff') },
-              uColorDeepGlow1: { value: new THREE.Color('#00e5a8') },
-              uColorDeepGlow2: { value: new THREE.Color('#ff813d') },
-              uColorMid: { value: new THREE.Color('#ff8080') },
-              uColorSoft: { value: new THREE.Color('#ffffff') },
-              uColorHigh: { value: new THREE.Color('#ffffff') },
-              uColorSpec: { value: new THREE.Color('#ffffff') },
-              uWaveColor: { value: new THREE.Color('#ffffff') },
-              uCrestColor: { value: new THREE.Color('#ffe0f5') }
-          }
-      });
-      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), shaderMaterial));
-      
-      const resize = () => {
-          renderer.setSize(window.innerWidth, window.innerHeight);
-          shaderMaterial.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
-      };
-      window.addEventListener('resize', resize);
-      resize();
-
-      let targetHover = 0;
-      let currentHover = 0;
-      const hoverCards = wrapper.querySelectorAll('.js-hover-card[data-heatmap-hover="true"]');
-
-      hoverCards.forEach(card => {
-        card.addEventListener('mouseenter', () => {
-          if (window.innerWidth < 990) return; 
-          targetHover = 1.0;
-        });
-        card.addEventListener('mouseleave', () => {
-          if (window.innerWidth < 990) return;
-          targetHover = 0.0;
-        });
-      });
-
-      const clock = new THREE.Clock();
-      let customTime = 0;
-
-      const animate = () => {
-          requestAnimationFrame(animate);
-
-          currentHover += (targetHover - currentHover) * 0.08;
-          shaderMaterial.uniforms.uHoverProgress.value = currentHover;
-
-          if (currentHover > 0.005 || targetHover > 0) {
-            const delta = clock.getDelta();
-            const elapsedTime = clock.getElapsedTime();
-            const configBaseSpeed = 2.5;
-            const rhythm = Math.sin(elapsedTime * 1.8) * 0.9;
-            customTime += delta * (configBaseSpeed + rhythm);
-            
-            shaderMaterial.uniforms.uTime.value = customTime;
-            renderer.render(scene, camera);
-          } else {
-            clock.getDelta(); 
-          }
-      };
-      animate();
-    }
-
-    if (typeof THREE === 'undefined') {
-        const script = document.createElement('script');
-        script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
-        script.onload = initHoverWebGL;
-        document.head.appendChild(script);
-    } else {
-        initHoverWebGL();
-    }
   }
 
   document.addEventListener('DOMContentLoaded', initKotoWorks);
@@ -839,7 +521,7 @@
 
 {% schema %}
 {
-  "name": "Koto Works (液态涟漪波浪)",
+  "name": "Koto Works",
   "settings": [
     {
       "type": "header",
@@ -851,23 +533,6 @@
       "label": "板块背景色",
       "default": "#ffffff"
     },
-    {
-      "type": "header",
-      "content": "🌊 悬浮全屏流体色彩"
-    },
-    {
-      "type": "range",
-      "id": "base_fluid_speed",
-      "label": "静止基础流速 (同步 Section)",
-      "min": 0.5,
-      "max": 10.0,
-      "step": 0.5,
-      "default": 2.5
-    },
-    { "type": "range", "id": "fluid_brightness", "label": "明度", "min": -0.5, "max": 0.5, "step": 0.1, "default": 0.0 },
-    { "type": "range", "id": "fluid_contrast", "label": "对比度", "min": 0.5, "max": 2.0, "step": 0.1, "default": 1.0 },
-    { "type": "range", "id": "fluid_hue", "label": "色相旋转", "min": 0, "max": 360, "step": 4, "unit": "deg", "default": 0 },
-    { "type": "range", "id": "fluid_saturation", "label": "饱和度", "min": 0.0, "max": 2.0, "step": 0.1, "default": 1.0 },
     {
       "type": "header",
       "content": "🔠 1.板块大标题 (Works)"
@@ -1189,7 +854,7 @@
   ],
   "presets": [
     {
-      "name": "Koto Works (液态涟漪波浪)",
+      "name": "Koto Works",
       "blocks": [
         { "type": "project", "settings": { "title": "branding koto" } },
         { "type": "project", "settings": { "title": "digital exploration" } }
