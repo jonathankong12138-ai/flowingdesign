@@ -213,6 +213,16 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s ease-out, transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+  }
+
+  .footer-bottom-row.is-revealed {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
   }
 
   .footer-note-title {
@@ -257,6 +267,9 @@
       left: auto;
       right: auto;
       bottom: auto;
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
     }
   }
 {%- endstyle -%}
@@ -286,7 +299,7 @@
     </div>
   </div>
 
-  <div class="footer-bottom-row animate-up delay-3">
+  <div class="footer-bottom-row">
     <p class="footer-note-title">Design in Flow. Touch the World.</p>
     <p class="footer-note-desc">
       All visual works, design concepts, interface mockups, branding explorations, and original imagery presented on this website are the intellectual property of the author and are protected under copyright law.<br><br>
@@ -482,6 +495,14 @@
         bottomRow?.classList.add('is-scroll-pinned');
       } else {
         resetCtaPin();
+      }
+
+      if (bottomRow) {
+        const title = ctaRow.querySelector('.footer-title');
+        const titleRect = title?.getBoundingClientRect();
+        const titleCenter = titleRect ? titleRect.top + titleRect.height / 2 : windowHeight;
+        const revealPoint = windowHeight * 0.55;
+        bottomRow.classList.toggle('is-revealed', window.innerWidth < 768 || titleCenter <= revealPoint);
       }
 
       if (previousWorksSection && window.innerWidth >= 768 && progress > 0) {
