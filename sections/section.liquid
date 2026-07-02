@@ -65,7 +65,7 @@
       object-fit: cover;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.68s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.68s;
+      transition: opacity 0.42s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.42s;
       will-change: opacity;
     }
 
@@ -428,7 +428,7 @@
           video.muted = true;
           video.loop = true;
           video.playsInline = true;
-          video.preload = 'auto';
+          video.preload = 'metadata';
           video.setAttribute('aria-hidden', 'true');
           video.src = url;
           mediaContent.appendChild(video);
@@ -550,23 +550,24 @@
         loadingLogo.dataset.split = 'true';
       };
 
-      const preloadHomeVideo = (url) => new Promise(resolve => {
+      const preloadHomeVideo = (url, index = 0) => new Promise(resolve => {
         if (!url) {
           resolve(false);
           return;
         }
 
-        const video = createMediaElement(url, 'video');
-        waitForMediaReady(video, 'video', 4500).then(ready => {
+        wait(index * 900).then(() => {
+          const video = createMediaElement(url, 'video');
+          video.preload = index === 0 ? 'auto' : 'metadata';
+          try { video.load(); } catch (error) {}
+          return waitForMediaReady(video, 'video', index === 0 ? 4500 : 1800);
+        }).then(ready => {
           if (!ready) {
             resolve(false);
             return;
           }
 
-          playMediaElement(video).then(() => {
-            video.pause();
-            resolve(true);
-          });
+          resolve(true);
         });
       });
 
@@ -578,10 +579,10 @@
 
         const minimumWait = wait(5000);
         const maximumWait = wait(8000);
-        const preloadVideos = Promise.allSettled(homeVideoUrls.map(preloadHomeVideo));
+        const preloadVideos = Promise.allSettled(homeVideoUrls.map((url, index) => preloadHomeVideo(url, index)));
         const preloadReadyEnough = preloadVideos.then(results => {
           const readyCount = results.filter(result => result.status === 'fulfilled' && result.value).length;
-          return readyCount >= 2 ? true : new Promise(() => {});
+          return readyCount >= 1 ? true : new Promise(() => {});
         });
 
         Promise.race([
@@ -694,6 +695,10 @@
 
         const animate = () => {
             requestAnimationFrame(animate);
+
+            if (mediaLayer.classList.contains('active')) {
+                return;
+            }
             
             if (wrapper) {
                 const rect = wrapper.getBoundingClientRect();
@@ -743,7 +748,7 @@
         if (element instanceof HTMLVideoElement) {
           window.setTimeout(() => {
             if (!element.classList.contains('is-active')) element.pause();
-          }, 720);
+          }, 440);
         }
       };
 
@@ -847,6 +852,12 @@
         }
 
         const mediaElement = createMediaElement(url, type);
+        if (type === 'video') {
+          mediaElement.preload = 'auto';
+          if (mediaElement.readyState < 2) {
+            try { mediaElement.load(); } catch (error) {}
+          }
+        }
         const ready = await waitForMediaReady(mediaElement, type);
         if (switchToken !== mediaSwitchToken) return;
 
