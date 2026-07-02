@@ -39,6 +39,7 @@
     --title-start-offset: 0px;
     --left-footer-space: 190px;
     --heatmap-bleed-y: 0px;
+    --heatmap-bleed-bottom: 0px;
     --koto-left-sticky-offset: 60px;
   }
 
@@ -65,12 +66,12 @@
     top: 0;
     width: 100vw;
     max-width: none;
-    height: calc(100vh + var(--heatmap-bleed-y));
-    height: calc(100dvh + var(--heatmap-bleed-y));
+    height: calc(100vh + var(--heatmap-bleed-y) + var(--heatmap-bleed-bottom));
+    height: calc(100dvh + var(--heatmap-bleed-y) + var(--heatmap-bleed-bottom));
     display: block;
     margin-left: calc(50% - 50vw);
-    margin-bottom: calc(-100vh - var(--heatmap-bleed-y));
-    margin-bottom: calc(-100dvh - var(--heatmap-bleed-y));
+    margin-bottom: calc(-100vh - var(--heatmap-bleed-y) - var(--heatmap-bleed-bottom));
+    margin-bottom: calc(-100dvh - var(--heatmap-bleed-y) - var(--heatmap-bleed-bottom));
     transform: translateY(calc(var(--heatmap-bleed-y) * -1));
     z-index: 1;
     opacity: 0;
@@ -330,6 +331,7 @@
       padding-left: {{ section.settings.padding_left_desktop }}px !important;
       padding-right: {{ section.settings.padding_right_desktop }}px !important;
       --heatmap-bleed-y: {{ section.settings.padding_top_desktop }}px;
+      --heatmap-bleed-bottom: 240px;
     }
   }
 
@@ -340,6 +342,7 @@
       padding-left: {{ section.settings.padding_left_mobile }}px !important;
       padding-right: {{ section.settings.padding_right_mobile }}px !important;
       --heatmap-bleed-y: {{ section.settings.padding_top_mobile }}px;
+      --heatmap-bleed-bottom: 180px;
     }
     .koto-inner-{{ section_id }} { flex-direction: column; }
     .koto-left-{{ section_id }} {
@@ -733,6 +736,7 @@
 	          float revealTop = clamp(wavePos, 0.0, 0.52);
 	          float revealStrength = smoothstep(0.02, 0.10, p);
 	          float revealAlpha = (1.0 - smoothstep(revealTop - 0.30, revealTop + 0.24, vUv.y)) * revealStrength;
+	          revealAlpha *= smoothstep(0.0, 0.18, vUv.y);
 	          gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), revealAlpha);
 	        }
       `;
