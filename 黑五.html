@@ -210,20 +210,7 @@
 
                     color = applyTexture(color, light, uv, normal, time, h);
                     
-                    float p = clamp(uScroll, 0.0, 1.0);
-                    float easedScroll = 1.0 - pow(max(1.0 - p, 0.0), 2.0);
-                    
-                    float wavePos = easedScroll * 2.8 - 0.2;
-                    float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
-                    float dist = wavePos - (vUv.y + waveOffset);
-                    
-                    float whiteMask = smoothstep(0.0, max(uMaskSmooth, 0.01), dist);
-                    float waveCrest = smoothstep(-0.05, max(uCrestSize, 0.01), dist) * smoothstep(uCrestSize * 2.0, 0.05, dist);
-                    
-                    vec3 finalColor = mix(color, uWaveColor, whiteMask);
-                    finalColor += uCrestColor * waveCrest * 0.6;
-                    float subtleBump = (light - 0.5) * 0.03 * whiteMask;
-                    finalColor += subtleBump;
+                    vec3 finalColor = color;
 
                     // 动态噪点 (Film Grain) 与 防色阶断层抖动 (Dithering)
                     vec2 grainUv = floor(vUv * uResolution * uGrainScale);
@@ -277,102 +264,69 @@
             });
             resize();
 
-            const inputs = document.querySelectorAll('input');
-            const themeSelector = document.getElementById('theme-selector');
-            const texSelector = document.getElementById('texture-selector');
+            const uniformById = {
+                cAmbient: { uniform: 'uColorAmbient', type: 'color' },
+                cDeep: { uniform: 'uColorDeep', type: 'color' },
+                cMid: { uniform: 'uColorMid', type: 'color' },
+                cSoft: { uniform: 'uColorSoft', type: 'color' },
+                cHigh: { uniform: 'uColorHigh', type: 'color' },
+                cSpec: { uniform: 'uColorSpec', type: 'color' },
+                cWave: { uniform: 'uWaveColor', type: 'color' },
+                cCrest: { uniform: 'uCrestColor', type: 'color' },
+                pStop1: { uniform: 'uStop1', type: 'number' },
+                pStop2: { uniform: 'uStop2', type: 'number' },
+                pStop3: { uniform: 'uStop3', type: 'number' },
+                pStop4: { uniform: 'uStop4', type: 'number' },
+                pLightX: { uniform: 'uLightX', type: 'number' },
+                pLightY: { uniform: 'uLightY', type: 'number' },
+                pSpeed: { uniform: 'uThemeSpeed', type: 'number' },
+                pFreq: { uniform: 'uWaveFreq', type: 'number' },
+                pDist: { uniform: 'uDistortion', type: 'number' },
+                pDetail: { uniform: 'uThemeDetail', type: 'number' },
+                pTex1: { uniform: 'uTexScale', type: 'number' },
+                pTex2: { uniform: 'uTexIntensity', type: 'number' },
+                pTex3: { uniform: 'uTexExtra', type: 'number' },
+                pMask: { uniform: 'uMaskSmooth', type: 'number' },
+                pCrest: { uniform: 'uCrestSize', type: 'number' },
+                gContrast: { uniform: 'uContrast', type: 'number' },
+                gBright: { uniform: 'uBrightness', type: 'number' },
+                gSat: { uniform: 'uSaturation', type: 'number' },
+                gGrainInt: { uniform: 'uGrainIntensity', type: 'number' },
+                gGrainScale: { uniform: 'uGrainScale', type: 'number' },
+                gGrainSpeed: { uniform: 'uGrainSpeed', type: 'number' }
+            };
 
-            function syncUniformsFromUI() {
-                inputs.forEach(input => {
-                    const uName = input.getAttribute('data-uniform');
-                    if (!uName) return;
-                    if (input.type === 'color') {
-                        uniforms[uName].value.set(input.value);
-                    } else if (input.type === 'range') {
-                        uniforms[uName].value = parseFloat(input.value);
-                        const labelSpan = input.parentElement.querySelector('label span.val');
-                        if(labelSpan) labelSpan.innerText = input.value;
+            function applyValues(valuesObj) {
+                Object.entries(valuesObj).forEach(([id, value]) => {
+                    const target = uniformById[id];
+                    if (!target || !uniforms[target.uniform]) return;
+                    if (target.type === 'color') {
+                        uniforms[target.uniform].value.set(value);
+                    } else {
+                        uniforms[target.uniform].value = parseFloat(value);
                     }
                 });
             }
 
-            function applyValuesToUI(valuesObj) {
-                Object.keys(valuesObj).forEach(id => {
-                    const el = document.getElementById(id);
-                    if(el) el.value = valuesObj[id];
-                });
-                syncUniformsFromUI();
-            }
-
-            function loadTextureConfig(texKey, setDefaults = true) {
-                const preset = texturePresets[texKey];
-                const config = preset.texConfig;
-                for (let key in config) {
-                    const el = document.getElementById(key);
-                    const labelEl = document.getElementById('label-' + key.replace('p', ''));
-                    if (el && config[key]) {
-                        el.min = config[key].min; el.max = config[key].max; el.step = config[key].step;
-                        if (setDefaults) el.value = config[key].default;
-                        if(labelEl) labelEl.innerText = config[key].label;
-                    }
-                }
+            function loadTextureConfig(texKey) {
+                const preset = texturePresets[texKey] || texturePresets.none;
                 shaderMaterial.fragmentShader = getFragmentShader(preset.glsl);
                 shaderMaterial.needsUpdate = true;
-                if (setDefaults) syncUniformsFromUI();
             }
 
             function loadPreset(themeKey) {
-                const theme = themePresets[themeKey];
-                applyValuesToUI(globalDefaults);
-                applyValuesToUI(theme);
-                
-                texSelector.value = theme.defaultTexture;
-                loadTextureConfig(theme.defaultTexture, true);
-                
+                const theme = themePresets[themeKey] || themePresets.obsidian;
+                loadTextureConfig(theme.defaultTexture);
+                applyValues({ ...globalDefaults, ...theme });
                 uniforms.uRandomSeed.value = Math.random() * 1000;
             }
 
-            inputs.forEach(input => input.addEventListener('input', syncUniformsFromUI));
-            themeSelector.addEventListener('change', (e) => loadPreset(e.target.value));
-            
-            texSelector.addEventListener('change', (e) => loadTextureConfig(e.target.value, true));
-
             if (window.SAVED_STATE) {
-                themeSelector.value = window.SAVED_STATE.theme;
-                texSelector.value = window.SAVED_STATE.texture || themePresets[window.SAVED_STATE.theme].defaultTexture;
-                
-                loadTextureConfig(texSelector.value, false);
-                applyValuesToUI(window.SAVED_STATE.values);
+                loadTextureConfig(window.SAVED_STATE.texture || themePresets[window.SAVED_STATE.theme]?.defaultTexture || 'none');
+                applyValues(window.SAVED_STATE.values || {});
             } else {
-                themeSelector.value = 'original'; loadPreset('original');
+                loadPreset('obsidian');
             }
-
-            document.getElementById('save-btn').onclick = () => {
-                const currentState = { 
-                    theme: themeSelector.value, 
-                    texture: texSelector.value,
-                    values: {} 
-                };
-                inputs.forEach(input => currentState.values[input.id] = input.value);
-                
-                const clone = document.documentElement.cloneNode(true);
-                const scriptTag = clone.querySelector('#saved-state');
-                scriptTag.textContent = `window.SAVED_STATE = ${JSON.stringify(currentState)};`;
-                
-                clone.querySelector('#theme-selector').value = currentState.theme;
-                clone.querySelector('#theme-selector').setAttribute('value', currentState.theme);
-                clone.querySelector('#texture-selector').value = currentState.texture;
-                clone.querySelector('#texture-selector').setAttribute('value', currentState.texture);
-                
-                clone.querySelectorAll('input').forEach(input => {
-                    const original = document.getElementById(input.id);
-                    input.setAttribute('value', original.value);
-                });
-                
-                const htmlContent = "<!DOCTYPE html>\n" + clone.outerHTML;
-                const blob = new Blob([htmlContent], {type: 'text/html'});
-                const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-                a.download = `fluid_custom_${currentState.theme}.html`; a.click();
-            };
 
             const clock = new THREE.Clock(); let customTime = 0;
             let targetScroll = 0; let currentScroll = 0;
