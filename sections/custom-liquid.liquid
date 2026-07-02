@@ -90,6 +90,10 @@
     color: #ffffff !important;
   }
 
+  .koto-wrapper-{{ section_id }}.is-heatmap-bfcm-active .koto-award-item-{{ section_id }} {
+    background: rgba(0, 0, 0, 0.42);
+  }
+
   .koto-inner-{{ section_id }} {
     display: flex;
     align-items: stretch;
@@ -232,6 +236,7 @@
     background: #f1f1f1;
     border-radius: 4px;
     cursor: help;
+    transition: background 0.24s ease;
   }
 
   .koto-award-img-{{ section_id }} {
@@ -391,12 +396,14 @@
                 assign video_key = 'video_url_' | append: i
                 assign current_image = block.settings[image_key]
                 assign current_video = block.settings[video_key]
-                if current_image != blank or current_video != blank
-                  assign title_heatmap_media_index = title_heatmap_media_index | plus: 1
-                  if title_heatmap_media_index > 3
-                    assign title_heatmap_style = 'bfcm'
-                  endif
-                endif
+	                if current_image != blank or current_video != blank
+	                  assign title_heatmap_media_index = title_heatmap_media_index | plus: 1
+	                  if title_heatmap_media_index > 5
+	                    assign title_heatmap_style = 'gtm'
+	                  elsif title_heatmap_media_index > 3
+	                    assign title_heatmap_style = 'bfcm'
+	                  endif
+	                endif
               endfor
             -%}
             <h3 class="koto-project-title-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}"{% if title_heatmap_style != blank %} data-heatmap-hover="true" data-heatmap-style="{{ title_heatmap_style }}"{% endif %}>
@@ -481,10 +488,12 @@
 
             {%- if current_image != blank or current_video != blank -%}
               {%- assign heatmap_media_index = heatmap_media_index | plus: 1 -%}
-              {%- assign heatmap_style = 'default' -%}
-              {%- if heatmap_media_index > 3 -%}
-                {%- assign heatmap_style = 'bfcm' -%}
-              {%- endif -%}
+	              {%- assign heatmap_style = 'default' -%}
+	              {%- if heatmap_media_index > 5 -%}
+	                {%- assign heatmap_style = 'gtm' -%}
+	              {%- elsif heatmap_media_index > 3 -%}
+	                {%- assign heatmap_style = 'bfcm' -%}
+	              {%- endif -%}
               <div class="koto-media-item-{{ section_id }}" data-index="{{ forloop.parentloop.index0 }}">
                 <a href="{{ block.settings.link | default: '#' }}" class="koto-media-card-{{ section_id }} js-hover-card" data-heatmap-hover="true" data-heatmap-style="{{ heatmap_style }}">
                   {%- if current_video != blank -%}
@@ -585,22 +594,35 @@
           float wave = sin(rotUV.y * 0.6 + distortion.x * 1.7 + flowTime);
           return pow(max(wave * 0.5 + 0.5, 0.0), 0.8) + detail;
         }
-        float getBfcmHeight(vec2 uv, float time, float scroll, float seed) {
-          vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
-          vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.2);
+	        float getBfcmHeight(vec2 uv, float time, float scroll, float seed) {
+	          vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
+	          vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.2);
           float flowTime = time * 0.5 + scroll * 0.5;
           vec2 rotUV = rotate2d(-0.5) * baseUV;
           vec2 distortion = vec2(0.0);
           distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
           distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
           float detail = snoise(rotUV * 0.3 + distortion + flowTime * 0.1) * 0.02;
-          float wave = sin(rotUV.y * 1.6 + distortion.x * 3.3 + flowTime);
-          return pow(max(wave * 0.5 + 0.5, 0.0), 0.8) + detail;
-        }
-        float getHeight(vec2 uv, float time, float scroll, float seed) {
-          if (uHeatmapStyle > 0.5) return getBfcmHeight(uv, time, scroll, seed);
-          return getDefaultHeight(uv, time, scroll, seed);
-        }
+	          float wave = sin(rotUV.y * 1.6 + distortion.x * 3.3 + flowTime);
+	          return pow(max(wave * 0.5 + 0.5, 0.0), 0.8) + detail;
+	        }
+	        float getGtmHeight(vec2 uv, float time, float scroll, float seed) {
+	          vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
+	          vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.2);
+	          float flowTime = time * 0.9 + scroll * 0.5;
+	          vec2 rotUV = rotate2d(-0.5) * baseUV;
+	          vec2 distortion = vec2(0.0);
+	          distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
+	          distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
+	          float detail = snoise(rotUV * 1.125 + distortion + flowTime * 0.1) * 0.075;
+	          float wave = sin(rotUV.y * 5.0 + distortion.x * 3.1 + flowTime);
+	          return pow(max(wave * 0.5 + 0.5, 0.0), 0.8) + detail;
+	        }
+	        float getHeight(vec2 uv, float time, float scroll, float seed) {
+	          if (uHeatmapStyle > 1.5) return getGtmHeight(uv, time, scroll, seed);
+	          if (uHeatmapStyle > 0.5) return getBfcmHeight(uv, time, scroll, seed);
+	          return getDefaultHeight(uv, time, scroll, seed);
+	        }
         float deepHaloMask(float lightValue, float rangeValue, float featherValue) {
           float stopGap = max(0.06 - 0.59, 0.001);
           float halfWidth = stopGap * mix(0.04, 0.50, clamp(rangeValue, 0.0, 1.0));
@@ -626,11 +648,24 @@
 	          float hy1 = getHeight(uv + vec2(0.0, eps), time, uScroll, uRandomSeed);
 	          float hy2 = getHeight(uv - vec2(0.0, eps), time, uScroll, uRandomSeed);
 	          vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
-	          vec3 lightDir = uHeatmapStyle > 0.5 ? vec3(-0.4, 0.6, 0.4) : vec3(-0.5, 0.5, 0.4);
+	          vec3 lightDir = uHeatmapStyle > 1.5 ? vec3(-0.6, 0.5, 0.4) : (uHeatmapStyle > 0.5 ? vec3(-0.4, 0.6, 0.4) : vec3(-0.5, 0.5, 0.4));
 	          float light = dot(normal, normalize(lightDir)) * 0.5 + 0.5;
 
           vec3 color;
-          if (uHeatmapStyle > 0.5) {
+          if (uHeatmapStyle > 1.5) {
+            color = mix(vec3(1.0), vec3(0.867, 0.812, 0.733), smoothstep(0.0, 1.0, light));
+            color = mix(color, vec3(0.729, 0.686, 0.612), smoothstep(0.24, 0.59, light));
+            color = mix(color, vec3(1.0), smoothstep(0.59, 1.0, light));
+            float deepHaloBand1 = smoothstep(0.0, 0.52, light) * (1.0 - smoothstep(0.52, 0.91, light));
+            float deepHaloBand2 = smoothstep(0.0, 1.0, light);
+            float deepFlow1 = snoise((uv / 3.9) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
+            float deepFlow2 = snoise((uv / 6.0) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
+            vec3 deepHalo = vec3(1.0, 0.584, 0.0) * deepHaloBand1 * deepHaloShape(deepFlow1, 0.77) * 0.98;
+            deepHalo += vec3(1.0, 0.635, 0.0) * deepHaloBand2 * deepHaloShape(deepFlow2, 0.4) * 0.97;
+            color = 1.0 - (1.0 - color) * (1.0 - clamp(deepHalo, 0.0, 1.0));
+            color = (color - 0.5) * 1.25 + 0.45;
+            color = clamp(color - 0.05, 0.0, 1.0);
+          } else if (uHeatmapStyle > 0.5) {
             color = mix(vec3(0.0), vec3(1.0, 0.647, 0.361), smoothstep(0.0, 0.381, light));
             color = mix(color, vec3(0.439, 0.0, 0.0), smoothstep(0.38, 1.001, light));
             color = mix(color, vec3(0.2, 0.0, 0.0), smoothstep(1.0, 1.001, light));
@@ -667,7 +702,17 @@
 	          float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
 	          float dist = wavePos - (vUv.y + waveOffset);
           vec3 finalColor;
-          if (uHeatmapStyle > 0.5) {
+          if (uHeatmapStyle > 1.5) {
+            float whiteMask = smoothstep(0.0, 0.15, dist);
+            float crest = smoothstep(-0.05, 0.10, dist) * smoothstep(0.20, 0.05, dist);
+            finalColor = mix(color, vec3(1.0), whiteMask);
+            finalColor += vec3(0.980, 0.988, 1.0) * crest * 0.6;
+            finalColor += (light - 0.5) * 0.03 * whiteMask;
+            vec2 grainUv = floor(vUv * uResolution);
+            float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * 2.0) * 43758.5453);
+            float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
+            finalColor += baseDither + (dither - 0.5) * 0.03;
+          } else if (uHeatmapStyle > 0.5) {
             float coloredWave = smoothstep(0.0, 0.15, dist);
             float crest = smoothstep(-0.05, 0.25, dist) * smoothstep(0.5, 0.05, dist);
             finalColor = mix(color, vec3(0.502, 0.0, 0.0), coloredWave * 0.28);
@@ -718,10 +763,21 @@
 	      let targetScroll = 0;
 	      let currentScroll = 0;
 	      const activeHeatmapTargets = new Set();
+	      const getHeatmapStyleForTarget = (target) => {
+	        if (target?.dataset.heatmapStyle) return target.dataset.heatmapStyle;
+	        const activeTitle = wrapper.querySelector('.koto-project-title-item-' + sectionId + '.is-active');
+	        return activeTitle?.dataset.heatmapStyle || 'default';
+	      };
 	      const syncHeatmapStyle = () => {
 	        const activeTargets = Array.from(activeHeatmapTargets);
 	        const activeTarget = activeTargets[activeTargets.length - 1];
-	        uniforms.uHeatmapStyle.value = activeTarget?.dataset.heatmapStyle === 'bfcm' ? 1 : 0;
+	        const style = getHeatmapStyleForTarget(activeTarget);
+	        uniforms.uHeatmapStyle.value = style === 'gtm' ? 2 : (style === 'bfcm' ? 1 : 0);
+	      };
+	      wrapper.kotoSyncHeatmapStyle = () => {
+	        syncHeatmapStyle();
+	        wrapper.classList.toggle('is-heatmap-bfcm-active', uniforms.uHeatmapStyle.value > 0.5 && uniforms.uHeatmapStyle.value < 1.5 && activeHeatmapTargets.size > 0);
+	        wrapper.classList.toggle('is-heatmap-gtm-active', uniforms.uHeatmapStyle.value > 1.5 && activeHeatmapTargets.size > 0);
 	      };
 	      const setActive = (active, event) => {
 	        if (!event?.currentTarget) return;
@@ -737,7 +793,7 @@
 	          uniforms.uScroll.value = 0;
 	        }
 	        wrapper.classList.toggle('is-heatmap-active', activeHeatmapTargets.size > 0);
-	        wrapper.classList.toggle('is-heatmap-bfcm-active', uniforms.uHeatmapStyle.value > 0.5 && activeHeatmapTargets.size > 0);
+	        wrapper.kotoSyncHeatmapStyle();
 	      };
       hoverTargets.forEach((target) => {
         target.addEventListener('mouseenter', setActive.bind(null, true));
@@ -922,6 +978,7 @@
             const activeIndex = entry.target.getAttribute('data-index');
             titleItems.forEach(text => { text.classList.toggle('is-active', text.getAttribute('data-index') === activeIndex); });
             footerItems.forEach(footer => { footer.classList.toggle('is-active', footer.getAttribute('data-index') === activeIndex); });
+            wrapper.kotoSyncHeatmapStyle?.();
             syncActiveTitleHeight();
           }
         });
