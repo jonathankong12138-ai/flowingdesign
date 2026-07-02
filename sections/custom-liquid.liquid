@@ -364,7 +364,7 @@
         
         <div class="koto-project-title-wrapper-{{ section_id }}">
           {%- for block in section.blocks -%}
-            <h3 class="koto-project-title-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}"{% if forloop.first %} data-heatmap-hover="true"{% endif %}>
+            <h3 class="koto-project-title-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}" data-heatmap-hover="true">
               {{ block.settings.title }}
             </h3>
           {%- endfor -%}
@@ -406,7 +406,6 @@
     </div>
 
     <div class="koto-right-{{ section_id }}">
-      {%- assign heatmap_media_index = 0 -%}
       {%- for block in section.blocks -%}
         <div class="koto-project-group-{{ section_id }}" {{ block.shopify_attributes }}>
           <div class="koto-mobile-text-{{ section_id }}">
@@ -445,9 +444,8 @@
             {%- assign current_video = block.settings[video_key] -%}
 
             {%- if current_image != blank or current_video != blank -%}
-              {%- assign heatmap_media_index = heatmap_media_index | plus: 1 -%}
               <div class="koto-media-item-{{ section_id }}" data-index="{{ forloop.parentloop.index0 }}">
-                <a href="{{ block.settings.link | default: '#' }}" class="koto-media-card-{{ section_id }} js-hover-card"{% if heatmap_media_index <= 3 %} data-heatmap-hover="true"{% endif %}>
+                <a href="{{ block.settings.link | default: '#' }}" class="koto-media-card-{{ section_id }} js-hover-card" data-heatmap-hover="true">
                   {%- if current_video != blank -%}
                     <video src="{{ current_video }}" autoplay loop muted playsinline style="width: 100%; height: auto; display: block;"></video>
                   {%- elsif current_image != blank -%}
@@ -534,79 +532,64 @@
             rgb.r = hue2rgb(p, q, c.x + 1.0/3.0); rgb.g = hue2rgb(p, q, c.x); rgb.b = hue2rgb(p, q, c.x - 1.0/3.0);
           } return rgb;
         }
-        float getHeight(vec2 uv, float time, float scroll, float seed) {
-          vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
-          vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.2);
-          float flowTime = time * 0.8 + scroll * 0.5;
-          vec2 rotUV = rotate2d(-0.5) * baseUV;
-          vec2 distortion = vec2(0.0);
-          distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
-          distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
-          float detail = snoise(rotUV * 0.975 + distortion + flowTime * 0.1) * 0.065;
-          float wave = sin(rotUV.y * 0.6 + distortion.x * 1.7 + flowTime);
-          return pow(max(wave * 0.5 + 0.5, 0.0), 0.8) + detail;
-        }
-        float deepHaloMask(float lightValue, float rangeValue, float featherValue) {
-          float stopGap = max(0.06 - 0.59, 0.001);
-          float halfWidth = stopGap * mix(0.04, 0.50, clamp(rangeValue, 0.0, 1.0));
-          float feather = max(featherValue * halfWidth * 1.4, 0.001);
-          float innerEdge = 0.59 - halfWidth;
-          float outerEdge = 0.59 + halfWidth;
-          float innerFade = smoothstep(innerEdge - feather, innerEdge, lightValue);
-          float outerFade = 1.0 - smoothstep(outerEdge, outerEdge + feather, lightValue);
-          return innerFade * outerFade;
-        }
-        float deepHaloShape(float flowValue, float featherValue) {
-          float feather = clamp(featherValue, 0.01, 0.95);
-          return smoothstep(1.0 - feather, 1.0, flowValue);
-        }
-        void main() {
-          vec2 uv = vUv;
-          uv.x *= uResolution.x / uResolution.y;
-          float time = uTime * 0.254;
-          float h = getHeight(uv, time, uScroll, uRandomSeed);
-          float eps = 0.01;
-          float hx1 = getHeight(uv + vec2(eps, 0.0), time, uScroll, uRandomSeed);
-          float hx2 = getHeight(uv - vec2(eps, 0.0), time, uScroll, uRandomSeed);
-          float hy1 = getHeight(uv + vec2(0.0, eps), time, uScroll, uRandomSeed);
-          float hy2 = getHeight(uv - vec2(0.0, eps), time, uScroll, uRandomSeed);
-          vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
-          float light = dot(normal, normalize(vec3(-0.5, 0.5, 0.4))) * 0.5 + 0.5;
+	        float getHeight(vec2 uv, float time, float scroll, float seed) {
+	          vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
+	          vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.2);
+	          float flowTime = time * 0.5 + scroll * 0.5;
+	          vec2 rotUV = rotate2d(-0.5) * baseUV;
+	          vec2 distortion = vec2(0.0);
+	          distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
+	          distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
+	          float detail = snoise(rotUV * 0.3 + distortion + flowTime * 0.1) * 0.02;
+	          float wave = sin(rotUV.y * 1.6 + distortion.x * 3.3 + flowTime);
+	          return pow(max(wave * 0.5 + 0.5, 0.0), 0.8) + detail;
+	        }
+	        void main() {
+	          vec2 uv = vUv;
+	          uv.x *= uResolution.x / uResolution.y;
+	          float time = uTime * 0.254;
+	          float h = getHeight(uv, time, uScroll, uRandomSeed);
+	          float eps = 0.01;
+	          float hx1 = getHeight(uv + vec2(eps, 0.0), time, uScroll, uRandomSeed);
+	          float hx2 = getHeight(uv - vec2(eps, 0.0), time, uScroll, uRandomSeed);
+	          float hy1 = getHeight(uv + vec2(0.0, eps), time, uScroll, uRandomSeed);
+	          float hy2 = getHeight(uv - vec2(0.0, eps), time, uScroll, uRandomSeed);
+	          vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
+	          float light = dot(normal, normalize(vec3(-0.4, 0.6, 0.4))) * 0.5 + 0.5;
 
-          vec3 color = mix(vec3(0.792, 0.341, 1.0), vec3(0.078, 0.463, 1.0), smoothstep(0.0, 0.591, light));
-          color = mix(color, vec3(1.0, 0.502, 0.502), smoothstep(0.59, 0.061, light));
-          color = mix(color, vec3(1.0), smoothstep(0.06, 1.001, light));
-          color = mix(color, vec3(1.0), smoothstep(1.0, 1.001, light));
-          color = mix(color, vec3(1.0), smoothstep(1.0, 1.001, light));
-          float deepHaloBand1 = deepHaloMask(light, 1.0, 0.95);
-          float deepHaloBand2 = deepHaloMask(light, 0.0, 0.29);
-          float deepFlow1 = snoise((uv / 6.0) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
-          float deepFlow2 = snoise((uv / 1.2) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
-          vec3 deepHalo = vec3(0.0, 0.898, 0.659) * deepHaloBand1 * deepHaloShape(deepFlow1, 0.95) * 0.77;
-          deepHalo += vec3(1.0, 0.506, 0.239) * deepHaloBand2 * deepHaloShape(deepFlow2, 0.29) * 1.5;
-          color = 1.0 - (1.0 - color) * (1.0 - clamp(deepHalo, 0.0, 1.0));
-          color = (color - 0.5) * 1.5 + 0.35;
-          color = clamp(color, 0.0, 1.0);
-          vec3 hsl = rgb2hsl(color);
-          hsl.y = clamp(hsl.y, 0.0, 1.0);
-          color = hsl2rgb(hsl);
+	          vec3 color = mix(vec3(1.0), vec3(1.0, 0.647, 0.361), smoothstep(0.0, 0.381, light));
+	          color = mix(color, vec3(0.439, 0.0, 0.0), smoothstep(0.38, 1.001, light));
+	          color = mix(color, vec3(0.2, 0.0, 0.0), smoothstep(1.0, 1.001, light));
+	          color = mix(color, vec3(0.0), smoothstep(1.0, 1.001, light));
+	          color = mix(color, vec3(0.0), smoothstep(1.0, 1.001, light));
 
-          float p = clamp(uScroll, 0.0, 1.0);
-          float easedScroll = 1.0 - pow(max(1.0 - p, 0.0), 2.0);
-          float wavePos = easedScroll * 2.8 - 0.2;
-          float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
-          float dist = wavePos - (vUv.y + waveOffset);
-          float whiteMask = smoothstep(0.0, 0.15, dist);
-          float crest = smoothstep(-0.08, 0.16, dist) * smoothstep(0.32, 0.04, dist);
-          vec3 finalColor = mix(color, vec3(1.0), whiteMask);
-          finalColor += vec3(1.0, 0.878, 0.961) * crest * 0.28;
-          finalColor += (light - 0.5) * 0.03 * whiteMask;
+	          color = (color - 0.5) * 1.45 + 0.5 - 0.15;
+	          color = clamp(color, 0.0, 1.0);
+	          vec3 hsl = rgb2hsl(color);
+	          hsl.y = clamp(hsl.y * 1.3, 0.0, 1.0);
+	          color = hsl2rgb(hsl);
 
-          float revealTop = clamp(wavePos, 0.0, 0.52);
-          float revealStrength = smoothstep(0.02, 0.10, p);
-          float revealAlpha = (1.0 - smoothstep(revealTop - 0.30, revealTop + 0.24, vUv.y)) * revealStrength;
-          gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), revealAlpha);
-        }
+	          float p = clamp(uScroll, 0.0, 1.0);
+	          float easedScroll = 1.0 - pow(max(1.0 - p, 0.0), 2.0);
+	          float wavePos = easedScroll * 2.8 - 0.2;
+	          float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
+	          float dist = wavePos - (vUv.y + waveOffset);
+	          float coloredWave = smoothstep(0.0, 0.15, dist);
+	          float crest = smoothstep(-0.05, 0.25, dist) * smoothstep(0.5, 0.05, dist);
+	          vec3 finalColor = mix(color, vec3(0.502, 0.0, 0.0), coloredWave * 0.28);
+	          finalColor += vec3(1.0, 0.502, 0.0) * crest * 0.34;
+	          finalColor += (light - 0.5) * 0.03 * coloredWave;
+
+	          vec2 grainUv = floor(vUv * uResolution);
+	          float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * 2.0) * 43758.5453);
+	          float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
+	          finalColor += baseDither + (dither - 0.5) * 0.03;
+
+	          float revealTop = clamp(wavePos, 0.0, 0.52);
+	          float revealStrength = smoothstep(0.02, 0.10, p);
+	          float revealAlpha = (1.0 - smoothstep(revealTop - 0.30, revealTop + 0.24, vUv.y)) * revealStrength;
+	          gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), revealAlpha);
+	        }
       `;
 
       const uniforms = {
