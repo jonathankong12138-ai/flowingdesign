@@ -403,19 +403,21 @@
       let activeMediaUrl = '';
       let mediaSwitchToken = 0;
       let isMediaPreparing = false;
-      let isOpenfitWarm = false;
-      let openfitWarmPromise = null;
       const videoPool = new Map();
       const imagePool = new Map();
+      const priorityVideoWarmState = new Map();
+      const priorityVideoWarmPromise = new Map();
       const mediaReadyTimeout = 1800;
       const openfitVideoUrl = "{{ 'home-openfit-video.mp4' | asset_url }}";
+      const userVideoUrl = "{{ 'home-user-video.mp4' | asset_url }}";
+      const priorityVideoUrls = new Set([openfitVideoUrl, userVideoUrl]);
       const fallbackPosterByUrl = new Map([
         ["{{ 'home-bfcm-video.mp4' | asset_url }}", "{{ 'home-bfcm-1.webp' | asset_url }}"]
       ]);
       const homeVideoUrls = [
         openfitVideoUrl,
         "{{ 'home-bfcm-video.mp4' | asset_url }}",
-        "{{ 'home-user-video.mp4' | asset_url }}"
+        userVideoUrl
       ];
 
       if (globalBgContainer && globalBgContainer.parentNode !== document.body) {
@@ -554,11 +556,13 @@
         window.setTimeout(() => finish(video.currentTime > 0 || video.readyState >= 3), timeout);
       });
 
-      const warmOpenfitVideo = () => {
-        if (openfitWarmPromise) return openfitWarmPromise;
+      const warmPriorityVideo = (url) => {
+        if (!priorityVideoUrls.has(url)) return Promise.resolve(false);
+        if (priorityVideoWarmState.get(url)) return Promise.resolve(true);
+        if (priorityVideoWarmPromise.has(url)) return priorityVideoWarmPromise.get(url);
 
-        openfitWarmPromise = (async () => {
-          const video = createMediaElement(openfitVideoUrl, 'video');
+        const warmPromise = (async () => {
+          const video = createMediaElement(url, 'video');
           video.preload = 'auto';
           video.classList.add('is-warming');
           isMediaPreparing = true;
@@ -568,7 +572,7 @@
           if (!ready) {
             video.classList.remove('is-warming');
             isMediaPreparing = false;
-            openfitWarmPromise = null;
+            priorityVideoWarmPromise.delete(url);
             return false;
           }
 
@@ -576,16 +580,17 @@
           if (canPlay) {
             await Promise.race([waitForVideoFrame(video, 800), wait(560)]);
             video.pause();
-            isOpenfitWarm = true;
+            priorityVideoWarmState.set(url, true);
           }
 
           video.classList.remove('is-warming');
           isMediaPreparing = false;
-          if (!isOpenfitWarm) openfitWarmPromise = null;
-          return isOpenfitWarm;
+          if (!priorityVideoWarmState.get(url)) priorityVideoWarmPromise.delete(url);
+          return Boolean(priorityVideoWarmState.get(url));
         })();
 
-        return openfitWarmPromise;
+        priorityVideoWarmPromise.set(url, warmPromise);
+        return warmPromise;
       };
 
       const splitLoadingLogo = () => {
@@ -627,8 +632,8 @@
           return;
         }
 
-        if (url === openfitVideoUrl) {
-          warmOpenfitVideo().then(resolve);
+        if (priorityVideoUrls.has(url)) {
+          warmPriorityVideo(url).then(resolve);
           return;
         }
 
@@ -928,10 +933,10 @@
         }
 
         const mediaElement = createMediaElement(url, type);
-        const isOpenfitVideo = type === 'video' && url === openfitVideoUrl;
-        if (isOpenfitVideo && !isOpenfitWarm) {
+        const isPriorityVideo = type === 'video' && priorityVideoUrls.has(url);
+        if (isPriorityVideo && !priorityVideoWarmState.get(url)) {
           isMediaPreparing = true;
-          await warmOpenfitVideo();
+          await warmPriorityVideo(url);
           if (switchToken !== mediaSwitchToken) {
             isMediaPreparing = false;
             return;
@@ -947,7 +952,7 @@
         if (switchToken !== mediaSwitchToken) return;
 
         if (!ready) {
-          if (isOpenfitVideo) isMediaPreparing = false;
+          if (isPriorityVideo) isMediaPreparing = false;
           await fallbackToPosterOrWave(url, switchToken);
           return;
         }
@@ -956,16 +961,16 @@
         if (switchToken !== mediaSwitchToken) return;
 
         if (!canPlay) {
-          if (isOpenfitVideo) isMediaPreparing = false;
+          if (isPriorityVideo) isMediaPreparing = false;
           await fallbackToPosterOrWave(url, switchToken);
           return;
         }
 
-        if (isOpenfitVideo && !isOpenfitWarm) {
+        if (isPriorityVideo && !priorityVideoWarmState.get(url)) {
           await Promise.race([waitForVideoFrame(mediaElement, 800), wait(560)]);
-          isOpenfitWarm = true;
+          priorityVideoWarmState.set(url, true);
         }
-        if (isOpenfitVideo) isMediaPreparing = false;
+        if (isPriorityVideo) isMediaPreparing = false;
 
         activateMediaElement(mediaElement, url);
       };
