@@ -74,6 +74,11 @@
       visibility: visible;
     }
 
+    .glacier-media-item-{{ section.id }}.is-warming {
+      opacity: 0;
+      visibility: visible;
+    }
+
     .glacier-bfcm-carousel-{{ section.id }} {
       position: absolute;
       top: 0;
@@ -397,14 +402,18 @@
       let activeMediaElement = null;
       let activeMediaUrl = '';
       let mediaSwitchToken = 0;
+      let isMediaPreparing = false;
+      let isOpenfitWarm = false;
+      let openfitWarmPromise = null;
       const videoPool = new Map();
       const imagePool = new Map();
       const mediaReadyTimeout = 1800;
+      const openfitVideoUrl = "{{ 'home-openfit-video.mp4' | asset_url }}";
       const fallbackPosterByUrl = new Map([
         ["{{ 'home-bfcm-video.mp4' | asset_url }}", "{{ 'home-bfcm-1.webp' | asset_url }}"]
       ]);
       const homeVideoUrls = [
-        "{{ 'home-openfit-video.mp4' | asset_url }}",
+        openfitVideoUrl,
         "{{ 'home-bfcm-video.mp4' | asset_url }}",
         "{{ 'home-user-video.mp4' | asset_url }}"
       ];
@@ -517,6 +526,68 @@
         return Promise.resolve(true);
       };
 
+      const waitForVideoFrame = (video, timeout = 700) => new Promise(resolve => {
+        if (!(video instanceof HTMLVideoElement)) {
+          resolve(false);
+          return;
+        }
+
+        let settled = false;
+        let callbackId = null;
+        const finish = (ready) => {
+          if (settled) return;
+          settled = true;
+          video.removeEventListener('timeupdate', handleFrame);
+          if (callbackId && typeof video.cancelVideoFrameCallback === 'function') {
+            try { video.cancelVideoFrameCallback(callbackId); } catch (error) {}
+          }
+          resolve(ready);
+        };
+        const handleFrame = () => finish(true);
+
+        if (typeof video.requestVideoFrameCallback === 'function') {
+          callbackId = video.requestVideoFrameCallback(() => finish(true));
+        } else {
+          video.addEventListener('timeupdate', handleFrame, { once: true });
+        }
+
+        window.setTimeout(() => finish(video.currentTime > 0 || video.readyState >= 3), timeout);
+      });
+
+      const warmOpenfitVideo = () => {
+        if (openfitWarmPromise) return openfitWarmPromise;
+
+        openfitWarmPromise = (async () => {
+          const video = createMediaElement(openfitVideoUrl, 'video');
+          video.preload = 'auto';
+          video.classList.add('is-warming');
+          isMediaPreparing = true;
+          try { video.load(); } catch (error) {}
+
+          const ready = await waitForMediaReady(video, 'video', 4500);
+          if (!ready) {
+            video.classList.remove('is-warming');
+            isMediaPreparing = false;
+            openfitWarmPromise = null;
+            return false;
+          }
+
+          const canPlay = await playMediaElement(video, false);
+          if (canPlay) {
+            await Promise.race([waitForVideoFrame(video, 800), wait(560)]);
+            video.pause();
+            isOpenfitWarm = true;
+          }
+
+          video.classList.remove('is-warming');
+          isMediaPreparing = false;
+          if (!isOpenfitWarm) openfitWarmPromise = null;
+          return isOpenfitWarm;
+        })();
+
+        return openfitWarmPromise;
+      };
+
       const splitLoadingLogo = () => {
         if (!loadingLogo || loadingLogo.dataset.split === 'true') return;
         const text = loadingLogo.textContent || '';
@@ -553,6 +624,11 @@
       const preloadHomeVideo = (url, index = 0) => new Promise(resolve => {
         if (!url) {
           resolve(false);
+          return;
+        }
+
+        if (url === openfitVideoUrl) {
+          warmOpenfitVideo().then(resolve);
           return;
         }
 
@@ -696,7 +772,7 @@
         const animate = () => {
             requestAnimationFrame(animate);
 
-            if (mediaLayer.classList.contains('active')) {
+            if (mediaLayer.classList.contains('active') || isMediaPreparing) {
                 return;
             }
             
@@ -852,6 +928,15 @@
         }
 
         const mediaElement = createMediaElement(url, type);
+        const isOpenfitVideo = type === 'video' && url === openfitVideoUrl;
+        if (isOpenfitVideo && !isOpenfitWarm) {
+          isMediaPreparing = true;
+          await warmOpenfitVideo();
+          if (switchToken !== mediaSwitchToken) {
+            isMediaPreparing = false;
+            return;
+          }
+        }
         if (type === 'video') {
           mediaElement.preload = 'auto';
           if (mediaElement.readyState < 2) {
@@ -862,6 +947,7 @@
         if (switchToken !== mediaSwitchToken) return;
 
         if (!ready) {
+          if (isOpenfitVideo) isMediaPreparing = false;
           await fallbackToPosterOrWave(url, switchToken);
           return;
         }
@@ -870,9 +956,16 @@
         if (switchToken !== mediaSwitchToken) return;
 
         if (!canPlay) {
+          if (isOpenfitVideo) isMediaPreparing = false;
           await fallbackToPosterOrWave(url, switchToken);
           return;
         }
+
+        if (isOpenfitVideo && !isOpenfitWarm) {
+          await Promise.race([waitForVideoFrame(mediaElement, 800), wait(560)]);
+          isOpenfitWarm = true;
+        }
+        if (isOpenfitVideo) isMediaPreparing = false;
 
         activateMediaElement(mediaElement, url);
       };
