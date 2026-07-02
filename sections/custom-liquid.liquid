@@ -75,6 +75,12 @@
     z-index: 10;
   }
 
+  .koto-wrapper-{{ section_id }}.is-heatmap-bfcm-active .koto-works-title-{{ section_id }},
+  .koto-wrapper-{{ section_id }}.is-heatmap-bfcm-active .koto-project-title-item-{{ section_id }},
+  .koto-wrapper-{{ section_id }}.is-heatmap-bfcm-active .koto-project-desc-{{ section_id }} {
+    color: #000000 !important;
+  }
+
   .koto-inner-{{ section_id }} {
     display: flex;
     align-items: stretch;
@@ -596,7 +602,7 @@
 
           vec3 color;
           if (uHeatmapStyle > 0.5) {
-            color = mix(vec3(1.0), vec3(1.0, 0.647, 0.361), smoothstep(0.0, 0.381, light));
+            color = mix(vec3(0.0), vec3(1.0, 0.647, 0.361), smoothstep(0.0, 0.381, light));
             color = mix(color, vec3(0.439, 0.0, 0.0), smoothstep(0.38, 1.001, light));
             color = mix(color, vec3(0.2, 0.0, 0.0), smoothstep(1.0, 1.001, light));
             color = mix(color, vec3(0.0), smoothstep(1.0, 1.001, light));
@@ -698,6 +704,7 @@
 	        syncHeatmapStyle();
 	        targetScroll = activeHeatmapTargets.size > 0 ? 0.13 : 0;
 	        wrapper.classList.toggle('is-heatmap-active', activeHeatmapTargets.size > 0);
+	        wrapper.classList.toggle('is-heatmap-bfcm-active', uniforms.uHeatmapStyle.value > 0.5 && activeHeatmapTargets.size > 0);
 	      };
       hoverTargets.forEach((target) => {
         target.addEventListener('mouseenter', setActive.bind(null, true));
