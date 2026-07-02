@@ -76,6 +76,9 @@
     z-index: 1;
     opacity: 0;
     visibility: hidden;
+    transition:
+      opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 1.2s;
     pointer-events: none;
   }
 
@@ -83,6 +86,7 @@
     z-index: 10;
     opacity: 1;
     visibility: visible;
+    transition-delay: 0s;
   }
 
   .koto-wrapper-{{ section_id }}.is-heatmap-bfcm-active .koto-works-title-{{ section_id }},
@@ -284,7 +288,7 @@
     opacity: 0;
     transform: scale(0.94);
     transform-origin: center center;
-    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.9s ease;
+    transition: transform 1.15s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.15s ease;
     display: block; position: relative; z-index: 5;
   }
 
@@ -783,9 +787,19 @@
 	        wrapper.classList.toggle('is-heatmap-bfcm-active', uniforms.uHeatmapStyle.value > 0.5 && uniforms.uHeatmapStyle.value < 1.5 && activeHeatmapTargets.size > 0);
 	        wrapper.classList.toggle('is-heatmap-gtm-active', uniforms.uHeatmapStyle.value > 1.5 && activeHeatmapTargets.size > 0);
 	      };
+	      let heatmapExitTimer = null;
+	      const syncHeatmapClasses = () => {
+	        const hasActiveTargets = activeHeatmapTargets.size > 0;
+	        wrapper.classList.toggle('is-heatmap-active', hasActiveTargets);
+	        wrapper.kotoSyncHeatmapStyle();
+	      };
 	      const setActive = (active, event) => {
 	        if (!event?.currentTarget) return;
 	        if (active) {
+	          if (heatmapExitTimer) {
+	            clearTimeout(heatmapExitTimer);
+	            heatmapExitTimer = null;
+	          }
 	          activeHeatmapTargets.add(event.currentTarget);
 	        } else {
 	          activeHeatmapTargets.delete(event.currentTarget);
@@ -793,11 +807,14 @@
 	        syncHeatmapStyle();
 	        targetScroll = activeHeatmapTargets.size > 0 ? 0.13 : 0;
 	        if (activeHeatmapTargets.size === 0) {
-	          currentScroll = 0;
-	          uniforms.uScroll.value = 0;
+	          heatmapExitTimer = window.setTimeout(() => {
+	            if (activeHeatmapTargets.size > 0) return;
+	            syncHeatmapClasses();
+	            heatmapExitTimer = null;
+	          }, 1200);
+	          return;
 	        }
-	        wrapper.classList.toggle('is-heatmap-active', activeHeatmapTargets.size > 0);
-	        wrapper.kotoSyncHeatmapStyle();
+	        syncHeatmapClasses();
 	      };
       hoverTargets.forEach((target) => {
         target.addEventListener('mouseenter', setActive.bind(null, true));
