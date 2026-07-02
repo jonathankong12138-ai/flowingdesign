@@ -46,12 +46,32 @@
       width: 100%; height: 100%;
       opacity: 0; 
       transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
     }
     .glacier-media-layer-{{ section.id }}.active { opacity: 1 !important; }
-    
-    .glacier-media-layer-{{ section.id }} img, 
-    .glacier-media-layer-{{ section.id }} video {
-      width: 100%; height: 100%; object-fit: cover;
+
+    .glacier-media-content-{{ section.id }} {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .glacier-media-item-{{ section.id }} {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.68s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.68s;
+      will-change: opacity;
+    }
+
+    .glacier-media-item-{{ section.id }}.is-active {
+      opacity: 1;
+      visibility: visible;
     }
 
     .glacier-bfcm-carousel-{{ section.id }} {
@@ -151,7 +171,7 @@
 
     .home-loading-logo-{{ section.id }} {
       color: #000;
-      font-size: 20px;
+      font-size: 48px;
       line-height: 1;
       letter-spacing: 0;
       white-space: nowrap;
@@ -203,7 +223,7 @@
 
   <div id="glacier-global-bg-{{ section.id }}" class="glacier-global-bg-{{ section.id }}">
     <div id="media-layer-{{ section.id }}" class="glacier-media-layer-{{ section.id }}">
-      <div id="media-content-{{ section.id }}" style="width:100%; height:100%;"></div>
+      <div id="media-content-{{ section.id }}" class="glacier-media-content-{{ section.id }}"></div>
     </div>
     <div id="bfcm-carousel-{{ section.id }}" class="glacier-bfcm-carousel-{{ section.id }}" aria-hidden="true"></div>
     <canvas id="canvas-{{ section.id }}" class="glacier-canvas-{{ section.id }}"></canvas>
@@ -374,12 +394,20 @@
       let bfcmCarouselTimer = null;
       let bfcmCarouselIndex = 0;
       let loadingCoverTimer = null;
+      let activeMediaElement = null;
+      let activeMediaUrl = '';
+      let mediaSwitchToken = 0;
+      const videoPool = new Map();
+      const imagePool = new Map();
+      const mediaReadyTimeout = 1800;
+      const fallbackPosterByUrl = new Map([
+        ["{{ 'home-bfcm-video.mp4' | asset_url }}", "{{ 'home-bfcm-1.webp' | asset_url }}"]
+      ]);
       const homeVideoUrls = [
         "{{ 'home-openfit-video.mp4' | asset_url }}",
         "{{ 'home-bfcm-video.mp4' | asset_url }}",
         "{{ 'home-user-video.mp4' | asset_url }}"
       ];
-      const preloadedHomeVideos = [];
 
       if (globalBgContainer && globalBgContainer.parentNode !== document.body) {
           const mainContent = document.getElementById('MainContent') || document.querySelector('main') || document.body;
@@ -391,6 +419,103 @@
       }
 
       const wait = (ms) => new Promise(resolve => window.setTimeout(resolve, ms));
+
+      const createMediaElement = (url, type) => {
+        if (type === 'video') {
+          if (videoPool.has(url)) return videoPool.get(url);
+          const video = document.createElement('video');
+          video.className = 'glacier-media-item-' + sectionId;
+          video.muted = true;
+          video.loop = true;
+          video.playsInline = true;
+          video.preload = 'auto';
+          video.setAttribute('aria-hidden', 'true');
+          video.src = url;
+          mediaContent.appendChild(video);
+          videoPool.set(url, video);
+          try { video.load(); } catch (error) {}
+          return video;
+        }
+
+        if (imagePool.has(url)) return imagePool.get(url);
+        const image = document.createElement('img');
+        image.className = 'glacier-media-item-' + sectionId;
+        image.alt = '';
+        image.decoding = 'async';
+        image.src = url;
+        mediaContent.appendChild(image);
+        imagePool.set(url, image);
+        return image;
+      };
+
+      const waitForMediaReady = (element, type, timeout = mediaReadyTimeout) => new Promise(resolve => {
+        if (!element) {
+          resolve(false);
+          return;
+        }
+
+        if (type === 'image') {
+          if (element.complete && element.naturalWidth > 0) {
+            resolve(true);
+            return;
+          }
+        } else if (element.readyState >= 2) {
+          resolve(true);
+          return;
+        }
+
+        let settled = false;
+        let timeoutId = null;
+        const cleanup = () => {
+          element.removeEventListener('load', handleReady);
+          element.removeEventListener('loadeddata', handleReady);
+          element.removeEventListener('canplay', handleReady);
+          element.removeEventListener('error', handleError);
+          if (timeoutId) clearTimeout(timeoutId);
+        };
+        const finish = (ready) => {
+          if (settled) return;
+          settled = true;
+          cleanup();
+          resolve(ready);
+        };
+        const handleReady = () => finish(true);
+        const handleError = () => finish(false);
+
+        if (type === 'image') {
+          element.addEventListener('load', handleReady, { once: true });
+        } else {
+          element.addEventListener('loadeddata', handleReady, { once: true });
+          element.addEventListener('canplay', handleReady, { once: true });
+        }
+        element.addEventListener('error', handleError, { once: true });
+        timeoutId = window.setTimeout(() => {
+          const ready = type === 'image'
+            ? element.complete && element.naturalWidth > 0
+            : element.readyState >= 2;
+          finish(ready);
+        }, timeout);
+      });
+
+      const playMediaElement = (element, restart = false) => {
+        if (!(element instanceof HTMLVideoElement)) return Promise.resolve(true);
+        if (restart) {
+          try { element.currentTime = 0; } catch (error) {}
+        }
+        const playPromise = element.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          return playPromise.then(() => true).catch(() => {
+            return wait(300).then(() => {
+              const retryPromise = element.play();
+              if (retryPromise && typeof retryPromise.catch === 'function') {
+                return retryPromise.then(() => true).catch(() => false);
+              }
+              return true;
+            });
+          });
+        }
+        return Promise.resolve(true);
+      };
 
       const splitLoadingLogo = () => {
         if (!loadingLogo || loadingLogo.dataset.split === 'true') return;
@@ -431,50 +556,18 @@
           return;
         }
 
-        const video = document.createElement('video');
-        let settled = false;
-        const cleanup = () => {
-          video.removeEventListener('loadeddata', handleReady);
-          video.removeEventListener('canplay', handleReady);
-          video.removeEventListener('error', handleError);
-        };
-        const finish = (ready) => {
-          if (settled) return;
-          settled = true;
-          cleanup();
-          resolve(ready);
-        };
-        const handleReady = () => {
-          const playPromise = video.play();
-          if (playPromise && typeof playPromise.then === 'function') {
-            playPromise.then(() => {
-              video.pause();
-              finish(true);
-            }).catch(() => finish(true));
-          } else {
-            finish(true);
+        const video = createMediaElement(url, 'video');
+        waitForMediaReady(video, 'video', 4500).then(ready => {
+          if (!ready) {
+            resolve(false);
+            return;
           }
-        };
-        const handleError = () => finish(false);
 
-        video.muted = true;
-        video.loop = true;
-        video.playsInline = true;
-        video.preload = 'auto';
-        video.style.position = 'fixed';
-        video.style.width = '1px';
-        video.style.height = '1px';
-        video.style.opacity = '0';
-        video.style.pointerEvents = 'none';
-        video.setAttribute('aria-hidden', 'true');
-        video.addEventListener('loadeddata', handleReady, { once: true });
-        video.addEventListener('canplay', handleReady, { once: true });
-        video.addEventListener('error', handleError, { once: true });
-        video.src = url;
-        document.body.appendChild(video);
-        preloadedHomeVideos.push(video);
-        try { video.load(); } catch (error) {}
-        window.setTimeout(() => finish(video.readyState >= 2), 4500);
+          playMediaElement(video).then(() => {
+            video.pause();
+            resolve(true);
+          });
+        });
       });
 
       const startHomeLoadingCover = () => {
@@ -640,11 +733,57 @@
       initGlacierWebGL();
 
       const replayActiveVideo = () => {
-        const activeVideo = mediaContent.querySelector('video');
-        if (!activeVideo) return;
-        try { activeVideo.currentTime = 0; } catch (error) {}
-        const playPromise = activeVideo.play();
-        if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(() => {});
+        if (!(activeMediaElement instanceof HTMLVideoElement)) return;
+        playMediaElement(activeMediaElement, true);
+      };
+
+      const deactivateMediaElement = (element) => {
+        if (!element) return;
+        element.classList.remove('is-active');
+        if (element instanceof HTMLVideoElement) {
+          window.setTimeout(() => {
+            if (!element.classList.contains('is-active')) element.pause();
+          }, 720);
+        }
+      };
+
+      const activateMediaElement = (element, url) => {
+        if (!element) return;
+        if (activeMediaElement && activeMediaElement !== element) {
+          deactivateMediaElement(activeMediaElement);
+        }
+        activeMediaElement = element;
+        activeMediaUrl = url;
+        mediaContent.setAttribute('data-active-url', url);
+        element.classList.add('is-active');
+        globalBgContainer.classList.add('is-media-mode-' + sectionId);
+        mediaLayer.classList.add('active');
+      };
+
+      const clearActiveMedia = () => {
+        if (activeMediaElement) deactivateMediaElement(activeMediaElement);
+        activeMediaElement = null;
+        activeMediaUrl = '';
+        mediaContent.setAttribute('data-active-url', '');
+        mediaLayer.classList.remove('active');
+        globalBgContainer.classList.remove('is-media-mode-' + sectionId);
+      };
+
+      const fallbackToPosterOrWave = async (url, token) => {
+        const posterUrl = fallbackPosterByUrl.get(url);
+        if (!posterUrl) {
+          clearActiveMedia();
+          return;
+        }
+
+        const poster = createMediaElement(posterUrl, 'image');
+        const posterReady = await waitForMediaReady(poster, 'image', 900);
+        if (token !== mediaSwitchToken) return;
+        if (!posterReady) {
+          clearActiveMedia();
+          return;
+        }
+        activateMediaElement(poster, posterUrl);
       };
 
       const stopBfcmCarousel = () => {
@@ -684,37 +823,47 @@
         }, 3300);
       };
 
-      const setGlacierMedia = (url, type, toggleIfSame = false, restartIfSame = false, galleryUrls = []) => {
+      const setGlacierMedia = async (url, type, toggleIfSame = false, restartIfSame = false, galleryUrls = []) => {
+        const switchToken = ++mediaSwitchToken;
+
         if (!url || type === "none") {
           stopBfcmCarousel();
-          globalBgContainer.classList.remove('is-media-mode-' + sectionId);
-          mediaLayer.classList.remove('active');
-          mediaContent.setAttribute('data-active-url', '');
+          clearActiveMedia();
           return;
         }
-        if (toggleIfSame && mediaLayer.classList.contains('active') && mediaContent.getAttribute('data-active-url') === url) {
-           stopBfcmCarousel();
-           globalBgContainer.classList.remove('is-media-mode-' + sectionId);
-           mediaLayer.classList.remove('active');
-           mediaContent.setAttribute('data-active-url', '');
-           return;
+        if (toggleIfSame && mediaLayer.classList.contains('active') && activeMediaUrl === url) {
+          stopBfcmCarousel();
+          clearActiveMedia();
+          return;
         }
         if (galleryUrls.length) {
           startBfcmCarousel(galleryUrls);
         } else {
           stopBfcmCarousel();
         }
-        if (mediaLayer.classList.contains('active') && mediaContent.getAttribute('data-active-url') === url) {
+        if (mediaLayer.classList.contains('active') && activeMediaUrl === url) {
           if (restartIfSame && type === 'video') replayActiveVideo();
           return;
         }
-        let html = (type === 'video') ?
-        `<video src="${url}" autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover;"></video>` : `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" />`;
-        mediaContent.innerHTML = html;
-        mediaContent.setAttribute('data-active-url', url);
-        globalBgContainer.classList.add('is-media-mode-' + sectionId);
-        mediaLayer.classList.add('active');
-        if (type === 'video') replayActiveVideo();
+
+        const mediaElement = createMediaElement(url, type);
+        const ready = await waitForMediaReady(mediaElement, type);
+        if (switchToken !== mediaSwitchToken) return;
+
+        if (!ready) {
+          await fallbackToPosterOrWave(url, switchToken);
+          return;
+        }
+
+        const canPlay = type === 'video' ? await playMediaElement(mediaElement, restartIfSame) : true;
+        if (switchToken !== mediaSwitchToken) return;
+
+        if (!canPlay) {
+          await fallbackToPosterOrWave(url, switchToken);
+          return;
+        }
+
+        activateMediaElement(mediaElement, url);
       };
 
       document.body.addEventListener('click', function(e) {
@@ -735,7 +884,7 @@
           if (globalBgContainer && globalBgContainer.parentNode) {
             stopBfcmCarousel();
             if (loadingCoverTimer) clearTimeout(loadingCoverTimer);
-            preloadedHomeVideos.forEach(video => {
+            videoPool.forEach(video => {
               try {
                 video.pause();
                 video.removeAttribute('src');
@@ -743,6 +892,9 @@
               } catch (error) {}
               video.remove();
             });
+            imagePool.forEach(image => image.remove());
+            videoPool.clear();
+            imagePool.clear();
             loadingCover?.remove();
             document.body.classList.remove('home-loading-active-' + sectionId);
             globalBgContainer.parentNode.removeChild(globalBgContainer);
