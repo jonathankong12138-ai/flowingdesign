@@ -73,11 +73,15 @@
     margin-bottom: calc(-100dvh - var(--heatmap-bleed-y));
     transform: translateY(calc(var(--heatmap-bleed-y) * -1));
     z-index: 1;
+    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
   }
 
   .koto-wrapper-{{ section_id }}.is-heatmap-active .koto-heatmap-canvas-{{ section_id }} {
     z-index: 10;
+    opacity: 1;
+    visibility: visible;
   }
 
   .koto-wrapper-{{ section_id }}.is-heatmap-bfcm-active .koto-works-title-{{ section_id }},
@@ -728,6 +732,10 @@
 	        }
 	        syncHeatmapStyle();
 	        targetScroll = activeHeatmapTargets.size > 0 ? 0.13 : 0;
+	        if (activeHeatmapTargets.size === 0) {
+	          currentScroll = 0;
+	          uniforms.uScroll.value = 0;
+	        }
 	        wrapper.classList.toggle('is-heatmap-active', activeHeatmapTargets.size > 0);
 	        wrapper.classList.toggle('is-heatmap-bfcm-active', uniforms.uHeatmapStyle.value > 0.5 && activeHeatmapTargets.size > 0);
 	      };
@@ -807,8 +815,7 @@
       const scrollY = window.scrollY || window.pageYOffset;
       const leftColumnTop = leftColumn.getBoundingClientRect().top + scrollY;
       const lastMediaRect = lastMediaCard.getBoundingClientRect();
-      const releaseScrollY = lastMediaRect.top + scrollY + lastMediaRect.height;
-      const shouldRelease = scrollY >= releaseScrollY;
+      const shouldRelease = lastMediaRect.top <= -(lastMediaRect.height / 3);
 
       if (!shouldRelease) {
         leftSticky.classList.remove('is-released');
