@@ -283,8 +283,12 @@
           assign media_url = block.settings[s_img] | image_url: width: 2000
           assign media_type = "image"
         endif
-        if i == 4 and media_url == blank
-          assign media_url = "fd-project-detail-9abdb01102-shokz-user.mp4" | asset_url
+        if i == 2
+          assign media_url = "home-openfit-video.mp4" | asset_url
+          assign media_type = "video"
+        endif
+        if i == 4
+          assign media_url = "home-user-video.mp4" | asset_url
           assign media_type = "video"
         endif
       -%}

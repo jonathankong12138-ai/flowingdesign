@@ -719,7 +719,8 @@
 
       const scrollY = window.scrollY || window.pageYOffset;
       const leftColumnTop = leftColumn.getBoundingClientRect().top + scrollY;
-      const releaseScrollY = lastMediaCard.getBoundingClientRect().top + scrollY;
+      const lastMediaRect = lastMediaCard.getBoundingClientRect();
+      const releaseScrollY = lastMediaRect.top + scrollY + lastMediaRect.height;
       const shouldRelease = scrollY >= releaseScrollY;
 
       if (!shouldRelease) {
