@@ -521,7 +521,7 @@
       if (!isAtTopState() && targetIndex !== 1) targetIndex = 1;
       if (targetIndex === currentActiveIdx) {
         const activeTrigger = wrapper.querySelector(`.js-trigger-bg[data-index="${targetIndex}"]`);
-        activateBackgroundMedia(activeTrigger, shouldReplayFullscreenVideo(activeTrigger));
+        if (shouldReplayFullscreenVideo(activeTrigger)) activateBackgroundMedia(activeTrigger, true);
         startAutoPlay();
         return;
       }

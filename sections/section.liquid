@@ -176,7 +176,7 @@
 
     .home-loading-logo-{{ section.id }} {
       color: #000;
-      font-size: 54px;
+      font-size: 42px;
       line-height: 1;
       letter-spacing: 0;
       white-space: nowrap;
@@ -398,6 +398,7 @@
       const loadingLogo = loadingCover?.querySelector('[data-home-loading-logo]');
       let bfcmCarouselTimer = null;
       let bfcmCarouselIndex = 0;
+      let bfcmCarouselKey = '';
       let loadingCoverTimer = null;
       let activeMediaElement = null;
       let activeMediaUrl = '';
@@ -633,7 +634,7 @@
         }
 
         if (priorityVideoUrls.has(url)) {
-          warmPriorityVideo(url).then(resolve);
+          wait(index * 1200).then(() => warmPriorityVideo(url)).then(resolve);
           return;
         }
 
@@ -880,7 +881,6 @@
         bfcmCarouselIndex = 0;
         if (!bfcmCarousel) return;
         bfcmCarousel.classList.remove('active');
-        bfcmCarousel.innerHTML = '';
       };
 
       const startBfcmCarousel = (galleryUrls) => {
@@ -888,15 +888,24 @@
         stopBfcmCarousel();
         if (!bfcmCarousel || !urls.length) return;
 
-        urls.forEach((src, index) => {
-          const image = document.createElement('img');
-          image.src = src;
-          image.alt = '';
-          image.decoding = 'async';
-          image.loading = index === 0 ? 'eager' : 'lazy';
-          image.className = index === 0 ? 'is-active' : '';
-          bfcmCarousel.appendChild(image);
-        });
+        const nextKey = urls.join('|');
+        if (bfcmCarouselKey !== nextKey) {
+          bfcmCarousel.innerHTML = '';
+          urls.forEach((src, index) => {
+            const image = document.createElement('img');
+            image.src = src;
+            image.alt = '';
+            image.decoding = 'async';
+            image.loading = index === 0 ? 'eager' : 'lazy';
+            image.className = index === 0 ? 'is-active' : '';
+            bfcmCarousel.appendChild(image);
+          });
+          bfcmCarouselKey = nextKey;
+        } else {
+          Array.from(bfcmCarousel.querySelectorAll('img')).forEach((image, index) => {
+            image.classList.toggle('is-active', index === 0);
+          });
+        }
 
         bfcmCarousel.classList.add('active');
         if (urls.length <= 1) return;
@@ -913,11 +922,6 @@
         const switchToken = ++mediaSwitchToken;
 
         if (!url || type === "none") {
-          stopBfcmCarousel();
-          clearActiveMedia();
-          return;
-        }
-        if (toggleIfSame && mediaLayer.classList.contains('active') && activeMediaUrl === url) {
           stopBfcmCarousel();
           clearActiveMedia();
           return;
@@ -975,24 +979,21 @@
         activateMediaElement(mediaElement, url);
       };
 
-      document.body.addEventListener('click', function(e) {
-        const trigger = e.target.closest('.js-trigger-bg');
-        if (!trigger || !wrapper.contains(trigger)) return;
-        const galleryUrls = (trigger.getAttribute('data-bfcm-gallery') || '').split('|').filter(Boolean);
-        setGlacierMedia(trigger.getAttribute('data-bg-url'), trigger.getAttribute('data-bg-type'), true, false, galleryUrls);
-      });
-
-      window.addEventListener('glacier:activate-media', function(e) {
+      const handleGlacierActivateMedia = (e) => {
         const sourceWrapper = e.detail?.wrapper;
         if (sourceWrapper && sourceWrapper.closest('.glacier-wrapper-' + sectionId) !== wrapper) return;
         setGlacierMedia(e.detail?.url, e.detail?.type, false, Boolean(e.detail?.restart), e.detail?.galleryUrls || []);
-      });
+      };
 
-      document.addEventListener('shopify:section:unload', function(e) {
+      window.addEventListener('glacier:activate-media', handleGlacierActivateMedia);
+
+      const handleSectionUnload = (e) => {
         if (e.detail.sectionId === sectionId) {
           if (globalBgContainer && globalBgContainer.parentNode) {
             stopBfcmCarousel();
             if (loadingCoverTimer) clearTimeout(loadingCoverTimer);
+            window.removeEventListener('glacier:activate-media', handleGlacierActivateMedia);
+            document.removeEventListener('shopify:section:unload', handleSectionUnload);
             videoPool.forEach(video => {
               try {
                 video.pause();
@@ -1009,7 +1010,9 @@
             globalBgContainer.parentNode.removeChild(globalBgContainer);
           }
         }
-      });
+      };
+
+      document.addEventListener('shopify:section:unload', handleSectionUnload);
     });
   </script>
 {%- endif -%}
