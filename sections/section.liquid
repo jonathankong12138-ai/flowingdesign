@@ -134,6 +134,10 @@
     
     .is-media-mode-{{ section.id }} .glacier-canvas-{{ section.id }} { opacity: 0 !important; }
     .is-media-mode-{{ section.id }} .glacier-media-layer-{{ section.id }} { opacity: 1 !important; }
+    .is-media-mode-{{ section.id }} .glacier-mask-{{ section.id }} {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
 
     .glacier-content-{{ section.id }} { 
       position: absolute !important;
@@ -158,8 +162,8 @@
       display: grid;
       place-items: center;
       background: rgba(255, 255, 255, 0.56);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       opacity: 1;
       visibility: visible;
       transition: opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.72s, backdrop-filter 0.72s cubic-bezier(0.4, 0, 0.2, 1);
@@ -403,23 +407,13 @@
       let activeMediaElement = null;
       let activeMediaUrl = '';
       let mediaSwitchToken = 0;
-      let isMediaPreparing = false;
+      let syncGlacierAnimationState = () => {};
       const videoPool = new Map();
       const imagePool = new Map();
-      const priorityVideoWarmState = new Map();
-      const priorityVideoWarmPromise = new Map();
       const mediaReadyTimeout = 1800;
-      const openfitVideoUrl = "{{ 'home-openfit-video.mp4' | asset_url }}";
-      const userVideoUrl = "{{ 'home-user-video.mp4' | asset_url }}";
-      const priorityVideoUrls = new Set([openfitVideoUrl, userVideoUrl]);
       const fallbackPosterByUrl = new Map([
         ["{{ 'home-bfcm-video.mp4' | asset_url }}", "{{ 'home-bfcm-1.webp' | asset_url }}"]
       ]);
-      const homeVideoUrls = [
-        openfitVideoUrl,
-        "{{ 'home-bfcm-video.mp4' | asset_url }}",
-        userVideoUrl
-      ];
 
       if (globalBgContainer && globalBgContainer.parentNode !== document.body) {
           const mainContent = document.getElementById('MainContent') || document.querySelector('main') || document.body;
@@ -440,12 +434,11 @@
           video.muted = true;
           video.loop = true;
           video.playsInline = true;
-          video.preload = 'metadata';
+          video.preload = 'none';
           video.setAttribute('aria-hidden', 'true');
           video.src = url;
           mediaContent.appendChild(video);
           videoPool.set(url, video);
-          try { video.load(); } catch (error) {}
           return video;
         }
 
@@ -529,71 +522,6 @@
         return Promise.resolve(true);
       };
 
-      const waitForVideoFrame = (video, timeout = 700) => new Promise(resolve => {
-        if (!(video instanceof HTMLVideoElement)) {
-          resolve(false);
-          return;
-        }
-
-        let settled = false;
-        let callbackId = null;
-        const finish = (ready) => {
-          if (settled) return;
-          settled = true;
-          video.removeEventListener('timeupdate', handleFrame);
-          if (callbackId && typeof video.cancelVideoFrameCallback === 'function') {
-            try { video.cancelVideoFrameCallback(callbackId); } catch (error) {}
-          }
-          resolve(ready);
-        };
-        const handleFrame = () => finish(true);
-
-        if (typeof video.requestVideoFrameCallback === 'function') {
-          callbackId = video.requestVideoFrameCallback(() => finish(true));
-        } else {
-          video.addEventListener('timeupdate', handleFrame, { once: true });
-        }
-
-        window.setTimeout(() => finish(video.currentTime > 0 || video.readyState >= 3), timeout);
-      });
-
-      const warmPriorityVideo = (url) => {
-        if (!priorityVideoUrls.has(url)) return Promise.resolve(false);
-        if (priorityVideoWarmState.get(url)) return Promise.resolve(true);
-        if (priorityVideoWarmPromise.has(url)) return priorityVideoWarmPromise.get(url);
-
-        const warmPromise = (async () => {
-          const video = createMediaElement(url, 'video');
-          video.preload = 'auto';
-          video.classList.add('is-warming');
-          isMediaPreparing = true;
-          try { video.load(); } catch (error) {}
-
-          const ready = await waitForMediaReady(video, 'video', 4500);
-          if (!ready) {
-            video.classList.remove('is-warming');
-            isMediaPreparing = false;
-            priorityVideoWarmPromise.delete(url);
-            return false;
-          }
-
-          const canPlay = await playMediaElement(video, false);
-          if (canPlay) {
-            await Promise.race([waitForVideoFrame(video, 800), wait(560)]);
-            video.pause();
-            priorityVideoWarmState.set(url, true);
-          }
-
-          video.classList.remove('is-warming');
-          isMediaPreparing = false;
-          if (!priorityVideoWarmState.get(url)) priorityVideoWarmPromise.delete(url);
-          return Boolean(priorityVideoWarmState.get(url));
-        })();
-
-        priorityVideoWarmPromise.set(url, warmPromise);
-        return warmPromise;
-      };
-
       const splitLoadingLogo = () => {
         if (!loadingLogo || loadingLogo.dataset.split === 'true') return;
         const text = loadingLogo.textContent || '';
@@ -627,50 +555,13 @@
         loadingLogo.dataset.split = 'true';
       };
 
-      const preloadHomeVideo = (url, index = 0) => new Promise(resolve => {
-        if (!url) {
-          resolve(false);
-          return;
-        }
-
-        if (priorityVideoUrls.has(url)) {
-          wait(index * 1200).then(() => warmPriorityVideo(url)).then(resolve);
-          return;
-        }
-
-        wait(index * 900).then(() => {
-          const video = createMediaElement(url, 'video');
-          video.preload = index === 0 ? 'auto' : 'metadata';
-          try { video.load(); } catch (error) {}
-          return waitForMediaReady(video, 'video', index === 0 ? 4500 : 1800);
-        }).then(ready => {
-          if (!ready) {
-            resolve(false);
-            return;
-          }
-
-          resolve(true);
-        });
-      });
-
       const startHomeLoadingCover = () => {
         if (!loadingCover) return;
 
         splitLoadingLogo();
         document.body.classList.add('home-loading-active-' + sectionId);
 
-        const minimumWait = wait(5000);
-        const maximumWait = wait(8000);
-        const preloadVideos = Promise.allSettled(homeVideoUrls.map((url, index) => preloadHomeVideo(url, index)));
-        const preloadReadyEnough = preloadVideos.then(results => {
-          const readyCount = results.filter(result => result.status === 'fulfilled' && result.value).length;
-          return readyCount >= 1 ? true : new Promise(() => {});
-        });
-
-        Promise.race([
-          Promise.all([minimumWait, preloadReadyEnough]),
-          maximumWait
-        ]).then(() => {
+        wait(1600).then(() => {
           loadingCover.classList.add('is-leaving');
           document.body.classList.remove('home-loading-active-' + sectionId);
           loadingCoverTimer = window.setTimeout(() => {
@@ -692,8 +583,8 @@
         
         const scene = new THREE.Scene();
         const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         
         const shaderMaterial = new THREE.ShaderMaterial({
             vertexShader: document.getElementById('vs-' + sectionId).textContent,
@@ -775,13 +666,12 @@
             lastMouseTime = now;
         });
 
+        let animationFrameId = null;
+        const shouldRunGlacierAnimation = () => !mediaLayer.classList.contains('active') && !document.hidden;
         const animate = () => {
-            requestAnimationFrame(animate);
+            animationFrameId = null;
+            if (!shouldRunGlacierAnimation()) return;
 
-            if (mediaLayer.classList.contains('active') || isMediaPreparing) {
-                return;
-            }
-            
             if (wrapper) {
                 const rect = wrapper.getBoundingClientRect();
                 let scrollPercent = 0;
@@ -790,11 +680,11 @@
                 }
                 targetScroll = Math.max(0, scrollPercent);
             }
-            
+
             // 🌟 將整數 1~20 縮放為 0.01~0.20，繞過 Shopify 小數點限制
             const scrollInertia = {{ section.settings.wave_scroll_inertia | default: 6 }} / 100.0;
             currentScroll += (targetScroll - currentScroll) * scrollInertia;
-            
+
             shaderMaterial.uniforms.uScroll.value = currentScroll;
             
             const friction = {{ section.settings.mouse_inertia | default: 96 }} / 100.0;
@@ -810,12 +700,26 @@
             
             shaderMaterial.uniforms.uWaveSpeed.value = {{ section.settings.wave_speed | default: 2.8 }};
             shaderMaterial.uniforms.uWaveCurve.value = {{ section.settings.wave_curve | default: 2.0 }};
-            
+
             shaderMaterial.uniforms.uTime.value = customTime;
             renderer.render(scene, camera);
+            animationFrameId = requestAnimationFrame(animate);
         };
-        animate();
-      }
+        syncGlacierAnimationState = () => {
+            if (!shouldRunGlacierAnimation()) {
+                if (animationFrameId !== null) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+                return;
+            }
+            if (animationFrameId === null) {
+                clock.getDelta();
+                animationFrameId = requestAnimationFrame(animate);
+            }
+        };
+        syncGlacierAnimationState();
+	      }
 
       initGlacierWebGL();
 
@@ -842,19 +746,21 @@
         activeMediaElement = element;
         activeMediaUrl = url;
         mediaContent.setAttribute('data-active-url', url);
-        element.classList.add('is-active');
-        globalBgContainer.classList.add('is-media-mode-' + sectionId);
-        mediaLayer.classList.add('active');
-      };
+	        element.classList.add('is-active');
+	        globalBgContainer.classList.add('is-media-mode-' + sectionId);
+	        mediaLayer.classList.add('active');
+	        syncGlacierAnimationState();
+	      };
 
       const clearActiveMedia = () => {
         if (activeMediaElement) deactivateMediaElement(activeMediaElement);
         activeMediaElement = null;
         activeMediaUrl = '';
-        mediaContent.setAttribute('data-active-url', '');
-        mediaLayer.classList.remove('active');
-        globalBgContainer.classList.remove('is-media-mode-' + sectionId);
-      };
+	        mediaContent.setAttribute('data-active-url', '');
+	        mediaLayer.classList.remove('active');
+	        globalBgContainer.classList.remove('is-media-mode-' + sectionId);
+	        syncGlacierAnimationState();
+	      };
 
       const fallbackToPosterOrWave = async (url, token) => {
         const posterUrl = fallbackPosterByUrl.get(url);
@@ -937,15 +843,6 @@
         }
 
         const mediaElement = createMediaElement(url, type);
-        const isPriorityVideo = type === 'video' && priorityVideoUrls.has(url);
-        if (isPriorityVideo && !priorityVideoWarmState.get(url)) {
-          isMediaPreparing = true;
-          await warmPriorityVideo(url);
-          if (switchToken !== mediaSwitchToken) {
-            isMediaPreparing = false;
-            return;
-          }
-        }
         if (type === 'video') {
           mediaElement.preload = 'auto';
           if (mediaElement.readyState < 2) {
@@ -956,7 +853,6 @@
         if (switchToken !== mediaSwitchToken) return;
 
         if (!ready) {
-          if (isPriorityVideo) isMediaPreparing = false;
           await fallbackToPosterOrWave(url, switchToken);
           return;
         }
@@ -965,16 +861,9 @@
         if (switchToken !== mediaSwitchToken) return;
 
         if (!canPlay) {
-          if (isPriorityVideo) isMediaPreparing = false;
           await fallbackToPosterOrWave(url, switchToken);
           return;
         }
-
-        if (isPriorityVideo && !priorityVideoWarmState.get(url)) {
-          await Promise.race([waitForVideoFrame(mediaElement, 800), wait(560)]);
-          priorityVideoWarmState.set(url, true);
-        }
-        if (isPriorityVideo) isMediaPreparing = false;
 
         activateMediaElement(mediaElement, url);
       };
@@ -986,6 +875,7 @@
       };
 
       window.addEventListener('glacier:activate-media', handleGlacierActivateMedia);
+      document.addEventListener('visibilitychange', syncGlacierAnimationState);
 
       const handleSectionUnload = (e) => {
         if (e.detail.sectionId === sectionId) {
@@ -993,6 +883,7 @@
             stopBfcmCarousel();
             if (loadingCoverTimer) clearTimeout(loadingCoverTimer);
             window.removeEventListener('glacier:activate-media', handleGlacierActivateMedia);
+            document.removeEventListener('visibilitychange', syncGlacierAnimationState);
             document.removeEventListener('shopify:section:unload', handleSectionUnload);
             videoPool.forEach(video => {
               try {
