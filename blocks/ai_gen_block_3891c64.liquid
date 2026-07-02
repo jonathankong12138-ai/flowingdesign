@@ -276,6 +276,7 @@
         assign s_btn_link = "btn_link_" | append: i
         assign media_url = ""
         assign media_type = "none"
+        assign bfcm_gallery_urls = ""
         if block.settings[s_vid] != blank
           assign media_url = block.settings[s_vid].sources[1].url
           assign media_type = "video"
@@ -287,12 +288,20 @@
           assign media_url = "home-openfit-video.mp4" | asset_url
           assign media_type = "video"
         endif
+        if i == 3
+          assign media_url = "home-bfcm-video.mp4" | asset_url
+          assign media_type = "video"
+          assign bfcm_gallery_1 = "home-bfcm-1.webp" | asset_url
+          assign bfcm_gallery_2 = "home-bfcm-2.webp" | asset_url
+          assign bfcm_gallery_3 = "home-bfcm-3.webp" | asset_url
+          assign bfcm_gallery_urls = bfcm_gallery_1 | append: "|" | append: bfcm_gallery_2 | append: "|" | append: bfcm_gallery_3
+        endif
         if i == 4
           assign media_url = "home-user-video.mp4" | asset_url
           assign media_type = "video"
         endif
       -%}
-      <div class="ai-column-{{ block_id }} ai-column-{{ i }}-{{ block_id }} js-trigger-bg {% if i == 1 %}is-active{% endif %}" data-index="{{ i }}" data-bg-url="{{ media_url }}" data-bg-type="{{ media_type }}" data-link="{{ block.settings[s_btn_link] }}" data-play-fullscreen-video="{% if i == 4 %}true{% else %}false{% endif %}">
+      <div class="ai-column-{{ block_id }} ai-column-{{ i }}-{{ block_id }} js-trigger-bg {% if i == 1 %}is-active{% endif %}" data-index="{{ i }}" data-bg-url="{{ media_url }}" data-bg-type="{{ media_type }}" data-bfcm-gallery="{{ bfcm_gallery_urls }}" data-link="{{ block.settings[s_btn_link] }}" data-play-fullscreen-video="{% if i == 4 %}true{% else %}false{% endif %}">
         <div class="ai-item-wrapper-{{ block_id }}">
           <div class="ai-item-{{ i }}-{{ block_id }} split-text-target-{{ block_id }}"
                {% if i == 1 %}
@@ -490,6 +499,7 @@
           wrapper,
           url: trigger.getAttribute('data-bg-url'),
           type: trigger.getAttribute('data-bg-type'),
+          galleryUrls: (trigger.getAttribute('data-bfcm-gallery') || '').split('|').filter(Boolean),
           restart: restartVideo
         }
       }));

@@ -53,6 +53,40 @@
     .glacier-media-layer-{{ section.id }} video {
       width: 100%; height: 100%; object-fit: cover;
     }
+
+    .glacier-bfcm-carousel-{{ section.id }} {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: min(44vw, 760px);
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 3;
+      overflow: hidden;
+      transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.7s;
+    }
+
+    .glacier-bfcm-carousel-{{ section.id }}.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .glacier-bfcm-carousel-{{ section.id }} img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.02);
+      transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 3.3s ease;
+    }
+
+    .glacier-bfcm-carousel-{{ section.id }} img.is-active {
+      opacity: 1;
+      transform: scale(1);
+    }
     
     .glacier-mask-{{ section.id }} {
       position: absolute;
@@ -96,6 +130,7 @@
     <div id="media-layer-{{ section.id }}" class="glacier-media-layer-{{ section.id }}">
       <div id="media-content-{{ section.id }}" style="width:100%; height:100%;"></div>
     </div>
+    <div id="bfcm-carousel-{{ section.id }}" class="glacier-bfcm-carousel-{{ section.id }}" aria-hidden="true"></div>
     <canvas id="canvas-{{ section.id }}" class="glacier-canvas-{{ section.id }}"></canvas>
     <div class="glacier-mask-{{ section.id }}"></div>
   </div>
@@ -254,6 +289,9 @@
       const globalBgContainer = document.getElementById('glacier-global-bg-' + sectionId);
       const mediaLayer = document.getElementById('media-layer-' + sectionId);
       const mediaContent = document.getElementById('media-content-' + sectionId);
+      const bfcmCarousel = document.getElementById('bfcm-carousel-' + sectionId);
+      let bfcmCarouselTimer = null;
+      let bfcmCarouselIndex = 0;
 
       if (globalBgContainer && globalBgContainer.parentNode !== document.body) {
           const mainContent = document.getElementById('MainContent') || document.querySelector('main') || document.body;
@@ -402,18 +440,62 @@
         if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(() => {});
       };
 
-      const setGlacierMedia = (url, type, toggleIfSame = false, restartIfSame = false) => {
+      const stopBfcmCarousel = () => {
+        if (bfcmCarouselTimer) {
+          clearInterval(bfcmCarouselTimer);
+          bfcmCarouselTimer = null;
+        }
+        bfcmCarouselIndex = 0;
+        if (!bfcmCarousel) return;
+        bfcmCarousel.classList.remove('active');
+        bfcmCarousel.innerHTML = '';
+      };
+
+      const startBfcmCarousel = (galleryUrls) => {
+        const urls = Array.isArray(galleryUrls) ? galleryUrls.filter(Boolean) : [];
+        stopBfcmCarousel();
+        if (!bfcmCarousel || !urls.length) return;
+
+        urls.forEach((src, index) => {
+          const image = document.createElement('img');
+          image.src = src;
+          image.alt = '';
+          image.decoding = 'async';
+          image.loading = index === 0 ? 'eager' : 'lazy';
+          image.className = index === 0 ? 'is-active' : '';
+          bfcmCarousel.appendChild(image);
+        });
+
+        bfcmCarousel.classList.add('active');
+        if (urls.length <= 1) return;
+        bfcmCarouselTimer = window.setInterval(() => {
+          const slides = Array.from(bfcmCarousel.querySelectorAll('img'));
+          if (!slides.length) return;
+          slides[bfcmCarouselIndex]?.classList.remove('is-active');
+          bfcmCarouselIndex = (bfcmCarouselIndex + 1) % slides.length;
+          slides[bfcmCarouselIndex]?.classList.add('is-active');
+        }, 3300);
+      };
+
+      const setGlacierMedia = (url, type, toggleIfSame = false, restartIfSame = false, galleryUrls = []) => {
         if (!url || type === "none") {
+          stopBfcmCarousel();
           globalBgContainer.classList.remove('is-media-mode-' + sectionId);
           mediaLayer.classList.remove('active');
           mediaContent.setAttribute('data-active-url', '');
           return;
         }
         if (toggleIfSame && mediaLayer.classList.contains('active') && mediaContent.getAttribute('data-active-url') === url) {
+           stopBfcmCarousel();
            globalBgContainer.classList.remove('is-media-mode-' + sectionId);
            mediaLayer.classList.remove('active');
            mediaContent.setAttribute('data-active-url', '');
            return;
+        }
+        if (galleryUrls.length) {
+          startBfcmCarousel(galleryUrls);
+        } else {
+          stopBfcmCarousel();
         }
         if (mediaLayer.classList.contains('active') && mediaContent.getAttribute('data-active-url') === url) {
           if (restartIfSame && type === 'video') replayActiveVideo();
@@ -431,18 +513,20 @@
       document.body.addEventListener('click', function(e) {
         const trigger = e.target.closest('.js-trigger-bg');
         if (!trigger || !wrapper.contains(trigger)) return;
-        setGlacierMedia(trigger.getAttribute('data-bg-url'), trigger.getAttribute('data-bg-type'), true);
+        const galleryUrls = (trigger.getAttribute('data-bfcm-gallery') || '').split('|').filter(Boolean);
+        setGlacierMedia(trigger.getAttribute('data-bg-url'), trigger.getAttribute('data-bg-type'), true, false, galleryUrls);
       });
 
       window.addEventListener('glacier:activate-media', function(e) {
         const sourceWrapper = e.detail?.wrapper;
         if (sourceWrapper && sourceWrapper.closest('.glacier-wrapper-' + sectionId) !== wrapper) return;
-        setGlacierMedia(e.detail?.url, e.detail?.type, false, Boolean(e.detail?.restart));
+        setGlacierMedia(e.detail?.url, e.detail?.type, false, Boolean(e.detail?.restart), e.detail?.galleryUrls || []);
       });
 
       document.addEventListener('shopify:section:unload', function(e) {
         if (e.detail.sectionId === sectionId) {
           if (globalBgContainer && globalBgContainer.parentNode) {
+            stopBfcmCarousel();
             globalBgContainer.parentNode.removeChild(globalBgContainer);
           }
         }
