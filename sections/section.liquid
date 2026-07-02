@@ -453,6 +453,24 @@
         return image;
       };
 
+      const warmVideoElement = (video) => {
+        if (!(video instanceof HTMLVideoElement)) return;
+        video.preload = 'auto';
+        video.classList.add('is-warming');
+        if (video.readyState < 2) {
+          try { video.load(); } catch (error) {}
+        }
+      };
+
+      const warmInteractiveVideos = () => {
+        if (!wrapper) return;
+        wrapper.querySelectorAll('.js-trigger-bg[data-bg-type="video"][data-bg-url]').forEach(trigger => {
+          const url = trigger.getAttribute('data-bg-url');
+          if (!url) return;
+          warmVideoElement(createMediaElement(url, 'video'));
+        });
+      };
+
       const waitForMediaReady = (element, type, timeout = mediaReadyTimeout) => new Promise(resolve => {
         if (!element) {
           resolve(false);
@@ -746,11 +764,12 @@
         activeMediaElement = element;
         activeMediaUrl = url;
         mediaContent.setAttribute('data-active-url', url);
-	        element.classList.add('is-active');
-	        globalBgContainer.classList.add('is-media-mode-' + sectionId);
-	        mediaLayer.classList.add('active');
-	        syncGlacierAnimationState();
-	      };
+        element.classList.remove('is-warming');
+        element.classList.add('is-active');
+        globalBgContainer.classList.add('is-media-mode-' + sectionId);
+        mediaLayer.classList.add('active');
+        syncGlacierAnimationState();
+      };
 
       const clearActiveMedia = () => {
         if (activeMediaElement) deactivateMediaElement(activeMediaElement);
@@ -844,10 +863,9 @@
 
         const mediaElement = createMediaElement(url, type);
         if (type === 'video') {
-          mediaElement.preload = 'auto';
-          if (mediaElement.readyState < 2) {
-            try { mediaElement.load(); } catch (error) {}
-          }
+          warmVideoElement(mediaElement);
+          activateMediaElement(mediaElement, url);
+          playMediaElement(mediaElement, restartIfSame);
         }
         const ready = await waitForMediaReady(mediaElement, type);
         if (switchToken !== mediaSwitchToken) return;
@@ -857,7 +875,7 @@
           return;
         }
 
-        const canPlay = type === 'video' ? await playMediaElement(mediaElement, restartIfSame) : true;
+        const canPlay = type === 'video' ? await playMediaElement(mediaElement, false) : true;
         if (switchToken !== mediaSwitchToken) return;
 
         if (!canPlay) {
@@ -876,6 +894,7 @@
 
       window.addEventListener('glacier:activate-media', handleGlacierActivateMedia);
       document.addEventListener('visibilitychange', syncGlacierAnimationState);
+      warmInteractiveVideos();
 
       const handleSectionUnload = (e) => {
         if (e.detail.sectionId === sectionId) {
