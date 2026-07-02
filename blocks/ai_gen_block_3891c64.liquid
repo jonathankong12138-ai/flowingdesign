@@ -473,10 +473,21 @@
     let autoPlayTimer = null;
     let panelSwitchTimer = null;
     let panelSwitchToken = 0;
+    let pendingTopActivationIndex = null;
+    let pendingTopActivationFrame = null;
     let wasAtTopState = true;
     const stableInfoButton = wrapper.querySelector('[data-stable-info-button]');
 
     const isAtTopState = () => wrapper.getBoundingClientRect().top >= -2;
+    const getWrapperScrollTop = () => wrapper.getBoundingClientRect().top + (window.scrollY || window.pageYOffset);
+
+    const cancelPendingTopActivation = () => {
+      pendingTopActivationIndex = null;
+      if (pendingTopActivationFrame) {
+        cancelAnimationFrame(pendingTopActivationFrame);
+        pendingTopActivationFrame = null;
+      }
+    };
 
     const syncStableInfoButton = (panel) => {
       if (!stableInfoButton || !panel) return;
@@ -551,6 +562,35 @@
       startAutoPlay();
     };
 
+    const returnTopAndActivate = (targetIndex) => {
+      targetIndex = parseInt(targetIndex, 10);
+      if (!targetIndex || targetIndex < 1 || targetIndex > totalItems) return;
+
+      clearTimeout(autoPlayTimer);
+      cancelPendingTopActivation();
+      pendingTopActivationIndex = targetIndex;
+
+      window.scrollTo({
+        top: getWrapperScrollTop(),
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+      });
+
+      const startedAt = performance.now();
+      const waitForTop = () => {
+        if (pendingTopActivationIndex !== targetIndex) return;
+        if (isAtTopState() || performance.now() - startedAt > 1800) {
+          pendingTopActivationFrame = null;
+          pendingTopActivationIndex = null;
+          if (!isAtTopState()) window.scrollTo({ top: getWrapperScrollTop(), behavior: 'auto' });
+          activateTab(targetIndex, true);
+          return;
+        }
+        pendingTopActivationFrame = requestAnimationFrame(waitForTop);
+      };
+
+      pendingTopActivationFrame = requestAnimationFrame(waitForTop);
+    };
+
     const playNext = () => {
       if (!isAtTopState()) {
         clearTimeout(autoPlayTimer);
@@ -571,8 +611,8 @@
       const atTop = isAtTopState();
       if (!atTop) {
         clearTimeout(autoPlayTimer);
-        if (currentActiveIdx !== 1) activateTab(1, false);
-      } else if (!wasAtTopState) {
+        if (pendingTopActivationIndex === null && currentActiveIdx !== 1) activateTab(1, false);
+      } else if (!wasAtTopState && pendingTopActivationIndex === null) {
         startAutoPlay();
       }
       wasAtTopState = atTop;
@@ -591,6 +631,13 @@
       trigger.dataset.clickBound = true;
       trigger.addEventListener('click', function(e) {
         const targetIndex = trigger.getAttribute('data-index');
+        if (!isAtTopState()) {
+          e.preventDefault();
+          e.stopPropagation();
+          returnTopAndActivate(targetIndex);
+          return;
+        }
+
         if (trigger.classList.contains('is-active')) {
           e.preventDefault(); e.stopPropagation();
           activateTab(targetIndex, e.isTrusted);
