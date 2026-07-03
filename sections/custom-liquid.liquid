@@ -825,6 +825,7 @@
 	        syncHeatmapStyle();
 	        targetScroll = activeHeatmapTargets.size > 0 ? 0.13 : 0;
 	        if (activeHeatmapTargets.size === 0) {
+	          wrapper.fdSyncHeatmapStyle();
 	          heatmapExitTimer = window.setTimeout(() => {
 	            if (activeHeatmapTargets.size > 0) return;
 	            syncHeatmapClasses();
