@@ -1,5 +1,5 @@
 {% comment %}
-  Section: Koto-Style 'Our Work' Sticky Scroll
+  Section: FD-Style 'Our Work' Sticky Scroll
   1. 支持首字母大写 (Capitalize)
   2. 支持多达 5 个独立媒体流 & 3 个悬浮奖项
   3. 悬浮图片时，其余图片透明度降至50%
@@ -11,7 +11,7 @@
 -%}
 
 {%- style -%}
-  #koto-{{ section_id }} {
+  #fd-{{ section_id }} {
     --item-spacing-pc: {{ section.settings.item_spacing_desktop }}px;
     --item-spacing-mb: {{ section.settings.item_spacing_mobile }}px;
 
@@ -40,28 +40,28 @@
     --left-footer-space: 190px;
     --heatmap-bleed-y: 0px;
     --heatmap-bleed-bottom: 0px;
-    --koto-left-sticky-offset: 60px;
+    --fd-left-sticky-offset: 60px;
   }
 
   /* --- 容器全局重置 --- */
-  .koto-wrapper-{{ section_id }} {
+  .fd-wrapper-{{ section_id }} {
     position: relative !important;
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
     background-color: {{ bg_color }} !important;
     box-sizing: border-box !important;
-    isolation: isolate; 
+    isolation: isolate;
     /* 【CSS 修复】：提升内部容器层级，压制后面的 Footer */
-    z-index: 50 !important; 
+    z-index: 50 !important;
     transition: background-color 0.28s ease;
   }
 
-  .koto-wrapper-{{ section_id }}.is-heatmap-bfcm-active {
+  .fd-wrapper-{{ section_id }}.is-heatmap-bfcm-active {
     background-color: #000000 !important;
   }
 
-  .koto-heatmap-canvas-{{ section_id }} {
+  .fd-heatmap-canvas-{{ section_id }} {
     position: sticky;
     top: 0;
     width: 100vw;
@@ -82,24 +82,24 @@
     pointer-events: none;
   }
 
-  .koto-wrapper-{{ section_id }}.is-heatmap-active .koto-heatmap-canvas-{{ section_id }} {
+  .fd-wrapper-{{ section_id }}.is-heatmap-active .fd-heatmap-canvas-{{ section_id }} {
     z-index: 10;
     opacity: 1;
     visibility: visible;
     transition-delay: 0s;
   }
 
-  .koto-wrapper-{{ section_id }}.is-heatmap-bfcm-active .koto-works-title-{{ section_id }},
-  .koto-wrapper-{{ section_id }}.is-heatmap-bfcm-active .koto-project-title-item-{{ section_id }},
-  .koto-wrapper-{{ section_id }}.is-heatmap-bfcm-active .koto-project-desc-{{ section_id }} {
+  .fd-wrapper-{{ section_id }}.is-heatmap-bfcm-active .fd-works-title-{{ section_id }},
+  .fd-wrapper-{{ section_id }}.is-heatmap-bfcm-active .fd-project-title-item-{{ section_id }},
+  .fd-wrapper-{{ section_id }}.is-heatmap-bfcm-active .fd-project-desc-{{ section_id }} {
     color: #ffffff !important;
   }
 
-  .koto-wrapper-{{ section_id }}.is-heatmap-bfcm-active .koto-award-item-{{ section_id }} {
+  .fd-wrapper-{{ section_id }}.is-heatmap-bfcm-active .fd-award-item-{{ section_id }} {
     background: rgba(0, 0, 0, 0.42);
   }
 
-  .koto-inner-{{ section_id }} {
+  .fd-inner-{{ section_id }} {
     display: flex;
     align-items: stretch;
     justify-content: space-between;
@@ -107,10 +107,10 @@
     max-width: 1800px;
     margin: 0 auto;
     position: relative;
-    z-index: 20; 
+    z-index: 20;
   }
 
-  .koto-left-{{ section_id }} {
+  .fd-left-{{ section_id }} {
     width: 38%;
     position: relative;
     top: auto;
@@ -120,32 +120,32 @@
     padding-right: 40px;
   }
 
-  .koto-left-sticky-{{ section_id }} {
+  .fd-left-sticky-{{ section_id }} {
     position: sticky;
-    top: var(--koto-left-sticky-offset);
+    top: var(--fd-left-sticky-offset);
     display: flex;
     flex-direction: column;
   }
 
-  .koto-left-sticky-{{ section_id }}.is-released {
+  .fd-left-sticky-{{ section_id }}.is-released {
     position: absolute;
-    top: var(--koto-left-release-top, 0px);
+    top: var(--fd-left-release-top, 0px);
     left: 0;
     right: 40px;
   }
 
   @media screen and (min-width: 990px) {
-    .koto-left-sticky-{{ section_id }}:not(.is-stuck) .koto-title-group-{{ section_id }},
-    .koto-left-sticky-{{ section_id }}:not(.is-stuck) .koto-left-footer-{{ section_id }},
-    .koto-left-sticky-{{ section_id }}.is-released .koto-title-group-{{ section_id }},
-    .koto-left-sticky-{{ section_id }}.is-released .koto-left-footer-{{ section_id }} {
+    .fd-left-sticky-{{ section_id }}:not(.is-stuck) .fd-title-group-{{ section_id }},
+    .fd-left-sticky-{{ section_id }}:not(.is-stuck) .fd-left-footer-{{ section_id }},
+    .fd-left-sticky-{{ section_id }}.is-released .fd-title-group-{{ section_id }},
+    .fd-left-sticky-{{ section_id }}.is-released .fd-left-footer-{{ section_id }} {
       opacity: 0;
       transform: translateY(24px) scale(0.98);
       pointer-events: none;
     }
   }
 
-  .koto-title-group-{{ section_id }} {
+  .fd-title-group-{{ section_id }} {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -160,12 +160,12 @@
     transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.9s ease;
   }
 
-  .koto-title-group-{{ section_id }}.is-visible {
+  .fd-title-group-{{ section_id }}.is-visible {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 
-  .koto-works-title-{{ section_id }} {
+  .fd-works-title-{{ section_id }} {
     color: var(--main-title-color) !important;
     font-size: var(--main-title-size-pc) !important;
     font-weight: var(--main-title-weight) !important;
@@ -175,7 +175,7 @@
     line-height: 1.1;
   }
 
-  .koto-project-title-wrapper-{{ section_id }} {
+  .fd-project-title-wrapper-{{ section_id }} {
     position: relative;
     width: 100%;
     min-height: calc(var(--project-title-size-pc) * 1.1);
@@ -183,14 +183,14 @@
     transition: height 0.35s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  .koto-project-title-item-{{ section_id }} {
+  .fd-project-title-item-{{ section_id }} {
     position: absolute;
     top: 0; left: 0; width: 100%; margin: 0 !important;
     color: var(--project-title-color) !important;
     font-size: var(--project-title-size-pc) !important;
     font-weight: var(--project-title-weight) !important;
     letter-spacing: var(--project-title-ls) !important;
-    text-transform: capitalize !important; 
+    text-transform: capitalize !important;
     line-height: 1.1;
     opacity: 0;
     transform: translateY(20px);
@@ -198,36 +198,36 @@
     pointer-events: none;
   }
 
-  .koto-project-title-item-{{ section_id }}.is-active {
+  .fd-project-title-item-{{ section_id }}.is-active {
     opacity: 1; transform: translateY(0); pointer-events: auto;
   }
 
-  .koto-left-footer-{{ section_id }} {
+  .fd-left-footer-{{ section_id }} {
     margin-top: 60px;
     margin-bottom: 0;
     position: relative;
     top: auto;
-    min-height: 150px; 
+    min-height: 150px;
     opacity: 0;
     transform: translateY(28px);
     transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
   }
 
-  .koto-left-footer-{{ section_id }}.is-visible {
+  .fd-left-footer-{{ section_id }}.is-visible {
     opacity: 1;
     transform: translateY(0);
   }
 
-  .koto-project-footer-item-{{ section_id }} {
+  .fd-project-footer-item-{{ section_id }} {
     position: absolute; top: 0; left: 0; width: 100%;
     opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
   }
 
-  .koto-project-footer-item-{{ section_id }}.is-active {
+  .fd-project-footer-item-{{ section_id }}.is-active {
     opacity: 1; pointer-events: auto;
   }
 
-  .koto-project-desc-{{ section_id }} {
+  .fd-project-desc-{{ section_id }} {
     color: var(--desc-color) !important;
     font-size: var(--desc-size-pc) !important;
     line-height: var(--desc-line-height) !important;
@@ -235,12 +235,12 @@
     max-width: 90%;
   }
 
-  .koto-award-list-{{ section_id }} {
+  .fd-award-list-{{ section_id }} {
     display: flex; align-items: center; gap: 4px;
     padding-top: 12px;
   }
 
-  .koto-award-item-{{ section_id }} {
+  .fd-award-item-{{ section_id }} {
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -255,46 +255,46 @@
     transition: background 0.24s ease;
   }
 
-  .koto-award-img-{{ section_id }} {
+  .fd-award-img-{{ section_id }} {
     width: 40px; height: 40px; object-fit: contain; transition: transform 0.3s ease;
   }
 
-  .koto-award-item-{{ section_id }}:hover .koto-award-img-{{ section_id }} { transform: scale(1.1); }
+  .fd-award-item-{{ section_id }}:hover .fd-award-img-{{ section_id }} { transform: scale(1.1); }
 
-  .koto-award-tooltip-{{ section_id }} {
+  .fd-award-tooltip-{{ section_id }} {
     position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(10px);
     background-color: #111111; color: #ffffff; padding: 6px 12px; font-size: 13px; font-weight: 500;
     white-space: nowrap; border-radius: 6px; letter-spacing: 0.05em; text-transform: uppercase;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; visibility: hidden; pointer-events: none;
     transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); z-index: 10;
   }
-  .koto-award-tooltip-{{ section_id }}::after {
+  .fd-award-tooltip-{{ section_id }}::after {
     content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
     border-width: 5px; border-style: solid; border-color: #111111 transparent transparent transparent;
   }
-  .koto-award-item-{{ section_id }}:hover .koto-award-tooltip-{{ section_id }} {
+  .fd-award-item-{{ section_id }}:hover .fd-award-tooltip-{{ section_id }} {
     opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
   }
 
   /* --- 右侧媒体区 --- */
-  .koto-right-{{ section_id }}, 
-  .koto-project-group-{{ section_id }} {
+  .fd-right-{{ section_id }},
+  .fd-project-group-{{ section_id }} {
     width: 100%; display: flex; flex-direction: column; gap: var(--item-spacing-pc);
   }
-  .koto-right-{{ section_id }} { width: 58%; }
+  .fd-right-{{ section_id }} { width: 58%; }
 
   /* =========================================================
      ✨ 核心交互：悬浮时降低其余项目透明度至 50%
      ========================================================= */
-  .koto-right-{{ section_id }}:hover .koto-media-card-{{ section_id }} {
+  .fd-right-{{ section_id }}:hover .fd-media-card-{{ section_id }} {
     opacity: 0.5;
   }
-  .koto-right-{{ section_id }} .koto-media-card-{{ section_id }}:hover {
+  .fd-right-{{ section_id }} .fd-media-card-{{ section_id }}:hover {
     opacity: 1 !important;
     transform: scale(0.98);
   }
 
-  .koto-media-card-{{ section_id }} {
+  .fd-media-card-{{ section_id }} {
     width: 100%; border-radius: 12px; overflow: hidden; background: #f4f4f4;
     opacity: 0;
     transform: scale(0.94);
@@ -303,44 +303,44 @@
     display: block; position: relative; z-index: 5;
   }
 
-  .koto-media-card-{{ section_id }}.is-visible {
+  .fd-media-card-{{ section_id }}.is-visible {
     opacity: 1;
     transform: scale(1);
   }
 
-  .koto-right-{{ section_id }}:hover .koto-media-card-{{ section_id }}:not(.is-visible) {
+  .fd-right-{{ section_id }}:hover .fd-media-card-{{ section_id }}:not(.is-visible) {
     opacity: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .koto-title-group-{{ section_id }},
-    .koto-left-footer-{{ section_id }},
-    .koto-mobile-text-{{ section_id }},
-    .koto-media-card-{{ section_id }} {
+    .fd-title-group-{{ section_id }},
+    .fd-left-footer-{{ section_id }},
+    .fd-mobile-text-{{ section_id }},
+    .fd-media-card-{{ section_id }} {
       opacity: 1;
       transform: none;
       transition: none;
     }
   }
 
-  .koto-media-card-{{ section_id }} img,
-  .koto-media-card-{{ section_id }} video {
+  .fd-media-card-{{ section_id }} img,
+  .fd-media-card-{{ section_id }} video {
     width: 100% !important; height: auto !important; display: block; object-fit: cover;
   }
-  .koto-mobile-text-{{ section_id }} {
+  .fd-mobile-text-{{ section_id }} {
     display: none;
     opacity: 0;
     transform: translateY(24px);
     transition: transform 0.72s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.72s ease;
   }
 
-  .koto-mobile-text-{{ section_id }}.is-visible {
+  .fd-mobile-text-{{ section_id }}.is-visible {
     opacity: 1;
     transform: translateY(0);
   }
 
   @media screen and (min-width: 990px) {
-    .koto-wrapper-{{ section_id }} {
+    .fd-wrapper-{{ section_id }} {
       padding-top: {{ section.settings.padding_top_desktop }}px !important;
       padding-bottom: {{ section.settings.padding_bottom_desktop }}px !important;
       padding-left: {{ section.settings.padding_left_desktop }}px !important;
@@ -351,7 +351,7 @@
   }
 
   @media screen and (max-width: 989px) {
-    .koto-wrapper-{{ section_id }} {
+    .fd-wrapper-{{ section_id }} {
       padding-top: {{ section.settings.padding_top_mobile }}px !important;
       padding-bottom: {{ section.settings.padding_bottom_mobile }}px !important;
       padding-left: {{ section.settings.padding_left_mobile }}px !important;
@@ -359,28 +359,28 @@
       --heatmap-bleed-y: {{ section.settings.padding_top_mobile }}px;
       --heatmap-bleed-bottom: 180px;
     }
-    .koto-inner-{{ section_id }} { flex-direction: column; }
-    .koto-left-{{ section_id }} {
-      width: 100%; height: auto; position: relative; top: 0; padding-right: 0; margin-bottom: 40px; display: none; 
+    .fd-inner-{{ section_id }} { flex-direction: column; }
+    .fd-left-{{ section_id }} {
+      width: 100%; height: auto; position: relative; top: 0; padding-right: 0; margin-bottom: 40px; display: none;
     }
-    .koto-right-{{ section_id }}, .koto-project-group-{{ section_id }} {
+    .fd-right-{{ section_id }}, .fd-project-group-{{ section_id }} {
       width: 100%; gap: var(--item-spacing-mb);
     }
-    .koto-right-{{ section_id }}:hover .koto-media-card-{{ section_id }} { opacity: 1; }
-    .koto-mobile-text-{{ section_id }} { display: block; margin-top: 10px; }
-    .koto-project-title-mobile-{{ section_id }} {
+    .fd-right-{{ section_id }}:hover .fd-media-card-{{ section_id }} { opacity: 1; }
+    .fd-mobile-text-{{ section_id }} { display: block; margin-top: 10px; }
+    .fd-project-title-mobile-{{ section_id }} {
       color: var(--project-title-color) !important; font-size: var(--project-title-size-mb) !important;
       font-weight: var(--project-title-weight) !important; margin: 0 0 12px 0 !important; line-height: 1.1;
       text-transform: capitalize !important; letter-spacing: var(--project-title-ls) !important;
     }
-    .koto-project-desc-mobile-{{ section_id }} {
+    .fd-project-desc-mobile-{{ section_id }} {
       color: var(--desc-color) !important; font-size: var(--desc-size-mb) !important;
       margin: 0 0 10px 0 !important; line-height: var(--desc-line-height) !important;
     }
-    .koto-award-list-mobile-{{ section_id }} {
+    .fd-award-list-mobile-{{ section_id }} {
       display: flex; align-items: center; gap: 4px; padding-top: 8px;
     }
-    .koto-award-item-{{ section_id }} {
+    .fd-award-item-{{ section_id }} {
       min-width: 40px;
       min-height: 40px;
       padding: 5px;
@@ -389,18 +389,18 @@
   }
 {%- endstyle -%}
 
-<div id="koto-{{ section_id }}" class="koto-wrapper-{{ section_id }}">
-  <canvas class="koto-heatmap-canvas-{{ section_id }}" data-koto-heatmap-canvas aria-hidden="true"></canvas>
-  <div class="koto-inner-{{ section_id }}">
-    
-    <div class="koto-left-{{ section_id }}">
-      <div class="koto-left-sticky-{{ section_id }}">
-      <div class="koto-title-group-{{ section_id }}" data-heatmap-hover="true">
+<div id="fd-{{ section_id }}" class="fd-wrapper-{{ section_id }}">
+  <canvas class="fd-heatmap-canvas-{{ section_id }}" data-fd-heatmap-canvas aria-hidden="true"></canvas>
+  <div class="fd-inner-{{ section_id }}">
+
+    <div class="fd-left-{{ section_id }}">
+      <div class="fd-left-sticky-{{ section_id }}">
+      <div class="fd-title-group-{{ section_id }}" data-heatmap-hover="true">
         {%- if section.settings.main_title != blank -%}
-          <h2 class="koto-works-title-{{ section_id }}">{{ section.settings.main_title }}</h2>
+          <h2 class="fd-works-title-{{ section_id }}">{{ section.settings.main_title }}</h2>
         {%- endif -%}
-        
-        <div class="koto-project-title-wrapper-{{ section_id }}">
+
+        <div class="fd-project-title-wrapper-{{ section_id }}">
           {%- assign title_heatmap_media_index = 0 -%}
           {%- for block in section.blocks -%}
             {%- liquid
@@ -424,35 +424,35 @@
 	                endif
               endfor
             -%}
-            <h3 class="koto-project-title-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}"{% if title_heatmap_style != blank %} data-heatmap-hover="true" data-heatmap-style="{{ title_heatmap_style }}"{% endif %}>
+            <h3 class="fd-project-title-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}"{% if title_heatmap_style != blank %} data-heatmap-hover="true" data-heatmap-style="{{ title_heatmap_style }}"{% endif %}>
               {{ block.settings.title }}
             </h3>
           {%- endfor -%}
         </div>
       </div>
 
-      <div class="koto-left-footer-{{ section_id }}">
+      <div class="fd-left-footer-{{ section_id }}">
         {%- for block in section.blocks -%}
-          <div class="koto-project-footer-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}">
-            <div class="koto-project-desc-{{ section_id }}">{{ block.settings.description }}</div>
-            {%- liquid 
+          <div class="fd-project-footer-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}">
+            <div class="fd-project-desc-{{ section_id }}">{{ block.settings.description }}</div>
+            {%- liquid
               assign has_award = false
               if block.settings.award_image_1 != blank or block.settings.award_image_2 != blank or block.settings.award_image_3 != blank
                 assign has_award = true
               endif
             -%}
             {%- if has_award -%}
-              <div class="koto-award-list-{{ section_id }}">
+              <div class="fd-award-list-{{ section_id }}">
                 {%- for i in (1..3) -%}
                   {%- assign img_key = 'award_image_' | append: i -%}
                   {%- assign txt_key = 'award_text_' | append: i -%}
                   {%- assign current_image = block.settings[img_key] -%}
                   {%- assign current_text = block.settings[txt_key] -%}
                   {%- if current_image != blank -%}
-                    <div class="koto-award-item-{{ section_id }}">
-                      <img src="{{ current_image | image_url: width: 80 }}" class="koto-award-img-{{ section_id }}" width="40" height="40" alt="Award Logo">
+                    <div class="fd-award-item-{{ section_id }}">
+                      <img src="{{ current_image | image_url: width: 80 }}" class="fd-award-img-{{ section_id }}" width="40" height="40" alt="Award Logo">
                       {%- if current_text != blank -%}
-                        <span class="koto-award-tooltip-{{ section_id }}">{{ current_text }}</span>
+                        <span class="fd-award-tooltip-{{ section_id }}">{{ current_text }}</span>
                       {%- endif -%}
                     </div>
                   {%- endif -%}
@@ -465,31 +465,31 @@
       </div>
     </div>
 
-    <div class="koto-right-{{ section_id }}">
+    <div class="fd-right-{{ section_id }}">
       {%- assign heatmap_media_index = 0 -%}
       {%- for block in section.blocks -%}
-        <div class="koto-project-group-{{ section_id }}" {{ block.shopify_attributes }}>
-          <div class="koto-mobile-text-{{ section_id }}">
-            <h3 class="koto-project-title-mobile-{{ section_id }}">{{ block.settings.title }}</h3>
-            <div class="koto-project-desc-mobile-{{ section_id }}">{{ block.settings.description }}</div>
-             {%- liquid 
+        <div class="fd-project-group-{{ section_id }}" {{ block.shopify_attributes }}>
+          <div class="fd-mobile-text-{{ section_id }}">
+            <h3 class="fd-project-title-mobile-{{ section_id }}">{{ block.settings.title }}</h3>
+            <div class="fd-project-desc-mobile-{{ section_id }}">{{ block.settings.description }}</div>
+             {%- liquid
               assign has_award_mobile = false
               if block.settings.award_image_1 != blank or block.settings.award_image_2 != blank or block.settings.award_image_3 != blank
                 assign has_award_mobile = true
               endif
             -%}
             {%- if has_award_mobile -%}
-              <div class="koto-award-list-mobile-{{ section_id }}">
+              <div class="fd-award-list-mobile-{{ section_id }}">
                  {%- for i in (1..3) -%}
                    {%- assign img_key = 'award_image_' | append: i -%}
                   {%- assign txt_key = 'award_text_' | append: i -%}
                   {%- assign current_image = block.settings[img_key] -%}
                   {%- assign current_text = block.settings[txt_key] -%}
                   {%- if current_image != blank -%}
-                    <div class="koto-award-item-{{ section_id }}">
+                    <div class="fd-award-item-{{ section_id }}">
                       <img src="{{ current_image | image_url: width: 60 }}" width="30" height="30" alt="Award Logo" style="width: 30px; height: 30px; object-fit: contain; transition: transform 0.3s ease;">
                       {%- if current_text != blank -%}
-                        <span class="koto-award-tooltip-{{ section_id }}">{{ current_text }}</span>
+                        <span class="fd-award-tooltip-{{ section_id }}">{{ current_text }}</span>
                        {%- endif -%}
                     </div>
                   {%- endif -%}
@@ -512,8 +512,8 @@
 	              {%- elsif heatmap_media_index > 3 -%}
 	                {%- assign heatmap_style = 'bfcm' -%}
 	              {%- endif -%}
-              <div class="koto-media-item-{{ section_id }}" data-index="{{ forloop.parentloop.index0 }}">
-                <a href="{{ block.settings.link | default: '#' }}" class="koto-media-card-{{ section_id }} js-hover-card" data-heatmap-hover="true" data-heatmap-style="{{ heatmap_style }}">
+              <div class="fd-media-item-{{ section_id }}" data-index="{{ forloop.parentloop.index0 }}">
+                <a href="{{ block.settings.link | default: '#' }}" class="fd-media-card-{{ section_id }} js-hover-card" data-heatmap-hover="true" data-heatmap-style="{{ heatmap_style }}">
                   {%- if current_video != blank -%}
                     <video src="{{ current_video }}" autoplay loop muted playsinline style="width: 100%; height: auto; display: block;"></video>
                   {%- elsif current_image != blank -%}
@@ -530,9 +530,9 @@
 </div>
 
 <script>
-  function initKotoWorks() {
+  function initFDWorks() {
     const sectionId = '{{ section_id }}';
-    const wrapper = document.getElementById('koto-' + sectionId);
+    const wrapper = document.getElementById('fd-' + sectionId);
     if (!wrapper) return;
 
     const shopifySection = wrapper.closest('.shopify-section');
@@ -543,7 +543,7 @@
 
     const initHeatmapWave = () => {
       if (wrapper.dataset.heatmapReady === 'true') return;
-      const canvas = wrapper.querySelector('[data-koto-heatmap-canvas]');
+      const canvas = wrapper.querySelector('[data-fd-heatmap-canvas]');
       const hoverTargets = wrapper.querySelectorAll('[data-heatmap-hover="true"]');
       if (!canvas || !hoverTargets.length || typeof THREE === 'undefined') return;
       wrapper.dataset.heatmapReady = 'true';
@@ -553,7 +553,7 @@
         renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       } catch (error) {
         wrapper.dataset.heatmapReady = 'false';
-        console.warn('Koto heatmap wave failed to initialize:', error);
+        console.warn('FD heatmap wave failed to initialize:', error);
         return;
       }
 
@@ -784,7 +784,7 @@
 	      const activeHeatmapTargets = new Set();
 	      const getHeatmapStyleForTarget = (target) => {
 	        if (target?.dataset.heatmapStyle) return target.dataset.heatmapStyle;
-	        const activeTitle = wrapper.querySelector('.koto-project-title-item-' + sectionId + '.is-active');
+	        const activeTitle = wrapper.querySelector('.fd-project-title-item-' + sectionId + '.is-active');
 	        return activeTitle?.dataset.heatmapStyle || 'default';
 	      };
 	      const syncHeatmapStyle = () => {
@@ -793,7 +793,7 @@
 	        const style = getHeatmapStyleForTarget(activeTarget);
 	        uniforms.uHeatmapStyle.value = style === 'gtm' ? 2 : (style === 'bfcm' ? 1 : 0);
 	      };
-	      wrapper.kotoSyncHeatmapStyle = () => {
+	      wrapper.fdSyncHeatmapStyle = () => {
 	        syncHeatmapStyle();
 	        wrapper.classList.toggle('is-heatmap-bfcm-active', uniforms.uHeatmapStyle.value > 0.5 && uniforms.uHeatmapStyle.value < 1.5 && activeHeatmapTargets.size > 0);
 	        wrapper.classList.toggle('is-heatmap-gtm-active', uniforms.uHeatmapStyle.value > 1.5 && activeHeatmapTargets.size > 0);
@@ -802,7 +802,7 @@
 	      const syncHeatmapClasses = () => {
 	        const hasActiveTargets = activeHeatmapTargets.size > 0;
 	        wrapper.classList.toggle('is-heatmap-active', hasActiveTargets);
-	        wrapper.kotoSyncHeatmapStyle();
+	        wrapper.fdSyncHeatmapStyle();
 	      };
 	      const setActive = (active, event) => {
 	        if (!event?.currentTarget) return;
@@ -860,8 +860,8 @@
     }
 
     const syncTitlePosition = () => {
-      const firstMediaCard = wrapper.querySelector('.koto-media-card-' + sectionId);
-      const titleGroup = wrapper.querySelector('.koto-title-group-' + sectionId);
+      const firstMediaCard = wrapper.querySelector('.fd-media-card-' + sectionId);
+      const titleGroup = wrapper.querySelector('.fd-title-group-' + sectionId);
       if (!firstMediaCard) return;
 
       const firstMediaHeight = firstMediaCard.getBoundingClientRect().height;
@@ -877,7 +877,7 @@
     };
 
     const syncLeftFooterSpace = () => {
-      const leftFooter = wrapper.querySelector('.koto-left-footer-' + sectionId);
+      const leftFooter = wrapper.querySelector('.fd-left-footer-' + sectionId);
       if (!leftFooter) return;
 
       const styles = window.getComputedStyle(leftFooter);
@@ -890,21 +890,21 @@
 
     let leftStickyReleaseTop = null;
     const syncLeftStickyState = () => {
-      const leftSticky = wrapper.querySelector('.koto-left-sticky-' + sectionId);
+      const leftSticky = wrapper.querySelector('.fd-left-sticky-' + sectionId);
       if (!leftSticky || window.innerWidth < 990 || leftSticky.classList.contains('is-released')) {
         if (leftSticky) leftSticky.classList.remove('is-stuck');
         return;
       }
 
-      const stickyOffset = parseFloat(window.getComputedStyle(wrapper).getPropertyValue('--koto-left-sticky-offset')) || 0;
+      const stickyOffset = parseFloat(window.getComputedStyle(wrapper).getPropertyValue('--fd-left-sticky-offset')) || 0;
       const stickyTop = leftSticky.getBoundingClientRect().top;
       leftSticky.classList.toggle('is-stuck', stickyTop <= stickyOffset + 1);
     };
 
     const syncLeftStickyRelease = () => {
-      const leftColumn = wrapper.querySelector('.koto-left-' + sectionId);
-      const leftSticky = wrapper.querySelector('.koto-left-sticky-' + sectionId);
-      const mediaCards = wrapper.querySelectorAll('.koto-media-card-' + sectionId);
+      const leftColumn = wrapper.querySelector('.fd-left-' + sectionId);
+      const leftSticky = wrapper.querySelector('.fd-left-sticky-' + sectionId);
+      const mediaCards = wrapper.querySelectorAll('.fd-media-card-' + sectionId);
       const lastMediaCard = mediaCards[mediaCards.length - 1];
       if (!leftColumn || !leftSticky || !lastMediaCard || window.innerWidth < 990) {
         if (leftSticky) leftSticky.classList.remove('is-released');
@@ -928,7 +928,7 @@
       if (leftStickyReleaseTop === null || !leftSticky.classList.contains('is-released')) {
         const stickyTop = leftSticky.getBoundingClientRect().top + scrollY;
         leftStickyReleaseTop = Math.max(stickyTop - leftColumnTop, 0);
-        wrapper.style.setProperty('--koto-left-release-top', leftStickyReleaseTop + 'px');
+        wrapper.style.setProperty('--fd-left-release-top', leftStickyReleaseTop + 'px');
       }
 
       leftSticky.classList.add('is-released');
@@ -949,7 +949,7 @@
     window.addEventListener('resize', syncLeftStickyState);
     window.addEventListener('scroll', syncLeftStickyRelease, { passive: true });
     window.addEventListener('scroll', syncLeftStickyState, { passive: true });
-    wrapper.querySelectorAll('.koto-media-card-' + sectionId + ' img').forEach(image => {
+    wrapper.querySelectorAll('.fd-media-card-' + sectionId + ' img').forEach(image => {
       if (image.complete) {
         syncTitlePosition();
         syncLeftStickyRelease();
@@ -961,10 +961,10 @@
       }
     });
 
-    const revealCards = wrapper.querySelectorAll('.koto-media-card-' + sectionId);
-    const titleGroup = wrapper.querySelector('.koto-title-group-' + sectionId);
-    const leftFooterReveal = wrapper.querySelector('.koto-left-footer-' + sectionId);
-    const mobileTextReveals = wrapper.querySelectorAll('.koto-mobile-text-' + sectionId);
+    const revealCards = wrapper.querySelectorAll('.fd-media-card-' + sectionId);
+    const titleGroup = wrapper.querySelector('.fd-title-group-' + sectionId);
+    const leftFooterReveal = wrapper.querySelector('.fd-left-footer-' + sectionId);
+    const mobileTextReveals = wrapper.querySelectorAll('.fd-mobile-text-' + sectionId);
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       if (titleGroup) titleGroup.classList.add('is-visible');
       if (leftFooterReveal) leftFooterReveal.classList.add('is-visible');
@@ -1002,15 +1002,15 @@
 
     // 1. 左侧文本联动逻辑
     if (window.innerWidth >= 990) {
-      const mediaItems = wrapper.querySelectorAll('.koto-media-item-' + sectionId);
-      const titleItems = wrapper.querySelectorAll('.koto-project-title-item-' + sectionId);
-      const footerItems = wrapper.querySelectorAll('.koto-project-footer-item-' + sectionId);
-      const titleWrapper = wrapper.querySelector('.koto-project-title-wrapper-' + sectionId);
+      const mediaItems = wrapper.querySelectorAll('.fd-media-item-' + sectionId);
+      const titleItems = wrapper.querySelectorAll('.fd-project-title-item-' + sectionId);
+      const footerItems = wrapper.querySelectorAll('.fd-project-footer-item-' + sectionId);
+      const titleWrapper = wrapper.querySelector('.fd-project-title-wrapper-' + sectionId);
 
       const syncActiveTitleHeight = () => {
         if (!titleWrapper) return;
 
-        const activeTitle = wrapper.querySelector('.koto-project-title-item-' + sectionId + '.is-active');
+        const activeTitle = wrapper.querySelector('.fd-project-title-item-' + sectionId + '.is-active');
         if (!activeTitle) return;
 
         const height = Math.ceil(activeTitle.getBoundingClientRect().height);
@@ -1031,7 +1031,7 @@
             const activeIndex = entry.target.getAttribute('data-index');
             titleItems.forEach(text => { text.classList.toggle('is-active', text.getAttribute('data-index') === activeIndex); });
             footerItems.forEach(footer => { footer.classList.toggle('is-active', footer.getAttribute('data-index') === activeIndex); });
-            wrapper.kotoSyncHeatmapStyle?.();
+            wrapper.fdSyncHeatmapStyle?.();
             syncActiveTitleHeight();
           }
         });
@@ -1042,17 +1042,17 @@
 
   }
 
-  document.addEventListener('DOMContentLoaded', initKotoWorks);
+  document.addEventListener('DOMContentLoaded', initFDWorks);
   if (window.Shopify && Shopify.designMode) {
     document.addEventListener('shopify:section:load', function(e) {
-      if (e.detail.sectionId === '{{ section.id }}') initKotoWorks();
+      if (e.detail.sectionId === '{{ section.id }}') initFDWorks();
     });
   }
 </script>
 
 {% schema %}
 {
-  "name": "Koto Works",
+  "name": "FD Works",
   "settings": [
     {
       "type": "header",
@@ -1385,9 +1385,9 @@
   ],
   "presets": [
     {
-      "name": "Koto Works",
+      "name": "FD Works",
       "blocks": [
-        { "type": "project", "settings": { "title": "branding koto" } },
+        { "type": "project", "settings": { "title": "branding fd" } },
         { "type": "project", "settings": { "title": "digital exploration" } }
       ]
     }

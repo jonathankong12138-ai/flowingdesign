@@ -447,7 +447,7 @@
     window.addEventListener('scroll', checkVisibility, { passive: true });
     checkVisibility();
 
-    const worksWrappers = Array.from(document.querySelectorAll('[id^="koto-"]'));
+    const worksWrappers = Array.from(document.querySelectorAll('[id^="fd-"]'));
     const previousWorksWrapper = worksWrappers
       .filter(element => element.compareDocumentPosition(footerElement) & Node.DOCUMENT_POSITION_FOLLOWING)
       .pop();

@@ -3,33 +3,33 @@
      0. 滚动条隐身魔法 (Scrollbar Hidden)
      ========================================= */
   {%- if section.settings.hide_scrollbar -%}
-    html::-webkit-scrollbar, 
-    body::-webkit-scrollbar, 
-    .koto-doc-sidebar::-webkit-scrollbar {
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar,
+    .fd-doc-sidebar::-webkit-scrollbar {
       display: none !important;
       width: 0 !important;
       height: 0 !important;
     }
-    html, body, .koto-doc-sidebar {
-      -ms-overflow-style: none !important; 
-      scrollbar-width: none !important; 
+    html, body, .fd-doc-sidebar {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
     }
   {%- endif -%}
 
   /* =========================================
      🌟 渐进式内容浮现 (新加入的动画特效)
      ========================================= */
-  .koto-reveal-after-wave {
+  .fd-reveal-after-wave {
     opacity: 0;
     transform: translateY(30px);
     /* 延迟 0.9s：等背景波浪退去大半时，内容才开始浮现 */
-    animation: kotoContentFadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.9s forwards;
+    animation: fdContentFadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.9s forwards;
   }
 
-  @keyframes kotoContentFadeIn {
-    to { 
-      opacity: 1; 
-      transform: translateY(0); 
+  @keyframes fdContentFadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
@@ -42,7 +42,7 @@
     display: block;
   }
 
-  .koto-master-wrapper-{{ section.id }} {
+  .fd-master-wrapper-{{ section.id }} {
     position: relative;
     width: 100% !important;
     margin: 0 auto !important;
@@ -64,9 +64,9 @@
   /* =========================================
      2. 核心 Grid 布局
      ========================================= */
-  .koto-doc-layout-{{ section.id }} {
+  .fd-doc-layout-{{ section.id }} {
     display: grid;
-    grid-template-columns: 1fr 3fr; 
+    grid-template-columns: 1fr 3fr;
     align-items: start;
     width: 100%;
     gap: {{ section.settings.column_gap }}px;
@@ -76,41 +76,41 @@
      🔥 3. 终极中文排版引擎 (Typography Engine)
      ========================================= */
   .sidebar-title-{{ section.id }},
-  .koto-doc-toc-link,
-  .koto-doc-heading,
-  .koto-grid-title,
+  .fd-doc-toc-link,
+  .fd-doc-heading,
+  .fd-grid-title,
   h2, h3 {
     word-break: normal;
-    overflow-wrap: break-word; 
-    line-break: strict; 
-    text-wrap: balance; 
+    overflow-wrap: break-word;
+    line-break: strict;
+    text-wrap: balance;
   }
 
   .sidebar-desc-{{ section.id }},
-  .koto-doc-toc-desc,
-  .koto-optimize-text,
-  .koto-grid-text,
-  .koto-inner-content div {
+  .fd-doc-toc-desc,
+  .fd-optimize-text,
+  .fd-grid-text,
+  .fd-inner-content div {
     text-align: justify;
-    text-justify: inter-ideograph; 
-    word-break: normal; 
-    overflow-wrap: break-word; 
-    line-break: strict; 
-    text-wrap: pretty; 
+    text-justify: inter-ideograph;
+    word-break: normal;
+    overflow-wrap: break-word;
+    line-break: strict;
+    text-wrap: pretty;
     hyphens: auto;
   }
 
   /* 🌟 文字块最大阅读宽度限制 */
-  .koto-doc-heading,
-  .koto-optimize-text,
-  .koto-grid-text {
+  .fd-doc-heading,
+  .fd-optimize-text,
+  .fd-grid-text {
     max-width: {{ section.settings.text_max_width }}px;
   }
 
   /* =========================================
      4. 左侧高级目录排版设置
      ========================================= */
-  .koto-doc-sidebar {
+  .fd-doc-sidebar {
     position: sticky;
     top: {{ section.settings.sticky_offset }}px;
     max-height: calc(100vh - 40px);
@@ -144,23 +144,23 @@
     text-transform: {{ section.settings.sidebar_desc_transform }};
     font-style: {{ section.settings.sidebar_desc_style }};
   }
-  .sidebar-desc-{{ section.id }} p, .koto-doc-toc-desc p, .koto-optimize-text p { margin: 0 0 0.8em 0; padding: 0; }
-  .sidebar-desc-{{ section.id }} p:last-child, .koto-doc-toc-desc p:last-child, .koto-optimize-text p:last-child { margin: 0; }
+  .sidebar-desc-{{ section.id }} p, .fd-doc-toc-desc p, .fd-optimize-text p { margin: 0 0 0.8em 0; padding: 0; }
+  .sidebar-desc-{{ section.id }} p:last-child, .fd-doc-toc-desc p:last-child, .fd-optimize-text p:last-child { margin: 0; }
 
-  .koto-doc-toc { list-style: none; padding: 0 !important; margin: 0 !important; display: flex; flex-direction: column; gap: {{ section.settings.toc_item_gap }}px; }
+  .fd-doc-toc { list-style: none; padding: 0 !important; margin: 0 !important; display: flex; flex-direction: column; gap: {{ section.settings.toc_item_gap }}px; }
 
-  .koto-toc-item {
+  .fd-toc-item {
     opacity: {{ section.settings.toc_inactive_opacity | divided_by: 100.0 }};
     transition: opacity 0.3s ease;
     cursor: pointer;
-    padding: 4px 0; 
+    padding: 4px 0;
   }
-  .koto-toc-item:hover,
-  .koto-toc-item.is-active {
+  .fd-toc-item:hover,
+  .fd-toc-item.is-active {
     opacity: 1;
   }
 
-  .koto-doc-toc-link { 
+  .fd-doc-toc-link {
     text-decoration: none; display: block; padding: 0 !important; margin: 0 !important;
     color: {{ section.settings.toc_link_color }};
     font-size: {{ section.settings.toc_link_size }}px;
@@ -169,14 +169,14 @@
     line-height: {{ section.settings.toc_link_line_height }};
     text-transform: {{ section.settings.toc_link_transform }};
     font-style: {{ section.settings.toc_link_style }};
-    pointer-events: none; 
+    pointer-events: none;
   }
-  .koto-toc-item.is-active .koto-doc-toc-link { font-weight: 700; }
+  .fd-toc-item.is-active .fd-doc-toc-link { font-weight: 700; }
 
-  .toc-level-h3 .koto-doc-toc-link { font-size: 0.95em; position: relative; padding-left: 20px !important; }
-  .toc-level-h3 .koto-doc-toc-link::before { content: "—"; position: absolute; left: 0; opacity: 0.5; }
+  .toc-level-h3 .fd-doc-toc-link { font-size: 0.95em; position: relative; padding-left: 20px !important; }
+  .toc-level-h3 .fd-doc-toc-link::before { content: "—"; position: absolute; left: 0; opacity: 0.5; }
 
-  .koto-doc-toc-desc {
+  .fd-doc-toc-desc {
     color: {{ section.settings.toc_desc_color }};
     font-size: {{ section.settings.toc_desc_size }}px;
     font-weight: {{ section.settings.toc_desc_weight }};
@@ -186,24 +186,24 @@
     font-style: {{ section.settings.toc_desc_style }};
     margin-top: {{ section.settings.toc_desc_margin_top }}px;
     margin-bottom: 0;
-    pointer-events: none; 
+    pointer-events: none;
   }
-  .toc-level-h3 .koto-doc-toc-desc { padding-left: 20px; }
+  .toc-level-h3 .fd-doc-toc-desc { padding-left: 20px; }
 
   /* =========================================
      5. 标签引擎
      ========================================= */
-  .koto-doc-toc-tags {
+  .fd-doc-toc-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     margin-top: {{ section.settings.tag_margin_top }}px;
     margin-bottom: 2px;
-    pointer-events: none; 
+    pointer-events: none;
   }
-  .toc-level-h3 .koto-doc-toc-tags { padding-left: 20px; }
+  .toc-level-h3 .fd-doc-toc-tags { padding-left: 20px; }
 
-  .koto-toc-tag {
+  .fd-toc-tag {
     background-color: color-mix(in srgb, {{ section.settings.tag_bg_color }} {{ section.settings.tag_bg_opacity }}%, transparent);
     color: {{ section.settings.tag_text_color }};
     font-size: {{ section.settings.tag_font_size }}px;
@@ -219,18 +219,18 @@
     transition: opacity 0.3s ease;
   }
 
-  .koto-back-btn-wrapper {
+  .fd-back-btn-wrapper {
     margin-bottom: {{ section.settings.back_btn_margin_bottom }}px;
     display: flex;
     align-items: center;
   }
-  .koto-back-btn:hover { opacity: 0.8; }
-  .koto-back-icon { height: 1.2em; width: auto; object-fit: contain; display: block; }
+  .fd-back-btn:hover { opacity: 0.8; }
+  .fd-back-icon { height: 1.2em; width: auto; object-fit: contain; display: block; }
 
   /* =========================================
      6. 右侧内容区
      ========================================= */
-  .koto-block-card {
+  .fd-block-card {
     position: relative;
     border-radius: {{ section.settings.card_radius }}px;
     overflow: hidden;
@@ -239,77 +239,77 @@
     box-sizing: border-box !important;
     margin-top: 0 !important;
   }
-  .koto-block-card:last-child { margin-bottom: 0; }
+  .fd-block-card:last-child { margin-bottom: 0; }
 
-  .koto-grid-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-  .koto-grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+  .fd-grid-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+  .fd-grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
 
-  .koto-media-wrap { width: 100%; border-radius: {{ section.settings.media_radius }}px; overflow: hidden; line-height: 0; }
-  .koto-media-wrap video, .koto-media-wrap img { width: 100%; height: auto; display: block; object-fit: cover; }
+  .fd-media-wrap { width: 100%; border-radius: {{ section.settings.media_radius }}px; overflow: hidden; line-height: 0; }
+  .fd-media-wrap video, .fd-media-wrap img { width: 100%; height: auto; display: block; object-fit: cover; }
 
-  .koto-square-media { width: 100%; aspect-ratio: 1 / 1; border-radius: {{ section.settings.media_radius }}px; overflow: hidden; margin-left: auto; margin-right: auto; }
-  .koto-square-media img { width: 100%; height: 100%; object-fit: cover; }
+  .fd-square-media { width: 100%; aspect-ratio: 1 / 1; border-radius: {{ section.settings.media_radius }}px; overflow: hidden; margin-left: auto; margin-right: auto; }
+  .fd-square-media img { width: 100%; height: 100%; object-fit: cover; }
 
-  .koto-bg-card-item { position: relative; display: block; overflow: hidden; border-radius: {{ section.settings.media_radius }}px; }
-  .koto-abs-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
-  .koto-abs-bg img { width: 100%; height: 100%; object-fit: cover; }
-  .koto-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1; }
+  .fd-bg-card-item { position: relative; display: block; overflow: hidden; border-radius: {{ section.settings.media_radius }}px; }
+  .fd-abs-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+  .fd-abs-bg img { width: 100%; height: 100%; object-fit: cover; }
+  .fd-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1; }
 
-  .koto-inner-content { 
+  .fd-inner-content {
     position: absolute;
-    top: 0; left: 0; 
-    width: 100%; 
-    height: 100%; 
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 2;
-    display: flex; 
-    flex-direction: column; 
-    justify-content: space-between; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     box-sizing: border-box;
   }
 
   /* =========================================
      🌟 7. 左文右图贴边滑动卡片专属 CSS
      ========================================= */
-  .koto-slider-bleed-wrapper {
+  .fd-slider-bleed-wrapper {
     display: flex;
     align-items: stretch;
     width: 100%;
     overflow: hidden;
   }
-  .koto-slider-text-area {
+  .fd-slider-text-area {
     flex: 1;
     display: flex;
     flex-direction: column;
     position: relative;
     box-sizing: border-box;
   }
-  .koto-slider-text-slides {
+  .fd-slider-text-slides {
     position: relative;
     flex: 1;
   }
-  .koto-slide-text-item {
+  .fd-slide-text-item {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; 
+    justify-content: space-between;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.5s ease;
   }
-  .koto-slide-text-item.is-active {
+  .fd-slide-text-item.is-active {
     opacity: 1;
     pointer-events: auto;
     z-index: 2;
   }
-  .koto-slider-controls {
+  .fd-slider-controls {
     display: flex;
     gap: 12px;
     margin-top: 30px;
     z-index: 10;
   }
-  .koto-slider-btn {
+  .fd-slider-btn {
     border-radius: 50%;
     border: 1px solid currentColor;
     display: flex; align-items: center; justify-content: center;
@@ -318,54 +318,54 @@
     transition: all 0.3s ease;
     overflow: hidden;
   }
-  .koto-slider-btn:hover {
+  .fd-slider-btn:hover {
     opacity: 1;
     transform: scale(1.05);
   }
-  .koto-slider-image-area {
+  .fd-slider-image-area {
     flex-shrink: 0;
     position: relative;
   }
-  .koto-slide-img-item {
+  .fd-slide-img-item {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
     opacity: 0;
     transition: opacity 0.5s ease;
   }
-  .koto-slide-img-item.is-active {
+  .fd-slide-img-item.is-active {
     opacity: 1;
     z-index: 2;
   }
-  .koto-slide-img-item img {
+  .fd-slide-img-item img {
     width: 100%; height: 100%;
     object-fit: cover;
     display: block;
   }
 
   @media screen and (max-width: 990px) {
-    .koto-master-wrapper-{{ section.id }} { padding-left: 20px !important; padding-right: 20px !important; }
-    .koto-doc-layout-{{ section.id }} { grid-template-columns: 1fr; }
-    .koto-grid-3col, .koto-grid-2col { grid-template-columns: 1fr !important; }
-    .koto-doc-sidebar { position: relative; top: 0 !important; margin-bottom: 40px !important; }
-    .koto-square-media { width: 100% !important; max-width: 100% !important; }
-    
-    .koto-slider-bleed-wrapper { flex-direction: column-reverse; }
-    .koto-slider-image-area { width: 100% !important; min-height: 300px; }
-    .koto-slide-text-item { position: relative; height: auto; display: none; gap: 20px; }
-    .koto-slide-text-item.is-active { display: flex; }
-    .koto-slider-controls { margin-top: 20px; }
+    .fd-master-wrapper-{{ section.id }} { padding-left: 20px !important; padding-right: 20px !important; }
+    .fd-doc-layout-{{ section.id }} { grid-template-columns: 1fr; }
+    .fd-grid-3col, .fd-grid-2col { grid-template-columns: 1fr !important; }
+    .fd-doc-sidebar { position: relative; top: 0 !important; margin-bottom: 40px !important; }
+    .fd-square-media { width: 100% !important; max-width: 100% !important; }
+
+    .fd-slider-bleed-wrapper { flex-direction: column-reverse; }
+    .fd-slider-image-area { width: 100% !important; min-height: 300px; }
+    .fd-slide-text-item { position: relative; height: auto; display: none; gap: 20px; }
+    .fd-slide-text-item.is-active { display: flex; }
+    .fd-slider-controls { margin-top: 20px; }
   }
 {%- endstyle -%}
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 
-<div id="koto-master-wrapper-{{ section.id }}" class="koto-master-wrapper-{{ section.id }} color-{{ section.settings.color_scheme }}" lang="zh">
-  
-  {% comment %} 在这里加了 koto-reveal-after-wave 控制内容延迟浮现 {% endcomment %}
-  <div class="koto-doc-layout-{{ section.id }} koto-reveal-after-wave">
+<div id="fd-master-wrapper-{{ section.id }}" class="fd-master-wrapper-{{ section.id }} color-{{ section.settings.color_scheme }}" lang="zh">
 
-    <aside class="koto-doc-sidebar">
+  {% comment %} 在这里加了 fd-reveal-after-wave 控制内容延迟浮现 {% endcomment %}
+  <div class="fd-doc-layout-{{ section.id }} fd-reveal-after-wave">
+
+    <aside class="fd-doc-sidebar">
       {%- if section.settings.sidebar_title != blank -%}
         <h1 class="sidebar-title-{{ section.id }}">{{ section.settings.sidebar_title }}</h1>
       {%- endif -%}
@@ -376,22 +376,22 @@
         </div>
       {%- endif -%}
 
-      <ul class="koto-doc-toc">
+      <ul class="fd-doc-toc">
         {%- for block in section.blocks -%}
           {%- if block.settings.title != blank or block.settings.toc_label != blank or block.settings.main_title != blank -%}
             {%- assign label = block.settings.toc_label | default: block.settings.title | default: block.settings.main_title -%}
-            <li class="koto-toc-item toc-level-{{ block.settings.heading_level }}">
-              <a href="#block-{{ block.id }}" class="koto-doc-toc-link js-toc-link">{{ label }}</a>
+            <li class="fd-toc-item toc-level-{{ block.settings.heading_level }}">
+              <a href="#block-{{ block.id }}" class="fd-doc-toc-link js-toc-link">{{ label }}</a>
 
               {%- if block.settings.toc_desc != blank -%}
-                <div class="koto-doc-toc-desc">{{ block.settings.toc_desc }}</div>
+                <div class="fd-doc-toc-desc">{{ block.settings.toc_desc }}</div>
               {%- endif -%}
 
               {%- if block.settings.tag_1 != blank or block.settings.tag_2 != blank or block.settings.tag_3 != blank -%}
-                <div class="koto-doc-toc-tags">
-                  {%- if block.settings.tag_1 != blank -%}<span class="koto-toc-tag">{{ block.settings.tag_1 }}</span>{%- endif -%}
-                  {%- if block.settings.tag_2 != blank -%}<span class="koto-toc-tag">{{ block.settings.tag_2 }}</span>{%- endif -%}
-                  {%- if block.settings.tag_3 != blank -%}<span class="koto-toc-tag">{{ block.settings.tag_3 }}</span>{%- endif -%}
+                <div class="fd-doc-toc-tags">
+                  {%- if block.settings.tag_1 != blank -%}<span class="fd-toc-tag">{{ block.settings.tag_1 }}</span>{%- endif -%}
+                  {%- if block.settings.tag_2 != blank -%}<span class="fd-toc-tag">{{ block.settings.tag_2 }}</span>{%- endif -%}
+                  {%- if block.settings.tag_3 != blank -%}<span class="fd-toc-tag">{{ block.settings.tag_3 }}</span>{%- endif -%}
                 </div>
               {%- endif -%}
 
@@ -401,13 +401,13 @@
       </ul>
     </aside>
 
-    <main class="koto-doc-main">
+    <main class="fd-doc-main">
 
       {%- if section.settings.show_back_btn -%}
-        <div class="koto-back-btn-wrapper">
-          <a href="{{ section.settings.back_btn_link | default: '#' }}" class="koto-toc-tag koto-back-btn">
+        <div class="fd-back-btn-wrapper">
+          <a href="{{ section.settings.back_btn_link | default: '#' }}" class="fd-toc-tag fd-back-btn">
             {%- if section.settings.back_btn_icon != blank -%}
-              <img src="{{ section.settings.back_btn_icon | image_url: width: 60 }}" alt="Back" class="koto-back-icon" loading="lazy">
+              <img src="{{ section.settings.back_btn_icon | image_url: width: 60 }}" alt="Back" class="fd-back-icon" loading="lazy">
             {%- endif -%}
             {%- if section.settings.back_btn_text != blank -%}
               <span>{{ section.settings.back_btn_text }}</span>
@@ -416,43 +416,43 @@
         </div>
       {%- endif -%}
 
-      <div class="koto-doc-content-shell">
+      <div class="fd-doc-content-shell">
         {%- for block in section.blocks -%}
-          
+
           {%- if block.type == 'slider_bleed_box' -%}
             <style>
               #block-{{ block.id }} {
-                padding: 0 !important; 
-                border-radius: {{ block.settings.box_radius }}px !important; 
+                padding: 0 !important;
+                border-radius: {{ block.settings.box_radius }}px !important;
               }
             </style>
           {%- endif -%}
 
-          <div id="block-{{ block.id }}" 
-               class="koto-block-card js-scroll-section" 
+          <div id="block-{{ block.id }}"
+               class="fd-block-card js-scroll-section"
                style="background-color: {{ block.settings.box_bg_color }}; {% if block.type != 'slider_bleed_box' %}padding: {{ block.settings.box_padding_top }}px {{ block.settings.box_padding_right }}px {{ block.settings.box_padding_bottom }}px {{ block.settings.box_padding_left }}px;{% endif %}"
                {{ block.shopify_attributes }}>
 
             {%- case block.type -%}
 
               {%- when 'slider_bleed_box' -%}
-                <div class="koto-slider-bleed-wrapper js-koto-slider" style="min-height: {{ block.settings.card_height }}px;">
-                  <div class="koto-slider-text-area" style="padding-top: {{ block.settings.box_padding_top }}px; padding-bottom: {{ block.settings.box_padding_bottom }}px; padding-left: {{ block.settings.box_padding_left }}px; padding-right: {{ block.settings.content_gap }}px;">
-                    
-                    <div class="koto-slider-text-slides">
+                <div class="fd-slider-bleed-wrapper js-fd-slider" style="min-height: {{ block.settings.card_height }}px;">
+                  <div class="fd-slider-text-area" style="padding-top: {{ block.settings.box_padding_top }}px; padding-bottom: {{ block.settings.box_padding_bottom }}px; padding-left: {{ block.settings.box_padding_left }}px; padding-right: {{ block.settings.content_gap }}px;">
+
+                    <div class="fd-slider-text-slides">
                       {%- assign slide_count = 0 -%}
                       {%- for i in (1..5) -%}
                         {%- capture img_key -%}image_{{ i }}{%- endcapture -%}
                         {%- capture t_key -%}title_{{ i }}{%- endcapture -%}
                         {%- capture p_key -%}text_{{ i }}{%- endcapture -%}
- 
+
                         {%- if block.settings[img_key] != blank or block.settings[t_key] != blank -%}
-                          <div class="koto-slide-text-item js-slide-text {% if slide_count == 0 %}is-active{% endif %}" data-has-content="true">
-                            <div class="koto-bleed-title">
-                              <h2 class="koto-doc-heading" style="margin: 0; color: {{ block.settings.title_color }}; font-size: {{ block.settings.title_size }}px; font-weight: {{ block.settings.title_weight }}; line-height: {{ block.settings.title_lh }};">{{ block.settings[t_key] }}</h2>
+                          <div class="fd-slide-text-item js-slide-text {% if slide_count == 0 %}is-active{% endif %}" data-has-content="true">
+                            <div class="fd-bleed-title">
+                              <h2 class="fd-doc-heading" style="margin: 0; color: {{ block.settings.title_color }}; font-size: {{ block.settings.title_size }}px; font-weight: {{ block.settings.title_weight }}; line-height: {{ block.settings.title_lh }};">{{ block.settings[t_key] }}</h2>
                             </div>
-                            <div class="koto-bleed-desc">
-                              <div class="koto-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; opacity: 0.9;">{{ block.settings[p_key] }}</div>
+                            <div class="fd-bleed-desc">
+                              <div class="fd-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; opacity: 0.9;">{{ block.settings[p_key] }}</div>
                             </div>
                           </div>
                           {%- assign slide_count = slide_count | plus: 1 -%}
@@ -460,15 +460,15 @@
                       {%- endfor -%}
                     </div>
 
-                    <div class="koto-slider-controls" style="color: {{ block.settings.title_color }};">
-                      <div class="koto-slider-btn js-prev" style="width: {{ block.settings.btn_size }}px; height: {{ block.settings.btn_size }}px; {% if block.settings.prev_btn_icon != blank %}border: none;{% endif %}">
+                    <div class="fd-slider-controls" style="color: {{ block.settings.title_color }};">
+                      <div class="fd-slider-btn js-prev" style="width: {{ block.settings.btn_size }}px; height: {{ block.settings.btn_size }}px; {% if block.settings.prev_btn_icon != blank %}border: none;{% endif %}">
                         {%- if block.settings.prev_btn_icon != blank -%}
                           <img src="{{ block.settings.prev_btn_icon | image_url: width: 100 }}" style="width: 100%; height: 100%; object-fit: contain;" alt="Prev">
                         {%- else -%}
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 40%; height: 40%;"><path d="M15 18l-6-6 6-6"/></svg>
                         {%- endif -%}
                       </div>
-                      <div class="koto-slider-btn js-next" style="width: {{ block.settings.btn_size }}px; height: {{ block.settings.btn_size }}px; {% if block.settings.next_btn_icon != blank %}border: none;{% endif %}">
+                      <div class="fd-slider-btn js-next" style="width: {{ block.settings.btn_size }}px; height: {{ block.settings.btn_size }}px; {% if block.settings.next_btn_icon != blank %}border: none;{% endif %}">
                         {%- if block.settings.next_btn_icon != blank -%}
                           <img src="{{ block.settings.next_btn_icon | image_url: width: 100 }}" style="width: 100%; height: 100%; object-fit: contain;" alt="Next">
                         {%- else -%}
@@ -478,13 +478,13 @@
                     </div>
                   </div>
 
-                  <div class="koto-slider-image-area" style="width: {{ block.settings.image_width }}%;">
+                  <div class="fd-slider-image-area" style="width: {{ block.settings.image_width }}%;">
                     {%- assign slide_count_img = 0 -%}
                     {%- for i in (1..5) -%}
                       {%- capture img_key -%}image_{{ i }}{%- endcapture -%}
                       {%- capture t_key -%}title_{{ i }}{%- endcapture -%}
                       {%- if block.settings[img_key] != blank or block.settings[t_key] != blank -%}
-                        <div class="koto-slide-img-item js-slide-img {% if slide_count_img == 0 %}is-active{% endif %}">
+                        <div class="fd-slide-img-item js-slide-img {% if slide_count_img == 0 %}is-active{% endif %}">
                            {%- if block.settings[img_key] != blank -%}
                             {{ block.settings[img_key] | image_url: width: 1400 | image_tag: loading: 'lazy' }}
                           {%- endif -%}
@@ -497,7 +497,7 @@
                 </div>
 
               {%- when 'content_unit' -%}
-                <div class="koto-media-wrap" style="margin-bottom: {{ block.settings.media_bottom_margin }}px;">
+                <div class="fd-media-wrap" style="margin-bottom: {{ block.settings.media_bottom_margin }}px;">
                   {%- if block.settings.video != blank -%}
                     {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
                   {%- elsif block.settings.image != blank -%}
@@ -505,32 +505,32 @@
                   {%- endif -%}
                 </div>
                 {%- if block.settings.title != blank -%}
-                  <h2 class="koto-doc-heading" style="margin: 0 0 {{ block.settings.title_bottom_margin }}px 0; color: {{ block.settings.title_color }}; font-size: {{ block.settings.title_size }}px; font-weight: {{ block.settings.title_weight }}; line-height: {{ block.settings.title_lh }}; text-align: {{ block.settings.text_alignment }} !important;">
+                  <h2 class="fd-doc-heading" style="margin: 0 0 {{ block.settings.title_bottom_margin }}px 0; color: {{ block.settings.title_color }}; font-size: {{ block.settings.title_size }}px; font-weight: {{ block.settings.title_weight }}; line-height: {{ block.settings.title_lh }}; text-align: {{ block.settings.text_alignment }} !important;">
                     {{ block.settings.title }}
                   </h2>
                 {%- endif -%}
-                <div class="koto-grid-3col" style="gap: {{ block.settings.col_gap }}px;">
-                  <div class="koto-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important; opacity: 0.9;">{{ block.settings.content }}</div>
-                  <div class="koto-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important; opacity: 0.9;">{{ block.settings.col_2_text }}</div>
-                  <div class="koto-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important; opacity: 0.9;">{{ block.settings.col_3_text }}</div>
+                <div class="fd-grid-3col" style="gap: {{ block.settings.col_gap }}px;">
+                  <div class="fd-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important; opacity: 0.9;">{{ block.settings.content }}</div>
+                  <div class="fd-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important; opacity: 0.9;">{{ block.settings.col_2_text }}</div>
+                  <div class="fd-optimize-text" style="color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important; opacity: 0.9;">{{ block.settings.col_3_text }}</div>
                 </div>
 
               {%- when 'triple_bg_image_box' -%}
-                <div class="koto-grid-3col" style="gap: {{ block.settings.image_gap }}px;">
+                <div class="fd-grid-3col" style="gap: {{ block.settings.image_gap }}px;">
                   {%- for i in (1..3) -%}
                     {%- capture img_key -%}image_{{ i }}{%- endcapture -%}
                     {%- capture t_key -%}title_{{ i }}{%- endcapture -%}
                     {%- capture p_key -%}text_{{ i }}{%- endcapture -%}
-                    <div class="koto-bg-card-item" style="min-height: {{ block.settings.card_height }}px; color: {{ block.settings.card_text_color }};">
+                    <div class="fd-bg-card-item" style="min-height: {{ block.settings.card_height }}px; color: {{ block.settings.card_text_color }};">
                       {%- if block.settings[img_key] != blank -%}
-                        <div class="koto-abs-bg">{{ block.settings[img_key] | image_url: width: 800 | image_tag: loading: 'lazy' }}</div>
+                        <div class="fd-abs-bg">{{ block.settings[img_key] | image_url: width: 800 | image_tag: loading: 'lazy' }}</div>
                       {%- endif -%}
-                      <div class="koto-overlay" style="opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};"></div>
-                      <div class="koto-inner-content" style="padding: {{ block.settings.card_inner_padding }}px;">
-                        <h3 class="koto-grid-title" style="color: inherit; font-size: {{ block.settings.card_title_size }}px; font-weight: {{ block.settings.card_title_weight }}; margin: 0; text-align: {{ block.settings.text_alignment }} !important;">
+                      <div class="fd-overlay" style="opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+                      <div class="fd-inner-content" style="padding: {{ block.settings.card_inner_padding }}px;">
+                        <h3 class="fd-grid-title" style="color: inherit; font-size: {{ block.settings.card_title_size }}px; font-weight: {{ block.settings.card_title_weight }}; margin: 0; text-align: {{ block.settings.text_alignment }} !important;">
                           {{ block.settings[t_key] }}
                         </h3>
-                        <div class="koto-optimize-text" style="color: inherit; font-size: {{ block.settings.card_desc_size }}px; opacity: 0.9; margin: 0; text-align: {{ block.settings.text_alignment }} !important;">
+                        <div class="fd-optimize-text" style="color: inherit; font-size: {{ block.settings.card_desc_size }}px; opacity: 0.9; margin: 0; text-align: {{ block.settings.text_alignment }} !important;">
                           {{ block.settings[p_key] }}
                         </div>
                       </div>
@@ -546,20 +546,20 @@
                   {%- assign img_margin = 'margin-left: auto; margin-right: 0;' -%}
                 {%- endif -%}
 
-                <div class="koto-grid-2col" style="gap: {{ block.settings.grid_gap }}px;">
+                <div class="fd-grid-2col" style="gap: {{ block.settings.grid_gap }}px;">
                   {%- for i in (1..6) -%}
                     {%- capture img_key -%}image_{{ i }}{%- endcapture -%}
                     {%- capture t_key -%}title_{{ i }}{%- endcapture -%}
                     {%- capture p_key -%}text_{{ i }}{%- endcapture -%}
                     {%- if block.settings[img_key] != blank -%}
-                      <div class="koto-grid-unit">
-                        <div class="koto-square-media" style="margin-bottom: {{ block.settings.media_bottom_margin }}px; width: {{ block.settings.img_size }}px; max-width: 100%; {{ img_margin }}">
+                      <div class="fd-grid-unit">
+                        <div class="fd-square-media" style="margin-bottom: {{ block.settings.media_bottom_margin }}px; width: {{ block.settings.img_size }}px; max-width: 100%; {{ img_margin }}">
                           {{ block.settings[img_key] | image_url: width: 800 | image_tag: loading: 'lazy' }}
                         </div>
-                        <h3 class="koto-grid-title" style="margin: 0 0 {{ block.settings.title_bottom_margin }}px 0; color: {{ block.settings.title_color }}; font-size: {{ block.settings.title_size }}px; font-weight: {{ block.settings.title_weight }}; line-height: {{ block.settings.title_lh }}; text-align: {{ block.settings.text_alignment }} !important;">
+                        <h3 class="fd-grid-title" style="margin: 0 0 {{ block.settings.title_bottom_margin }}px 0; color: {{ block.settings.title_color }}; font-size: {{ block.settings.title_size }}px; font-weight: {{ block.settings.title_weight }}; line-height: {{ block.settings.title_lh }}; text-align: {{ block.settings.text_alignment }} !important;">
                           {{ block.settings[t_key] }}
                         </h3>
-                        <div class="koto-grid-text" style="margin: 0; color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important;">
+                        <div class="fd-grid-text" style="margin: 0; color: {{ block.settings.desc_color }}; font-size: {{ block.settings.desc_size }}px; font-weight: {{ block.settings.desc_weight }}; line-height: {{ block.settings.desc_lh }}; text-align: {{ block.settings.text_alignment }} !important;">
                           {{ block.settings[p_key] }}
                         </div>
                       </div>
@@ -568,12 +568,12 @@
                 </div>
 
               {%- when 'split_content_box' -%}
-                <div class="koto-grid-2col" style="align-items: center; gap: {{ block.settings.content_gap }}px;">
+                <div class="fd-grid-2col" style="align-items: center; gap: {{ block.settings.content_gap }}px;">
                   <div>
-                    <h2 class="koto-doc-heading" style="font-size: {{ block.settings.title_size }}px; margin-bottom: 15px;">{{ block.settings.title }}</h2>
-                    <div class="koto-optimize-text" style="font-size: 15px; line-height: 1.7;">{{ block.settings.content }}</div>
+                    <h2 class="fd-doc-heading" style="font-size: {{ block.settings.title_size }}px; margin-bottom: 15px;">{{ block.settings.title }}</h2>
+                    <div class="fd-optimize-text" style="font-size: 15px; line-height: 1.7;">{{ block.settings.content }}</div>
                   </div>
-                  <div class="koto-media-wrap" style="margin-bottom: 0;">
+                  <div class="fd-media-wrap" style="margin-bottom: 0;">
                     {%- if block.settings.image != blank -%}
                       {{ block.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy' }}
                     {%- endif -%}
@@ -581,7 +581,7 @@
                 </div>
 
               {%- when 'media_hero_2col' -%}
-                <div class="koto-media-wrap" style="margin-bottom: {{ block.settings.media_bottom_margin }}px;">
+                <div class="fd-media-wrap" style="margin-bottom: {{ block.settings.media_bottom_margin }}px;">
                   {%- if block.settings.video != blank -%}
                     {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
                   {%- elsif block.settings.image != blank -%}
@@ -591,25 +591,25 @@
 
                 <div style="margin-bottom: {{ block.settings.main_text_bottom_margin }}px;">
                   {%- if block.settings.main_title != blank -%}
-                    <h2 class="koto-doc-heading" style="margin: 0 0 15px 0; color: {{ block.settings.main_title_color }}; font-size: {{ block.settings.main_title_size }}px; font-weight: {{ block.settings.main_title_weight }}; line-height: {{ block.settings.main_title_lh }};">{{ block.settings.main_title }}</h2>
+                    <h2 class="fd-doc-heading" style="margin: 0 0 15px 0; color: {{ block.settings.main_title_color }}; font-size: {{ block.settings.main_title_size }}px; font-weight: {{ block.settings.main_title_weight }}; line-height: {{ block.settings.main_title_lh }};">{{ block.settings.main_title }}</h2>
                   {%- endif -%}
                   {%- if block.settings.main_desc != blank -%}
-                    <div class="koto-optimize-text" style="color: {{ block.settings.main_desc_color }}; font-size: {{ block.settings.main_desc_size }}px; font-weight: {{ block.settings.main_desc_weight }}; line-height: {{ block.settings.main_desc_lh }};">{{ block.settings.main_desc }}</div>
+                    <div class="fd-optimize-text" style="color: {{ block.settings.main_desc_color }}; font-size: {{ block.settings.main_desc_size }}px; font-weight: {{ block.settings.main_desc_weight }}; line-height: {{ block.settings.main_desc_lh }};">{{ block.settings.main_desc }}</div>
                   {%- endif -%}
                 </div>
 
-                <div class="koto-grid-2col" style="gap: {{ block.settings.col_gap }}px;">
+                <div class="fd-grid-2col" style="gap: {{ block.settings.col_gap }}px;">
                   <div>
                     {%- if block.settings.col_1_title != blank -%}
-                      <h3 class="koto-doc-heading" style="margin: 0 0 10px 0; color: {{ block.settings.col_title_color }}; font-size: {{ block.settings.col_title_size }}px; font-weight: {{ block.settings.col_title_weight }}; line-height: {{ block.settings.col_title_lh }};">{{ block.settings.col_1_title }}</h3>
+                      <h3 class="fd-doc-heading" style="margin: 0 0 10px 0; color: {{ block.settings.col_title_color }}; font-size: {{ block.settings.col_title_size }}px; font-weight: {{ block.settings.col_title_weight }}; line-height: {{ block.settings.col_title_lh }};">{{ block.settings.col_1_title }}</h3>
                     {%- endif -%}
-                    <div class="koto-optimize-text" style="color: {{ block.settings.col_desc_color }}; font-size: {{ block.settings.col_desc_size }}px; font-weight: {{ block.settings.col_desc_weight }}; line-height: {{ block.settings.col_desc_lh }};">{{ block.settings.col_1_desc }}</div>
+                    <div class="fd-optimize-text" style="color: {{ block.settings.col_desc_color }}; font-size: {{ block.settings.col_desc_size }}px; font-weight: {{ block.settings.col_desc_weight }}; line-height: {{ block.settings.col_desc_lh }};">{{ block.settings.col_1_desc }}</div>
                   </div>
                   <div>
                     {%- if block.settings.col_2_title != blank -%}
-                      <h3 class="koto-doc-heading" style="margin: 0 0 10px 0; color: {{ block.settings.col_title_color }}; font-size: {{ block.settings.col_title_size }}px; font-weight: {{ block.settings.col_title_weight }}; line-height: {{ block.settings.col_title_lh }};">{{ block.settings.col_2_title }}</h3>
+                      <h3 class="fd-doc-heading" style="margin: 0 0 10px 0; color: {{ block.settings.col_title_color }}; font-size: {{ block.settings.col_title_size }}px; font-weight: {{ block.settings.col_title_weight }}; line-height: {{ block.settings.col_title_lh }};">{{ block.settings.col_2_title }}</h3>
                     {%- endif -%}
-                    <div class="koto-optimize-text" style="color: {{ block.settings.col_desc_color }}; font-size: {{ block.settings.col_desc_size }}px; font-weight: {{ block.settings.col_desc_weight }}; line-height: {{ block.settings.col_desc_lh }};">{{ block.settings.col_2_desc }}</div>
+                    <div class="fd-optimize-text" style="color: {{ block.settings.col_desc_color }}; font-size: {{ block.settings.col_desc_size }}px; font-weight: {{ block.settings.col_desc_weight }}; line-height: {{ block.settings.col_desc_lh }};">{{ block.settings.col_2_desc }}</div>
                   </div>
                 </div>
 
@@ -623,15 +623,15 @@
 
 <script>
   (function() {
-    function initKotoVisionJS() {
-      const sectionWrapper = document.getElementById('koto-master-wrapper-{{ section.id }}');
+    function initFDVisionJS() {
+      const sectionWrapper = document.getElementById('fd-master-wrapper-{{ section.id }}');
       if (!sectionWrapper) return;
 
-      const tocItems = sectionWrapper.querySelectorAll('.koto-toc-item');
+      const tocItems = sectionWrapper.querySelectorAll('.fd-toc-item');
 
       tocItems.forEach(item => {
         item.addEventListener('click', function(e) {
-          e.preventDefault(); 
+          e.preventDefault();
           const link = this.querySelector('.js-toc-link');
           if (!link) return;
 
@@ -646,9 +646,9 @@
             const bodyRect = document.body.getBoundingClientRect().top;
             const elementRect = target.getBoundingClientRect().top;
             const offsetPosition = (elementRect - bodyRect) - offset;
-            window.scrollTo({ 
-              top: offsetPosition, 
-              behavior: 'smooth' 
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
             });
           }
         });
@@ -657,10 +657,10 @@
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            sectionWrapper.querySelectorAll('.koto-toc-item').forEach(li => li.classList.remove('is-active'));
+            sectionWrapper.querySelectorAll('.fd-toc-item').forEach(li => li.classList.remove('is-active'));
             const activeLink = sectionWrapper.querySelector(`.js-toc-link[href="#${entry.target.id}"]`);
             if (activeLink) {
-              const parentLi = activeLink.closest('.koto-toc-item');
+              const parentLi = activeLink.closest('.fd-toc-item');
               if (parentLi) parentLi.classList.add('is-active');
             }
           }
@@ -669,14 +669,14 @@
 
       sectionWrapper.querySelectorAll('.js-scroll-section').forEach(s => observer.observe(s));
 
-      const bleedSliders = sectionWrapper.querySelectorAll('.js-koto-slider');
+      const bleedSliders = sectionWrapper.querySelectorAll('.js-fd-slider');
       bleedSliders.forEach(slider => {
         const textSlides = slider.querySelectorAll('.js-slide-text');
         const imgSlides = slider.querySelectorAll('.js-slide-img');
         const prevBtn = slider.querySelector('.js-prev');
         const nextBtn = slider.querySelector('.js-next');
-        const controls = slider.querySelector('.koto-slider-controls');
-        
+        const controls = slider.querySelector('.fd-slider-controls');
+
         let validCount = 0;
         textSlides.forEach(s => { if(s.getAttribute('data-has-content') === 'true') validCount++; });
 
@@ -704,7 +704,7 @@
             updateBleedSlider();
           });
         }
-        
+
         if (nextBtn) {
           nextBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -716,15 +716,15 @@
     }
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initKotoVisionJS);
+      document.addEventListener('DOMContentLoaded', initFDVisionJS);
     } else {
-      initKotoVisionJS();
+      initFDVisionJS();
     }
 
     if (window.Shopify && window.Shopify.designMode) {
       document.addEventListener('shopify:section:load', function(e) {
         if (e.detail.sectionId === '{{ section.id }}') {
-          initKotoVisionJS();
+          initFDVisionJS();
         }
       });
     }
@@ -827,7 +827,7 @@
         { "type": "text", "id": "tag_2", "label": "标签 2" },
         { "type": "text", "id": "tag_3", "label": "标签 3" },
         { "type": "select", "id": "heading_level", "label": "层级", "options": [{"value":"h2","label":"主"},{"value":"h3","label":"次"}], "default": "h2" },
-        
+
         { "type": "header", "content": "--- 卡片与排版设定 ---" },
         { "type": "color", "id": "box_bg_color", "label": "背景色", "default": "#f4f4f4" },
         { "type": "range", "id": "card_height", "label": "卡片最小高度", "min": 300, "max": 800, "step": 10, "default": 450 },
@@ -835,10 +835,10 @@
         { "type": "range", "id": "box_padding_bottom", "label": "内下", "min": 0, "max": 100, "step": 2, "default": 60 },
         { "type": "range", "id": "box_padding_left", "label": "内左", "min": 0, "max": 100, "step": 2, "default": 60 },
         { "type": "range", "id": "box_radius", "label": "卡片独立圆角", "min": 0, "max": 100, "step": 2, "default": 16, "info": "覆盖此轮播卡片的边框圆角，右侧图片会完美适配裁切" },
-        
+
         { "type": "range", "id": "image_width", "label": "右侧图片宽度占比 (%)", "min": 30, "max": 80, "step": 1, "default": 50 },
         { "type": "range", "id": "content_gap", "label": "文字与图片间距", "min": 0, "max": 100, "step": 2, "default": 60 },
-        
+
         { "type": "header", "content": "--- 按钮自定义 ---" },
         { "type": "image_picker", "id": "prev_btn_icon", "label": "左滑按钮图片", "info": "如果不上传，将显示默认线框箭头" },
         { "type": "image_picker", "id": "next_btn_icon", "label": "右滑按钮图片" },
@@ -849,7 +849,7 @@
         { "type": "range", "id": "title_size", "label": "标题字号", "min": 16, "max": 60, "step": 1, "default": 32 },
         { "type": "select", "id": "title_weight", "label": "标题字重", "options": [{"value":"400","label":"常规"},{"value":"600","label":"半粗"},{"value":"800","label":"粗体"}], "default": "800" },
         { "type": "range", "id": "title_lh", "label": "标题行高", "min": 1.0, "max": 2.0, "step": 0.1, "default": 1.3 },
-        
+
         { "type": "color", "id": "desc_color", "label": "正文颜色", "default": "#555555" },
         { "type": "range", "id": "desc_size", "label": "正文字号", "min": 12, "max": 30, "step": 1, "default": 15 },
         { "type": "select", "id": "desc_weight", "label": "正文字重", "options": [{"value":"300","label":"细体"},{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "400" },
@@ -859,7 +859,7 @@
         { "type": "image_picker", "id": "image_1", "label": "右侧图片 1" },
         { "type": "text", "id": "title_1", "label": "左侧标题 1" },
         { "type": "richtext", "id": "text_1", "label": "左侧正文 1" },
-        
+
         { "type": "header", "content": "--- 轮播图 2 ---" },
         { "type": "image_picker", "id": "image_2", "label": "右侧图片 2" },
         { "type": "text", "id": "title_2", "label": "左侧标题 2" },
@@ -1050,7 +1050,7 @@
         { "type": "range", "id": "box_padding_bottom", "label": "内下距", "min": 0, "max": 100, "step": 2, "default": 40 },
         { "type": "range", "id": "box_padding_left", "label": "内左距", "min": 0, "max": 100, "step": 2, "default": 40 },
         { "type": "range", "id": "box_padding_right", "label": "内右距", "min": 0, "max": 100, "step": 2, "default": 40 },
-        
+
         { "type": "header", "content": "--- 间距控制 (Spacing) ---" },
         { "type": "range", "id": "media_bottom_margin", "label": "媒体与主文间距", "min": 0, "max": 100, "step": 2, "default": 40 },
         { "type": "range", "id": "main_text_bottom_margin", "label": "主文与双栏间距", "min": 0, "max": 100, "step": 2, "default": 40 },
@@ -1059,33 +1059,33 @@
         { "type": "header", "content": "--- 媒体 ---" },
         { "type": "image_picker", "id": "image", "label": "大图" },
         { "type": "video", "id": "video", "label": "视频" },
-        
+
         { "type": "header", "content": "--- 主标题排版 ---" },
         { "type": "text", "id": "main_title", "label": "大标题" },
         { "type": "color", "id": "main_title_color", "label": "主标题颜色", "default": "#000000" },
         { "type": "range", "id": "main_title_size", "label": "主标题字号", "min": 16, "max": 80, "step": 1, "default": 32 },
         { "type": "select", "id": "main_title_weight", "label": "主标题字重", "options": [{"value":"400","label":"常规"},{"value":"600","label":"半粗"},{"value":"800","label":"粗体"}], "default": "800" },
         { "type": "range", "id": "main_title_lh", "label": "主标题行高", "min": 1.0, "max": 2.0, "step": 0.1, "default": 1.3 },
-    
+
         { "type": "header", "content": "--- 主正文排版 ---" },
         { "type": "richtext", "id": "main_desc", "label": "主正文说明" },
         { "type": "color", "id": "main_desc_color", "label": "主正文颜色", "default": "#333333" },
         { "type": "range", "id": "main_desc_size", "label": "主正文字号", "min": 12, "max": 30, "step": 1, "default": 16 },
         { "type": "select", "id": "main_desc_weight", "label": "主正文字重", "options": [{"value":"300","label":"细体"},{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "400" },
         { "type": "range", "id": "main_desc_lh", "label": "主正文行高", "min": 1.0, "max": 2.5, "step": 0.1, "default": 1.7 },
-    
+
         { "type": "header", "content": "--- 双栏标题排版 ---" },
         { "type": "color", "id": "col_title_color", "label": "栏标题颜色", "default": "#000000" },
         { "type": "range", "id": "col_title_size", "label": "栏标题字号", "min": 14, "max": 40, "step": 1, "default": 20 },
         { "type": "select", "id": "col_title_weight", "label": "栏标题字重", "options": [{"value":"400","label":"常规"},{"value":"600","label":"半粗"},{"value":"800","label":"粗体"}], "default": "600" },
         { "type": "range", "id": "col_title_lh", "label": "栏标题行高", "min": 1.0, "max": 2.0, "step": 0.1, "default": 1.4 },
-    
+
         { "type": "header", "content": "--- 双栏正文排版 ---" },
         { "type": "color", "id": "col_desc_color", "label": "栏正文颜色", "default": "#555555" },
         { "type": "range", "id": "col_desc_size", "label": "栏正文字号", "min": 12, "max": 24, "step": 1, "default": 15 },
         { "type": "select", "id": "col_desc_weight", "label": "栏正文字重", "options": [{"value":"300","label":"细体"},{"value":"400","label":"常规"},{"value":"600","label":"加粗"}], "default": "400" },
         { "type": "range", "id": "col_desc_lh", "label": "栏正文行高", "min": 1.0, "max": 2.5, "step": 0.1, "default": 1.7 },
-        
+
         { "type": "header", "content": "--- 栏位内容 ---" },
         { "type": "text", "id": "col_1_title", "label": "栏1-标题" },
         { "type": "richtext", "id": "col_1_desc", "label": "栏1-正文" },
