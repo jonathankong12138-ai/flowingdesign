@@ -217,6 +217,10 @@
     gap: 16px;
   }
 
+  .custom-footer-{{ section.id }}:not(.is-rise-ready) .footer-bottom-row {
+    visibility: hidden;
+  }
+
   .footer-bottom-row.animate-up {
     transition: opacity 0.08s ease-out, transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
@@ -524,6 +528,8 @@
       } else {
         resetPreviousWorks();
       }
+
+      footerElement.classList.add('is-rise-ready');
     };
 
     window.addEventListener('scroll', syncFooterRise, { passive: true });
