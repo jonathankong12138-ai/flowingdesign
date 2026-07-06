@@ -1,0 +1,1007 @@
+{% comment %}
+  Reusable project detail page for non e-commerce-upgrade cases.
+  It intentionally reuses the e-commerce-upgrade visual framework, CSS and JS,
+  while templates/page.e-commerce-upgrade.json still points at sections/main-page.liquid unchanged.
+{% endcomment %}
+
+{% liquid
+  assign project_variant = template.suffix | default: page.handle
+
+  case project_variant
+    when 'flowin-design'
+      assign breadcrumb_title = "Flowin' Design"
+      assign stat_label_1 = '能力主线'
+      assign stat_value_1 = '4 Tracks'
+      assign stat_label_2 = '设计方法'
+      assign stat_value_2 = 'System'
+      assign stat_label_3 = '作品沉淀'
+      assign stat_value_3 = 'Portfolio'
+      assign next_project_title = 'Product Launch Visual'
+      assign project_hero_title = "Flowin' Design 作品集与方法系统"
+      assign hero_caption = '从视觉表达走向可复用的设计系统'
+      assign rail_1_title = '个人设计定位'
+      assign rail_1_body = 'Flowin Design 作为个人作品集入口，集中呈现产品上市视觉、整合营销设计、运营系统与官网体验升级等能力。'
+      assign rail_2_title = '能力结构'
+      assign rail_2_body = '以产品理解、用户洞察、视觉策略、跨渠道交付和复盘沉淀为核心，把单点视觉产出整理为可持续复用的方法系统。'
+      assign rail_3_title = '设计挑战'
+      assign rail_3_body = '作品集需要同时表达审美判断、业务理解、项目推进和系统化能力，而不是停留在图片陈列。'
+      assign rail_4_title = '方法路径'
+      assign rail_4_body = '通过统一的详情页框架，把不同项目归纳为背景、目标、策略、执行、成果和复盘六个层级。'
+      assign rail_5_title = '输出沉淀'
+      assign rail_5_body = '最终形成可被浏览、比较和复用的个人设计资产，让每个项目都服务于清晰的职业叙事。'
+      assign target_tab_1 = '产品视觉'
+      assign target_tab_2 = '/运营设计'
+      assign target_tab_3 = '/体验增长'
+      assign target_copy = '围绕商业目标建立视觉表达，把项目中的洞察、策略、执行和结果组织成可以被快速理解的作品集语言。'
+      assign challenge_intro = '个人作品集不只是结果展示，而是对设计判断、项目方法和业务价值的系统表达。'
+      assign friction_title_1 = '从项目结果／回到方法结构'
+      assign friction_copy_1 = '把不同类型项目拆解为统一的叙事骨架，让观看者能快速理解设计问题、约束条件和关键决策。'
+      assign friction_title_2 = '从视觉呈现／走向业务证明'
+      assign friction_copy_2 = '在作品中明确说明目标、渠道、协作和结果，让设计能力不只依赖审美感受。'
+      assign friction_title_3 = '从单点案例／沉淀长期资产'
+      assign friction_copy_3 = '通过统一模板和交互框架，把作品集变成持续更新的个人知识与项目系统。'
+      assign timeline_title = '定位梳理／内容归档／页面系统化'
+      assign timeline_date = '2026.07'
+      assign timeline_name = '作品集结构建设'
+      assign timeline_copy = '梳理个人设计能力主线，整合项目文案与视觉素材，并建立统一详情页框架。'
+      assign research_title = '作品叙事导入'
+      assign research_sub = '项目定位　设计挑战　方法路径　成果复盘　资产沉淀'
+      assign research_quote = '作品集的价值，不是展示做过什么，而是让别人理解你如何定义问题、组织资源并推动结果。'
+      assign org_title = '视觉/策略/／体验/增长'
+      assign org_sub = '用统一框架承接不同项目类型，形成稳定的个人设计表达系统'
+      assign workflow_title = '4条能力主线'
+      assign workflow_list = '产品上市视觉｜整合营销设计｜官网体验升级｜设计系统沉淀｜......'
+      assign user_title = '能力画像'
+      assign user_stat_label_1 = '项目类型'
+      assign user_stat_value_1 = '4'
+      assign user_stat_label_2 = '方法模块'
+      assign user_stat_value_2 = '6'
+      assign user_stat_label_3 = '核心页面'
+      assign user_stat_value_3 = '4'
+      assign user_stat_label_4 = '持续沉淀'
+      assign user_stat_value_4 = '2026'
+      assign persona_title = '系统型／视觉设计者'
+      assign persona_lede = '关注设计如何在产品、渠道、团队和增长目标之间建立连接。'
+      assign persona_name = 'Design System Builder'
+      assign persona_chip_1 = '能力: 视觉策略'
+      assign persona_chip_2 = '路径: 系统沉淀'
+      assign journey_tabs = '定位与入口|内容组织|项目证明|持续复盘'
+      assign journey_copy = '从首页入口进入后，用户需要快速理解设计者是谁、擅长什么、做过什么，以及这些项目背后的方法是否可迁移。\n\n核心策略：用统一作品详情框架承接差异化项目内容，让每个页面既有一致的浏览秩序，也保留项目自身的视觉气质。'
+      assign libs_title = '作品集系统'
+      assign libs_copy = '统一详情页框架让不同项目拥有一致的信息层级、视觉节奏和交互体验，降低维护成本，也让个人作品沉淀更接近长期产品。'
+
+    when 'product-launch-visual'
+      assign breadcrumb_title = 'Product Launch Visual'
+      assign stat_label_1 = '上市链路'
+      assign stat_value_1 = 'End-to-End'
+      assign stat_label_2 = '渠道素材'
+      assign stat_value_2 = 'Matrix'
+      assign stat_label_3 = '交付机制'
+      assign stat_value_3 = 'Reusable'
+      assign next_project_title = 'Integrated Marketing Design'
+      assign project_hero_title = 'Product Launch Visual System'
+      assign hero_caption = '从产品定位到上市视觉资产的系统化建设'
+      assign rail_1_title = '新品上市背景'
+      assign rail_1_body = '新品上市视觉不仅是 KV 或海报，而是把产品定位、用户洞察、卖点表达和渠道节奏转化成可执行素材系统。'
+      assign rail_2_title = '设计目标'
+      assign rail_2_body = '帮助用户快速理解产品价值，同时让官网、电商、零售、社媒、KOL 和本地化市场在统一策略下完成上市传播。'
+      assign rail_3_title = '核心挑战'
+      assign rail_3_body = '不同渠道对信息密度、视觉比例、转化入口和本地化表达有不同要求，需要在统一品牌叙事下保持灵活适配。'
+      assign rail_4_title = '策略路径'
+      assign rail_4_body = '从 Insight、Positioning、Visual Language 到 Asset Matrix 与 Launch Delivery，建立从策略到物料的完整链路。'
+      assign rail_5_title = '项目沉淀'
+      assign rail_5_body = '把上市过程中的视觉语言、素材规格、协作流程和复盘方法沉淀为后续新品可复用的设计资产。'
+      assign target_tab_1 = '产品定位'
+      assign target_tab_2 = '/视觉语言'
+      assign target_tab_3 = '/素材矩阵'
+      assign target_copy = '将新品卖点、用户场景与渠道需求转译成统一视觉系统，减少重复沟通并提升上市期交付效率。'
+      assign challenge_intro = '新品上市通常面临节奏快、渠道多、需求碎片化的问题，设计需要在策略统一和快速适配之间取得平衡。'
+      assign friction_title_1 = '产品卖点／需要快速被理解'
+      assign friction_copy_1 = '把复杂功能和体验优势转化为可视化语言，让用户在短时间内建立对新品价值的判断。'
+      assign friction_title_2 = '多渠道素材／需要统一又可变'
+      assign friction_copy_2 = '官网、电商、社媒和线下零售拥有不同规格与转化目标，需要建立统一母版和可扩展模板。'
+      assign friction_title_3 = '上市节奏／需要跨团队协同'
+      assign friction_copy_3 = '设计需连接产品、市场、内容、渠道和本地化团队，确保信息一致、版本可控、交付可追踪。'
+      assign timeline_title = '洞察输入／视觉策略／上市交付'
+      assign timeline_date = 'Launch'
+      assign timeline_name = '新品视觉系统建设'
+      assign timeline_copy = '从产品定位与用户场景出发，建立核心视觉语言与多渠道素材矩阵，并配合上市节奏完成交付。'
+      assign research_title = '上市设计流程'
+      assign research_sub = 'Insight　Positioning　Visual Language　Asset Matrix　Launch Delivery'
+      assign research_quote = '新品上市视觉的关键不是做一张大图，而是让产品价值在每一个触点都被一致、快速、准确地理解。'
+      assign org_title = '官网/电商/／零售/社媒'
+      assign org_sub = '围绕统一上市策略建立不同渠道的视觉资产与交付规范'
+      assign workflow_title = '多渠道素材矩阵'
+      assign workflow_list = '官网首屏与购买页｜Amazon / 电商素材｜线下零售 POP｜社媒与 KOL 内容｜EDM 与本地化版本｜......'
+      assign user_title = '上市资产'
+      assign user_stat_label_1 = '渠道覆盖'
+      assign user_stat_value_1 = '6+'
+      assign user_stat_label_2 = '交付周期'
+      assign user_stat_value_2 = '2W'
+      assign user_stat_label_3 = '核心素材效率'
+      assign user_stat_value_3 = '+50%'
+      assign user_stat_label_4 = '方法复用'
+      assign user_stat_value_4 = 'Yes'
+      assign persona_title = '快速判断型／新品用户'
+      assign persona_lede = '用户需要在短时间内理解新品差异、使用场景和购买理由。'
+      assign persona_name = 'Launch Decision Maker'
+      assign persona_chip_1 = '场景: 新品首发'
+      assign persona_chip_2 = '目标: 快速理解价值'
+      assign journey_tabs = '认知吸引|卖点理解|渠道承接|转化行动'
+      assign journey_copy = '用户从广告、社媒、官网或电商入口接触新品，需要连续看到一致的产品主张、清晰的功能利益和可信的购买理由。\n\n核心策略：先建立统一视觉母版，再根据不同渠道的信息密度和转化目标进行适配。'
+      assign libs_title = '上市视觉资产库'
+      assign libs_copy = '通过 KV、卖点模块、人物场景、产品渲染、渠道模板和本地化规范，把新品上市从一次性设计变成可管理的素材系统。'
+
+    else
+      assign breadcrumb_title = 'Integrated Marketing Design'
+      assign stat_label_1 = '运营触点'
+      assign stat_value_1 = 'Multi-channel'
+      assign stat_label_2 = '设计系统'
+      assign stat_value_2 = 'Campaign Kit'
+      assign stat_label_3 = '复用机制'
+      assign stat_value_3 = 'Scale'
+      assign next_project_title = 'E-commerce Upgrade'
+      assign project_hero_title = 'Integrated Marketing Design System'
+      assign hero_caption = '从活动策略到规模化交付的运营视觉系统'
+      assign rail_1_title = '运营设计背景'
+      assign rail_1_body = '运营设计不只服务单次活动，而是围绕大促、节点营销、上市、日常转化和渠道协作建立长期可复用的视觉系统。'
+      assign rail_2_title = '设计目标'
+      assign rail_2_body = '将用户旅程、活动机制、促销信息、品牌视觉和渠道规格统一起来，让复杂运营需求能快速落地。'
+      assign rail_3_title = '核心挑战'
+      assign rail_3_body = '运营场景变化快、触点多、版本多，设计需要在品牌一致性、信息效率和交付速度之间保持稳定。'
+      assign rail_4_title = '策略路径'
+      assign rail_4_body = '以活动目标为起点，拆解用户路径和转化节点，建立主视觉、信息模块、素材矩阵和复盘机制。'
+      assign rail_5_title = '输出沉淀'
+      assign rail_5_body = '形成覆盖官网、Amazon、EDM、广告、社媒、DM、分销和独立店的运营素材系统。'
+      assign target_tab_1 = '活动策略'
+      assign target_tab_2 = '/素材矩阵'
+      assign target_tab_3 = '/规模交付'
+      assign target_copy = '把不同运营活动背后的共性抽象出来，建立可复用的视觉语言、信息模块和渠道交付规范。'
+      assign challenge_intro = '运营设计的难点不是单张图的表现，而是如何在高频变化中保持品牌一致、信息清晰和交付稳定。'
+      assign friction_title_1 = '活动需求／高频且碎片化'
+      assign friction_copy_1 = '大促、节点营销、广告投放和渠道活动经常并行发生，需要建立可快速组合的设计模块。'
+      assign friction_title_2 = '渠道规格／复杂且易失控'
+      assign friction_copy_2 = '不同触点拥有不同尺寸、语言、信息优先级和审核要求，需要以素材矩阵管理版本。'
+      assign friction_title_3 = '复盘机制／决定长期效率'
+      assign friction_copy_3 = '通过活动后复盘沉淀模板、组件和规则，让下一次运营设计不再从零开始。'
+      assign timeline_title = '活动目标／系统搭建／规模交付'
+      assign timeline_date = 'Campaign'
+      assign timeline_name = '运营视觉系统建设'
+      assign timeline_copy = '从活动策略和用户旅程出发，建立视觉母版、信息模块与渠道素材矩阵，支撑高频运营交付。'
+      assign research_title = '运营设计流程'
+      assign research_sub = 'Campaign Goal　User Journey　Creative System　Asset Matrix　Review'
+      assign research_quote = '成熟的运营设计系统，不是让每次活动看起来一样，而是让每次活动都能在统一规则下快速长出自己的表达。'
+      assign org_title = '官网/Amazon/／EDM/社媒'
+      assign org_sub = '用统一活动策略连接不同触点的视觉资产与转化任务'
+      assign workflow_title = '运营素材系统'
+      assign workflow_list = '官网活动页｜Amazon 店铺与素材｜EDM / 广告图｜社媒与 DM｜分销与本地化物料｜......'
+      assign user_title = '运营触点'
+      assign user_stat_label_1 = '渠道类型'
+      assign user_stat_value_1 = '8+'
+      assign user_stat_label_2 = '活动类型'
+      assign user_stat_value_2 = 'Multi'
+      assign user_stat_label_3 = '模板复用'
+      assign user_stat_value_3 = 'Scale'
+      assign user_stat_label_4 = '复盘沉淀'
+      assign user_stat_value_4 = 'Loop'
+      assign persona_title = '转化导向型／活动用户'
+      assign persona_lede = '用户在活动中需要快速识别利益点、比较优惠并完成行动。'
+      assign persona_name = 'Campaign Shopper'
+      assign persona_chip_1 = '场景: 活动促销'
+      assign persona_chip_2 = '目标: 快速决策'
+      assign journey_tabs = '活动认知|利益理解|商品选择|转化复盘'
+      assign journey_copy = '用户在大促、节点营销或日常运营入口中接触品牌，需要迅速理解活动主题、优惠机制和购买路径。\n\n核心策略：用清晰的信息层级与可复用素材矩阵，支撑多渠道快速上线和活动后复盘。'
+      assign libs_title = '运营视觉组件库'
+      assign libs_copy = '通过主视觉、促销标签、价格模块、商品卡、渠道模板和复盘规范，把运营设计从临时响应转化为可规模化管理的设计系统。'
+  endcase
+%}
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Urbanist:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+{{ "fd-project-detail.css" | asset_url | stylesheet_tag }}
+
+<style>
+  .template-project-detail--case .contact-form,
+  .template-project-detail--case .shopify-section:has(.contact-form) {
+    display: none !important;
+  }
+</style>
+
+<script>
+  window.projectDetailAssetMap = {
+    "电脑端素材/{{ research_title }}.webp": {{ "fd-project-detail-3c191f2ed4-asset.webp" | asset_url | json }},
+    "电脑端素材/项目总结 资产盘点 迭代机制.webp": {{ "fd-project-detail-f7f1814be6-asset.webp" | asset_url | json }},
+    "电脑端素材/用户访谈 核心页设计 数据监控.webp": {{ "fd-project-detail-1012bb5031-asset.webp" | asset_url | json }},
+    "电脑端素材/用户路径 工作流沉淀 团队搭建.webp": {{ "fd-project-detail-63a89cc180-asset.webp" | asset_url | json }},
+    "电脑端素材/用户研究.webp": {{ "fd-project-detail-5b0899d855-asset.webp" | asset_url | json }},
+    "构建流程/交互设计.svg": {{ "fd-project-detail-44586eb55f-asset.svg" | asset_url | json }},
+    "构建流程/视觉与组件.svg": {{ "fd-project-detail-dee9eb1567-asset.svg" | asset_url | json }},
+    "构建流程/数据复盘.svg": {{ "fd-project-detail-2b4685081c-asset.svg" | asset_url | json }},
+    "构建流程/需求分析.svg": {{ "fd-project-detail-6b86c2e424-asset.svg" | asset_url | json }},
+    "构建流程/验证与交付.svg": {{ "fd-project-detail-e4b720f766-asset.svg" | asset_url | json }},
+    "构建流程/用户研究.svg": {{ "fd-project-detail-030dcc63c2-asset.svg" | asset_url | json }},
+    "旅程素材/{{ journey_tabs | split: "|" | slice: 1, 1 | first }}1.webp": {{ "fd-project-detail-52c56caa31-1.webp" | asset_url | json }},
+    "旅程素材/{{ journey_tabs | split: "|" | slice: 2, 1 | first }}1.webp": {{ "fd-project-detail-ceab11fe9f-1.webp" | asset_url | json }},
+    "旅程素材/{{ journey_tabs | split: "|" | slice: 2, 1 | first }}2.webp": {{ "fd-project-detail-8b3ba1d8ce-2.webp" | asset_url | json }},
+    "旅程素材/{{ journey_tabs | split: "|" | first }}1.webp": {{ "fd-project-detail-c12fc344b0-1.webp" | asset_url | json }},
+    "旅程素材/{{ journey_tabs | split: "|" | first }}2.webp": {{ "fd-project-detail-d76cd55a15-2.webp" | asset_url | json }},
+    "旅程素材/{{ journey_tabs | split: "|" | slice: 3, 1 | first }}.webp": {{ "fd-project-detail-8951e82158-asset.webp" | asset_url | json }},
+    "目标用户/决策型 目标买家.webp": {{ "fd-project-detail-02f4052f30-asset.webp" | asset_url | json }},
+    "目标用户/认知型 评估探索者.webp": {{ "fd-project-detail-79b27e96b4-asset.webp" | asset_url | json }},
+    "目标用户/深度支持 特殊诉求者.webp": {{ "fd-project-detail-56d9d692fe-asset.webp" | asset_url | json }},
+    "素材/icon/箭头.svg": {{ "fd-project-detail-5f6a2c33a4-icon.svg" | asset_url | json }},
+    "页面浏览素材/1.webp": {{ "fd-project-detail-d7103c39e2-1.webp" | asset_url | json }},
+    "页面浏览素材/2.webp": {{ "fd-project-detail-763b111c0e-2.webp" | asset_url | json }},
+    "页面浏览素材/3.webp": {{ "fd-project-detail-637d0dbaf2-3.webp" | asset_url | json }},
+    "组件库轮播.png": {{ "fd-project-detail-dc6ece9570-asset.png" | asset_url | json }},
+    "组件库素材/北美弹窗-邮箱-Desktop.webp": {{ "fd-project-detail-96ee43dd3f-desktop.webp" | asset_url | json }},
+    "组件库素材/促销-产品卡-M-1.webp": {{ "fd-project-detail-687110c5fd-m-1.webp" | asset_url | json }},
+    "组件库素材/促销-产品卡-M.webp": {{ "fd-project-detail-131b530a7c-m.webp" | asset_url | json }},
+    "组件库素材/国际弹窗-Desktop.webp": {{ "fd-project-detail-3f69a9b444-desktop.webp" | asset_url | json }},
+    "组件库素材/首页-产品卡-M-1.webp": {{ "fd-project-detail-52334ff868-m-1.webp" | asset_url | json }},
+    "组件库素材/首页-产品卡-M.webp": {{ "fd-project-detail-40c61cf647-m.webp" | asset_url | json }},
+    "组件库素材/Group 2062151530.webp": {{ "fd-project-detail-0ebace0cde-group-2062151530.webp" | asset_url | json }},
+    "组件库素材/Group 2062151531.webp": {{ "fd-project-detail-3dbc461f46-group-2062151531.webp" | asset_url | json }},
+    "shokz user.mp4": {{ "fd-project-detail-9abdb01102-shokz-user.mp4" | asset_url | json }},
+    "ugc素材/250427_Shokz_London_Marathon_01533 1.webp": {{ "fd-project-detail-3621a33c36-ugc-250427-shokz-london-marathon-01533-1.webp" | asset_url | json }},
+    "ugc素材/250427_Shokz_London_Marathon_01839 1.webp": {{ "fd-project-detail-3d4724b428-ugc-250427-shokz-london-marathon-01839-1.webp" | asset_url | json }},
+    "ugc素材/250427_Shokz_London_Marathon_02027 1.webp": {{ "fd-project-detail-5c7e8d56c1-ugc-250427-shokz-london-marathon-02027-1.webp" | asset_url | json }},
+    "ugc素材/250427_Shokz_London_Marathon_02330 1.webp": {{ "fd-project-detail-88c67634c6-ugc-250427-shokz-london-marathon-02330-1.webp" | asset_url | json }},
+    "ugc素材/250427_Shokz_London_Marathon_02381 1.webp": {{ "fd-project-detail-c813c3e4bc-ugc-250427-shokz-london-marathon-02381-1.webp" | asset_url | json }},
+    "ugc素材/4Y7A2425 1.webp": {{ "fd-project-detail-280fb60f66-ugc-4y7a2425-1.webp" | asset_url | json }},
+    "ugc素材/4Y7A2517 1.webp": {{ "fd-project-detail-cd9323bdfe-ugc-4y7a2517-1.webp" | asset_url | json }},
+    "ugc素材/4Y7A3312 1.webp": {{ "fd-project-detail-84bfcf3654-ugc-4y7a3312-1.webp" | asset_url | json }},
+    "ugc素材/DSC00398 1.webp": {{ "fd-project-detail-d7d6021b50-ugc-dsc00398-1.webp" | asset_url | json }},
+    "ugc素材/DSC00514 1.webp": {{ "fd-project-detail-fe4822e84b-ugc-dsc00514-1.webp" | asset_url | json }},
+    "ugc素材/DSC00526 1.webp": {{ "fd-project-detail-f7db591274-ugc-dsc00526-1.webp" | asset_url | json }},
+    "ugc素材/London Marathon_Shakeout Run_3 1.webp": {{ "fd-project-detail-c35fda3308-ugc-london-marathon-shakeout-run-3-1.webp" | asset_url | json }},
+    "ugc素材/NA_BOS_WT_Running_Dakotah_022 1.webp": {{ "fd-project-detail-b610133212-ugc-na-bos-wt-running-dakotah-022-1.webp" | asset_url | json }},
+    "ugc素材/NA_BOS_WT_Running_Dakotah_022 2.webp": {{ "fd-project-detail-0fc4de81a9-ugc-na-bos-wt-running-dakotah-022-2.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_EK_LDT_Running_UK_17 1.webp": {{ "fd-project-detail-5d6609ff2a-ugc-openrun-pro-2-ek-ldt-running-uk-17-1.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_LDT_Running_UK_15 1.webp": {{ "fd-project-detail-ff0ecdb7e1-ugc-openrun-pro-2-ldt-running-uk-15-1.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_LDT_Running_UK_16 1.webp": {{ "fd-project-detail-8eca03e784-ugc-openrun-pro-2-ldt-running-uk-16-1.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_LDT_Running_UK_4 1.webp": {{ "fd-project-detail-deb47209f1-ugc-openrun-pro-2-ldt-running-uk-4-1.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_LDT_Running_UK_7 1.webp": {{ "fd-project-detail-5f0cce6e48-ugc-openrun-pro-2-ldt-running-uk-7-1.webp" | asset_url | json }},
+    "ugc素材/OpenRun Pro 2_OR_LDT_Running_UK_2 1.webp": {{ "fd-project-detail-f67e663089-ugc-openrun-pro-2-or-ldt-running-uk-2-1.webp" | asset_url | json }}
+  };
+  window.projectDetailAssetUrl = function projectDetailAssetUrl(path) {
+    return window.projectDetailAssetMap[path] || path;
+  };
+  window.projectDetailMobileFinalImages = [
+    {%- assign mobile_final_separator = '' -%}
+    {%- if section.settings.mobile_final_image_1 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_1 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_1.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_2 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_2 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_2.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_3 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_3 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_3.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_4 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_4 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_4.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_5 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_5 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_5.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_6 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_6 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_6.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_7 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_7 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_7.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_8 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_8 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_8.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_9 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_9 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_9.alt | default: '页面浏览图片' | json }} }
+      {%- assign mobile_final_separator = ',' -%}
+    {%- endif -%}
+    {%- if section.settings.mobile_final_image_10 != blank -%}
+      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_10 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_10.alt | default: '页面浏览图片' | json }} }
+    {%- endif -%}
+  ];
+</script>
+
+<div class="fd-project-detail-section" data-section-id="{{ section.id }}">
+<div class="canvas-wrap">
+
+  <div class="rail-layer">
+    <div class="rail-sticky">
+      <div class="rail-scaler">
+        <div class="rail-positioner">
+          <aside class="rail" data-screen-label="02 Rail">
+            <div class="acc-item is-open" data-target="c1">
+              <button class="acc-trigger" type="button" aria-expanded="true">
+                <span>{{ rail_1_title }}</span><span class="ind" aria-hidden="true"></span>
+              </button>
+              <div class="acc-panel"><div class="acc-body">{{ rail_1_body }}</div></div>
+            </div>
+            <div class="acc-item" data-target="c2">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <span>{{ rail_2_title }}</span><span class="ind" aria-hidden="true"></span>
+              </button>
+              <div class="acc-panel"><div class="acc-body">{{ rail_2_body }}</div></div>
+            </div>
+            <div class="acc-item" data-target="c3">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <span>{{ rail_3_title }}</span><span class="ind" aria-hidden="true"></span>
+              </button>
+              <div class="acc-panel"><div class="acc-body">{{ rail_3_body }}</div></div>
+            </div>
+            <div class="acc-item" data-target="c4">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <span>{{ rail_4_title }}</span><span class="ind" aria-hidden="true"></span>
+              </button>
+              <div class="acc-panel"><div class="acc-body">{{ rail_4_body }}</div></div>
+            </div>
+            <div class="acc-item" data-target="c6">
+              <button class="acc-trigger" type="button" aria-expanded="false">
+                <span>{{ rail_5_title }}</span><span class="ind" aria-hidden="true"></span>
+              </button>
+              <div class="acc-panel"><div class="acc-body">{{ rail_5_body }}</div></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="canvas">
+    <header class="header" data-screen-label="01 Header">
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="{{ routes.root_url }}">首页</a>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
+        <span class="breadcrumb-current" aria-current="page">{{ breadcrumb_title }}</span>
+      </nav>
+      <h1 class="h-title blend-difference">{{ project_hero_title }}</h1>
+      <div class="h-stats">
+        <div class="h-stat"><div class="label">{{ stat_label_1 }}</div><div class="value">{{ stat_value_1 }}</div></div>
+        <div class="h-stat"><div class="label">{{ stat_label_2 }}</div><div class="value">{{ stat_value_2 }}</div></div>
+        <div class="h-stat"><div class="label">{{ stat_label_3 }}</div><div class="value">{{ stat_value_3 }}</div></div>
+      </div>
+    </header>
+
+    <section class="body">
+      <div class="rail-col"></div>
+      
+      <main class="content" data-screen-label="03 Content">
+        <article class="card c-hero" id="c1">
+          <video class="c-hero-video" src="{{ "fd-project-detail-9abdb01102-shokz-user.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="c-hero-caption">{{ hero_caption }}</div>
+          <div class="c-hero-stats">
+            <div class="c-hero-stats-row">
+              <div class="stat-l"><div class="v">7,000,000</div><div class="l">Customers</div></div>
+            </div>
+            <div class="c-hero-stats-row">
+              <div class="stat-l"><div class="v">60</div><div class="l">Countries And Regions</div></div>
+              <div class="stat-l"><div class="v">4.7</div><div class="l">Customer Review Rating</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card c-pillars" id="c2" data-pillar-index="0">
+          <div class="pillar pillar-1 pillar-tint-1">
+            <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+            <div class="pillar-ugc-wall" aria-hidden="true">
+              <div class="ugc-col"></div>
+              <div class="ugc-col"></div>
+              <div class="ugc-col"></div>
+            </div>
+            <div class="pillar-component-wall" aria-hidden="true">
+              <div class="component-col"></div>
+              <div class="component-col"></div>
+              <div class="component-col"></div>
+            </div>
+            <div class="pillar-flow-wall is-revealing" aria-hidden="true">
+              <div class="flow-step"><img src="{{ "fd-project-detail-6b86c2e424-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+              <div class="flow-step"><img src="{{ "fd-project-detail-030dcc63c2-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+              <div class="flow-step"><img src="{{ "fd-project-detail-44586eb55f-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+              <div class="flow-step"><img src="{{ "fd-project-detail-dee9eb1567-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+              <div class="flow-step"><img src="{{ "fd-project-detail-e4b720f766-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+              <div class="flow-step"><img src="{{ "fd-project-detail-2b4685081c-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+            </div>
+            <div class="pillar-label">
+              <div class="pillar-tabs" role="tablist" aria-label="三个整体目标">
+                <button class="pillar-tab blend-difference is-active" type="button" role="tab" aria-selected="true" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="{{ target_copy }}">{{ target_tab_1 }}</button>
+                <button class="pillar-tab blend-difference" type="button" role="tab" aria-selected="false" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="梳理并制定统一的色彩、字体及间距系统，主导建设 UI 基础组件库 1.0，确保全域站点的视觉表达高度一致。">{{ target_tab_2 }}</button>
+                <button class="pillar-tab blend-difference" type="button" role="tab" aria-selected="false" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="制定设计与开发流程，明确从设计方案评审到代码组件库选型落地的流转规范，降低跨部门沟通成本。">{{ target_tab_3 }}</button>
+              </div>
+              <div class="s pillar-copy" aria-live="polite">{{ target_copy }}</div>
+            </div>
+            <div class="pillar-target">Target</div>
+            <div class="nav-arrows nav-arrows--row pillar-switch" aria-label="切换目标">
+              <button class="nav-btn prev" type="button" aria-label="上一个目标" onclick="window.switchPillarTab && window.switchPillarTab(this, -1)"><span class="ic"></span></button>
+              <button class="nav-btn next" type="button" aria-label="下一个目标" onclick="window.switchPillarTab && window.switchPillarTab(this, 1)"><span class="ic"></span></button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card c-friction" id="c3" data-friction-index="0">
+          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+          <div class="c-friction-kicker">Systemic
+Challenges</div>
+          <div class="c-friction-label">
+            <div class="s friction-intro">{{ challenge_intro }}</div>
+            <div class="friction-list">
+              <div class="friction-item">
+                <div class="t friction-title blend-difference">{{ friction_title_1 }}</div>
+                <div class="s friction-copy">{{ friction_copy_1 }}</div>
+              </div>
+              <div class="friction-item">
+                <div class="t friction-title blend-difference">{{ friction_title_2 }}</div>
+                <div class="s friction-copy">{{ friction_copy_2 }}</div>
+              </div>
+              <div class="friction-item">
+                <div class="t friction-title blend-difference">{{ friction_title_3 }}</div>
+                <div class="s friction-copy">{{ friction_copy_3 }}</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card c-timeline" id="c4" data-timeline-index="0" data-bg-index="0">
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="dates">
+            <div class="d">07.08</div>
+            <div class="line"></div>
+            <div class="d">10.08</div>
+            <div class="line"></div>
+            <div class="d">11.08</div>
+          </div>
+          <div class="phase">
+            <div class="phase-title">{{ timeline_title }}</div>
+            <div class="phase-date">{{ timeline_date }}</div>
+            <div class="phase-name">{{ timeline_name }}</div>
+            <div class="phase-copy">{{ timeline_copy }}</div>
+          </div>
+          <div class="nav-arrows nav-arrows--row">
+            <button class="nav-btn prev nav-btn--light" type="button" aria-label="上一个阶段" data-timeline-step="-1" onclick="window.triggerTimelineSlide && window.triggerTimelineSlide(this, -1)"><span class="ic"></span></button>
+            <button class="nav-btn next nav-btn--light" type="button" aria-label="下一个阶段" data-timeline-step="1" onclick="window.triggerTimelineSlide && window.triggerTimelineSlide(this, 1)"><span class="ic"></span></button>
+          </div>
+        </article>
+
+        <article class="card c-research">
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="heading">
+            <div class="t">{{ research_title }}</div>
+            <div class="row">
+              <span>{{ research_sub | replace: "　", "</span><span>" }}</span>
+            </div>
+          </div>
+          <div class="quote-eyebrow">为什么需要它？</div>
+          <div class="quote" aria-live="polite">{{ research_quote }}</div>
+        </article>
+
+        <article class="card c-org" id="c6">
+          <div class="c-org-l">
+            <div class="bg-placeholder" aria-hidden="true"></div>
+            <div class="org-left-top">
+              <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+              <div class="org-title">{{ org_title }}</div>
+              <div class="org-sub">{{ org_sub }}</div>
+            </div>
+            <div class="org-left-bottom">
+              <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+              <div class="org-title">{{ workflow_title }}</div>
+              <div class="org-list">{{ workflow_list }}</div>
+            </div>
+            <div class="body-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+国际与北美产品经理双擎驱动本地化定制，
+设计代表统筹全渠道视觉与UX体验。
+在落地端，新增内部设计团队(UI及助理)保障视觉交付，
+并深度洽谈引入外部开发经理严控代码质量。</div>
+            <div class="nodes">
+              <div class="node"></div><div class="divider"></div><div class="node"></div><div class="node"></div>
+            </div>
+            <div class="legend">- 设计团队架构 -</div>
+          </div>
+          <div class="c-org-r">
+            <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+            <div class="bg-placeholder" aria-hidden="true"></div>
+            <div class="org-team">
+              <div class="org-team-grid">
+                <div class="org-team-chip">设计代表</div>
+                <div class="org-team-chip">国际产品经理</div>
+                <div class="org-team-chip">北美产品经理</div>
+                <div class="org-team-chip">开发经理</div>
+              </div>
+              <div class="org-team-copy">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+国际与北美产品经理双擎驱动本地化定制，
+设计代表统筹全渠道视觉与UX体验。
+在落地端，新增内部设计团队(UI及助理)保障视觉交付，
+并深度洽谈引入外部开发经理严控代码质量。</div>
+            </div>
+            <div class="top">
+              <div class="bg-placeholder" aria-hidden="true"></div>
+              <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+              <div class="lbl">{{ org_sub }}</div>
+            </div>
+            <div class="bot">
+              <div class="bg-placeholder" aria-hidden="true"></div>
+              <div class="v">10+</div>
+              <div class="hd">工作流沉淀，解决流程缺陷</div>
+              <div class="ls">{{ workflow_list }}</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card c-userres" id="c7">
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="label">{{ user_title }}</div>
+          <div class="stats">
+            <div class="stat"><div class="l">{{ user_stat_label_1 }}</div><div class="v">{{ user_stat_value_1 }}</div></div>
+            <div class="stat"><div class="l">{{ user_stat_label_2 }}</div><div class="v">{{ user_stat_value_2 }}</div></div>
+            <div class="stat"><div class="l">{{ user_stat_label_3 }}</div><div class="v">{{ user_stat_value_3 }}</div></div>
+            <div class="stat"><div class="l">{{ user_stat_label_4 }}</div><div class="v">{{ user_stat_value_4 }}</div></div>
+          </div>
+        </article>
+
+        <article class="card c-persona" id="c8" data-bg-index="0">
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="nav-arrows nav-arrows--row">
+            <button class="nav-btn prev" type="button" aria-label="上一个画像" data-persona-step="-1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, -1)"><span class="ic"></span></button>
+            <button class="nav-btn next" type="button" aria-label="下一个画像" data-persona-step="1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, 1)"><span class="ic"></span></button>
+            <span class="switch-count" aria-live="polite">01 / 03</span>
+          </div>
+          <div class="title">{{ persona_title }}</div>
+          <div class="lede">{{ persona_lede }}</div>
+          <div class="who">
+            <div class="name">{{ persona_name }}</div>
+            <div class="chips">
+              <span class="chip">{{ persona_chip_1 }}</span><span class="chip">{{ persona_chip_2 }}</span>
+            </div>
+            <div class="quotes">
+<div class="q">在 3 次点击内找到特定型号 - 反感拥挤的移动端导航</div>
+<div class="q">顺畅调用 Klarna 或信用卡完成无缝支付 - 对支付网关报错极度缺乏耐心。</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card c-journey" id="c9" data-bg-count="4" data-bg-index="0">
+          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="nav-arrows nav-arrows--row">
+            <button class="nav-btn prev" type="button" aria-label="上一张背景图" data-bg-step="-1"><span class="ic"></span></button>
+            <button class="nav-btn next" type="button" aria-label="下一张背景图" data-bg-step="1"><span class="ic"></span></button>
+            <span class="switch-count" aria-live="polite">01 / 04</span>
+          </div>
+          <div class="steps">
+            <button class="step active" type="button" data-journey-index="0">{{ journey_tabs | split: "|" | first }}</button>
+            <button class="step" type="button" data-journey-index="1">{{ journey_tabs | split: "|" | slice: 1, 1 | first }}</button>
+            <button class="step" type="button" data-journey-index="2">{{ journey_tabs | split: "|" | slice: 2, 1 | first }}</button>
+            <button class="step" type="button" data-journey-index="3">{{ journey_tabs | split: "|" | slice: 3, 1 | first }}</button>
+          </div>
+          <div class="body-text">
+            <div class="journey-copy-line">{{ journey_copy }}</div>
+<div class="journey-copy-line">"Technical language feel foreign." - Olfa Fdhila</div>
+            <div class="journey-copy-gap"></div>
+            <div class="journey-head blend-difference">统一入口认知与行动路径</div>
+            <div class="journey-copy-line">通过一致的信息层级、视觉节奏和渠道承接，帮助用户快速理解项目价值与下一步行动。</div>
+            <div class="journey-copy-gap"></div>
+            <div class="journey-head blend-difference">沉淀可复用的设计资产</div>
+            <div class="journey-copy-line">将项目中的策略、视觉模块、素材规格与复盘结论整理为后续项目可复用的方法。</div>
+          </div>
+          <div class="journey-result" aria-live="polite"></div>
+          <div class="quote">"Technical language feel foreign." / "Confusing navigation, Slightly too busy on mobile device." / "Contact form was just automated bot answers..."</div>
+          <div class="journey-shot" aria-hidden="true"></div>
+          <div class="pains">
+            <div class="pain">体验阻力：信息分散、渠道版本不一致和交付节奏紧张，会削弱用户理解与团队协作效率。</div>
+            <div class="pain">战略机会：通过统一框架、素材矩阵和复盘机制，把设计从单次交付转化为长期资产。</div>
+          </div>
+        </article>
+
+        <article class="card c-libs" id="c10" data-bg-count="3" data-bg-index="0">
+          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="c-libs-marquee" aria-hidden="true">
+            <div class="c-libs-marquee-track">
+              <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy">
+              <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy">
+            </div>
+          </div>
+          <div class="c-libs-label">
+            <div class="t blend-difference">{{ libs_title }}</div>
+            <div class="s">{{ libs_copy }}</div>
+          </div>
+        </article>
+
+        <article class="card c-final" id="c11" data-bg-count="3" data-bg-index="0">
+          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+          <div class="bg-placeholder" aria-hidden="true"></div>
+          <div class="final-mock" aria-label="页面浏览预览">
+            <img class="final-shot" src="{{ "fd-project-detail-d7103c39e2-1.webp" | asset_url }}" width="1440" height="1000" alt="页面浏览素材 1" loading="lazy">
+            <img class="final-shot" src="{{ "fd-project-detail-763b111c0e-2.webp" | asset_url }}" width="1440" height="1000" alt="页面浏览素材 2" loading="lazy">
+            <img class="final-shot" src="{{ "fd-project-detail-637d0dbaf2-3.webp" | asset_url }}" width="1440" height="1000" alt="页面浏览素材 3" loading="lazy">
+          </div>
+          <div class="nav-arrows">
+            <button class="nav-btn prev" type="button" aria-label="上一张页面浏览图片" data-final-step="-1"><span class="ic"></span></button>
+            <button class="nav-btn next" type="button" aria-label="下一张页面浏览图片" data-final-step="1"><span class="ic"></span></button>
+            <span class="switch-count" aria-live="polite">01 / 03</span>
+          </div>
+        </article>
+      </main>
+    </section>
+  </div>
+</div>
+
+<main class="mobile-393" aria-label="{{ breadcrumb_title }} 手机端">
+  <header class="m-head">
+    <nav class="m-breadcrumb" aria-label="手机端面包屑导航">
+      <a href="{{ routes.root_url }}">首页</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{ breadcrumb_title }}</span>
+    </nav>
+    <h1 class="m-title blend-difference" data-sync-project-title></h1>
+    <div class="m-stats">
+      <div class="m-stat">
+        <div class="m-stat__label"></div>
+        <div class="m-stat__value"></div>
+      </div>
+      <div class="m-stat">
+        <div class="m-stat__label"></div>
+        <div class="m-stat__value"></div>
+      </div>
+      <div class="m-stat">
+        <div class="m-stat__label"></div>
+        <div class="m-stat__value"></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="m-media m-media--dark m-ratio-hero m-hero-media">
+    <div class="m-img" aria-hidden="true"></div>
+    <video class="mobile-hero-video" src="{{ "fd-project-detail-9abdb01102-shokz-user.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    <div class="m-overlay m-hero-caption">{{ hero_caption }}</div>
+    <div class="m-overlay m-hero-stats">
+      <div class="m-hero-stat">
+        <div class="m-hero-stat__value">7,000,000</div>
+        <div class="m-hero-stat__label">Customers</div>
+      </div>
+      <div class="m-hero-stat">
+        <div class="m-hero-stat__value">60</div>
+        <div class="m-hero-stat__label">Countries And Regions</div>
+      </div>
+      <div class="m-hero-stat">
+        <div class="m-hero-stat__value">4.7</div>
+        <div class="m-hero-stat__label">Customer Review Rating</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="m-media m-ratio-medium m-structure-goals" id="m-mobile-goals" data-mobile-pillar data-bg-count="3" data-bg-index="0">
+    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <div class="m-mobile-pillar-visual" aria-hidden="true"></div>
+    <div class="m-overlay m-arrow-row m-pillar-controls">
+      <button class="m-arrow m-arrow--dark" type="button" aria-label="上一个目标" data-mobile-pillar-step="-1"></button>
+      <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一个目标" data-mobile-pillar-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 03</span>
+    </div>
+    <div class="m-overlay m-card-label">
+      <div class="m-card-label__title blend-difference m-mobile-pillar-tabs" role="group" aria-label="三个整体目标"></div>
+      <div class="m-card-label__sub"></div>
+    </div>
+    <div class="m-overlay m-structure-target">Target</div>
+  </section>
+
+  <section class="m-media m-media--square" id="m-mobile-challenges" data-bg-count="3" data-bg-index="0" aria-label="系统性挑战视觉概览">
+    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <div class="m-overlay m-arrow-row">
+      <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+      <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 03</span>
+    </div>
+    <div class="m-overlay m-card-label">
+      <div class="m-card-label__sub m-friction-intro">{{ challenge_intro }}</div>
+      <div class="m-friction-list">
+        <div class="m-friction-item">
+          <div class="m-friction-title blend-difference">{{ friction_title_1 }}</div>
+          <div class="m-friction-copy">{{ friction_copy_1 }}</div>
+        </div>
+        <div class="m-friction-item">
+          <div class="m-friction-title blend-difference">{{ friction_title_2 }}</div>
+          <div class="m-friction-copy">{{ friction_copy_2 }}</div>
+        </div>
+        <div class="m-friction-item">
+          <div class="m-friction-title blend-difference">{{ friction_title_3 }}</div>
+          <div class="m-friction-copy">{{ friction_copy_3 }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="m-overlay m-structure-kicker">Systemic
+Challenges</div>
+  </section>
+
+  <section class="m-media m-timeline m-media--square" data-mobile-timeline-index="0">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-arrow-row m-timeline-controls">
+      <button class="m-arrow m-arrow--light" type="button" aria-label="上一个阶段" data-mobile-timeline-step="-1"></button>
+      <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一个阶段" data-mobile-timeline-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 03</span>
+    </div>
+    <div class="m-overlay m-timeline__phase">
+      <div class="m-timeline__phase-title">{{ timeline_title }}</div>
+      <div class="m-timeline__phase-text">
+        <span class="m-timeline__phase-date">{{ timeline_date }}</span>
+        <span class="m-timeline__phase-name">{{ timeline_name }}</span>
+        <span class="m-timeline__phase-copy">{{ timeline_copy }}</span>
+      </div>
+    </div>
+    <div class="m-overlay m-timeline__dates">
+      <span class="m-timeline__date">07.08</span>
+      <span class="m-timeline__line"></span>
+      <span class="m-timeline__date">10.08</span>
+      <span class="m-timeline__line"></span>
+      <span class="m-timeline__date">11.08</span>
+    </div>
+  </section>
+  <section class="m-media m-media--dark m-ratio-tall m-research-intro m-research-intro--static">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-card-label m-card-label--light">
+      <div class="m-card-label__title">{{ research_title }}</div>
+      <div class="m-card-label__sub">需求分析　产品与系统设计　研发编码　数据收集　迭代优化</div>
+    </div>
+    <div class="m-overlay m-research-quote-eyebrow">为什么需要它？</div>
+    <div class="m-overlay m-research-quote" aria-live="polite">{{ research_quote }}</div>
+  </section>
+
+  <section class="m-media m-media--square m-org-overview">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-org-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+国际与北美产品经理双擎驱动本地化定制，
+设计代表统筹全渠道视觉与UX体验。
+在落地端，新增内部设计团队(UI及助理)保障视觉交付，
+并深度洽谈引入外部开发经理严控代码质量。</div>
+    <div class="m-org-nodes">
+      <span class="m-org-node">设计代表</span>
+      <span class="m-org-node">国际产品经理</span>
+      <span class="m-org-node">北美产品经理</span>
+      <span class="m-org-node">开发经理</span>
+    </div>
+    <div class="m-overlay m-org-legend">- 设计团队架构 -</div>
+  </section>
+  <section class="m-media m-media--dark m-ratio-tall m-org-goals">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-card-label m-card-label--light">
+      <div class="m-card-label__title">{{ org_title }}</div>
+      <div class="m-card-label__sub">{{ org_sub }}</div>
+    </div>
+  </section>
+  <section class="m-media m-media--soft m-ratio-tall m-org-workflow">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-workflow-value"></div>
+    <div class="m-overlay m-workflow-title">{{ workflow_title }}</div>
+    <div class="m-overlay m-workflow-list">{{ workflow_list }}</div>
+  </section>
+
+  <section class="m-media m-media--dark m-ratio-tall m-user-research" id="m-mobile-research">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-user-title">用户研究</div>
+    <div class="m-overlay m-user-stats">
+      <div>
+        <div class="m-user-stat__label">{{ user_stat_label_1 }}</div>
+        <div class="m-user-stat__value">{{ user_stat_value_1 }}</div>
+      </div>
+      <div>
+        <div class="m-user-stat__label">{{ user_stat_label_2 }}</div>
+        <div class="m-user-stat__value">{{ user_stat_value_2 }}</div>
+      </div>
+      <div>
+        <div class="m-user-stat__label">{{ user_stat_label_3 }}</div>
+        <div class="m-user-stat__value">{{ user_stat_value_3 }}</div>
+      </div>
+      <div>
+        <div class="m-user-stat__label">{{ user_stat_label_4 }}</div>
+        <div class="m-user-stat__value">{{ user_stat_value_4 }}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="m-media m-ratio-medium m-structure-image m-structure-decision" data-mobile-persona data-bg-count="3" data-bg-index="0">
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-overlay m-arrow-row">
+      <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+      <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 03</span>
+    </div>
+    <div class="m-overlay m-persona-title">{{ persona_title }}</div>
+    <div class="m-overlay m-persona-lede">{{ persona_lede }}</div>
+    <div class="m-overlay m-persona-info">
+      <div class="m-persona-name">{{ persona_name }}</div>
+      <div class="m-chip-row">
+        <span class="m-chip">{{ persona_chip_1 }}</span>
+        <span class="m-chip">{{ persona_chip_2 }}</span>
+      </div>
+      <div class="m-quote-stack">
+<div>在 3 次点击内找到特定型号 - 反感拥挤的移动端导航</div>
+<div>顺畅调用 Klarna 或信用卡完成无缝支付 - 对支付网关报错极度缺乏耐心。</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="m-media m-ratio-tall m-structure-image m-structure-browse" id="m-mobile-journey" data-mobile-journey data-bg-count="4" data-bg-index="0">
+    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-journey-shot" aria-hidden="true"></div>
+    <div class="m-overlay m-arrow-row">
+      <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+      <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 04</span>
+    </div>
+    <div class="m-overlay m-journey-tabs" role="group" aria-label="用户旅程阶段">
+      <button class="m-journey-tab is-active" type="button" aria-pressed="true" data-mobile-journey-index="0">{{ journey_tabs | split: "|" | first }}</button>
+      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="1">{{ journey_tabs | split: "|" | slice: 1, 1 | first }}</button>
+      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="2">{{ journey_tabs | split: "|" | slice: 2, 1 | first }}</button>
+      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="3">{{ journey_tabs | split: "|" | slice: 3, 1 | first }}</button>
+    </div>
+    <div class="m-overlay m-journey-copy">{{ journey_copy }}
+"Technical language feel foreign." - Olfa Fdhila
+
+强化品牌背书与 DTC 利益点
+Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力保障展示。
+
+科技降维解释与构建社会认同
+合并科技与痛点展示并采用易懂文案。引入明星推荐与真实 Reviews，增加独立对比页跳转。
+
+方法沉淀：
+用统一内容结构承接不同项目类型，让策略、执行、成果和复盘在同一套浏览框架中被快速理解。</div>
+<div class="m-overlay m-journey-quote"></div>
+    <div class="m-overlay m-journey-pains">
+    </div>
+  </section>
+
+  <section class="m-media m-ratio-medium m-structure-image m-structure-components" data-bg-count="3" data-bg-index="0">
+    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <div class="m-img" aria-hidden="true"></div>
+    <div class="m-component-preview" aria-hidden="true">
+      <div class="c-libs-marquee-track">
+        <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
+        <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
+      </div>
+    </div>
+    <div class="m-overlay m-arrow-row">
+      <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+      <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+      <span class="m-switch-count" aria-live="polite">01 / 03</span>
+    </div>
+    <div class="m-overlay m-card-label">
+      <div class="m-card-label__title blend-difference"></div>
+      <div class="m-card-label__sub"></div>
+    </div>
+  </section>
+  <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" data-mobile-final-count="{{ section.settings.mobile_final_image_count | default: 3 }}" aria-label="页面浏览预览">
+    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <div class="m-final-mobile__head">
+      <div class="m-final-mobile__controls">
+        <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张页面浏览图片" data-mobile-final-step="-1"></button>
+        <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张页面浏览图片" data-mobile-final-step="1"></button>
+        <span class="m-switch-count" aria-live="polite">01 / 03</span>
+      </div>
+    </div>
+    <div class="m-final-mobile__frame">
+    </div>
+  </section>
+</main>
+
+<section class="outro" data-screen-label="04 Outro">
+  <div class="outro-pin">
+    <div class="outro-pane outro-next" id="outroNext">
+      <canvas class="outro-wave-canvas" id="outroWaveCanvas" aria-hidden="true"></canvas>
+      <div class="outro-next-scale">
+        <div class="next-header">
+          <span class="next-eyebrow">下一个项目</span>
+          <span class="next-title blend-difference">{{ next_project_title }}</span>
+          <a class="next-cta-arrow" href="#" aria-label="查看下一个项目" onclick="event.preventDefault()"></a>
+        </div>
+        <div class="next-bottom">
+          <div class="next-footer-bottom next-footer-anim delay-3">
+            <div class="next-footer-note-head">
+              <p class="next-footer-note-title">重新浏览当前项目，<a class="next-footer-back-link" href="#" onclick="return window.fdProjectBackToTop ? window.fdProjectBackToTop(event) : false;">返回顶部</a></p>
+            </div>
+            <p class="next-footer-note-desc">All visual works, design concepts, interface mockups, branding explorations, and original imagery presented on this website are the intellectual property of the author and are protected under copyright law.<br><br>© 2026. All rights reserved.</p>
+          </div>
+        </div>
+        <div class="next-thumb" role="link" aria-label="Next project preview">
+          <div class="thumb-placeholder" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="{{ "fd-project-detail.js" | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Project detail case",
+  "tag": "section",
+  "class": "section-fd-project-detail",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Generated from 项目详情.html. Edit local source and regenerate; do not hand-edit generated theme output."
+    },
+    {
+      "type": "header",
+      "content": "移动端最后板块"
+    },
+    {
+      "type": "range",
+      "id": "mobile_final_image_count",
+      "label": "展示图片数量",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_1",
+      "label": "移动端图片 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_2",
+      "label": "移动端图片 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_3",
+      "label": "移动端图片 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_4",
+      "label": "移动端图片 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_5",
+      "label": "移动端图片 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_6",
+      "label": "移动端图片 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_7",
+      "label": "移动端图片 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_8",
+      "label": "移动端图片 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_9",
+      "label": "移动端图片 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_final_image_10",
+      "label": "移动端图片 10"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Project detail case"
+    }
+  ]
+}
+{% endschema %}

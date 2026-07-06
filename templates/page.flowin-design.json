@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "project-detail-case",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

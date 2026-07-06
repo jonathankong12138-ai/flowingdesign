@@ -546,9 +546,6 @@
         vec3 finalColor = mix(color, vec3(1.0), whiteMask);
         finalColor += vec3(0.98, 0.99, 1.0) * waveCrest * 0.6;
         finalColor += (light - 0.5) * 0.03 * whiteMask;
-        vec2 grainUv = floor(vUv * uResolution * 0.55);
-        float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * 0.3) * 43758.5453);
-        finalColor += (dither - 0.5) * 0.1;
         gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
       }
     `;
@@ -748,9 +745,6 @@
           vec3 waveColor = color + vec3(0.98, 0.99, 1.0) * waveCrest * 0.6;
           waveColor += (light - 0.5) * 0.03 * coloredWave;
           vec3 finalColor = mix(vec3(1.0), waveColor, coloredWave);
-          vec2 grainUv = floor(vUv * uResolution * 1.0);
-          float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * 2.0) * 43758.5453);
-          finalColor += (dither - 0.5) * 0.03;
           gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
         }
       `;
@@ -950,9 +944,6 @@
         vec3 waveColor = color + vec3(0.98, 0.99, 1.0) * waveCrest * 0.6;
         waveColor += (light - 0.5) * 0.03 * coloredWave;
         vec3 finalColor = mix(vec3(1.0), waveColor, coloredWave);
-        vec2 grainUv = floor(vUv * uResolution * 1.0);
-        float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * 2.0) * 43758.5453);
-        finalColor += (dither - 0.5) * 0.03;
         gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
       }
     `;
