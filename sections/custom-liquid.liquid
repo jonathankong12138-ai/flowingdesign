@@ -209,6 +209,12 @@
     opacity: 1; transform: translateY(0); pointer-events: auto;
   }
 
+  .fd-project-title-link-{{ section_id }} {
+    color: inherit !important;
+    text-decoration: none !important;
+    cursor: pointer;
+  }
+
   .fd-left-footer-{{ section_id }} {
     margin-top: 60px;
     margin-bottom: 0;
@@ -380,6 +386,9 @@
       font-weight: var(--project-title-weight) !important; margin: 0 0 12px 0 !important; line-height: 1.1;
       text-transform: capitalize !important; letter-spacing: var(--project-title-ls) !important;
     }
+    .fd-project-title-mobile-{{ section_id }} .fd-project-title-link-{{ section_id }} {
+      display: inline-block;
+    }
     .fd-project-desc-mobile-{{ section_id }} {
       color: var(--desc-color) !important; font-size: var(--desc-size-mb) !important;
       margin: 0 0 10px 0 !important; line-height: var(--desc-line-height) !important;
@@ -432,7 +441,11 @@
               endfor
             -%}
             <h3 class="fd-project-title-item-{{ section_id }} {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}"{% if title_heatmap_style != blank %} data-heatmap-hover="true" data-heatmap-style="{{ title_heatmap_style }}"{% endif %}>
-              {{ block.settings.title }}
+              {%- if block.settings.link != blank -%}
+                <a class="fd-project-title-link-{{ section_id }}" href="{{ block.settings.link }}">{{ block.settings.title }}</a>
+              {%- else -%}
+                {{ block.settings.title }}
+              {%- endif -%}
             </h3>
           {%- endfor -%}
         </div>
@@ -477,7 +490,13 @@
       {%- for block in section.blocks -%}
         <div class="fd-project-group-{{ section_id }}" {{ block.shopify_attributes }}>
           <div class="fd-mobile-text-{{ section_id }}">
-            <h3 class="fd-project-title-mobile-{{ section_id }}">{{ block.settings.title }}</h3>
+            <h3 class="fd-project-title-mobile-{{ section_id }}">
+              {%- if block.settings.link != blank -%}
+                <a class="fd-project-title-link-{{ section_id }}" href="{{ block.settings.link }}">{{ block.settings.title }}</a>
+              {%- else -%}
+                {{ block.settings.title }}
+              {%- endif -%}
+            </h3>
             <div class="fd-project-desc-mobile-{{ section_id }}">{{ block.settings.description }}</div>
              {%- liquid
               assign has_award_mobile = false
