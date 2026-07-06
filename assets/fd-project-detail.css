@@ -15503,7 +15503,6 @@
 
     #c9.c-journey > :not(.glacier-wave-bg):not(.bg-placeholder),
     #c11.c-final > :not(.glacier-wave-bg):not(.bg-placeholder) {
-      position: relative;
       z-index: 3 !important;
     }
   }
