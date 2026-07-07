@@ -6,6 +6,8 @@
 
 {% liquid
   assign project_variant = template.suffix | default: page.handle
+  assign is_gtm_case = false
+  assign hero_video_asset = 'fd-project-detail-9abdb01102-shokz-user.mp4'
 
   case project_variant
     when 'flowin-design'
@@ -71,6 +73,8 @@
       assign libs_copy = '统一详情页框架让不同项目拥有一致的信息层级、视觉节奏和交互体验，降低维护成本，也让个人作品沉淀更接近长期产品。'
 
     when 'product-launch-visual'
+      assign is_gtm_case = true
+      assign hero_video_asset = 'fd-project-detail-gtm-intro.mp4'
       assign breadcrumb_title = 'Product Launch Visual'
       assign stat_label_1 = '上市链路'
       assign stat_value_1 = 'End-to-End'
@@ -313,7 +317,7 @@
   ];
 </script>
 
-<div class="fd-project-detail-section" data-section-id="{{ section.id }}">
+<div class="fd-project-detail-section fd-project-detail-section--{{ project_variant }}" data-section-id="{{ section.id }}" data-project-variant="{{ project_variant }}">
 <div class="canvas-wrap">
 
   <div class="rail-layer">
@@ -377,55 +381,67 @@
       
       <main class="content" data-screen-label="03 Content">
         <article class="card c-hero" id="c1">
-          <video class="c-hero-video" src="{{ "fd-project-detail-9abdb01102-shokz-user.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+          <video class="c-hero-video" src="{{ hero_video_asset | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
           <div class="bg-placeholder" aria-hidden="true"></div>
-          <div class="c-hero-caption">{{ hero_caption }}</div>
-          <div class="c-hero-stats">
-            <div class="c-hero-stats-row">
-              <div class="stat-l"><div class="v">7,000,000</div><div class="l">Customers</div></div>
+          {%- unless is_gtm_case -%}
+            <div class="c-hero-caption">{{ hero_caption }}</div>
+            <div class="c-hero-stats">
+              <div class="c-hero-stats-row">
+                <div class="stat-l"><div class="v">7,000,000</div><div class="l">Customers</div></div>
+              </div>
+              <div class="c-hero-stats-row">
+                <div class="stat-l"><div class="v">60</div><div class="l">Countries And Regions</div></div>
+                <div class="stat-l"><div class="v">4.7</div><div class="l">Customer Review Rating</div></div>
+              </div>
             </div>
-            <div class="c-hero-stats-row">
-              <div class="stat-l"><div class="v">60</div><div class="l">Countries And Regions</div></div>
-              <div class="stat-l"><div class="v">4.7</div><div class="l">Customer Review Rating</div></div>
-            </div>
-          </div>
+          {%- endunless -%}
         </article>
 
         <article class="card c-pillars" id="c2" data-pillar-index="0">
-          <div class="pillar pillar-1 pillar-tint-1">
-            <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-            <div class="pillar-ugc-wall" aria-hidden="true">
-              <div class="ugc-col"></div>
-              <div class="ugc-col"></div>
-              <div class="ugc-col"></div>
-            </div>
-            <div class="pillar-component-wall" aria-hidden="true">
-              <div class="component-col"></div>
-              <div class="component-col"></div>
-              <div class="component-col"></div>
-            </div>
-            <div class="pillar-flow-wall is-revealing" aria-hidden="true">
-              <div class="flow-step"><img src="{{ "fd-project-detail-6b86c2e424-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
-              <div class="flow-step"><img src="{{ "fd-project-detail-030dcc63c2-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
-              <div class="flow-step"><img src="{{ "fd-project-detail-44586eb55f-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
-              <div class="flow-step"><img src="{{ "fd-project-detail-dee9eb1567-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
-              <div class="flow-step"><img src="{{ "fd-project-detail-e4b720f766-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
-              <div class="flow-step"><img src="{{ "fd-project-detail-2b4685081c-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
-            </div>
-            <div class="pillar-label">
-              <div class="pillar-tabs" role="tablist" aria-label="三个整体目标">
-                <button class="pillar-tab blend-difference is-active" type="button" role="tab" aria-selected="true" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="{{ target_copy }}">{{ target_tab_1 }}</button>
-                <button class="pillar-tab blend-difference" type="button" role="tab" aria-selected="false" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="梳理并制定统一的色彩、字体及间距系统，主导建设 UI 基础组件库 1.0，确保全域站点的视觉表达高度一致。">{{ target_tab_2 }}</button>
-                <button class="pillar-tab blend-difference" type="button" role="tab" aria-selected="false" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="制定设计与开发流程，明确从设计方案评审到代码组件库选型落地的流转规范，降低跨部门沟通成本。">{{ target_tab_3 }}</button>
+          {%- if is_gtm_case -%}
+            <div class="pillar pillar-1 pillar-tint-1 pillar-gtm-launch">
+              <canvas class="glacier-wave-bg glacier-wave-bg--gtm" data-glacier-wave aria-hidden="true"></canvas>
+              <div class="gtm-launch-carousel" aria-label="GTM 项目素材轮播">
+                <img class="gtm-launch-slide gtm-launch-slide--one" src="{{ "fd-project-detail-gtm-2-2.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-2" loading="eager">
+                <img class="gtm-launch-slide gtm-launch-slide--two" src="{{ "fd-project-detail-gtm-2-1.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-1" loading="eager">
               </div>
-              <div class="s pillar-copy" aria-live="polite">{{ target_copy }}</div>
             </div>
-            <div class="pillar-target">Target</div>
-            <div class="nav-arrows nav-arrows--row pillar-switch" aria-label="切换目标">
-              <button class="nav-btn prev" type="button" aria-label="上一个目标" onclick="window.switchPillarTab && window.switchPillarTab(this, -1)"><span class="ic"></span></button>
-              <button class="nav-btn next" type="button" aria-label="下一个目标" onclick="window.switchPillarTab && window.switchPillarTab(this, 1)"><span class="ic"></span></button>
+          {%- else -%}
+            <div class="pillar pillar-1 pillar-tint-1">
+              <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+              <div class="pillar-ugc-wall" aria-hidden="true">
+                <div class="ugc-col"></div>
+                <div class="ugc-col"></div>
+                <div class="ugc-col"></div>
+              </div>
+              <div class="pillar-component-wall" aria-hidden="true">
+                <div class="component-col"></div>
+                <div class="component-col"></div>
+                <div class="component-col"></div>
+              </div>
+              <div class="pillar-flow-wall is-revealing" aria-hidden="true">
+                <div class="flow-step"><img src="{{ "fd-project-detail-6b86c2e424-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+                <div class="flow-step"><img src="{{ "fd-project-detail-030dcc63c2-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+                <div class="flow-step"><img src="{{ "fd-project-detail-44586eb55f-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+                <div class="flow-step"><img src="{{ "fd-project-detail-dee9eb1567-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+                <div class="flow-step"><img src="{{ "fd-project-detail-e4b720f766-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+                <div class="flow-step"><img src="{{ "fd-project-detail-2b4685081c-asset.svg" | asset_url }}" width="96" height="96" alt="" loading="lazy" /></div>
+              </div>
+              <div class="pillar-label">
+                <div class="pillar-tabs" role="tablist" aria-label="三个整体目标">
+                  <button class="pillar-tab blend-difference is-active" type="button" role="tab" aria-selected="true" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="{{ target_copy }}">{{ target_tab_1 }}</button>
+                  <button class="pillar-tab blend-difference" type="button" role="tab" aria-selected="false" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="梳理并制定统一的色彩、字体及间距系统，主导建设 UI 基础组件库 1.0，确保全域站点的视觉表达高度一致。">{{ target_tab_2 }}</button>
+                  <button class="pillar-tab blend-difference" type="button" role="tab" aria-selected="false" onpointerdown="window.setPillarTab && window.setPillarTab(this)" onclick="window.setPillarTab && window.setPillarTab(this)" data-copy="制定设计与开发流程，明确从设计方案评审到代码组件库选型落地的流转规范，降低跨部门沟通成本。">{{ target_tab_3 }}</button>
+                </div>
+                <div class="s pillar-copy" aria-live="polite">{{ target_copy }}</div>
+              </div>
+              <div class="pillar-target">Target</div>
+              <div class="nav-arrows nav-arrows--row pillar-switch" aria-label="切换目标">
+                <button class="nav-btn prev" type="button" aria-label="上一个目标" onclick="window.switchPillarTab && window.switchPillarTab(this, -1)"><span class="ic"></span></button>
+                <button class="nav-btn next" type="button" aria-label="下一个目标" onclick="window.switchPillarTab && window.switchPillarTab(this, 1)"><span class="ic"></span></button>
+              </div>
             </div>
-          </div>
+          {%- endif -%}
         </article>
 
         <article class="card c-friction" id="c3" data-friction-index="0">
@@ -662,37 +678,46 @@ Challenges</div>
 
   <section class="m-media m-media--dark m-ratio-hero m-hero-media">
     <div class="m-img" aria-hidden="true"></div>
-    <video class="mobile-hero-video" src="{{ "fd-project-detail-9abdb01102-shokz-user.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
-    <div class="m-overlay m-hero-caption">{{ hero_caption }}</div>
-    <div class="m-overlay m-hero-stats">
-      <div class="m-hero-stat">
-        <div class="m-hero-stat__value">7,000,000</div>
-        <div class="m-hero-stat__label">Customers</div>
+    <video class="mobile-hero-video" src="{{ hero_video_asset | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    {%- unless is_gtm_case -%}
+      <div class="m-overlay m-hero-caption">{{ hero_caption }}</div>
+      <div class="m-overlay m-hero-stats">
+        <div class="m-hero-stat">
+          <div class="m-hero-stat__value">7,000,000</div>
+          <div class="m-hero-stat__label">Customers</div>
+        </div>
+        <div class="m-hero-stat">
+          <div class="m-hero-stat__value">60</div>
+          <div class="m-hero-stat__label">Countries And Regions</div>
+        </div>
+        <div class="m-hero-stat">
+          <div class="m-hero-stat__value">4.7</div>
+          <div class="m-hero-stat__label">Customer Review Rating</div>
+        </div>
       </div>
-      <div class="m-hero-stat">
-        <div class="m-hero-stat__value">60</div>
-        <div class="m-hero-stat__label">Countries And Regions</div>
-      </div>
-      <div class="m-hero-stat">
-        <div class="m-hero-stat__value">4.7</div>
-        <div class="m-hero-stat__label">Customer Review Rating</div>
-      </div>
-    </div>
+    {%- endunless -%}
   </section>
 
   <section class="m-media m-ratio-medium m-structure-goals" id="m-mobile-goals" data-mobile-pillar data-bg-count="3" data-bg-index="0">
     <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-    <div class="m-mobile-pillar-visual" aria-hidden="true"></div>
-    <div class="m-overlay m-arrow-row m-pillar-controls">
-      <button class="m-arrow m-arrow--dark" type="button" aria-label="上一个目标" data-mobile-pillar-step="-1"></button>
-      <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一个目标" data-mobile-pillar-step="1"></button>
-      <span class="m-switch-count" aria-live="polite">01 / 03</span>
-    </div>
-    <div class="m-overlay m-card-label">
-      <div class="m-card-label__title blend-difference m-mobile-pillar-tabs" role="group" aria-label="三个整体目标"></div>
-      <div class="m-card-label__sub"></div>
-    </div>
-    <div class="m-overlay m-structure-target">Target</div>
+    {%- if is_gtm_case -%}
+      <div class="gtm-launch-carousel gtm-launch-carousel--mobile" aria-label="GTM 项目素材轮播">
+        <img class="gtm-launch-slide gtm-launch-slide--one" src="{{ "fd-project-detail-gtm-2-2.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-2" loading="eager">
+        <img class="gtm-launch-slide gtm-launch-slide--two" src="{{ "fd-project-detail-gtm-2-1.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-1" loading="eager">
+      </div>
+    {%- else -%}
+      <div class="m-mobile-pillar-visual" aria-hidden="true"></div>
+      <div class="m-overlay m-arrow-row m-pillar-controls">
+        <button class="m-arrow m-arrow--dark" type="button" aria-label="上一个目标" data-mobile-pillar-step="-1"></button>
+        <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一个目标" data-mobile-pillar-step="1"></button>
+        <span class="m-switch-count" aria-live="polite">01 / 03</span>
+      </div>
+      <div class="m-overlay m-card-label">
+        <div class="m-card-label__title blend-difference m-mobile-pillar-tabs" role="group" aria-label="三个整体目标"></div>
+        <div class="m-card-label__sub"></div>
+      </div>
+      <div class="m-overlay m-structure-target">Target</div>
+    {%- endif -%}
   </section>
 
   <section class="m-media m-media--square" id="m-mobile-challenges" data-bg-count="3" data-bg-index="0" aria-label="系统性挑战视觉概览">

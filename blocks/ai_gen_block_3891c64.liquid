@@ -112,10 +112,16 @@
     -webkit-font-smoothing: antialiased;
   }
   
-  .js-trigger-bg.is-active .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }},
-  .js-trigger-bg:hover .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }} {
+  .ai-column-1-{{ block_id }}.is-active .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }},
+  .ai-column-1-{{ block_id }}:hover .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }} {
+    font-weight: var(--flowin-word-weight, 200);
+    transition-delay: 0s;
+  }
+
+  .js-trigger-bg:not(.ai-column-1-{{ block_id }}).is-active .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }},
+  .js-trigger-bg:not(.ai-column-1-{{ block_id }}):hover .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }} {
     font-weight: 600;
-    transition-delay: var(--char-delay, 0s);
+    transition-delay: 0s;
   }
 
   /* ========== 所有文字栏位：引入 --scroll-fade-dim 和 --scroll-fade 实现同步渐隐 ========== */
@@ -255,7 +261,19 @@
     pointer-events: none;
     transition-delay: 0s, 0s, 0s, 0.12s;
   }
+  .ai-info-btn-{{ block_id }}[data-active-index="2"],
+  .ai-info-btn-{{ block_id }}[data-active-index="3"],
+  .ai-info-btn-{{ block_id }}[data-active-index="4"] {
+    background-color: #ffffff;
+    color: #000000;
+  }
   .ai-info-btn-{{ block_id }}:hover { background-color: {{ block.settings.info_btn_bg | color_modify: 'alpha', 1.0 }}; transform: scale(1.02); }
+  .ai-info-btn-{{ block_id }}[data-active-index="2"]:hover,
+  .ai-info-btn-{{ block_id }}[data-active-index="3"]:hover,
+  .ai-info-btn-{{ block_id }}[data-active-index="4"]:hover {
+    background-color: #ffffff;
+    color: #000000;
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .ai-info-panel-{{ block_id }},
@@ -371,6 +389,7 @@
       href="{{ initial_btn_link | default: '#' | escape }}"
       class="ai-info-btn-{{ block_id }} {% unless initial_show_btn and initial_btn_text != blank %}is-hidden{% endunless %}"
       data-stable-info-button
+      data-active-index="1"
     >{{ initial_btn_text }}</a>
   </div>
 </div>
@@ -386,9 +405,15 @@
       const customSpacingValStr = element.getAttribute('data-custom-spacing-value');
       const customSpacingWords = customWordsStr ? parseInt(customWordsStr, 10) : 0;
       const customSpacingVal = customSpacingValStr ? parseFloat(customSpacingValStr) : 0;
+      const childNodes = Array.from(element.childNodes);
+      const isFlowinTitle = element.classList.contains('ai-item-1-{{ block_id }}');
+      const flowinWords = isFlowinTitle
+        ? childNodes
+            .filter(node => node.nodeType === Node.TEXT_NODE)
+            .flatMap(node => (node.textContent || '').match(/\S+/g) || [])
+        : [];
       let globalWordCount = 0; 
       
-      const childNodes = Array.from(element.childNodes);
       element.innerHTML = '';
       let charIndex = 0;
       const endWeight = 600;
@@ -409,6 +434,10 @@
               if (globalWordCount < customSpacingWords && customSpacingVal !== 0) {
                 wordWrapper.style.letterSpacing = `${customSpacingVal}em`;
               }
+
+              const flowinWordWeight = flowinWords.length > 1
+                ? Math.round(800 - (globalWordCount * (800 - 200)) / (flowinWords.length - 1))
+                : 800;
               
               for (let i = 0; i < word.length; i++) {
                 const char = word[i];
@@ -420,7 +449,7 @@
                 
                 const boldPlaceholder = document.createElement('span');
                 boldPlaceholder.textContent = char;
-                boldPlaceholder.style.fontWeight = endWeight;
+                boldPlaceholder.style.fontWeight = isFlowinTitle ? flowinWordWeight : endWeight;
                 boldPlaceholder.style.visibility = 'hidden';
                 boldPlaceholder.style.gridArea = '1 / 1';
                 boldPlaceholder.style.pointerEvents = 'none';
@@ -430,6 +459,9 @@
                 visibleSpan.textContent = char; 
                 visibleSpan.className = 'char-span-{{ block_id }}';
                 visibleSpan.style.setProperty('--char-delay', `${charIndex * 0.018}s`);
+                if (isFlowinTitle) {
+                  visibleSpan.style.setProperty('--flowin-word-weight', flowinWordWeight);
+                }
                 visibleSpan.style.gridArea = '1 / 1';
                 visibleSpan.style.lineHeight = 'inherit';
                 
@@ -505,8 +537,10 @@
       const shouldShow = panel.getAttribute('data-button-visible') === 'true';
       const buttonText = panel.getAttribute('data-button-text') || '';
       const buttonLink = panel.getAttribute('data-button-link') || '#';
+      const activeIndex = panel.getAttribute('data-target-index') || '';
       stableInfoButton.textContent = buttonText;
       stableInfoButton.setAttribute('href', buttonLink);
+      stableInfoButton.setAttribute('data-active-index', activeIndex);
       stableInfoButton.classList.toggle('is-hidden', !shouldShow);
     };
 

@@ -6,6 +6,7 @@
     background: #fff; 
     overscroll-behavior: none; 
   }
+
   body {
     font-family: "Noto Sans SC", "Urbanist", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #000;
@@ -15511,5 +15512,126 @@
     #c9.c-journey > :not(.glacier-wave-bg):not(.bg-placeholder),
     #c11.c-final > :not(.glacier-wave-bg):not(.bg-placeholder) {
       z-index: 3 !important;
+    }
+  }
+
+  /* GTM launch detail: hero is pure video, second card is a wave-backed asset carousel. */
+  .fd-project-detail-section--product-launch-visual #c1.c-hero::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c2.c-pillars,
+  .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch {
+    background: #f6fbff !important;
+    overflow: hidden !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch::before,
+  .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch::after {
+    content: none !important;
+    display: none !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c2 .glacier-wave-bg--gtm,
+  .fd-project-detail-section--product-launch-visual #m-mobile-goals > .glacier-wave-bg {
+    z-index: 0 !important;
+    opacity: .98 !important;
+    filter: hue-rotate(178deg) saturate(.86) contrast(1.06) brightness(1.08) !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch {
+    isolation: isolate;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch::selection {
+    background: transparent;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c2 .gtm-launch-carousel,
+  .fd-project-detail-section--product-launch-visual #m-mobile-goals .gtm-launch-carousel {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c2 .gtm-launch-carousel::before,
+  .fd-project-detail-section--product-launch-visual #m-mobile-goals .gtm-launch-carousel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse at 20% 18%, rgba(255,255,255,.76) 0%, rgba(255,255,255,.18) 34%, rgba(255,255,255,0) 62%),
+      linear-gradient(90deg, rgba(255,255,255,.2) 0%, rgba(255,255,255,.62) 50%, rgba(255,255,255,.2) 100%);
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-launch-slide {
+    position: absolute;
+    z-index: 1;
+    display: block;
+    width: min(82%, 1180px);
+    height: min(72%, 680px);
+    object-fit: contain;
+    object-position: center;
+    opacity: 0;
+    transform: translate3d(0, 22px, 0) scale(.985);
+    filter: drop-shadow(0 26px 58px rgba(42, 95, 128, .15));
+    animation: gtmLaunchSlideFade 8s cubic-bezier(.22, 1, .36, 1) infinite;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-launch-slide--two {
+    animation-delay: 4s;
+  }
+
+  @keyframes gtmLaunchSlideFade {
+    0%,
+    8% {
+      opacity: 0;
+      transform: translate3d(0, 22px, 0) scale(.985);
+    }
+    16%,
+    48% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    56%,
+    100% {
+      opacity: 0;
+      transform: translate3d(0, -18px, 0) scale(1.01);
+    }
+  }
+
+  .fd-project-detail-section--product-launch-visual #m-mobile-goals {
+    background: #f6fbff !important;
+    overflow: hidden !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual #m-mobile-goals::before,
+  .fd-project-detail-section--product-launch-visual #m-mobile-goals::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual #m-mobile-goals .gtm-launch-slide {
+    width: 92%;
+    height: 78%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fd-project-detail-section--product-launch-visual .gtm-launch-slide {
+      animation: none !important;
+      opacity: 0 !important;
+      transform: none !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual .gtm-launch-slide--one {
+      opacity: 1 !important;
     }
   }
