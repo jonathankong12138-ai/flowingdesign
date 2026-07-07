@@ -472,8 +472,6 @@
         if (textContainer) textContainer.style.pointerEvents = 'auto';
       }
     }
-    window.addEventListener('scroll', handleScrollFade, { passive: true });
-    handleScrollFade(); // 初始化执行一次
     // ===========================================
 
     // 原版轮播与事件绑定，严格保留原样
@@ -630,8 +628,18 @@
       wasAtTopState = atTop;
     };
 
-    window.addEventListener('scroll', enforceTopOnlyPlayback, { passive: true });
-    enforceTopOnlyPlayback();
+    let scrollSyncFrame = null;
+    const runScrollSync = () => {
+      scrollSyncFrame = null;
+      handleScrollFade();
+      enforceTopOnlyPlayback();
+    };
+    const scheduleScrollSync = () => {
+      if (scrollSyncFrame !== null) return;
+      scrollSyncFrame = requestAnimationFrame(runScrollSync);
+    };
+    window.addEventListener('scroll', scheduleScrollSync, { passive: true });
+    runScrollSync();
     setTimeout(() => { startAutoPlay(); }, 100);
 
     document.addEventListener('visibilitychange', () => {

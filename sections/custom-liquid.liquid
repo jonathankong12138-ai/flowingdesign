@@ -982,6 +982,8 @@
 
 	      let targetScroll = 0;
 	      let currentScroll = 0;
+	      let isHeatmapSectionVisible = true;
+	      let syncHeatmapAnimationState = () => {};
 	      const activeHeatmapTargets = new Set();
 	      const getHeatmapStyleForTarget = (target) => {
 	        if (target?.dataset.heatmapStyle) return target.dataset.heatmapStyle;
@@ -1018,6 +1020,7 @@
 	        }
 	        syncHeatmapStyle();
 	        targetScroll = activeHeatmapTargets.size > 0 ? 0.13 : 0;
+	        syncHeatmapAnimationState();
 	        if (activeHeatmapTargets.size === 0) {
 	          wrapper.fdSyncHeatmapStyle();
 	          heatmapExitTimer = window.setTimeout(() => {
@@ -1038,8 +1041,17 @@
 
       const clock = new THREE.Clock();
       let customTime = 0;
+      let heatmapAnimationFrameId = null;
+      const shouldRunHeatmapAnimation = () => {
+        return isHeatmapSectionVisible && !document.hidden && (
+          activeHeatmapTargets.size > 0 ||
+          targetScroll > 0.001 ||
+          currentScroll > 0.001
+        );
+      };
       const animate = () => {
-        requestAnimationFrame(animate);
+        heatmapAnimationFrameId = null;
+        if (!shouldRunHeatmapAnimation()) return;
         const waveEase = targetScroll > currentScroll ? 0.22 : 0.18;
         currentScroll += (targetScroll - currentScroll) * waveEase;
         uniforms.uScroll.value = currentScroll;
@@ -1048,8 +1060,32 @@
         customTime += delta * (2.5 + Math.sin(elapsed * 1.8) * 0.9);
         uniforms.uTime.value = customTime;
         renderer.render(scene, camera);
+        if (shouldRunHeatmapAnimation()) {
+          heatmapAnimationFrameId = requestAnimationFrame(animate);
+        }
       };
-      animate();
+      syncHeatmapAnimationState = () => {
+        if (!shouldRunHeatmapAnimation()) {
+          if (heatmapAnimationFrameId !== null) {
+            cancelAnimationFrame(heatmapAnimationFrameId);
+            heatmapAnimationFrameId = null;
+          }
+          return;
+        }
+        if (heatmapAnimationFrameId === null) {
+          clock.getDelta();
+          heatmapAnimationFrameId = requestAnimationFrame(animate);
+        }
+      };
+      if ('IntersectionObserver' in window) {
+        const heatmapVisibilityObserver = new IntersectionObserver((entries) => {
+          isHeatmapSectionVisible = entries.some(entry => entry.isIntersecting);
+          syncHeatmapAnimationState();
+        }, { rootMargin: '160px 0px' });
+        heatmapVisibilityObserver.observe(wrapper);
+      }
+      document.addEventListener('visibilitychange', syncHeatmapAnimationState);
+      syncHeatmapAnimationState();
     };
 
     if (typeof THREE === 'undefined') {
@@ -1149,8 +1185,16 @@
     window.addEventListener('resize', syncLeftFooterSpace);
     window.addEventListener('resize', syncLeftStickyRelease);
     window.addEventListener('resize', syncLeftStickyState);
-    window.addEventListener('scroll', syncLeftStickyRelease, { passive: true });
-    window.addEventListener('scroll', syncLeftStickyState, { passive: true });
+    let stickySyncFrame = null;
+    const scheduleStickySync = () => {
+      if (stickySyncFrame !== null) return;
+      stickySyncFrame = requestAnimationFrame(() => {
+        stickySyncFrame = null;
+        syncLeftStickyRelease();
+        syncLeftStickyState();
+      });
+    };
+    window.addEventListener('scroll', scheduleStickySync, { passive: true });
     wrapper.querySelectorAll('.fd-media-card-' + sectionId + ' img').forEach(image => {
       if (image.complete) {
         syncTitlePosition();
@@ -1204,6 +1248,41 @@
       if (leftFooterReveal) leftFooterReveal.classList.add('is-visible');
       mobileTextReveals.forEach(text => text.classList.add('is-visible'));
       revealCards.forEach(card => card.classList.add('is-visible'));
+    }
+
+    const managedVideos = Array.from(wrapper.querySelectorAll('.fd-media-card-' + sectionId + ' video'));
+    if (managedVideos.length) {
+      const visibleVideos = new WeakSet();
+      const syncManagedVideo = (video) => {
+        if (!(video instanceof HTMLVideoElement)) return;
+        if (document.hidden || !visibleVideos.has(video)) {
+          video.pause();
+          return;
+        }
+        const playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(() => {});
+        }
+      };
+      if ('IntersectionObserver' in window) {
+        const videoObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            const video = entry.target;
+            if (entry.isIntersecting) {
+              visibleVideos.add(video);
+            } else {
+              visibleVideos.delete(video);
+            }
+            syncManagedVideo(video);
+          });
+        }, { rootMargin: '120px 0px', threshold: 0.12 });
+        managedVideos.forEach(video => videoObserver.observe(video));
+      } else {
+        managedVideos.forEach(video => visibleVideos.add(video));
+      }
+      document.addEventListener('visibilitychange', () => {
+        managedVideos.forEach(syncManagedVideo);
+      });
     }
 
     // 1. 左侧文本联动逻辑

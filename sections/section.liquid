@@ -408,7 +408,11 @@
       let activeMediaUrl = '';
       let mediaSwitchToken = 0;
       let syncGlacierAnimationState = () => {};
+      let syncActiveMediaPlayback = () => {};
+      let isSectionVisible = true;
+      let glacierVisibilityObserver = null;
       const videoPool = new Map();
+      const warmedVideoUrls = new Set();
       const imagePool = new Map();
       const mediaReadyTimeout = 1800;
       const fallbackPosterByUrl = new Map([
@@ -455,6 +459,8 @@
 
       const warmVideoElement = (video) => {
         if (!(video instanceof HTMLVideoElement)) return;
+        if (warmedVideoUrls.has(video.currentSrc || video.src)) return;
+        warmedVideoUrls.add(video.currentSrc || video.src);
         video.preload = 'auto';
         video.classList.add('is-warming');
         if (video.readyState < 2) {
@@ -464,11 +470,25 @@
 
       const warmInteractiveVideos = () => {
         if (!wrapper) return;
-        wrapper.querySelectorAll('.js-trigger-bg[data-bg-type="video"][data-bg-url]').forEach(trigger => {
-          const url = trigger.getAttribute('data-bg-url');
-          if (!url) return;
+        const urls = Array.from(wrapper.querySelectorAll('.js-trigger-bg[data-bg-type="video"][data-bg-url]'))
+          .map(trigger => trigger.getAttribute('data-bg-url'))
+          .filter(Boolean);
+        let index = 0;
+        const warmNext = () => {
+          if (index >= urls.length) return;
+          if (document.hidden) {
+            document.addEventListener('visibilitychange', () => {
+              if (!document.hidden) warmNext();
+            }, { once: true });
+            return;
+          }
+          const url = urls[index++];
           warmVideoElement(createMediaElement(url, 'video'));
-        });
+          const schedule = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 650));
+          schedule(warmNext, { timeout: 1600 });
+        };
+        const schedule = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 650));
+        schedule(warmNext, { timeout: 1600 });
       };
 
       const waitForMediaReady = (element, type, timeout = mediaReadyTimeout) => new Promise(resolve => {
@@ -685,7 +705,7 @@
         });
 
         let animationFrameId = null;
-        const shouldRunGlacierAnimation = () => !mediaLayer.classList.contains('active') && !document.hidden;
+        const shouldRunGlacierAnimation = () => isSectionVisible && !mediaLayer.classList.contains('active') && !document.hidden;
         const animate = () => {
             animationFrameId = null;
             if (!shouldRunGlacierAnimation()) return;
@@ -736,6 +756,14 @@
                 animationFrameId = requestAnimationFrame(animate);
             }
         };
+        if ('IntersectionObserver' in window && wrapper) {
+          glacierVisibilityObserver = new IntersectionObserver((entries) => {
+            isSectionVisible = entries.some(entry => entry.isIntersecting);
+            syncGlacierAnimationState();
+            syncActiveMediaPlayback();
+          }, { rootMargin: '120px 0px' });
+          glacierVisibilityObserver.observe(wrapper);
+        }
         syncGlacierAnimationState();
 	      }
 
@@ -744,6 +772,15 @@
       const replayActiveVideo = () => {
         if (!(activeMediaElement instanceof HTMLVideoElement)) return;
         playMediaElement(activeMediaElement, true);
+      };
+
+      syncActiveMediaPlayback = () => {
+        if (!(activeMediaElement instanceof HTMLVideoElement)) return;
+        if (document.hidden || !isSectionVisible) {
+          activeMediaElement.pause();
+          return;
+        }
+        playMediaElement(activeMediaElement, false);
       };
 
       const deactivateMediaElement = (element) => {
@@ -769,6 +806,7 @@
         globalBgContainer.classList.add('is-media-mode-' + sectionId);
         mediaLayer.classList.add('active');
         syncGlacierAnimationState();
+        syncActiveMediaPlayback();
       };
 
       const clearActiveMedia = () => {
@@ -894,6 +932,7 @@
 
       window.addEventListener('glacier:activate-media', handleGlacierActivateMedia);
       document.addEventListener('visibilitychange', syncGlacierAnimationState);
+      document.addEventListener('visibilitychange', syncActiveMediaPlayback);
       warmInteractiveVideos();
 
       const handleSectionUnload = (e) => {
@@ -903,7 +942,9 @@
             if (loadingCoverTimer) clearTimeout(loadingCoverTimer);
             window.removeEventListener('glacier:activate-media', handleGlacierActivateMedia);
             document.removeEventListener('visibilitychange', syncGlacierAnimationState);
+            document.removeEventListener('visibilitychange', syncActiveMediaPlayback);
             document.removeEventListener('shopify:section:unload', handleSectionUnload);
+            glacierVisibilityObserver?.disconnect();
             videoPool.forEach(video => {
               try {
                 video.pause();
