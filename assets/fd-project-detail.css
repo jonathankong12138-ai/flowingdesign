@@ -6637,10 +6637,17 @@
 
   #c4.c-timeline .phase-copy,
   .c-timeline .phase-copy {
+    width: 520px !important;
+    max-width: 520px !important;
+    color: rgba(255, 255, 255, .88) !important;
+    font-size: 16px !important;
+    line-height: 1.55 !important;
+    font-weight: 400 !important;
     text-align: center !important;
     text-align-last: center !important;
     margin-left: auto !important;
     margin-right: auto !important;
+    white-space: pre-line !important;
   }
 
   #c6 .org-team-copy,
