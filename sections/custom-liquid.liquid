@@ -9,7 +9,11 @@
   assign section_id = section.id | replace: '-', '_'
   assign bg_color = section.settings.bg_color
   assign product_launch_visual_background_video = 'home-openfit-video.mp4' | asset_url
-  assign gtm_seventh_image = 'home-gtm-seventh-image.webp' | asset_url
+  assign integrated_marketing_background_video = 'home-bfcm-video.mp4' | asset_url
+  assign integrated_marketing_carousel_1 = 'home-bfcm-1.webp' | asset_url
+  assign integrated_marketing_carousel_2 = 'home-bfcm-2.webp' | asset_url
+  assign integrated_marketing_carousel_3 = 'home-bfcm-3.webp' | asset_url
+  assign gtm_seventh_video = 'home-gtm-openfit-intro.mp4' | asset_url
   assign gtm_eighth_image_background_video = 'home-gtm-eighth-image-video.mp4' | asset_url
 -%}
 
@@ -354,38 +358,37 @@
     height: 100% !important;
     object-fit: cover;
   }
-  .fd-media-card-{{ section_id }}.fd-media-card--gtm-wave-bg {
-    background:
-      radial-gradient(circle at 22% 18%, rgba(255, 162, 0, 0.42), transparent 28%),
-      radial-gradient(circle at 78% 46%, rgba(188, 174, 148, 0.44), transparent 34%),
-      linear-gradient(135deg, #fffaf2 0%, #ded4c3 44%, #ffffff 74%, #f5b94a 100%);
-  }
-  .fd-media-card-{{ section_id }}.fd-media-card--gtm-wave-bg::before {
-    content: '';
+  .fd-bfcm-card-carousel-{{ section_id }} {
     position: absolute;
-    inset: -28%;
-    z-index: 0;
-    background:
-      radial-gradient(ellipse at 32% 62%, rgba(255, 148, 0, 0.46), transparent 26%),
-      radial-gradient(ellipse at 66% 30%, rgba(255, 255, 255, 0.88), transparent 32%),
-      repeating-linear-gradient(118deg, rgba(181, 164, 136, 0.34) 0 8px, rgba(255, 255, 255, 0.28) 8px 22px);
-    filter: blur(22px);
-    opacity: 0.9;
-    transform: translate3d(-4%, -2%, 0) rotate(-6deg) scale(1.08);
-    animation: fd-gtm-card-wave-{{ section_id }} 11s ease-in-out infinite alternate;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
     pointer-events: none;
   }
-  .fd-media-card-{{ section_id }}.fd-media-card--gtm-wave-bg img,
-  .fd-media-card-{{ section_id }}.fd-media-card--gtm-wave-bg video {
-    position: relative;
-    z-index: 1;
+  .fd-bfcm-card-carousel-{{ section_id }} img {
+    position: absolute !important;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: right center;
+    opacity: 0;
+    animation: fd-bfcm-card-fade-{{ section_id }} 9s linear infinite;
   }
-  @keyframes fd-gtm-card-wave-{{ section_id }} {
-    0% {
-      transform: translate3d(-6%, -3%, 0) rotate(-7deg) scale(1.08);
+  .fd-bfcm-card-carousel-{{ section_id }} img:nth-child(2) {
+    animation-delay: 3s;
+  }
+  .fd-bfcm-card-carousel-{{ section_id }} img:nth-child(3) {
+    animation-delay: 6s;
+  }
+  @keyframes fd-bfcm-card-fade-{{ section_id }} {
+    0%,
+    30% {
+      opacity: 1;
     }
+    36%,
     100% {
-      transform: translate3d(4%, 3%, 0) rotate(5deg) scale(1.16);
+      opacity: 0;
     }
   }
   .fd-mobile-text-{{ section_id }} {
@@ -584,20 +587,23 @@
             {%- assign media_placeholder_class = 'fd-media-placeholder-' | append: section_id -%}
             {%- assign current_image = block.settings[image_key] -%}
             {%- assign current_video = block.settings[video_key] -%}
-            {%- assign current_asset_image = '' -%}
-            {%- assign media_card_extra_class = '' -%}
+            {%- assign show_integrated_marketing_carousel = false -%}
+            {%- if block.settings.title == '全渠道运营视觉系统：从活动策略到规模化交付' and media_slot == 1 -%}
+              {%- assign current_video = integrated_marketing_background_video -%}
+              {%- assign show_integrated_marketing_carousel = true -%}
+            {%- endif -%}
             {%- if block.settings.title == 'GTM 视觉整合设计' and media_slot == 1 -%}
               {%- assign current_video = product_launch_visual_background_video -%}
             {%- endif -%}
             {%- if block.settings.title == 'GTM 视觉整合设计' and media_slot == 2 -%}
-              {%- assign current_asset_image = gtm_seventh_image -%}
-              {%- assign media_card_extra_class = ' fd-media-card--gtm-wave-bg' -%}
+              {%- assign current_image = '' -%}
+              {%- assign current_video = gtm_seventh_video -%}
             {%- endif -%}
             {%- if block.settings.title == 'GTM 视觉整合设计' and media_slot == 4 -%}
               {%- assign current_video = gtm_eighth_image_background_video -%}
             {%- endif -%}
 
-            {%- if current_image != blank or current_video != blank or current_asset_image != blank -%}
+            {%- if current_image != blank or current_video != blank -%}
               {%- assign heatmap_media_index = heatmap_media_index | plus: 1 -%}
 	              {%- assign heatmap_style = 'default' -%}
 	              {%- if heatmap_media_index > 5 -%}
@@ -606,17 +612,22 @@
 	                {%- assign heatmap_style = 'bfcm' -%}
 	              {%- endif -%}
               <div class="fd-media-item-{{ section_id }}" data-index="{{ forloop.parentloop.index0 }}">
-                <a href="{{ block.settings.link | default: '#' }}" class="fd-media-card-{{ section_id }} js-hover-card{{ media_card_extra_class }}" data-heatmap-hover="true" data-heatmap-style="{{ heatmap_style }}">
-                  {%- if current_video != blank -%}
-                    {%- if current_image != blank -%}
-                      {{ current_image | image_url: width: 1600 | image_tag: loading: 'lazy', class: media_placeholder_class }}
-                    {%- endif -%}
-                    <video src="{{ current_video }}" autoplay loop muted playsinline preload="metadata" class="{% if current_image != blank %}fd-media-video-overlay-{{ section_id }}{% endif %}"></video>
-                  {%- elsif current_asset_image != blank -%}
-                    <img src="{{ current_asset_image }}" width="2920" height="1824" loading="lazy" alt="{{ block.settings.title | escape }}">
-                  {%- elsif current_image != blank -%}
-                    {{ current_image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
-                  {%- endif -%}
+                <a href="{{ block.settings.link | default: '#' }}" class="fd-media-card-{{ section_id }} js-hover-card" data-heatmap-hover="true" data-heatmap-style="{{ heatmap_style }}">
+	                  {%- if current_video != blank -%}
+	                    {%- if current_image != blank -%}
+	                      {{ current_image | image_url: width: 1600 | image_tag: loading: 'lazy', class: media_placeholder_class }}
+	                    {%- endif -%}
+	                    <video src="{{ current_video }}" autoplay loop muted playsinline preload="metadata" class="{% if current_image != blank %}fd-media-video-overlay-{{ section_id }}{% endif %}"></video>
+                      {%- if show_integrated_marketing_carousel -%}
+                        <div class="fd-bfcm-card-carousel-{{ section_id }}" aria-hidden="true">
+                          <img src="{{ integrated_marketing_carousel_1 }}" width="1600" height="900" loading="lazy" alt="">
+                          <img src="{{ integrated_marketing_carousel_2 }}" width="1600" height="900" loading="lazy" alt="">
+                          <img src="{{ integrated_marketing_carousel_3 }}" width="1600" height="900" loading="lazy" alt="">
+                        </div>
+                      {%- endif -%}
+	                  {%- elsif current_image != blank -%}
+	                    {{ current_image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
+	                  {%- endif -%}
                 </a>
               </div>
             {%- endif -%}

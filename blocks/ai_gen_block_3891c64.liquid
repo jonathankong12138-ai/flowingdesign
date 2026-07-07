@@ -113,8 +113,8 @@
   
   .js-trigger-bg.is-active .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }},
   .js-trigger-bg:hover .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }} {
-    font-weight: var(--target-weight, 600);
-    transition-delay: var(--char-delay, 0s) !important;
+    font-weight: 600;
+    transition-delay: 0s !important;
   }
 
   /* ========== 所有文字栏位：引入 --scroll-fade-dim 和 --scroll-fade 实现同步渐隐 ========== */
@@ -381,7 +381,6 @@
     
     // 字符级分割动画，严格保留原样
     wrapper.querySelectorAll('.split-text-target-{{ block_id }}').forEach(element => {
-      const isFirstColumn = element.classList.contains('ai-item-1-{{ block_id }}');
       const customWordsStr = element.getAttribute('data-custom-spacing-words');
       const customSpacingValStr = element.getAttribute('data-custom-spacing-value');
       const customSpacingWords = customWordsStr ? parseInt(customWordsStr, 10) : 0;
@@ -390,9 +389,8 @@
       
       const childNodes = Array.from(element.childNodes);
       element.innerHTML = '';
-      let charIndex = 0; let totalChars = 0;
-      childNodes.forEach(node => { if (node.nodeType === Node.TEXT_NODE) totalChars += node.textContent.replace(/\s/g, '').length; });
-      const startWeight = 200; const endWeight = 600; const step = totalChars > 1 ? (endWeight - startWeight) / (totalChars - 1) : 0;
+      let charIndex = 0;
+      const endWeight = 600;
       
       childNodes.forEach(node => {
         if (node.nodeType === Node.TEXT_NODE) {
@@ -413,7 +411,6 @@
               
               for (let i = 0; i < word.length; i++) {
                 const char = word[i];
-                const targetWeight = isFirstColumn ? Math.round(endWeight - charIndex * step) : Math.round(startWeight + charIndex * step);
                 const charWrapper = document.createElement('span');
                 charWrapper.style.display = 'inline-grid';
                 charWrapper.style.justifyItems = 'center';
@@ -422,7 +419,7 @@
                 
                 const boldPlaceholder = document.createElement('span');
                 boldPlaceholder.textContent = char;
-                boldPlaceholder.style.fontWeight = targetWeight;
+                boldPlaceholder.style.fontWeight = endWeight;
                 boldPlaceholder.style.visibility = 'hidden';
                 boldPlaceholder.style.gridArea = '1 / 1';
                 boldPlaceholder.style.pointerEvents = 'none';
@@ -431,10 +428,7 @@
                 const visibleSpan = document.createElement('span');
                 visibleSpan.textContent = char; 
                 visibleSpan.className = 'char-span-{{ block_id }}';
-                visibleSpan.style.setProperty('--target-weight', targetWeight);
-                
-                let delayIndex = isFirstColumn ? (totalChars - 1 - charIndex) : charIndex;
-                visibleSpan.style.setProperty('--char-delay', `${delayIndex * 0.005}s`);
+                visibleSpan.style.setProperty('--char-delay', '0s');
                 visibleSpan.style.gridArea = '1 / 1';
                 visibleSpan.style.lineHeight = 'inherit';
                 
