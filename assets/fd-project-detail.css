@@ -15673,6 +15673,78 @@
     animation-delay: 8s;
   }
 
+  .fd-project-detail-section--product-launch-visual #c3.c-friction > :not(.gtm-challenge-carousel),
+  .fd-project-detail-section--product-launch-visual #m-mobile-challenges > :not(.gtm-challenge-carousel) {
+    display: none !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c3.c-friction,
+  .fd-project-detail-section--product-launch-visual #m-mobile-challenges {
+    isolation: isolate;
+    background: #f7f7f7 url("fd-project-detail-gtm-3-1.webp") center / cover no-repeat !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c3.c-friction::before,
+  .fd-project-detail-section--product-launch-visual #c3.c-friction::after,
+  .fd-project-detail-section--product-launch-visual #m-mobile-challenges::before,
+  .fd-project-detail-section--product-launch-visual #m-mobile-challenges::after {
+    content: "" !important;
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    opacity: 0;
+    pointer-events: none !important;
+    transform: scale(1.012);
+    background-position: center !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c3.c-friction::before,
+  .fd-project-detail-section--product-launch-visual #m-mobile-challenges::before {
+    z-index: 1 !important;
+    background-image: url("fd-project-detail-gtm-3-2.webp") !important;
+    animation: gtmChallengeFallbackTwo 12s cubic-bezier(.22, 1, .36, 1) infinite;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c3.c-friction::after,
+  .fd-project-detail-section--product-launch-visual #m-mobile-challenges::after {
+    z-index: 2 !important;
+    background-image: url("fd-project-detail-gtm-3-3.webp") !important;
+    animation: gtmChallengeFallbackThree 12s cubic-bezier(.22, 1, .36, 1) infinite;
+  }
+
+  @keyframes gtmChallengeFallbackTwo {
+    0%,
+    32%,
+    70%,
+    100% {
+      opacity: 0;
+      transform: scale(1.012);
+    }
+    38%,
+    64% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes gtmChallengeFallbackThree {
+    0%,
+    64%,
+    100% {
+      opacity: 0;
+      transform: scale(1.012);
+    }
+    70%,
+    96% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
   @keyframes gtmChallengeSlideFade {
     0%,
     5% {
@@ -15710,5 +15782,14 @@
 
     .fd-project-detail-section--product-launch-visual .gtm-challenge-slide--one {
       opacity: 1 !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c3.c-friction::before,
+    .fd-project-detail-section--product-launch-visual #c3.c-friction::after,
+    .fd-project-detail-section--product-launch-visual #m-mobile-challenges::before,
+    .fd-project-detail-section--product-launch-visual #m-mobile-challenges::after {
+      animation: none !important;
+      opacity: 0 !important;
+      transform: none !important;
     }
   }
