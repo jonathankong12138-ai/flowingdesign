@@ -8,6 +8,12 @@
 {%- liquid
   assign section_id = section.id | replace: '-', '_'
   assign bg_color = section.settings.bg_color
+  assign first_project_first_image = 'home-ux-first-image.webp' | asset_url
+  assign first_project_first_background_video = 'home-ux-first-background-video.mp4' | asset_url
+  assign first_project_third_carousel_1 = 'home-ux-third-1.webp' | asset_url
+  assign first_project_third_carousel_2 = 'home-ux-third-2.webp' | asset_url
+  assign first_project_third_carousel_3 = 'home-ux-third-3.webp' | asset_url
+  assign first_project_third_carousel_4 = 'home-ux-third-4.webp' | asset_url
   assign product_launch_visual_background_video = 'home-openfit-video.mp4' | asset_url
   assign integrated_marketing_background_video = 'home-bfcm-video.mp4' | asset_url
   assign integrated_marketing_carousel_1 = 'home-bfcm-1.webp' | asset_url
@@ -358,6 +364,15 @@
     height: 100% !important;
     object-fit: cover;
   }
+  .fd-media-card-{{ section_id }} .fd-media-asset-overlay-{{ section_id }} {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    pointer-events: none;
+  }
   .fd-bfcm-card-carousel-{{ section_id }} {
     position: absolute;
     inset: 0;
@@ -387,6 +402,41 @@
       opacity: 1;
     }
     36%,
+    100% {
+      opacity: 0;
+    }
+  }
+  .fd-card-carousel-{{ section_id }} {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .fd-card-carousel-{{ section_id }} img {
+    position: absolute !important;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    opacity: 0;
+    animation: fd-card-carousel-fade-{{ section_id }} 12s linear infinite;
+  }
+  .fd-card-carousel-{{ section_id }} img:nth-child(2) {
+    animation-delay: 3s;
+  }
+  .fd-card-carousel-{{ section_id }} img:nth-child(3) {
+    animation-delay: 6s;
+  }
+  .fd-card-carousel-{{ section_id }} img:nth-child(4) {
+    animation-delay: 9s;
+  }
+  @keyframes fd-card-carousel-fade-{{ section_id }} {
+    0%,
+    22% {
+      opacity: 1;
+    }
+    28%,
     100% {
       opacity: 0;
     }
@@ -587,8 +637,23 @@
             {%- assign media_placeholder_class = 'fd-media-placeholder-' | append: section_id -%}
             {%- assign current_image = block.settings[image_key] -%}
             {%- assign current_video = block.settings[video_key] -%}
+            {%- assign current_asset_image = '' -%}
+            {%- assign show_first_project_first_asset_image = false -%}
+            {%- assign show_first_project_third_carousel = false -%}
             {%- assign show_integrated_marketing_carousel = false -%}
-            {%- if block.settings.title == '全渠道运营视觉系统：从活动策略到规模化交付' and media_slot == 1 -%}
+            {%- if block.settings.title == '全球官网UX与视觉系统重塑，从0到1的全链路建设' and media_slot == 1 -%}
+              {%- assign current_image = '' -%}
+              {%- assign current_asset_image = first_project_first_image -%}
+              {%- assign current_video = first_project_first_background_video -%}
+              {%- assign show_first_project_first_asset_image = true -%}
+            {%- endif -%}
+            {%- if block.settings.title == '全球官网UX与视觉系统重塑，从0到1的全链路建设' and media_slot == 2 -%}
+              {%- assign current_video = product_launch_visual_background_video -%}
+            {%- endif -%}
+            {%- if block.settings.title == '全球官网UX与视觉系统重塑，从0到1的全链路建设' and media_slot == 3 -%}
+              {%- assign show_first_project_third_carousel = true -%}
+            {%- endif -%}
+            {%- if block.settings.title == '全渠道运营视觉系统：从活动策略到规模化交付' and media_slot == 2 -%}
               {%- assign current_video = integrated_marketing_background_video -%}
               {%- assign show_integrated_marketing_carousel = true -%}
             {%- endif -%}
@@ -603,7 +668,7 @@
               {%- assign current_video = gtm_eighth_image_background_video -%}
             {%- endif -%}
 
-            {%- if current_image != blank or current_video != blank -%}
+            {%- if current_image != blank or current_video != blank or current_asset_image != blank or show_first_project_third_carousel -%}
               {%- assign heatmap_media_index = heatmap_media_index | plus: 1 -%}
 	              {%- assign heatmap_style = 'default' -%}
 	              {%- if heatmap_media_index > 5 -%}
@@ -616,8 +681,13 @@
 	                  {%- if current_video != blank -%}
 	                    {%- if current_image != blank -%}
 	                      {{ current_image | image_url: width: 1600 | image_tag: loading: 'lazy', class: media_placeholder_class }}
-	                    {%- endif -%}
-	                    <video src="{{ current_video }}" autoplay loop muted playsinline preload="metadata" class="{% if current_image != blank %}fd-media-video-overlay-{{ section_id }}{% endif %}"></video>
+                      {%- elsif show_first_project_first_asset_image and current_asset_image != blank -%}
+                        <img src="{{ current_asset_image }}" width="1600" height="1000" loading="lazy" alt="" class="{{ media_placeholder_class }}">
+                      {%- endif -%}
+	                    <video src="{{ current_video }}" autoplay loop muted playsinline preload="metadata" class="{% if current_image != blank or show_first_project_first_asset_image %}fd-media-video-overlay-{{ section_id }}{% endif %}"></video>
+                      {%- if show_first_project_first_asset_image and current_asset_image != blank -%}
+                        <img src="{{ current_asset_image }}" width="1600" height="1000" loading="lazy" alt="{{ block.settings.title | escape }}" class="fd-media-asset-overlay-{{ section_id }}">
+                      {%- endif -%}
                       {%- if show_integrated_marketing_carousel -%}
                         <div class="fd-bfcm-card-carousel-{{ section_id }}" aria-hidden="true">
                           <img src="{{ integrated_marketing_carousel_1 }}" width="1600" height="900" loading="lazy" alt="">
@@ -625,8 +695,18 @@
                           <img src="{{ integrated_marketing_carousel_3 }}" width="1600" height="900" loading="lazy" alt="">
                         </div>
                       {%- endif -%}
-	                  {%- elsif current_image != blank -%}
-	                    {{ current_image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
+                    {%- elsif current_asset_image != blank -%}
+                      <img src="{{ current_asset_image }}" width="1600" height="900" loading="lazy" alt="{{ block.settings.title | escape }}">
+		                  {%- elsif current_image != blank -%}
+		                    {{ current_image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
+                      {%- if show_first_project_third_carousel -%}
+                        <div class="fd-card-carousel-{{ section_id }}" aria-hidden="true">
+                          <img src="{{ first_project_third_carousel_1 }}" width="1600" height="900" loading="lazy" alt="">
+                          <img src="{{ first_project_third_carousel_2 }}" width="1600" height="900" loading="lazy" alt="">
+                          <img src="{{ first_project_third_carousel_3 }}" width="1600" height="900" loading="lazy" alt="">
+                          <img src="{{ first_project_third_carousel_4 }}" width="1600" height="900" loading="lazy" alt="">
+                        </div>
+                      {%- endif -%}
 	                  {%- endif -%}
                 </a>
               </div>
