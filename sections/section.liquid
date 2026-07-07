@@ -497,7 +497,7 @@
         schedule(warmNext, { timeout: 1600 });
       };
 
-      const waitForVideoFirstFrame = (video) => new Promise(resolve => {
+      const waitForVideoFirstFrame = (video, timeout = 9000) => new Promise(resolve => {
         if (!(video instanceof HTMLVideoElement)) {
           resolve(false);
           return;
@@ -510,6 +510,7 @@
         }
 
         let settled = false;
+        let timeoutId = null;
         const cleanup = () => {
           video.removeEventListener('loadeddata', handleReady);
           video.removeEventListener('canplay', handleReady);
@@ -517,6 +518,7 @@
           video.removeEventListener('error', handleError);
           video.removeEventListener('stalled', handleStalled);
           video.removeEventListener('suspend', handleStalled);
+          if (timeoutId) clearTimeout(timeoutId);
         };
         const finish = (ready) => {
           if (settled) return;
@@ -537,13 +539,17 @@
         video.addEventListener('stalled', handleStalled);
         video.addEventListener('suspend', handleStalled);
 
+        timeoutId = window.setTimeout(() => {
+          finish(video.readyState >= 2);
+        }, timeout);
+
         try { video.load(); } catch (error) {}
       });
 
       const waitForInitialInteractiveVideos = () => {
         const urls = getInteractiveVideoUrls();
         if (!urls.length) return Promise.resolve(true);
-        return Promise.all(urls.map(url => waitForVideoFirstFrame(createMediaElement(url, 'video'))));
+        return Promise.allSettled(urls.map(url => waitForVideoFirstFrame(createMediaElement(url, 'video'))));
       };
 
       const waitForMediaReady = (element, type, timeout = mediaReadyTimeout) => new Promise(resolve => {
@@ -654,7 +660,7 @@
         splitLoadingLogo();
         document.body.classList.add('home-loading-active-' + sectionId);
 
-        Promise.all([wait(2600), waitForInitialInteractiveVideos()]).then(() => {
+        Promise.all([wait(2800), waitForInitialInteractiveVideos()]).finally(() => {
           loadingCover.classList.add('is-leaving');
           document.body.classList.remove('home-loading-active-' + sectionId);
           loadingCoverTimer = window.setTimeout(() => {
