@@ -660,10 +660,6 @@
           e.preventDefault(); e.stopPropagation();
           activateTab(targetIndex, e.isTrusted);
           if (shouldReplayFullscreenVideo(trigger)) return;
-          if (e.isTrusted) { 
-             const targetLink = trigger.getAttribute('data-link'); 
-             if (targetLink && targetLink !== "" && targetLink !== "#") window.location.href = targetLink; 
-          }
           return; 
         }
         activateTab(targetIndex, e.isTrusted);
