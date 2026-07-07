@@ -468,11 +468,17 @@
         }
       };
 
+      const getInteractiveVideoUrls = () => {
+        if (!wrapper) return [];
+        return Array.from(wrapper.querySelectorAll('.js-trigger-bg[data-bg-type="video"][data-bg-url]'))
+          .map(trigger => trigger.getAttribute('data-bg-url'))
+          .filter(Boolean)
+          .filter((url, index, urls) => urls.indexOf(url) === index);
+      };
+
       const warmInteractiveVideos = () => {
         if (!wrapper) return;
-        const urls = Array.from(wrapper.querySelectorAll('.js-trigger-bg[data-bg-type="video"][data-bg-url]'))
-          .map(trigger => trigger.getAttribute('data-bg-url'))
-          .filter(Boolean);
+        const urls = getInteractiveVideoUrls();
         let index = 0;
         const warmNext = () => {
           if (index >= urls.length) return;
@@ -489,6 +495,55 @@
         };
         const schedule = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 650));
         schedule(warmNext, { timeout: 1600 });
+      };
+
+      const waitForVideoFirstFrame = (video) => new Promise(resolve => {
+        if (!(video instanceof HTMLVideoElement)) {
+          resolve(false);
+          return;
+        }
+
+        warmVideoElement(video);
+        if (video.readyState >= 2) {
+          resolve(true);
+          return;
+        }
+
+        let settled = false;
+        const cleanup = () => {
+          video.removeEventListener('loadeddata', handleReady);
+          video.removeEventListener('canplay', handleReady);
+          video.removeEventListener('canplaythrough', handleReady);
+          video.removeEventListener('error', handleError);
+          video.removeEventListener('stalled', handleStalled);
+          video.removeEventListener('suspend', handleStalled);
+        };
+        const finish = (ready) => {
+          if (settled) return;
+          settled = true;
+          cleanup();
+          resolve(ready);
+        };
+        const handleReady = () => finish(video.readyState >= 2);
+        const handleError = () => finish(false);
+        const handleStalled = () => {
+          if (video.readyState >= 2) finish(true);
+        };
+
+        video.addEventListener('loadeddata', handleReady, { once: true });
+        video.addEventListener('canplay', handleReady, { once: true });
+        video.addEventListener('canplaythrough', handleReady, { once: true });
+        video.addEventListener('error', handleError, { once: true });
+        video.addEventListener('stalled', handleStalled);
+        video.addEventListener('suspend', handleStalled);
+
+        try { video.load(); } catch (error) {}
+      });
+
+      const waitForInitialInteractiveVideos = () => {
+        const urls = getInteractiveVideoUrls();
+        if (!urls.length) return Promise.resolve(true);
+        return Promise.all(urls.map(url => waitForVideoFirstFrame(createMediaElement(url, 'video'))));
       };
 
       const waitForMediaReady = (element, type, timeout = mediaReadyTimeout) => new Promise(resolve => {
@@ -599,7 +654,7 @@
         splitLoadingLogo();
         document.body.classList.add('home-loading-active-' + sectionId);
 
-        wait(1600).then(() => {
+        Promise.all([wait(2600), waitForInitialInteractiveVideos()]).then(() => {
           loadingCover.classList.add('is-leaving');
           document.body.classList.remove('home-loading-active-' + sectionId);
           loadingCoverTimer = window.setTimeout(() => {
