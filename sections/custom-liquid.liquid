@@ -9,12 +9,12 @@
   assign section_id = section.id | replace: '-', '_'
   assign bg_color = section.settings.bg_color
   assign first_project_first_image = 'home-ux-first-image.webp' | asset_url
-  assign first_project_first_background_video = 'home-ux-first-background-video.mp4' | asset_url
   assign first_project_third_carousel_1 = 'home-ux-third-1.webp' | asset_url
   assign first_project_third_carousel_2 = 'home-ux-third-2.webp' | asset_url
   assign first_project_third_carousel_3 = 'home-ux-third-3.webp' | asset_url
   assign first_project_third_carousel_4 = 'home-ux-third-4.webp' | asset_url
   assign product_launch_visual_background_video = 'home-openfit-video.mp4' | asset_url
+  assign website_ux_background_video = 'home-user-video.mp4' | asset_url
   assign integrated_marketing_background_video = 'home-bfcm-video.mp4' | asset_url
   assign integrated_marketing_carousel_1 = 'home-bfcm-1.webp' | asset_url
   assign integrated_marketing_carousel_2 = 'home-bfcm-2.webp' | asset_url
@@ -373,6 +373,9 @@
     object-fit: cover;
     pointer-events: none;
   }
+  .fd-media-card-{{ section_id }} .fd-media-gray-bg-{{ section_id }} {
+    background-color: #f8f8f8;
+  }
   .fd-bfcm-card-carousel-{{ section_id }} {
     position: absolute;
     inset: 0;
@@ -412,6 +415,7 @@
     z-index: 2;
     overflow: hidden;
     pointer-events: none;
+    background-color: #f8f8f8;
   }
   .fd-card-carousel-{{ section_id }} img {
     position: absolute !important;
@@ -420,25 +424,34 @@
     height: 100% !important;
     object-fit: cover !important;
     opacity: 0;
-    animation: fd-card-carousel-fade-{{ section_id }} 12s linear infinite;
+    animation: fd-card-carousel-fade-{{ section_id }} 16s ease-in-out infinite;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    will-change: opacity;
+  }
+  .fd-card-carousel-{{ section_id }} img:first-child {
+    opacity: 1;
   }
   .fd-card-carousel-{{ section_id }} img:nth-child(2) {
-    animation-delay: 3s;
+    animation-delay: 4s;
   }
   .fd-card-carousel-{{ section_id }} img:nth-child(3) {
-    animation-delay: 6s;
+    animation-delay: 8s;
   }
   .fd-card-carousel-{{ section_id }} img:nth-child(4) {
-    animation-delay: 9s;
+    animation-delay: 12s;
   }
   @keyframes fd-card-carousel-fade-{{ section_id }} {
     0%,
-    22% {
+    21% {
       opacity: 1;
     }
-    28%,
-    100% {
+    25%,
+    96% {
       opacity: 0;
+    }
+    100% {
+      opacity: 1;
     }
   }
   .fd-mobile-text-{{ section_id }} {
@@ -644,11 +657,10 @@
             {%- if block.settings.title == '全球官网UX与视觉系统重塑，从0到1的全链路建设' and media_slot == 1 -%}
               {%- assign current_image = '' -%}
               {%- assign current_asset_image = first_project_first_image -%}
-              {%- assign current_video = first_project_first_background_video -%}
               {%- assign show_first_project_first_asset_image = true -%}
             {%- endif -%}
             {%- if block.settings.title == '全球官网UX与视觉系统重塑，从0到1的全链路建设' and media_slot == 2 -%}
-              {%- assign current_video = product_launch_visual_background_video -%}
+              {%- assign current_video = website_ux_background_video -%}
             {%- endif -%}
             {%- if block.settings.title == '全球官网UX与视觉系统重塑，从0到1的全链路建设' and media_slot == 3 -%}
               {%- assign show_first_project_third_carousel = true -%}
@@ -696,15 +708,15 @@
                         </div>
                       {%- endif -%}
                     {%- elsif current_asset_image != blank -%}
-                      <img src="{{ current_asset_image }}" width="1600" height="900" loading="lazy" alt="{{ block.settings.title | escape }}">
+                      <img src="{{ current_asset_image }}" width="1600" height="1000" loading="lazy" alt="{{ block.settings.title | escape }}" class="{% if show_first_project_first_asset_image %}fd-media-gray-bg-{{ section_id }}{% endif %}">
 		                  {%- elsif current_image != blank -%}
 		                    {{ current_image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
                       {%- if show_first_project_third_carousel -%}
                         <div class="fd-card-carousel-{{ section_id }}" aria-hidden="true">
-                          <img src="{{ first_project_third_carousel_1 }}" width="1600" height="900" loading="lazy" alt="">
-                          <img src="{{ first_project_third_carousel_2 }}" width="1600" height="900" loading="lazy" alt="">
-                          <img src="{{ first_project_third_carousel_3 }}" width="1600" height="900" loading="lazy" alt="">
-                          <img src="{{ first_project_third_carousel_4 }}" width="1600" height="900" loading="lazy" alt="">
+                          <img src="{{ first_project_third_carousel_1 }}" width="1600" height="900" loading="eager" alt="">
+                          <img src="{{ first_project_third_carousel_2 }}" width="1600" height="900" loading="eager" alt="">
+                          <img src="{{ first_project_third_carousel_3 }}" width="1600" height="900" loading="eager" alt="">
+                          <img src="{{ first_project_third_carousel_4 }}" width="1600" height="900" loading="eager" alt="">
                         </div>
                       {%- endif -%}
 	                  {%- endif -%}
