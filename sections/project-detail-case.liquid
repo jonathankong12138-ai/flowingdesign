@@ -445,26 +445,34 @@
         </article>
 
         <article class="card c-friction" id="c3" data-friction-index="0">
-          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-          <div class="c-friction-kicker">Systemic
+          {%- if is_gtm_case -%}
+            <div class="gtm-challenge-carousel" aria-label="GTM 产品挑战素材轮播">
+              <img class="gtm-challenge-slide gtm-challenge-slide--one" src="{{ "fd-project-detail-gtm-3-1.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-1" loading="eager">
+              <img class="gtm-challenge-slide gtm-challenge-slide--two" src="{{ "fd-project-detail-gtm-3-2.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-2" loading="eager">
+              <img class="gtm-challenge-slide gtm-challenge-slide--three" src="{{ "fd-project-detail-gtm-3-3.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-3" loading="eager">
+            </div>
+          {%- else -%}
+            <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+            <div class="c-friction-kicker">Systemic
 Challenges</div>
-          <div class="c-friction-label">
-            <div class="s friction-intro">{{ challenge_intro }}</div>
-            <div class="friction-list">
-              <div class="friction-item">
-                <div class="t friction-title blend-difference">{{ friction_title_1 }}</div>
-                <div class="s friction-copy">{{ friction_copy_1 }}</div>
-              </div>
-              <div class="friction-item">
-                <div class="t friction-title blend-difference">{{ friction_title_2 }}</div>
-                <div class="s friction-copy">{{ friction_copy_2 }}</div>
-              </div>
-              <div class="friction-item">
-                <div class="t friction-title blend-difference">{{ friction_title_3 }}</div>
-                <div class="s friction-copy">{{ friction_copy_3 }}</div>
+            <div class="c-friction-label">
+              <div class="s friction-intro">{{ challenge_intro }}</div>
+              <div class="friction-list">
+                <div class="friction-item">
+                  <div class="t friction-title blend-difference">{{ friction_title_1 }}</div>
+                  <div class="s friction-copy">{{ friction_copy_1 }}</div>
+                </div>
+                <div class="friction-item">
+                  <div class="t friction-title blend-difference">{{ friction_title_2 }}</div>
+                  <div class="s friction-copy">{{ friction_copy_2 }}</div>
+                </div>
+                <div class="friction-item">
+                  <div class="t friction-title blend-difference">{{ friction_title_3 }}</div>
+                  <div class="s friction-copy">{{ friction_copy_3 }}</div>
+                </div>
               </div>
             </div>
-          </div>
+          {%- endif -%}
         </article>
 
         <article class="card c-timeline" id="c4" data-timeline-index="0" data-bg-index="0">
@@ -699,7 +707,7 @@ Challenges</div>
   </section>
 
   <section class="m-media m-ratio-medium m-structure-goals" id="m-mobile-goals" data-mobile-pillar data-bg-count="3" data-bg-index="0">
-    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <canvas class="glacier-wave-bg{% if is_gtm_case %} glacier-wave-bg--gtm{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
     {%- if is_gtm_case -%}
       <div class="gtm-launch-carousel gtm-launch-carousel--mobile" aria-label="GTM 项目素材轮播">
         <img class="gtm-launch-slide gtm-launch-slide--one" src="{{ "fd-project-detail-gtm-2-2.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-2" loading="eager">
@@ -721,31 +729,39 @@ Challenges</div>
   </section>
 
   <section class="m-media m-media--square" id="m-mobile-challenges" data-bg-count="3" data-bg-index="0" aria-label="系统性挑战视觉概览">
-    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-    <div class="m-overlay m-arrow-row">
-      <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
-      <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
-      <span class="m-switch-count" aria-live="polite">01 / 03</span>
-    </div>
-    <div class="m-overlay m-card-label">
-      <div class="m-card-label__sub m-friction-intro">{{ challenge_intro }}</div>
-      <div class="m-friction-list">
-        <div class="m-friction-item">
-          <div class="m-friction-title blend-difference">{{ friction_title_1 }}</div>
-          <div class="m-friction-copy">{{ friction_copy_1 }}</div>
-        </div>
-        <div class="m-friction-item">
-          <div class="m-friction-title blend-difference">{{ friction_title_2 }}</div>
-          <div class="m-friction-copy">{{ friction_copy_2 }}</div>
-        </div>
-        <div class="m-friction-item">
-          <div class="m-friction-title blend-difference">{{ friction_title_3 }}</div>
-          <div class="m-friction-copy">{{ friction_copy_3 }}</div>
+    {%- if is_gtm_case -%}
+      <div class="gtm-challenge-carousel gtm-challenge-carousel--mobile" aria-label="GTM 产品挑战素材轮播">
+        <img class="gtm-challenge-slide gtm-challenge-slide--one" src="{{ "fd-project-detail-gtm-3-1.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-1" loading="eager">
+        <img class="gtm-challenge-slide gtm-challenge-slide--two" src="{{ "fd-project-detail-gtm-3-2.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-2" loading="eager">
+        <img class="gtm-challenge-slide gtm-challenge-slide--three" src="{{ "fd-project-detail-gtm-3-3.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-3" loading="eager">
+      </div>
+    {%- else -%}
+      <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+      <div class="m-overlay m-arrow-row">
+        <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+        <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+        <span class="m-switch-count" aria-live="polite">01 / 03</span>
+      </div>
+      <div class="m-overlay m-card-label">
+        <div class="m-card-label__sub m-friction-intro">{{ challenge_intro }}</div>
+        <div class="m-friction-list">
+          <div class="m-friction-item">
+            <div class="m-friction-title blend-difference">{{ friction_title_1 }}</div>
+            <div class="m-friction-copy">{{ friction_copy_1 }}</div>
+          </div>
+          <div class="m-friction-item">
+            <div class="m-friction-title blend-difference">{{ friction_title_2 }}</div>
+            <div class="m-friction-copy">{{ friction_copy_2 }}</div>
+          </div>
+          <div class="m-friction-item">
+            <div class="m-friction-title blend-difference">{{ friction_title_3 }}</div>
+            <div class="m-friction-copy">{{ friction_copy_3 }}</div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="m-overlay m-structure-kicker">Systemic
+      <div class="m-overlay m-structure-kicker">Systemic
 Challenges</div>
+    {%- endif -%}
   </section>
 
   <section class="m-media m-timeline m-media--square" data-mobile-timeline-index="0">

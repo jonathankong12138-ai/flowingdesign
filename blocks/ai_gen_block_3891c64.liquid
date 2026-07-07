@@ -114,7 +114,7 @@
   
   .ai-column-1-{{ block_id }}.is-active .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }},
   .ai-column-1-{{ block_id }}:hover .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }} {
-    font-weight: var(--flowin-word-weight, 200);
+    font-weight: var(--flowin-char-weight, 200);
     transition-delay: 0s;
   }
 
@@ -407,11 +407,11 @@
       const customSpacingVal = customSpacingValStr ? parseFloat(customSpacingValStr) : 0;
       const childNodes = Array.from(element.childNodes);
       const isFlowinTitle = element.classList.contains('ai-item-1-{{ block_id }}');
-      const flowinWords = isFlowinTitle
+      const flowinCharCount = isFlowinTitle
         ? childNodes
             .filter(node => node.nodeType === Node.TEXT_NODE)
-            .flatMap(node => (node.textContent || '').match(/\S+/g) || [])
-        : [];
+            .reduce((count, node) => count + Array.from(node.textContent || '').filter(char => !/\s/.test(char)).length, 0)
+        : 0;
       let globalWordCount = 0; 
       
       element.innerHTML = '';
@@ -435,12 +435,10 @@
                 wordWrapper.style.letterSpacing = `${customSpacingVal}em`;
               }
 
-              const flowinWordWeight = flowinWords.length > 1
-                ? Math.round(800 - (globalWordCount * (800 - 200)) / (flowinWords.length - 1))
-                : 800;
-              
-              for (let i = 0; i < word.length; i++) {
-                const char = word[i];
+              Array.from(word).forEach(char => {
+                const flowinCharWeight = flowinCharCount > 1
+                  ? Math.round(800 - (charIndex * (800 - 200)) / (flowinCharCount - 1))
+                  : 800;
                 const charWrapper = document.createElement('span');
                 charWrapper.style.display = 'inline-grid';
                 charWrapper.style.justifyItems = 'center';
@@ -449,7 +447,7 @@
                 
                 const boldPlaceholder = document.createElement('span');
                 boldPlaceholder.textContent = char;
-                boldPlaceholder.style.fontWeight = isFlowinTitle ? flowinWordWeight : endWeight;
+                boldPlaceholder.style.fontWeight = isFlowinTitle ? flowinCharWeight : endWeight;
                 boldPlaceholder.style.visibility = 'hidden';
                 boldPlaceholder.style.gridArea = '1 / 1';
                 boldPlaceholder.style.pointerEvents = 'none';
@@ -460,7 +458,7 @@
                 visibleSpan.className = 'char-span-{{ block_id }}';
                 visibleSpan.style.setProperty('--char-delay', `${charIndex * 0.018}s`);
                 if (isFlowinTitle) {
-                  visibleSpan.style.setProperty('--flowin-word-weight', flowinWordWeight);
+                  visibleSpan.style.setProperty('--flowin-char-weight', flowinCharWeight);
                 }
                 visibleSpan.style.gridArea = '1 / 1';
                 visibleSpan.style.lineHeight = 'inherit';
@@ -469,7 +467,7 @@
                 charWrapper.appendChild(visibleSpan);
                 wordWrapper.appendChild(charWrapper);
                 charIndex++;
-              }
+              });
               element.appendChild(wordWrapper);
               globalWordCount++;
             }
