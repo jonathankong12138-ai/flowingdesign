@@ -902,8 +902,9 @@
         const mediaElement = createMediaElement(url, type);
         if (type === 'video') {
           warmVideoElement(mediaElement);
-          activateMediaElement(mediaElement, url);
-          playMediaElement(mediaElement, restartIfSame);
+          if (restartIfSame) {
+            try { mediaElement.currentTime = 0; } catch (error) {}
+          }
         }
         const ready = await waitForMediaReady(mediaElement, type);
         if (switchToken !== mediaSwitchToken) return;

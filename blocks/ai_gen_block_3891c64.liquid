@@ -107,14 +107,15 @@
     isolation: auto !important;
     mix-blend-mode: normal !important;
     font-weight: 200;
-    transition: font-weight 0.2s linear; transition-delay: 0s !important;
+    transition: font-weight 0.2s linear;
+    transition-delay: 0s;
     -webkit-font-smoothing: antialiased;
   }
   
   .js-trigger-bg.is-active .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }},
   .js-trigger-bg:hover .ai-item-wrapper-{{ block_id }} .char-span-{{ block_id }} {
     font-weight: 600;
-    transition-delay: 0s !important;
+    transition-delay: var(--char-delay, 0s);
   }
 
   /* ========== 所有文字栏位：引入 --scroll-fade-dim 和 --scroll-fade 实现同步渐隐 ========== */
@@ -428,7 +429,7 @@
                 const visibleSpan = document.createElement('span');
                 visibleSpan.textContent = char; 
                 visibleSpan.className = 'char-span-{{ block_id }}';
-                visibleSpan.style.setProperty('--char-delay', '0s');
+                visibleSpan.style.setProperty('--char-delay', `${charIndex * 0.018}s`);
                 visibleSpan.style.gridArea = '1 / 1';
                 visibleSpan.style.lineHeight = 'inherit';
                 
