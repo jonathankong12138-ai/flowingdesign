@@ -699,7 +699,7 @@ Challenges</div>
   </section>
 
   <section class="m-media m-ratio-medium m-structure-goals" id="m-mobile-goals" data-mobile-pillar data-bg-count="3" data-bg-index="0">
-    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+    <canvas class="glacier-wave-bg{% if is_gtm_case %} glacier-wave-bg--gtm{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
     {%- if is_gtm_case -%}
       <div class="gtm-launch-carousel gtm-launch-carousel--mobile" aria-label="GTM 项目素材轮播">
         <img class="gtm-launch-slide gtm-launch-slide--one" src="{{ "fd-project-detail-gtm-2-2.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-2" loading="eager">

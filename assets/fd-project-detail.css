@@ -15540,7 +15540,7 @@
   .fd-project-detail-section--product-launch-visual #m-mobile-goals > .glacier-wave-bg {
     z-index: 0 !important;
     opacity: .98 !important;
-    filter: hue-rotate(178deg) saturate(.86) contrast(1.06) brightness(1.08) !important;
+    filter: saturate(1) contrast(1.03) brightness(1.03) !important;
   }
 
   .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch {

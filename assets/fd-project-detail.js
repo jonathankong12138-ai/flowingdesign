@@ -454,6 +454,7 @@
       uniform vec2 uResolution;
       uniform float uScroll;
       uniform float uRandomSeed;
+      uniform float uGtmStyle;
       varying vec2 vUv;
 
       mat2 rotate2d(float angle) {
@@ -488,15 +489,16 @@
       }
 
       float getHeight(vec2 uv, float time, float scroll, float seed) {
+        float gtm = step(0.5, uGtmStyle);
         vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
         vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.2);
-        float flowTime = time * 0.8 + scroll * 0.5;
+        float flowTime = time * mix(0.8, 0.9, gtm) + scroll * 0.5;
         vec2 rotUV = rotate2d(-0.5) * baseUV;
         vec2 distortion = vec2(0.0);
         distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
         distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
-        float detail = snoise(rotUV * 0.975 + distortion + flowTime * 0.1) * 0.065;
-        float wave = sin(rotUV.y * 0.6 + distortion.x * 1.7 + flowTime);
+        float detail = snoise(rotUV * mix(0.975, 1.125, gtm) + distortion + flowTime * 0.1) * mix(0.065, 0.075, gtm);
+        float wave = sin(rotUV.y * mix(0.6, 5.0, gtm) + distortion.x * mix(1.7, 3.1, gtm) + flowTime);
         return pow(wave * 0.5 + 0.5, 0.8) + detail;
       }
 
@@ -514,26 +516,27 @@
 
         vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
         float light = dot(normal, normalize(vec3(-0.6, 0.5, 0.4))) * 0.5 + 0.5;
+        float gtm = step(0.5, uGtmStyle);
 
-        vec3 colAmbient = vec3(0.7922, 0.3412, 1.0);
-        vec3 colDeep = vec3(0.0784, 0.4627, 1.0);
-        vec3 colMid = vec3(1.0, 0.5020, 0.5020);
+        vec3 colAmbient = mix(vec3(0.7922, 0.3412, 1.0), vec3(1.0), gtm);
+        vec3 colDeep = mix(vec3(0.0784, 0.4627, 1.0), vec3(1.0), gtm);
+        vec3 colMid = mix(vec3(1.0, 0.5020, 0.5020), vec3(0.8667, 0.8118, 0.7333), gtm);
         vec3 colSoft = vec3(1.0);
-        vec3 colHigh = vec3(1.0);
+        vec3 colHigh = mix(vec3(1.0), vec3(0.7294, 0.6863, 0.6118), gtm);
         vec3 colSpec = vec3(1.0);
         vec3 color = mix(colAmbient, colDeep, smoothstep(0.0, 0.591, light));
         color = mix(color, colMid, 1.0 - smoothstep(0.06, 0.591, light));
         color = mix(color, colSoft, smoothstep(0.06, 1.001, light));
         color = mix(color, colHigh, smoothstep(1.0, 1.001, light));
         color = mix(color, colSpec, smoothstep(1.0, 1.001, light));
-        float heatFlow1 = snoise((uv / 6.0) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
-        float heatFlow2 = snoise((uv / 1.2) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
+        float heatFlow1 = snoise((uv / mix(6.0, 3.9, gtm)) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
+        float heatFlow2 = snoise((uv / mix(1.2, 6.0, gtm)) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
         float heatBand1 = smoothstep(0.50, 0.59, light) * (1.0 - smoothstep(0.59, 0.70, light));
         float heatBand2 = smoothstep(0.02, 0.06, light) * (1.0 - smoothstep(0.06, 0.14, light));
-        vec3 heatHalo = vec3(0.0, 0.8980, 0.6588) * heatBand1 * smoothstep(0.05, 1.0, heatFlow1) * 0.77;
-        heatHalo += vec3(1.0, 0.5059, 0.2392) * heatBand2 * smoothstep(0.71, 1.0, heatFlow2) * 1.5;
+        vec3 heatHalo = mix(vec3(0.0, 0.8980, 0.6588), vec3(1.0, 0.5843, 0.0), gtm) * heatBand1 * smoothstep(0.05, 1.0, heatFlow1) * mix(0.77, 0.98, gtm);
+        heatHalo += mix(vec3(1.0, 0.5059, 0.2392), vec3(1.0, 0.6353, 0.0), gtm) * heatBand2 * smoothstep(0.71, 1.0, heatFlow2) * mix(1.5, 0.97, gtm);
         color = 1.0 - (1.0 - color) * (1.0 - clamp(heatHalo, 0.0, 1.0));
-        color = clamp((color - 0.5) * 1.5 + 0.35, 0.0, 1.0);
+        color = clamp((color - 0.5) * mix(1.5, 1.25, gtm) + mix(0.35, 0.45, gtm), 0.0, 1.0);
 
         float p = clamp(uScroll, 0.0, 1.0);
         float easedScroll = 1.0 - pow(1.0 - p, 2.0);
@@ -560,7 +563,8 @@
         uTime: { value: 0 },
         uResolution: { value: new THREE.Vector2(1, 1) },
         uScroll: { value: 0 },
-        uRandomSeed: { value: Math.random() * 100 }
+        uRandomSeed: { value: Math.random() * 100 },
+        uGtmStyle: { value: canvas.classList.contains('glacier-wave-bg--gtm') ? 1 : 0 }
       };
       const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms });
       scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
