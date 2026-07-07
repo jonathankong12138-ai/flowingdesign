@@ -15624,6 +15624,73 @@
     height: 78%;
   }
 
+  .fd-project-detail-section--product-launch-visual #c3.c-friction,
+  .fd-project-detail-section--product-launch-visual #m-mobile-challenges {
+    background: #f7f7f7 !important;
+    overflow: hidden !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual #c3.c-friction::before,
+  .fd-project-detail-section--product-launch-visual #c3.c-friction::after,
+  .fd-project-detail-section--product-launch-visual #m-mobile-challenges::before,
+  .fd-project-detail-section--product-launch-visual #m-mobile-challenges::after {
+    content: none !important;
+    display: none !important;
+    opacity: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-challenge-carousel {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    overflow: hidden;
+    background: #f7f7f7;
+    pointer-events: none;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-challenge-slide {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    transform: scale(1.012);
+    animation: gtmChallengeSlideFade 12s cubic-bezier(.22, 1, .36, 1) infinite;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-challenge-slide--two {
+    animation-delay: 4s;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-challenge-slide--three {
+    animation-delay: 8s;
+  }
+
+  @keyframes gtmChallengeSlideFade {
+    0%,
+    5% {
+      opacity: 0;
+      transform: scale(1.012);
+    }
+    11%,
+    33% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    39%,
+    100% {
+      opacity: 0;
+      transform: scale(.995);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .fd-project-detail-section--product-launch-visual .gtm-launch-slide {
       animation: none !important;
@@ -15632,6 +15699,16 @@
     }
 
     .fd-project-detail-section--product-launch-visual .gtm-launch-slide--one {
+      opacity: 1 !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual .gtm-challenge-slide {
+      animation: none !important;
+      opacity: 0 !important;
+      transform: none !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual .gtm-challenge-slide--one {
       opacity: 1 !important;
     }
   }
