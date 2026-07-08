@@ -437,8 +437,8 @@
 
               Array.from(word).forEach(char => {
                 const flowinCharWeight = flowinCharCount > 1
-                  ? Math.round(800 - (charIndex * (800 - 200)) / (flowinCharCount - 1))
-                  : 800;
+                  ? Math.round(500 - (charIndex * (500 - 200)) / (flowinCharCount - 1))
+                  : 500;
                 const charWrapper = document.createElement('span');
                 charWrapper.style.display = 'inline-grid';
                 charWrapper.style.justifyItems = 'center';

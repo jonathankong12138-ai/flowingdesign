@@ -16,6 +16,7 @@
   assign product_launch_visual_background_video = 'home-openfit-video.mp4' | asset_url
   assign website_ux_background_video = 'home-user-video.mp4' | asset_url
   assign integrated_marketing_background_video = 'home-bfcm-video.mp4' | asset_url
+  assign integrated_marketing_fourth_image = 'home-integrated-fourth.png' | asset_url
   assign integrated_marketing_carousel_1 = 'home-integrated-fifth-1.webp' | asset_url
   assign integrated_marketing_carousel_2 = 'home-integrated-fifth-2.webp' | asset_url
   assign integrated_marketing_carousel_3 = 'home-integrated-fifth-3.webp' | asset_url
@@ -672,6 +673,10 @@
             {%- if block.settings.title == '全渠道运营视觉系统：从活动策略到规模化交付' and media_slot == 2 -%}
               {%- assign current_video = integrated_marketing_background_video -%}
               {%- assign show_integrated_marketing_carousel = true -%}
+            {%- endif -%}
+            {%- if block.settings.title == '全渠道运营视觉系统：从活动策略到规模化交付' and media_slot == 1 -%}
+              {%- assign current_image = '' -%}
+              {%- assign current_asset_image = integrated_marketing_fourth_image -%}
             {%- endif -%}
             {%- if block.settings.title == 'GTM 视觉整合设计' and media_slot == 1 -%}
               {%- assign current_video = product_launch_visual_background_video -%}
