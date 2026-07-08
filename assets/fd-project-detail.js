@@ -767,6 +767,8 @@
     const canvas = document.getElementById('outroWaveCanvas');
     const pane = document.getElementById('outroNext');
     if (!canvas || !pane) return;
+    const isHeatmapOutro = canvas.classList.contains('outro-wave-canvas--heatmap') || window.location.pathname.includes('/pages/integrated-marketing-design');
+    if (isHeatmapOutro) canvas.classList.add('outro-wave-canvas--heatmap');
     if (typeof THREE === 'undefined') {
       if (canvas.dataset.outroWaveReady) return;
       canvas.dataset.outroWaveReady = 'true';
@@ -790,6 +792,7 @@
         uniform float uRandomSeed;
         uniform float uMobileVertical;
         uniform float uHeatmapStyle;
+        uniform float uDarkMask;
         varying vec2 vUv;
 
         mat2 rotate2d(float angle) { return mat2(cos(angle), -sin(angle), sin(angle), cos(angle)); }
@@ -917,6 +920,16 @@
           vec3 hsl = rgb2hsl(color);
           hsl.y = clamp(hsl.y * mix(1.3, 1.0, heatmap), 0.0, 1.0);
           color = hsl2rgb(hsl);
+
+          if (heatmap > 0.5) {
+            vec2 heatGrainUv = floor(vUv * uResolution * 0.55);
+            float heatDither = fract(sin(dot(heatGrainUv, vec2(12.9898, 78.233)) + uTime * 0.3) * 43758.5453);
+            float heatBaseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
+            color += heatBaseDither + (heatDither - 0.5) * 0.1;
+            gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+            return;
+          }
+
           float p = clamp(uProgress, 0.0, 1.0);
           float easedProgress = 1.0 - pow(1.0 - p, 2.0);
           float wavePos = mix(1.2, 0.08, easedProgress);
@@ -929,7 +942,8 @@
           float waveCrest = smoothstep(-0.05, 0.1, dist) * smoothstep(0.2, 0.05, dist);
           vec3 waveColor = color + mix(vec3(1.0, 0.5, 0.0) * 0.25, vec3(1.0, 0.8784, 0.9608) * 0.6, heatmap) * waveCrest;
           waveColor += (light - 0.5) * 0.03 * coloredWave;
-          vec3 finalColor = mix(vec3(1.0), waveColor, coloredWave);
+          vec3 maskColor = mix(vec3(1.0), vec3(0.0), step(0.5, uDarkMask));
+          vec3 finalColor = mix(maskColor, waveColor, coloredWave);
           vec2 grainUv = floor(vUv * uResolution);
           float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * 2.0) * 43758.5453);
           float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
@@ -968,11 +982,13 @@
         progress: gl.getUniformLocation(program, 'uProgress'),
         seed: gl.getUniformLocation(program, 'uRandomSeed'),
         mobileVertical: gl.getUniformLocation(program, 'uMobileVertical'),
-        heatmapStyle: gl.getUniformLocation(program, 'uHeatmapStyle')
+        heatmapStyle: gl.getUniformLocation(program, 'uHeatmapStyle'),
+        darkMask: gl.getUniformLocation(program, 'uDarkMask')
       };
       gl.uniform1f(uniforms.seed, 42.0);
       gl.uniform1f(uniforms.mobileVertical, window.matchMedia('(max-width: 767px)').matches ? 1.0 : 0.0);
-      gl.uniform1f(uniforms.heatmapStyle, canvas.classList.contains('outro-wave-canvas--heatmap') ? 1.0 : 0.0);
+      gl.uniform1f(uniforms.heatmapStyle, isHeatmapOutro ? 1.0 : 0.0);
+      gl.uniform1f(uniforms.darkMask, canvas.classList.contains('outro-wave-canvas--dark') ? 1.0 : 0.0);
 
       let targetProgress = 0;
       let currentProgress = 0;
@@ -1009,7 +1025,7 @@
         requestAnimationFrame(animateRaw);
         if (document.hidden) return;
         /* outro 波浪只在过渡进行/收尾时渲染，离屏静止时跳过（外观不变） */
-        if (targetProgress <= 0.0005 && currentProgress <= 0.0005) {
+        if (!isHeatmapOutro && targetProgress <= 0.0005 && currentProgress <= 0.0005) {
           currentProgress = targetProgress;
           return;
         }
@@ -1042,6 +1058,7 @@
       uniform float uRandomSeed;
       uniform float uMobileVertical;
       uniform float uHeatmapStyle;
+      uniform float uDarkMask;
       varying vec2 vUv;
 
       mat2 rotate2d(float angle) {
@@ -1180,6 +1197,15 @@
         hsl.y = clamp(hsl.y * mix(1.3, 1.0, heatmap), 0.0, 1.0);
         color = hsl2rgb(hsl);
 
+        if (heatmap > 0.5) {
+          vec2 heatGrainUv = floor(vUv * uResolution * 0.55);
+          float heatDither = fract(sin(dot(heatGrainUv, vec2(12.9898, 78.233)) + uTime * 0.3) * 43758.5453);
+          float heatBaseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
+          color += heatBaseDither + (heatDither - 0.5) * 0.1;
+          gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+          return;
+        }
+
         float p = clamp(uProgress, 0.0, 1.0);
         float easedProgress = 1.0 - pow(1.0 - p, 2.0);
         float wavePos = mix(1.2, 0.08, easedProgress);
@@ -1193,7 +1219,8 @@
 
         vec3 waveColor = color + mix(vec3(1.0, 0.5, 0.0) * 0.25, vec3(1.0, 0.8784, 0.9608) * 0.6, heatmap) * waveCrest;
         waveColor += (light - 0.5) * 0.03 * coloredWave;
-        vec3 finalColor = mix(vec3(1.0), waveColor, coloredWave);
+        vec3 maskColor = mix(vec3(1.0), vec3(0.0), step(0.5, uDarkMask));
+        vec3 finalColor = mix(maskColor, waveColor, coloredWave);
         vec2 grainUv = floor(vUv * uResolution);
         float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * 2.0) * 43758.5453);
         float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
@@ -1213,7 +1240,8 @@
       uProgress: { value: 0 },
       uRandomSeed: { value: 42.0 },
       uMobileVertical: { value: window.matchMedia('(max-width: 767px)').matches ? 1 : 0 },
-      uHeatmapStyle: { value: canvas.classList.contains('outro-wave-canvas--heatmap') ? 1 : 0 }
+      uHeatmapStyle: { value: isHeatmapOutro ? 1 : 0 },
+      uDarkMask: { value: canvas.classList.contains('outro-wave-canvas--dark') ? 1 : 0 }
     };
     const material = new THREE.ShaderMaterial({
       vertexShader,
@@ -1254,7 +1282,7 @@
       requestAnimationFrame(animate);
       if (document.hidden) return;
       /* outro 波浪只在过渡进行/收尾时渲染，离屏静止时跳过（外观不变） */
-      if (targetProgress <= 0.0005 && currentProgress <= 0.0005) {
+      if (!isHeatmapOutro && targetProgress <= 0.0005 && currentProgress <= 0.0005) {
         currentProgress = targetProgress;
         return;
       }

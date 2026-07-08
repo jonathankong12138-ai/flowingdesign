@@ -6,7 +6,6 @@
     background: #fff; 
     overscroll-behavior: none; 
   }
-
   body {
     font-family: "Noto Sans SC", "Urbanist", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #000;
@@ -1837,9 +1836,10 @@
     pointer-events: none;
     z-index: 0;
     background:
-      radial-gradient(ellipse at 80% 24%, rgba(255,255,255,.9), rgba(255,255,255,0) 30%),
-      radial-gradient(ellipse at 72% 74%, rgba(172,164,151,.5), rgba(172,164,151,0) 36%),
-      linear-gradient(115deg, rgba(62,76,86,.72), rgba(190,210,226,.74) 42%, rgba(249,251,252,.92) 74%);
+      radial-gradient(ellipse at 72% 28%, rgba(255,149,0,.38), rgba(255,149,0,0) 34%),
+      radial-gradient(ellipse at 48% 56%, rgba(221,207,187,.72), rgba(221,207,187,0) 44%),
+      radial-gradient(ellipse at 78% 76%, rgba(186,175,156,.54), rgba(186,175,156,0) 38%),
+      linear-gradient(115deg, #fff 0%, #fff 38%, #ddcfbb 58%, #baaf9c 100%);
     background-size: 150% 150%;
     animation: outroWaveDrift 8s ease-in-out infinite alternate;
     -webkit-mask-image: none;
@@ -5399,9 +5399,10 @@
 
   .outro-wave-canvas {
     background:
-      linear-gradient(64deg, transparent 0 20%, rgba(255,255,255,.3) 20.4%, transparent 24%),
-      linear-gradient(115deg, rgba(61,73,80,.78), rgba(190,211,223,.72) 42%, rgba(247,248,245,.96) 76%),
-      linear-gradient(180deg, #f4f5f2, #eceeea) !important;
+      radial-gradient(ellipse at 72% 28%, rgba(255,149,0,.38), rgba(255,149,0,0) 34%),
+      radial-gradient(ellipse at 48% 56%, rgba(221,207,187,.72), rgba(221,207,187,0) 44%),
+      radial-gradient(ellipse at 78% 76%, rgba(186,175,156,.54), rgba(186,175,156,0) 38%),
+      linear-gradient(115deg, #fff 0%, #fff 38%, #ddcfbb 58%, #baaf9c 100%) !important;
   }
 
   @media (max-width: 767px) {
@@ -15738,6 +15739,30 @@
     filter: none !important;
   }
 
+  .fd-project-detail-section--product-launch-visual .outro-next {
+    background: #080808 !important;
+    color: #fff !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual .outro-next .outro-wave-canvas--dark {
+    background: #080808 !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual .outro-next :is(.next-eyebrow, .next-title, .next-title.blend-difference, .next-footer-note-title, .next-footer-note-desc, .next-footer-back-link) {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    mix-blend-mode: normal !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual .outro-next .next-eyebrow,
+  .fd-project-detail-section--product-launch-visual .outro-next .next-footer-note-desc {
+    opacity: .72;
+  }
+
+  .fd-project-detail-section--product-launch-visual .outro-next .next-cta-arrow {
+    filter: invert(1) !important;
+  }
+
   .fd-project-detail-section--product-launch-visual .outro-next .next-title,
   .fd-project-detail-section--product-launch-visual .outro-next .next-title.blend-difference {
     overflow-wrap: anywhere;
@@ -16536,4 +16561,18 @@
       animation: none !important;
       transform: none !important;
     }
+  }
+
+  /* Final override: keep integrated outro on the downloaded heatmap fluid background. */
+  .outro-next:has(> .outro-wave-canvas--heatmap) {
+    background: #080808 !important;
+  }
+
+  .outro-wave-canvas--heatmap {
+    background:
+      radial-gradient(ellipse at 20% 18%, rgba(202,87,255,.56), rgba(202,87,255,0) 34%),
+      radial-gradient(ellipse at 58% 42%, rgba(20,118,255,.64), rgba(20,118,255,0) 40%),
+      radial-gradient(ellipse at 72% 68%, rgba(0,229,168,.34), rgba(0,229,168,0) 38%),
+      radial-gradient(ellipse at 78% 28%, rgba(255,129,61,.42), rgba(255,129,61,0) 30%),
+      linear-gradient(115deg, rgba(255,128,128,.42), rgba(255,255,255,.94) 48%, rgba(255,255,255,1) 78%) !important;
   }
