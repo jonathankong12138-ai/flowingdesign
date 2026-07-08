@@ -15660,22 +15660,29 @@
   .fd-project-detail-section--product-launch-visual #c5.c-research,
   .fd-project-detail-section--product-launch-visual #c6.c-org,
   .fd-project-detail-section--product-launch-visual #c7.c-userres,
+  .fd-project-detail-section--product-launch-visual #c8.c-persona,
+  .fd-project-detail-section--product-launch-visual #c9.c-journey,
+  .fd-project-detail-section--product-launch-visual #c10.c-libs,
   .fd-project-detail-section--product-launch-visual .m-timeline,
   .fd-project-detail-section--product-launch-visual .m-research-intro,
   .fd-project-detail-section--product-launch-visual .m-org-overview,
-  .fd-project-detail-section--product-launch-visual #m-mobile-research {
+  .fd-project-detail-section--product-launch-visual #m-mobile-research,
+  .fd-project-detail-section--product-launch-visual [data-mobile-persona],
+  .fd-project-detail-section--product-launch-visual #m-mobile-journey,
+  .fd-project-detail-section--product-launch-visual .m-structure-components {
     background: #f7f7f7 !important;
     isolation: isolate;
     overflow: hidden !important;
   }
 
-  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c6.c-org, #c7.c-userres, .m-timeline, .m-research-intro, .m-org-overview, #m-mobile-research)::before,
-  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c6.c-org, #c7.c-userres, .m-timeline, .m-research-intro, .m-org-overview, #m-mobile-research)::after {
+  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c6.c-org, #c7.c-userres, #c8.c-persona, #c9.c-journey, #c10.c-libs, .m-timeline, .m-research-intro, .m-org-overview, #m-mobile-research, [data-mobile-persona], #m-mobile-journey, .m-structure-components)::before,
+  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c6.c-org, #c7.c-userres, #c8.c-persona, #c9.c-journey, #c10.c-libs, .m-timeline, .m-research-intro, .m-org-overview, #m-mobile-research, [data-mobile-persona], #m-mobile-journey, .m-structure-components)::after {
     content: none !important;
     display: none !important;
   }
 
-  .fd-project-detail-section--product-launch-visual .gtm-sixth-carousel {
+  .fd-project-detail-section--product-launch-visual .gtm-sixth-carousel,
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-carousel {
     position: absolute;
     inset: 0;
     z-index: 3;
@@ -15684,7 +15691,8 @@
     pointer-events: none;
   }
 
-  .fd-project-detail-section--product-launch-visual .gtm-sixth-slide {
+  .fd-project-detail-section--product-launch-visual .gtm-sixth-slide,
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide {
     position: absolute;
     inset: 0;
     z-index: 1;
@@ -15696,6 +15704,11 @@
     opacity: 0;
     transform: scale(1.012);
     animation: gtmSixthSlideFade 16s cubic-bezier(.22, 1, .36, 1) infinite;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide {
+    animation-name: gtmEighthSlideFade;
+    animation-duration: 40s;
   }
 
   .fd-project-detail-section--product-launch-visual .gtm-sixth-slide--two {
@@ -15710,6 +15723,16 @@
     animation-delay: 12s;
   }
 
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--two { animation-delay: 4s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--three { animation-delay: 8s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--four { animation-delay: 12s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--five { animation-delay: 16s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--six { animation-delay: 20s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--seven { animation-delay: 24s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--eight { animation-delay: 28s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--nine { animation-delay: 32s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--ten { animation-delay: 36s; }
+
   @keyframes gtmSixthSlideFade {
     0%,
     24% {
@@ -15717,6 +15740,19 @@
       transform: scale(1);
     }
     30%,
+    100% {
+      opacity: 0;
+      transform: scale(1.012);
+    }
+  }
+
+  @keyframes gtmEighthSlideFade {
+    0%,
+    9% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    12%,
     100% {
       opacity: 0;
       transform: scale(1.012);

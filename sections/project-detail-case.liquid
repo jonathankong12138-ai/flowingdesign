@@ -633,72 +633,95 @@ Challenges</div>
         </article>
 
         <article class="card c-persona" id="c8" data-bg-index="0">
-          <div class="bg-placeholder" aria-hidden="true"></div>
-          <div class="nav-arrows nav-arrows--row">
-            <button class="nav-btn prev" type="button" aria-label="上一个画像" data-persona-step="-1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, -1)"><span class="ic"></span></button>
-            <button class="nav-btn next" type="button" aria-label="下一个画像" data-persona-step="1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, 1)"><span class="ic"></span></button>
-            <span class="switch-count" aria-live="polite">01 / 03</span>
-          </div>
-          <div class="title">{{ persona_title }}</div>
-          <div class="lede">{{ persona_lede }}</div>
-          <div class="who">
-            <div class="name">{{ persona_name }}</div>
-            <div class="chips">
-              <span class="chip">{{ persona_chip_1 }}</span><span class="chip">{{ persona_chip_2 }}</span>
+          {%- if is_gtm_case -%}
+            <div class="gtm-eighth-carousel" aria-label="第八板块图片轮播">
+              <img class="gtm-eighth-slide gtm-eighth-slide--one" src="{{ "fd-project-detail-gtm-section-8-1.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 1" loading="lazy">
+              <img class="gtm-eighth-slide gtm-eighth-slide--two" src="{{ "fd-project-detail-gtm-section-8-2.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 2" loading="lazy">
+              <img class="gtm-eighth-slide gtm-eighth-slide--three" src="{{ "fd-project-detail-gtm-section-8-3.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 3" loading="lazy">
+              <img class="gtm-eighth-slide gtm-eighth-slide--four" src="{{ "fd-project-detail-gtm-section-8-4.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 4" loading="lazy">
+              <img class="gtm-eighth-slide gtm-eighth-slide--five" src="{{ "fd-project-detail-gtm-section-8-5.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 5" loading="lazy">
+              <img class="gtm-eighth-slide gtm-eighth-slide--six" src="{{ "fd-project-detail-gtm-section-8-6.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 6" loading="lazy">
+              <img class="gtm-eighth-slide gtm-eighth-slide--seven" src="{{ "fd-project-detail-gtm-section-8-7.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 7" loading="lazy">
+              <img class="gtm-eighth-slide gtm-eighth-slide--eight" src="{{ "fd-project-detail-gtm-section-8-8.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 8" loading="lazy">
+              <img class="gtm-eighth-slide gtm-eighth-slide--nine" src="{{ "fd-project-detail-gtm-section-8-9.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 9" loading="lazy">
+              <img class="gtm-eighth-slide gtm-eighth-slide--ten" src="{{ "fd-project-detail-gtm-section-8-10.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 10" loading="lazy">
             </div>
-            <div class="quotes">
+          {%- else -%}
+            <div class="bg-placeholder" aria-hidden="true"></div>
+            <div class="nav-arrows nav-arrows--row">
+              <button class="nav-btn prev" type="button" aria-label="上一个画像" data-persona-step="-1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, -1)"><span class="ic"></span></button>
+              <button class="nav-btn next" type="button" aria-label="下一个画像" data-persona-step="1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, 1)"><span class="ic"></span></button>
+              <span class="switch-count" aria-live="polite">01 / 03</span>
+            </div>
+            <div class="title">{{ persona_title }}</div>
+            <div class="lede">{{ persona_lede }}</div>
+            <div class="who">
+              <div class="name">{{ persona_name }}</div>
+              <div class="chips">
+                <span class="chip">{{ persona_chip_1 }}</span><span class="chip">{{ persona_chip_2 }}</span>
+              </div>
+              <div class="quotes">
 <div class="q">在 3 次点击内找到特定型号 - 反感拥挤的移动端导航</div>
 <div class="q">顺畅调用 Klarna 或信用卡完成无缝支付 - 对支付网关报错极度缺乏耐心。</div>
+              </div>
             </div>
-          </div>
+          {%- endif -%}
         </article>
 
         <article class="card c-journey" id="c9" data-bg-count="4" data-bg-index="0">
-          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-          <div class="bg-placeholder" aria-hidden="true"></div>
-          <div class="nav-arrows nav-arrows--row">
-            <button class="nav-btn prev" type="button" aria-label="上一张背景图" data-bg-step="-1"><span class="ic"></span></button>
-            <button class="nav-btn next" type="button" aria-label="下一张背景图" data-bg-step="1"><span class="ic"></span></button>
-            <span class="switch-count" aria-live="polite">01 / 04</span>
-          </div>
-          <div class="steps">
-            <button class="step active" type="button" data-journey-index="0">{{ journey_tabs | split: "|" | first }}</button>
-            <button class="step" type="button" data-journey-index="1">{{ journey_tabs | split: "|" | slice: 1, 1 | first }}</button>
-            <button class="step" type="button" data-journey-index="2">{{ journey_tabs | split: "|" | slice: 2, 1 | first }}</button>
-            <button class="step" type="button" data-journey-index="3">{{ journey_tabs | split: "|" | slice: 3, 1 | first }}</button>
-          </div>
-          <div class="body-text">
-            <div class="journey-copy-line">{{ journey_copy }}</div>
+          {%- if is_gtm_case -%}
+            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-9-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第九板块视频"></video>
+          {%- else -%}
+            <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+            <div class="bg-placeholder" aria-hidden="true"></div>
+            <div class="nav-arrows nav-arrows--row">
+              <button class="nav-btn prev" type="button" aria-label="上一张背景图" data-bg-step="-1"><span class="ic"></span></button>
+              <button class="nav-btn next" type="button" aria-label="下一张背景图" data-bg-step="1"><span class="ic"></span></button>
+              <span class="switch-count" aria-live="polite">01 / 04</span>
+            </div>
+            <div class="steps">
+              <button class="step active" type="button" data-journey-index="0">{{ journey_tabs | split: "|" | first }}</button>
+              <button class="step" type="button" data-journey-index="1">{{ journey_tabs | split: "|" | slice: 1, 1 | first }}</button>
+              <button class="step" type="button" data-journey-index="2">{{ journey_tabs | split: "|" | slice: 2, 1 | first }}</button>
+              <button class="step" type="button" data-journey-index="3">{{ journey_tabs | split: "|" | slice: 3, 1 | first }}</button>
+            </div>
+            <div class="body-text">
+              <div class="journey-copy-line">{{ journey_copy }}</div>
 <div class="journey-copy-line">"Technical language feel foreign." - Olfa Fdhila</div>
-            <div class="journey-copy-gap"></div>
-            <div class="journey-head blend-difference">统一入口认知与行动路径</div>
-            <div class="journey-copy-line">通过一致的信息层级、视觉节奏和渠道承接，帮助用户快速理解项目价值与下一步行动。</div>
-            <div class="journey-copy-gap"></div>
-            <div class="journey-head blend-difference">沉淀可复用的设计资产</div>
-            <div class="journey-copy-line">将项目中的策略、视觉模块、素材规格与复盘结论整理为后续项目可复用的方法。</div>
-          </div>
-          <div class="journey-result" aria-live="polite"></div>
-          <div class="quote">"Technical language feel foreign." / "Confusing navigation, Slightly too busy on mobile device." / "Contact form was just automated bot answers..."</div>
-          <div class="journey-shot" aria-hidden="true"></div>
-          <div class="pains">
-            <div class="pain">体验阻力：信息分散、渠道版本不一致和交付节奏紧张，会削弱用户理解与团队协作效率。</div>
-            <div class="pain">战略机会：通过统一框架、素材矩阵和复盘机制，把设计从单次交付转化为长期资产。</div>
-          </div>
+              <div class="journey-copy-gap"></div>
+              <div class="journey-head blend-difference">统一入口认知与行动路径</div>
+              <div class="journey-copy-line">通过一致的信息层级、视觉节奏和渠道承接，帮助用户快速理解项目价值与下一步行动。</div>
+              <div class="journey-copy-gap"></div>
+              <div class="journey-head blend-difference">沉淀可复用的设计资产</div>
+              <div class="journey-copy-line">将项目中的策略、视觉模块、素材规格与复盘结论整理为后续项目可复用的方法。</div>
+            </div>
+            <div class="journey-result" aria-live="polite"></div>
+            <div class="quote">"Technical language feel foreign." / "Confusing navigation, Slightly too busy on mobile device." / "Contact form was just automated bot answers..."</div>
+            <div class="journey-shot" aria-hidden="true"></div>
+            <div class="pains">
+              <div class="pain">体验阻力：信息分散、渠道版本不一致和交付节奏紧张，会削弱用户理解与团队协作效率。</div>
+              <div class="pain">战略机会：通过统一框架、素材矩阵和复盘机制，把设计从单次交付转化为长期资产。</div>
+            </div>
+          {%- endif -%}
         </article>
 
         <article class="card c-libs" id="c10" data-bg-count="3" data-bg-index="0">
-          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-          <div class="bg-placeholder" aria-hidden="true"></div>
-          <div class="c-libs-marquee" aria-hidden="true">
-            <div class="c-libs-marquee-track">
-              <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy">
-              <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy">
+          {%- if is_gtm_case -%}
+            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-10-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第十板块视频"></video>
+          {%- else -%}
+            <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+            <div class="bg-placeholder" aria-hidden="true"></div>
+            <div class="c-libs-marquee" aria-hidden="true">
+              <div class="c-libs-marquee-track">
+                <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy">
+                <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy">
+              </div>
             </div>
-          </div>
-          <div class="c-libs-label">
-            <div class="t blend-difference">{{ libs_title }}</div>
-            <div class="s">{{ libs_copy }}</div>
-          </div>
+            <div class="c-libs-label">
+              <div class="t blend-difference">{{ libs_title }}</div>
+              <div class="s">{{ libs_copy }}</div>
+            </div>
+          {%- endif -%}
         </article>
 
         <article class="card c-final" id="c11" data-bg-count="3" data-bg-index="0">
@@ -963,43 +986,61 @@ Challenges</div>
   </section>
 
   <section class="m-media m-ratio-medium m-structure-image m-structure-decision" data-mobile-persona data-bg-count="3" data-bg-index="0">
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-overlay m-arrow-row">
-      <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
-      <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
-      <span class="m-switch-count" aria-live="polite">01 / 03</span>
-    </div>
-    <div class="m-overlay m-persona-title">{{ persona_title }}</div>
-    <div class="m-overlay m-persona-lede">{{ persona_lede }}</div>
-    <div class="m-overlay m-persona-info">
-      <div class="m-persona-name">{{ persona_name }}</div>
-      <div class="m-chip-row">
-        <span class="m-chip">{{ persona_chip_1 }}</span>
-        <span class="m-chip">{{ persona_chip_2 }}</span>
+    {%- if is_gtm_case -%}
+      <div class="gtm-eighth-carousel gtm-eighth-carousel--mobile" aria-label="第八板块移动端图片轮播">
+        <img class="gtm-eighth-slide gtm-eighth-slide--one" src="{{ "fd-project-detail-gtm-section-8-1.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 1" loading="lazy">
+        <img class="gtm-eighth-slide gtm-eighth-slide--two" src="{{ "fd-project-detail-gtm-section-8-2.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 2" loading="lazy">
+        <img class="gtm-eighth-slide gtm-eighth-slide--three" src="{{ "fd-project-detail-gtm-section-8-3.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 3" loading="lazy">
+        <img class="gtm-eighth-slide gtm-eighth-slide--four" src="{{ "fd-project-detail-gtm-section-8-4.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 4" loading="lazy">
+        <img class="gtm-eighth-slide gtm-eighth-slide--five" src="{{ "fd-project-detail-gtm-section-8-5.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 5" loading="lazy">
+        <img class="gtm-eighth-slide gtm-eighth-slide--six" src="{{ "fd-project-detail-gtm-section-8-6.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 6" loading="lazy">
+        <img class="gtm-eighth-slide gtm-eighth-slide--seven" src="{{ "fd-project-detail-gtm-section-8-7.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 7" loading="lazy">
+        <img class="gtm-eighth-slide gtm-eighth-slide--eight" src="{{ "fd-project-detail-gtm-section-8-8.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 8" loading="lazy">
+        <img class="gtm-eighth-slide gtm-eighth-slide--nine" src="{{ "fd-project-detail-gtm-section-8-9.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 9" loading="lazy">
+        <img class="gtm-eighth-slide gtm-eighth-slide--ten" src="{{ "fd-project-detail-gtm-section-8-10.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 10" loading="lazy">
       </div>
-      <div class="m-quote-stack">
+    {%- else -%}
+      <div class="m-img" aria-hidden="true"></div>
+      <div class="m-overlay m-arrow-row">
+        <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+        <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+        <span class="m-switch-count" aria-live="polite">01 / 03</span>
+      </div>
+      <div class="m-overlay m-persona-title">{{ persona_title }}</div>
+      <div class="m-overlay m-persona-lede">{{ persona_lede }}</div>
+      <div class="m-overlay m-persona-info">
+        <div class="m-persona-name">{{ persona_name }}</div>
+        <div class="m-chip-row">
+          <span class="m-chip">{{ persona_chip_1 }}</span>
+          <span class="m-chip">{{ persona_chip_2 }}</span>
+        </div>
+        <div class="m-quote-stack">
 <div>在 3 次点击内找到特定型号 - 反感拥挤的移动端导航</div>
 <div>顺畅调用 Klarna 或信用卡完成无缝支付 - 对支付网关报错极度缺乏耐心。</div>
+        </div>
       </div>
-    </div>
+    {%- endif -%}
   </section>
 
   <section class="m-media m-ratio-tall m-structure-image m-structure-browse" id="m-mobile-journey" data-mobile-journey data-bg-count="4" data-bg-index="0">
-    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-journey-shot" aria-hidden="true"></div>
-    <div class="m-overlay m-arrow-row">
-      <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
-      <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
-      <span class="m-switch-count" aria-live="polite">01 / 04</span>
-    </div>
-    <div class="m-overlay m-journey-tabs" role="group" aria-label="用户旅程阶段">
-      <button class="m-journey-tab is-active" type="button" aria-pressed="true" data-mobile-journey-index="0">{{ journey_tabs | split: "|" | first }}</button>
-      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="1">{{ journey_tabs | split: "|" | slice: 1, 1 | first }}</button>
-      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="2">{{ journey_tabs | split: "|" | slice: 2, 1 | first }}</button>
-      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="3">{{ journey_tabs | split: "|" | slice: 3, 1 | first }}</button>
-    </div>
-    <div class="m-overlay m-journey-copy">{{ journey_copy }}
+    {%- if is_gtm_case -%}
+      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-9-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第九板块移动端视频"></video>
+    {%- else -%}
+      <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+      <div class="m-img" aria-hidden="true"></div>
+      <div class="m-journey-shot" aria-hidden="true"></div>
+      <div class="m-overlay m-arrow-row">
+        <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+        <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+        <span class="m-switch-count" aria-live="polite">01 / 04</span>
+      </div>
+      <div class="m-overlay m-journey-tabs" role="group" aria-label="用户旅程阶段">
+        <button class="m-journey-tab is-active" type="button" aria-pressed="true" data-mobile-journey-index="0">{{ journey_tabs | split: "|" | first }}</button>
+        <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="1">{{ journey_tabs | split: "|" | slice: 1, 1 | first }}</button>
+        <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="2">{{ journey_tabs | split: "|" | slice: 2, 1 | first }}</button>
+        <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="3">{{ journey_tabs | split: "|" | slice: 3, 1 | first }}</button>
+      </div>
+      <div class="m-overlay m-journey-copy">{{ journey_copy }}
 "Technical language feel foreign." - Olfa Fdhila
 
 强化品牌背书与 DTC 利益点
@@ -1010,29 +1051,34 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
 
 方法沉淀：
 用统一内容结构承接不同项目类型，让策略、执行、成果和复盘在同一套浏览框架中被快速理解。</div>
-<div class="m-overlay m-journey-quote"></div>
-    <div class="m-overlay m-journey-pains">
-    </div>
+      <div class="m-overlay m-journey-quote"></div>
+      <div class="m-overlay m-journey-pains">
+      </div>
+    {%- endif -%}
   </section>
 
   <section class="m-media m-ratio-medium m-structure-image m-structure-components" data-bg-count="3" data-bg-index="0">
-    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-component-preview" aria-hidden="true">
-      <div class="c-libs-marquee-track">
-        <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
-        <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
+    {%- if is_gtm_case -%}
+      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-10-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第十板块移动端视频"></video>
+    {%- else -%}
+      <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+      <div class="m-img" aria-hidden="true"></div>
+      <div class="m-component-preview" aria-hidden="true">
+        <div class="c-libs-marquee-track">
+          <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
+          <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
+        </div>
       </div>
-    </div>
-    <div class="m-overlay m-arrow-row">
-      <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
-      <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
-      <span class="m-switch-count" aria-live="polite">01 / 03</span>
-    </div>
-    <div class="m-overlay m-card-label">
-      <div class="m-card-label__title blend-difference"></div>
-      <div class="m-card-label__sub"></div>
-    </div>
+      <div class="m-overlay m-arrow-row">
+        <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+        <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+        <span class="m-switch-count" aria-live="polite">01 / 03</span>
+      </div>
+      <div class="m-overlay m-card-label">
+        <div class="m-card-label__title blend-difference"></div>
+        <div class="m-card-label__sub"></div>
+      </div>
+    {%- endif -%}
   </section>
   <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" data-mobile-final-count="{{ section.settings.mobile_final_image_count | default: 3 }}" aria-label="页面浏览预览">
     <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
