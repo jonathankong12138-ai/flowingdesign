@@ -767,7 +767,9 @@
     const canvas = document.getElementById('outroWaveCanvas');
     const pane = document.getElementById('outroNext');
     if (!canvas || !pane) return;
-    const isHeatmapOutro = canvas.classList.contains('outro-wave-canvas--heatmap');
+    const isIntegratedDefaultOutro = canvas.classList.contains('outro-wave-canvas--integrated-default') || window.location.pathname.includes('/pages/integrated-marketing-design');
+    if (isIntegratedDefaultOutro) canvas.classList.remove('outro-wave-canvas--heatmap');
+    const isHeatmapOutro = !isIntegratedDefaultOutro && canvas.classList.contains('outro-wave-canvas--heatmap');
     if (typeof THREE === 'undefined') {
       if (canvas.dataset.outroWaveReady) return;
       canvas.dataset.outroWaveReady = 'true';

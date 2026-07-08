@@ -1853,6 +1853,17 @@
       radial-gradient(ellipse at 78% 28%, rgba(255,129,61,.42), rgba(255,129,61,0) 30%),
       linear-gradient(115deg, rgba(255,128,128,.42), rgba(255,255,255,.94) 48%, rgba(255,255,255,1) 78%);
   }
+  .outro-next:has(> .outro-wave-canvas--integrated-default) {
+    background: #fff;
+  }
+  .outro-wave-canvas--integrated-default,
+  .outro-wave-canvas--integrated-default.outro-wave-canvas--heatmap {
+    background:
+      radial-gradient(ellipse at 72% 28%, rgba(255,149,0,.38), rgba(255,149,0,0) 34%),
+      radial-gradient(ellipse at 48% 56%, rgba(221,207,187,.72), rgba(221,207,187,0) 44%),
+      radial-gradient(ellipse at 78% 76%, rgba(186,175,156,.54), rgba(186,175,156,0) 38%),
+      linear-gradient(115deg, #fff 0%, #fff 38%, #ddcfbb 58%, #baaf9c 100%);
+  }
   @keyframes outroWaveDrift {
     0% { background-position: 100% 44%; }
     50% { background-position: 58% 52%; }
@@ -16563,9 +16574,13 @@
     }
   }
 
-  /* Final override: keep integrated outro on the downloaded heatmap fluid background. */
+  /* Final override: heatmap pages keep their downloaded fluid background unless a page opts into the default outro wave. */
   .outro-next:has(> .outro-wave-canvas--heatmap) {
     background: #080808 !important;
+  }
+
+  .outro-next:has(> .outro-wave-canvas--integrated-default) {
+    background: #fff !important;
   }
 
   .outro-wave-canvas--heatmap {
@@ -16575,4 +16590,13 @@
       radial-gradient(ellipse at 72% 68%, rgba(0,229,168,.34), rgba(0,229,168,0) 38%),
       radial-gradient(ellipse at 78% 28%, rgba(255,129,61,.42), rgba(255,129,61,0) 30%),
       linear-gradient(115deg, rgba(255,128,128,.42), rgba(255,255,255,.94) 48%, rgba(255,255,255,1) 78%) !important;
+  }
+
+  .outro-wave-canvas--integrated-default,
+  .outro-wave-canvas--integrated-default.outro-wave-canvas--heatmap {
+    background:
+      radial-gradient(ellipse at 72% 28%, rgba(255,149,0,.38), rgba(255,149,0,0) 34%),
+      radial-gradient(ellipse at 48% 56%, rgba(221,207,187,.72), rgba(221,207,187,0) 44%),
+      radial-gradient(ellipse at 78% 76%, rgba(186,175,156,.54), rgba(186,175,156,0) 38%),
+      linear-gradient(115deg, #fff 0%, #fff 38%, #ddcfbb 58%, #baaf9c 100%) !important;
   }
