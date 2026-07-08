@@ -150,7 +150,7 @@
       assign stat_value_2 = 'Campaign Kit'
       assign stat_label_3 = '复用机制'
       assign stat_value_3 = 'Scale'
-      assign next_project_title = 'E-commerce Upgrade'
+      assign next_project_title = '全球官网UX与视觉系统重:塑，从O到的全链路建设'
       assign project_hero_title = 'Integrated Marketing Design System'
       assign hero_caption = '从活动策略到规模化交付的运营视觉系统'
       assign rail_1_title = '运营设计背景'
@@ -726,6 +726,19 @@ Challenges</div>
         <article class="card c-libs" id="c10" data-bg-count="3" data-bg-index="0">
           {%- if is_gtm_case -%}
             <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-10-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第十板块视频"></video>
+          {%- elsif is_integrated_case -%}
+            <canvas class="glacier-wave-bg glacier-wave-bg--bf" data-glacier-wave aria-hidden="true"></canvas>
+            <div class="integrated-libs-marquee" aria-hidden="true">
+              {%- for row_index in (1..2) -%}
+                <div class="integrated-libs-row integrated-libs-row--{{ row_index }}">
+                  <div class="integrated-libs-track">
+                    {%- for copy_index in (1..4) -%}
+                      <img src="{{ "fd-project-detail-integrated-libs.webp" | asset_url }}" width="9963" height="1200" alt="" loading="lazy">
+                    {%- endfor -%}
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
           {%- else -%}
             <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
             <div class="bg-placeholder" aria-hidden="true"></div>
@@ -743,7 +756,7 @@ Challenges</div>
         </article>
 
         <article class="card c-final" id="c11" data-bg-count="{% if is_integrated_case %}1{% else %}3{% endif %}" data-bg-index="0">
-          <canvas class="glacier-wave-bg{% if is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
+          <canvas class="glacier-wave-bg{% if is_gtm_case %} glacier-wave-bg--gtm{% elsif is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
           <div class="bg-placeholder" aria-hidden="true"></div>
           <div class="final-mock" aria-label="页面浏览预览">
             {%- if is_integrated_case -%}
@@ -1090,6 +1103,19 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
   <section class="m-media m-ratio-medium m-structure-image m-structure-components" data-bg-count="3" data-bg-index="0">
     {%- if is_gtm_case -%}
       <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-10-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第十板块移动端视频"></video>
+    {%- elsif is_integrated_case -%}
+      <canvas class="glacier-wave-bg glacier-wave-bg--bf" data-glacier-wave aria-hidden="true"></canvas>
+      <div class="integrated-libs-marquee integrated-libs-marquee--mobile" aria-hidden="true">
+        {%- for row_index in (1..2) -%}
+          <div class="integrated-libs-row integrated-libs-row--{{ row_index }}">
+            <div class="integrated-libs-track">
+              {%- for copy_index in (1..4) -%}
+                <img src="{{ "fd-project-detail-integrated-libs.webp" | asset_url }}" width="9963" height="1200" alt="" loading="eager">
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
     {%- else -%}
       <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
       <div class="m-img" aria-hidden="true"></div>
@@ -1111,7 +1137,7 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
     {%- endif -%}
   </section>
   <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" data-mobile-final-count="{% if is_integrated_case %}1{% else %}{{ section.settings.mobile_final_image_count | default: 3 }}{% endif %}" aria-label="页面浏览预览">
-    <canvas class="glacier-wave-bg{% if is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
+    <canvas class="glacier-wave-bg{% if is_gtm_case %} glacier-wave-bg--gtm{% elsif is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
     <div class="m-final-mobile__head">
       <div class="m-final-mobile__controls">
         <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张页面浏览图片" data-mobile-final-step="-1"></button>
@@ -1127,7 +1153,7 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
 <section class="outro" data-screen-label="04 Outro">
   <div class="outro-pin">
     <div class="outro-pane outro-next" id="outroNext">
-      <canvas class="outro-wave-canvas" id="outroWaveCanvas" aria-hidden="true"></canvas>
+      <canvas class="outro-wave-canvas{% if is_integrated_case %} outro-wave-canvas--heatmap{% endif %}" id="outroWaveCanvas" aria-hidden="true"></canvas>
       <div class="outro-next-scale">
         <div class="next-header">
           <span class="next-eyebrow">下一个项目</span>
@@ -1143,12 +1169,14 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
           </div>
         </div>
         <div class="next-thumb" role="link" aria-label="Next project preview">
-          <video class="next-thumb-video" src="{{ "home-bfcm-video.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
-          <div class="next-thumb-carousel" aria-hidden="true">
-            <img src="{{ "home-bfcm-1.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">
-            <img src="{{ "home-bfcm-2.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">
-            <img src="{{ "home-bfcm-3.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">
-          </div>
+          <video class="next-thumb-video" src="{% if is_integrated_case %}{{ "home-user-video.mp4" | asset_url }}{% else %}{{ "home-bfcm-video.mp4" | asset_url }}{% endif %}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+          {%- unless is_integrated_case -%}
+            <div class="next-thumb-carousel" aria-hidden="true">
+              <img src="{{ "home-bfcm-1.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">
+              <img src="{{ "home-bfcm-2.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">
+              <img src="{{ "home-bfcm-3.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">
+            </div>
+          {%- endunless -%}
         </div>
       </div>
     </div>
