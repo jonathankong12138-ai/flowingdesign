@@ -85,7 +85,7 @@
       assign stat_value_2 = 'Matrix'
       assign stat_label_3 = '交付机制'
       assign stat_value_3 = 'Reusable'
-      assign next_project_title = 'Integrated Marketing Design'
+      assign next_project_title = '全渠道运营视觉系统:从活动策略到规模化交付'
       assign project_hero_title = 'Product Launch Visual System'
       assign hero_caption = '从产品定位到上市视觉资产的系统化建设'
       assign rail_1_title = '新品上市背景'
@@ -238,6 +238,12 @@
     "旅程素材/{{ journey_tabs | split: "|" | first }}1.webp": {{ "fd-project-detail-c12fc344b0-1.webp" | asset_url | json }},
     "旅程素材/{{ journey_tabs | split: "|" | first }}2.webp": {{ "fd-project-detail-d76cd55a15-2.webp" | asset_url | json }},
     "旅程素材/{{ journey_tabs | split: "|" | slice: 3, 1 | first }}.webp": {{ "fd-project-detail-8951e82158-asset.webp" | asset_url | json }},
+    "旅程素材/认知与入站1.webp": {{ "fd-project-detail-c12fc344b0-1.webp" | asset_url | json }},
+    "旅程素材/认知与入站2.webp": {{ "fd-project-detail-d76cd55a15-2.webp" | asset_url | json }},
+    "旅程素材/浏览与定位1.webp": {{ "fd-project-detail-52c56caa31-1.webp" | asset_url | json }},
+    "旅程素材/评估与对比1.webp": {{ "fd-project-detail-ceab11fe9f-1.webp" | asset_url | json }},
+    "旅程素材/评估与对比2.webp": {{ "fd-project-detail-8b3ba1d8ce-2.webp" | asset_url | json }},
+    "旅程素材/转化与加购.webp": {{ "fd-project-detail-8951e82158-asset.webp" | asset_url | json }},
     "目标用户/决策型 目标买家.webp": {{ "fd-project-detail-02f4052f30-asset.webp" | asset_url | json }},
     "目标用户/认知型 评估探索者.webp": {{ "fd-project-detail-79b27e96b4-asset.webp" | asset_url | json }},
     "目标用户/深度支持 特殊诉求者.webp": {{ "fd-project-detail-56d9d692fe-asset.webp" | asset_url | json }},
@@ -280,45 +286,49 @@
     return window.projectDetailAssetMap[path] || path;
   };
   window.projectDetailMobileFinalImages = [
-    {%- assign mobile_final_separator = '' -%}
-    {%- if section.settings.mobile_final_image_1 != blank -%}
-      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_1 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_1.alt | default: '页面浏览图片' | json }} }
-      {%- assign mobile_final_separator = ',' -%}
-    {%- endif -%}
-    {%- if section.settings.mobile_final_image_2 != blank -%}
-      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_2 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_2.alt | default: '页面浏览图片' | json }} }
-      {%- assign mobile_final_separator = ',' -%}
-    {%- endif -%}
-    {%- if section.settings.mobile_final_image_3 != blank -%}
-      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_3 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_3.alt | default: '页面浏览图片' | json }} }
-      {%- assign mobile_final_separator = ',' -%}
-    {%- endif -%}
-    {%- if section.settings.mobile_final_image_4 != blank -%}
-      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_4 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_4.alt | default: '页面浏览图片' | json }} }
-      {%- assign mobile_final_separator = ',' -%}
-    {%- endif -%}
-    {%- if section.settings.mobile_final_image_5 != blank -%}
-      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_5 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_5.alt | default: '页面浏览图片' | json }} }
-      {%- assign mobile_final_separator = ',' -%}
-    {%- endif -%}
-    {%- if section.settings.mobile_final_image_6 != blank -%}
-      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_6 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_6.alt | default: '页面浏览图片' | json }} }
-      {%- assign mobile_final_separator = ',' -%}
-    {%- endif -%}
-    {%- if section.settings.mobile_final_image_7 != blank -%}
-      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_7 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_7.alt | default: '页面浏览图片' | json }} }
-      {%- assign mobile_final_separator = ',' -%}
-    {%- endif -%}
-    {%- if section.settings.mobile_final_image_8 != blank -%}
-      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_8 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_8.alt | default: '页面浏览图片' | json }} }
-      {%- assign mobile_final_separator = ',' -%}
-    {%- endif -%}
-    {%- if section.settings.mobile_final_image_9 != blank -%}
-      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_9 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_9.alt | default: '页面浏览图片' | json }} }
-      {%- assign mobile_final_separator = ',' -%}
-    {%- endif -%}
-    {%- if section.settings.mobile_final_image_10 != blank -%}
-      {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_10 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_10.alt | default: '页面浏览图片' | json }} }
+    {%- if is_integrated_case -%}
+      { "src": {{ "fd-project-detail-integrated-final.webp" | asset_url | json }}, "alt": "页面浏览素材" }
+    {%- else -%}
+      {%- assign mobile_final_separator = '' -%}
+      {%- if section.settings.mobile_final_image_1 != blank -%}
+        {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_1 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_1.alt | default: '页面浏览图片' | json }} }
+        {%- assign mobile_final_separator = ',' -%}
+      {%- endif -%}
+      {%- if section.settings.mobile_final_image_2 != blank -%}
+        {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_2 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_2.alt | default: '页面浏览图片' | json }} }
+        {%- assign mobile_final_separator = ',' -%}
+      {%- endif -%}
+      {%- if section.settings.mobile_final_image_3 != blank -%}
+        {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_3 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_3.alt | default: '页面浏览图片' | json }} }
+        {%- assign mobile_final_separator = ',' -%}
+      {%- endif -%}
+      {%- if section.settings.mobile_final_image_4 != blank -%}
+        {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_4 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_4.alt | default: '页面浏览图片' | json }} }
+        {%- assign mobile_final_separator = ',' -%}
+      {%- endif -%}
+      {%- if section.settings.mobile_final_image_5 != blank -%}
+        {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_5 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_5.alt | default: '页面浏览图片' | json }} }
+        {%- assign mobile_final_separator = ',' -%}
+      {%- endif -%}
+      {%- if section.settings.mobile_final_image_6 != blank -%}
+        {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_6 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_6.alt | default: '页面浏览图片' | json }} }
+        {%- assign mobile_final_separator = ',' -%}
+      {%- endif -%}
+      {%- if section.settings.mobile_final_image_7 != blank -%}
+        {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_7 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_7.alt | default: '页面浏览图片' | json }} }
+        {%- assign mobile_final_separator = ',' -%}
+      {%- endif -%}
+      {%- if section.settings.mobile_final_image_8 != blank -%}
+        {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_8 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_8.alt | default: '页面浏览图片' | json }} }
+        {%- assign mobile_final_separator = ',' -%}
+      {%- endif -%}
+      {%- if section.settings.mobile_final_image_9 != blank -%}
+        {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_9 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_9.alt | default: '页面浏览图片' | json }} }
+        {%- assign mobile_final_separator = ',' -%}
+      {%- endif -%}
+      {%- if section.settings.mobile_final_image_10 != blank -%}
+        {{ mobile_final_separator }}{ "src": {{ section.settings.mobile_final_image_10 | image_url: width: 1800 | json }}, "alt": {{ section.settings.mobile_final_image_10.alt | default: '页面浏览图片' | json }} }
+      {%- endif -%}
     {%- endif -%}
   ];
 </script>
@@ -555,164 +565,199 @@ Challenges</div>
           {%- endif -%}
         </article>
 
-        <article class="card c-org" id="c6">
-          {%- if is_gtm_case -%}
-            <div class="gtm-sixth-carousel" aria-label="第六板块图片轮播">
-              <img class="gtm-sixth-slide gtm-sixth-slide--one" src="{{ "fd-project-detail-gtm-section-6-1.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 1" loading="lazy">
-              <img class="gtm-sixth-slide gtm-sixth-slide--two" src="{{ "fd-project-detail-gtm-section-6-2.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 2" loading="lazy">
-              <img class="gtm-sixth-slide gtm-sixth-slide--three" src="{{ "fd-project-detail-gtm-section-6-3.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 3" loading="lazy">
-              <img class="gtm-sixth-slide gtm-sixth-slide--four" src="{{ "fd-project-detail-gtm-section-6-4.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 4" loading="lazy">
-            </div>
-          {%- else -%}
-            <div class="c-org-l">
-              <div class="bg-placeholder" aria-hidden="true"></div>
-              <div class="org-left-top">
-                <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-                <div class="org-title">{{ org_title }}</div>
-                <div class="org-sub">{{ org_sub }}</div>
+        {%- unless is_integrated_case -%}
+          <article class="card c-org" id="c6">
+            {%- if is_gtm_case -%}
+              <div class="gtm-sixth-carousel" aria-label="第六板块图片轮播">
+                <img class="gtm-sixth-slide gtm-sixth-slide--one" src="{{ "fd-project-detail-gtm-section-6-1.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 1" loading="lazy">
+                <img class="gtm-sixth-slide gtm-sixth-slide--two" src="{{ "fd-project-detail-gtm-section-6-2.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 2" loading="lazy">
+                <img class="gtm-sixth-slide gtm-sixth-slide--three" src="{{ "fd-project-detail-gtm-section-6-3.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 3" loading="lazy">
+                <img class="gtm-sixth-slide gtm-sixth-slide--four" src="{{ "fd-project-detail-gtm-section-6-4.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 4" loading="lazy">
               </div>
-              <div class="org-left-bottom">
-                <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-                <div class="org-title">{{ workflow_title }}</div>
-                <div class="org-list">{{ workflow_list }}</div>
-              </div>
-              <div class="body-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
-国际与北美产品经理双擎驱动本地化定制，
-设计代表统筹全渠道视觉与UX体验。
-在落地端，新增内部设计团队(UI及助理)保障视觉交付，
-并深度洽谈引入外部开发经理严控代码质量。</div>
-              <div class="nodes">
-                <div class="node"></div><div class="divider"></div><div class="node"></div><div class="node"></div>
-              </div>
-              <div class="legend">- 设计团队架构 -</div>
-            </div>
-            <div class="c-org-r">
-              <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-              <div class="bg-placeholder" aria-hidden="true"></div>
-              <div class="org-team">
-                <div class="org-team-grid">
-                  <div class="org-team-chip">设计代表</div>
-                  <div class="org-team-chip">国际产品经理</div>
-                  <div class="org-team-chip">北美产品经理</div>
-                  <div class="org-team-chip">开发经理</div>
+            {%- else -%}
+              <div class="c-org-l">
+                <div class="bg-placeholder" aria-hidden="true"></div>
+                <div class="org-left-top">
+                  <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+                  <div class="org-title">{{ org_title }}</div>
+                  <div class="org-sub">{{ org_sub }}</div>
                 </div>
-                <div class="org-team-copy">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+                <div class="org-left-bottom">
+                  <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+                  <div class="org-title">{{ workflow_title }}</div>
+                  <div class="org-list">{{ workflow_list }}</div>
+                </div>
+                <div class="body-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
 国际与北美产品经理双擎驱动本地化定制，
 设计代表统筹全渠道视觉与UX体验。
 在落地端，新增内部设计团队(UI及助理)保障视觉交付，
 并深度洽谈引入外部开发经理严控代码质量。</div>
+                <div class="nodes">
+                  <div class="node"></div><div class="divider"></div><div class="node"></div><div class="node"></div>
+                </div>
+                <div class="legend">- 设计团队架构 -</div>
               </div>
-              <div class="top">
+              <div class="c-org-r">
+                <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
                 <div class="bg-placeholder" aria-hidden="true"></div>
-                <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
-                <div class="lbl">{{ org_sub }}</div>
+                <div class="org-team">
+                  <div class="org-team-grid">
+                    <div class="org-team-chip">设计代表</div>
+                    <div class="org-team-chip">国际产品经理</div>
+                    <div class="org-team-chip">北美产品经理</div>
+                    <div class="org-team-chip">开发经理</div>
+                  </div>
+                  <div class="org-team-copy">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+国际与北美产品经理双擎驱动本地化定制，
+设计代表统筹全渠道视觉与UX体验。
+在落地端，新增内部设计团队(UI及助理)保障视觉交付，
+并深度洽谈引入外部开发经理严控代码质量。</div>
+                </div>
+                <div class="top">
+                  <div class="bg-placeholder" aria-hidden="true"></div>
+                  <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+                  <div class="lbl">{{ org_sub }}</div>
+                </div>
+                <div class="bot">
+                  <div class="bg-placeholder" aria-hidden="true"></div>
+                  <div class="v">10+</div>
+                  <div class="hd">工作流沉淀，解决流程缺陷</div>
+                  <div class="ls">{{ workflow_list }}</div>
+                </div>
               </div>
-              <div class="bot">
-                <div class="bg-placeholder" aria-hidden="true"></div>
-                <div class="v">10+</div>
-                <div class="hd">工作流沉淀，解决流程缺陷</div>
-                <div class="ls">{{ workflow_list }}</div>
+            {%- endif -%}
+          </article>
+        {%- endunless -%}
+
+        {%- unless is_integrated_case -%}
+          <article class="card c-userres" id="c7">
+            {%- if is_gtm_case -%}
+              <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-7-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第七板块视频"></video>
+            {%- else -%}
+              <div class="bg-placeholder" aria-hidden="true"></div>
+              <div class="label">{{ user_title }}</div>
+              <div class="stats">
+                <div class="stat"><div class="l">{{ user_stat_label_1 }}</div><div class="v">{{ user_stat_value_1 }}</div></div>
+                <div class="stat"><div class="l">{{ user_stat_label_2 }}</div><div class="v">{{ user_stat_value_2 }}</div></div>
+                <div class="stat"><div class="l">{{ user_stat_label_3 }}</div><div class="v">{{ user_stat_value_3 }}</div></div>
+                <div class="stat"><div class="l">{{ user_stat_label_4 }}</div><div class="v">{{ user_stat_value_4 }}</div></div>
               </div>
-            </div>
-          {%- endif -%}
-        </article>
+            {%- endif -%}
+          </article>
+        {%- endunless -%}
 
-        <article class="card c-userres" id="c7">
-          {%- if is_gtm_case -%}
-            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-7-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第七板块视频"></video>
-          {%- else -%}
-            <div class="bg-placeholder" aria-hidden="true"></div>
-            <div class="label">{{ user_title }}</div>
-            <div class="stats">
-              <div class="stat"><div class="l">{{ user_stat_label_1 }}</div><div class="v">{{ user_stat_value_1 }}</div></div>
-              <div class="stat"><div class="l">{{ user_stat_label_2 }}</div><div class="v">{{ user_stat_value_2 }}</div></div>
-              <div class="stat"><div class="l">{{ user_stat_label_3 }}</div><div class="v">{{ user_stat_value_3 }}</div></div>
-              <div class="stat"><div class="l">{{ user_stat_label_4 }}</div><div class="v">{{ user_stat_value_4 }}</div></div>
-            </div>
-          {%- endif -%}
-        </article>
-
-        <article class="card c-persona" id="c8" data-bg-index="0">
-          <div class="bg-placeholder" aria-hidden="true"></div>
-          <div class="nav-arrows nav-arrows--row">
-            <button class="nav-btn prev" type="button" aria-label="上一个画像" data-persona-step="-1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, -1)"><span class="ic"></span></button>
-            <button class="nav-btn next" type="button" aria-label="下一个画像" data-persona-step="1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, 1)"><span class="ic"></span></button>
-            <span class="switch-count" aria-live="polite">01 / 03</span>
-          </div>
-          <div class="title">{{ persona_title }}</div>
-          <div class="lede">{{ persona_lede }}</div>
-          <div class="who">
-            <div class="name">{{ persona_name }}</div>
-            <div class="chips">
-              <span class="chip">{{ persona_chip_1 }}</span><span class="chip">{{ persona_chip_2 }}</span>
-            </div>
-            <div class="quotes">
+        {%- unless is_integrated_case -%}
+          <article class="card c-persona" id="c8" data-bg-index="0">
+            {%- if is_gtm_case -%}
+              <div class="gtm-eighth-carousel" aria-label="第八板块图片轮播">
+                <img class="gtm-eighth-slide gtm-eighth-slide--one" src="{{ "fd-project-detail-gtm-section-8-1.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 1" loading="lazy">
+                <img class="gtm-eighth-slide gtm-eighth-slide--two" src="{{ "fd-project-detail-gtm-section-8-2.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 2" loading="lazy">
+                <img class="gtm-eighth-slide gtm-eighth-slide--three" src="{{ "fd-project-detail-gtm-section-8-3.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 3" loading="lazy">
+                <img class="gtm-eighth-slide gtm-eighth-slide--four" src="{{ "fd-project-detail-gtm-section-8-4.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 4" loading="lazy">
+                <img class="gtm-eighth-slide gtm-eighth-slide--five" src="{{ "fd-project-detail-gtm-section-8-5.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 5" loading="lazy">
+                <img class="gtm-eighth-slide gtm-eighth-slide--six" src="{{ "fd-project-detail-gtm-section-8-6.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 6" loading="lazy">
+                <img class="gtm-eighth-slide gtm-eighth-slide--seven" src="{{ "fd-project-detail-gtm-section-8-7.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 7" loading="lazy">
+                <img class="gtm-eighth-slide gtm-eighth-slide--eight" src="{{ "fd-project-detail-gtm-section-8-8.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 8" loading="lazy">
+                <img class="gtm-eighth-slide gtm-eighth-slide--nine" src="{{ "fd-project-detail-gtm-section-8-9.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 9" loading="lazy">
+                <img class="gtm-eighth-slide gtm-eighth-slide--ten" src="{{ "fd-project-detail-gtm-section-8-10.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 10" loading="lazy">
+              </div>
+            {%- else -%}
+              <div class="bg-placeholder" aria-hidden="true"></div>
+              <div class="nav-arrows nav-arrows--row">
+                <button class="nav-btn prev" type="button" aria-label="上一个画像" data-persona-step="-1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, -1)"><span class="ic"></span></button>
+                <button class="nav-btn next" type="button" aria-label="下一个画像" data-persona-step="1" onclick="window.triggerPersonaSlide && window.triggerPersonaSlide(this, 1)"><span class="ic"></span></button>
+                <span class="switch-count" aria-live="polite">01 / 03</span>
+              </div>
+              <div class="title">{{ persona_title }}</div>
+              <div class="lede">{{ persona_lede }}</div>
+              <div class="who">
+                <div class="name">{{ persona_name }}</div>
+                <div class="chips">
+                  <span class="chip">{{ persona_chip_1 }}</span><span class="chip">{{ persona_chip_2 }}</span>
+                </div>
+                <div class="quotes">
 <div class="q">在 3 次点击内找到特定型号 - 反感拥挤的移动端导航</div>
 <div class="q">顺畅调用 Klarna 或信用卡完成无缝支付 - 对支付网关报错极度缺乏耐心。</div>
-            </div>
-          </div>
-        </article>
+                </div>
+              </div>
+            {%- endif -%}
+          </article>
+        {%- endunless -%}
 
-        <article class="card c-journey" id="c9" data-bg-count="4" data-bg-index="0">
-          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-          <div class="bg-placeholder" aria-hidden="true"></div>
-          <div class="nav-arrows nav-arrows--row">
-            <button class="nav-btn prev" type="button" aria-label="上一张背景图" data-bg-step="-1"><span class="ic"></span></button>
-            <button class="nav-btn next" type="button" aria-label="下一张背景图" data-bg-step="1"><span class="ic"></span></button>
-            <span class="switch-count" aria-live="polite">01 / 04</span>
-          </div>
-          <div class="steps">
-            <button class="step active" type="button" data-journey-index="0">{{ journey_tabs | split: "|" | first }}</button>
-            <button class="step" type="button" data-journey-index="1">{{ journey_tabs | split: "|" | slice: 1, 1 | first }}</button>
-            <button class="step" type="button" data-journey-index="2">{{ journey_tabs | split: "|" | slice: 2, 1 | first }}</button>
-            <button class="step" type="button" data-journey-index="3">{{ journey_tabs | split: "|" | slice: 3, 1 | first }}</button>
-          </div>
-          <div class="body-text">
-            <div class="journey-copy-line">{{ journey_copy }}</div>
+        {%- unless is_integrated_case -%}
+          <article class="card c-journey" id="c9" data-bg-count="4" data-bg-index="0">
+            {%- if is_gtm_case -%}
+              <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-9-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第九板块视频"></video>
+            {%- else -%}
+              <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+              <div class="bg-placeholder" aria-hidden="true"></div>
+              <div class="nav-arrows nav-arrows--row">
+                <button class="nav-btn prev" type="button" aria-label="上一张背景图" data-bg-step="-1"><span class="ic"></span></button>
+                <button class="nav-btn next" type="button" aria-label="下一张背景图" data-bg-step="1"><span class="ic"></span></button>
+                <span class="switch-count" aria-live="polite">01 / 04</span>
+              </div>
+              <div class="steps">
+                <button class="step active" type="button" data-journey-index="0">{{ journey_tabs | split: "|" | first }}</button>
+                <button class="step" type="button" data-journey-index="1">{{ journey_tabs | split: "|" | slice: 1, 1 | first }}</button>
+                <button class="step" type="button" data-journey-index="2">{{ journey_tabs | split: "|" | slice: 2, 1 | first }}</button>
+                <button class="step" type="button" data-journey-index="3">{{ journey_tabs | split: "|" | slice: 3, 1 | first }}</button>
+              </div>
+              <div class="body-text">
+                <div class="journey-copy-line">{{ journey_copy }}</div>
 <div class="journey-copy-line">"Technical language feel foreign." - Olfa Fdhila</div>
-            <div class="journey-copy-gap"></div>
-            <div class="journey-head blend-difference">统一入口认知与行动路径</div>
-            <div class="journey-copy-line">通过一致的信息层级、视觉节奏和渠道承接，帮助用户快速理解项目价值与下一步行动。</div>
-            <div class="journey-copy-gap"></div>
-            <div class="journey-head blend-difference">沉淀可复用的设计资产</div>
-            <div class="journey-copy-line">将项目中的策略、视觉模块、素材规格与复盘结论整理为后续项目可复用的方法。</div>
-          </div>
-          <div class="journey-result" aria-live="polite"></div>
-          <div class="quote">"Technical language feel foreign." / "Confusing navigation, Slightly too busy on mobile device." / "Contact form was just automated bot answers..."</div>
-          <div class="journey-shot" aria-hidden="true"></div>
-          <div class="pains">
-            <div class="pain">体验阻力：信息分散、渠道版本不一致和交付节奏紧张，会削弱用户理解与团队协作效率。</div>
-            <div class="pain">战略机会：通过统一框架、素材矩阵和复盘机制，把设计从单次交付转化为长期资产。</div>
-          </div>
-        </article>
+                <div class="journey-copy-gap"></div>
+                <div class="journey-head blend-difference">统一入口认知与行动路径</div>
+                <div class="journey-copy-line">通过一致的信息层级、视觉节奏和渠道承接，帮助用户快速理解项目价值与下一步行动。</div>
+                <div class="journey-copy-gap"></div>
+                <div class="journey-head blend-difference">沉淀可复用的设计资产</div>
+                <div class="journey-copy-line">将项目中的策略、视觉模块、素材规格与复盘结论整理为后续项目可复用的方法。</div>
+              </div>
+              <div class="journey-result" aria-live="polite"></div>
+              <div class="quote">"Technical language feel foreign." / "Confusing navigation, Slightly too busy on mobile device." / "Contact form was just automated bot answers..."</div>
+              <div class="journey-shot" aria-hidden="true"></div>
+              <div class="pains">
+                <div class="pain">体验阻力：信息分散、渠道版本不一致和交付节奏紧张，会削弱用户理解与团队协作效率。</div>
+                <div class="pain">战略机会：通过统一框架、素材矩阵和复盘机制，把设计从单次交付转化为长期资产。</div>
+              </div>
+            {%- endif -%}
+          </article>
+        {%- endunless -%}
 
         <article class="card c-libs" id="c10" data-bg-count="3" data-bg-index="0">
-          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-          <div class="bg-placeholder" aria-hidden="true"></div>
-          <div class="c-libs-marquee" aria-hidden="true">
-            <div class="c-libs-marquee-track">
-              <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy">
-              <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy">
+          {%- if is_gtm_case -%}
+            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-10-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第十板块视频"></video>
+          {%- else -%}
+            <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+            <div class="bg-placeholder" aria-hidden="true"></div>
+            <div class="c-libs-marquee" aria-hidden="true">
+              <div class="c-libs-marquee-track">
+                <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy">
+                <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy">
+              </div>
             </div>
-          </div>
-          <div class="c-libs-label">
-            <div class="t blend-difference">{{ libs_title }}</div>
-            <div class="s">{{ libs_copy }}</div>
-          </div>
+            <div class="c-libs-label">
+              <div class="t blend-difference">{{ libs_title }}</div>
+              <div class="s">{{ libs_copy }}</div>
+            </div>
+          {%- endif -%}
         </article>
 
-        <article class="card c-final" id="c11" data-bg-count="3" data-bg-index="0">
-          <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+        <article class="card c-final" id="c11" data-bg-count="{% if is_integrated_case %}1{% else %}3{% endif %}" data-bg-index="0">
+          <canvas class="glacier-wave-bg{% if is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
           <div class="bg-placeholder" aria-hidden="true"></div>
           <div class="final-mock" aria-label="页面浏览预览">
-            <img class="final-shot" src="{{ "fd-project-detail-d7103c39e2-1.webp" | asset_url }}" width="1440" height="1000" alt="页面浏览素材 1" loading="lazy">
-            <img class="final-shot" src="{{ "fd-project-detail-763b111c0e-2.webp" | asset_url }}" width="1440" height="1000" alt="页面浏览素材 2" loading="lazy">
-            <img class="final-shot" src="{{ "fd-project-detail-637d0dbaf2-3.webp" | asset_url }}" width="1440" height="1000" alt="页面浏览素材 3" loading="lazy">
+            {%- if is_integrated_case -%}
+              <img class="final-shot final-shot--integrated" src="{{ "fd-project-detail-integrated-final.webp" | asset_url }}" width="2880" height="6495" alt="页面浏览素材" loading="lazy">
+            {%- else -%}
+              <img class="final-shot" src="{{ "fd-project-detail-d7103c39e2-1.webp" | asset_url }}" width="2880" height="13358" alt="页面浏览素材 1" loading="lazy">
+              <img class="final-shot" src="{{ "fd-project-detail-763b111c0e-2.webp" | asset_url }}" width="2880" height="4550" alt="页面浏览素材 2" loading="lazy">
+              <img class="final-shot" src="{{ "fd-project-detail-637d0dbaf2-3.webp" | asset_url }}" width="3350" height="16383" alt="页面浏览素材 3" loading="lazy">
+            {%- endif -%}
           </div>
           <div class="nav-arrows">
             <button class="nav-btn prev" type="button" aria-label="上一张页面浏览图片" data-final-step="-1"><span class="ic"></span></button>
             <button class="nav-btn next" type="button" aria-label="下一张页面浏览图片" data-final-step="1"><span class="ic"></span></button>
-            <span class="switch-count" aria-live="polite">01 / 03</span>
+            <span class="switch-count" aria-live="polite">01 / {% if is_integrated_case %}01{% else %}03{% endif %}</span>
           </div>
         </article>
       </main>
@@ -895,111 +940,136 @@ Challenges</div>
     {%- endif -%}
   </section>
 
-  <section class="m-media m-media--square m-org-overview">
-    {%- if is_gtm_case -%}
-      <div class="gtm-sixth-carousel gtm-sixth-carousel--mobile" aria-label="第六板块移动端图片轮播">
-        <img class="gtm-sixth-slide gtm-sixth-slide--one" src="{{ "fd-project-detail-gtm-section-6-1.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 1" loading="lazy">
-        <img class="gtm-sixth-slide gtm-sixth-slide--two" src="{{ "fd-project-detail-gtm-section-6-2.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 2" loading="lazy">
-        <img class="gtm-sixth-slide gtm-sixth-slide--three" src="{{ "fd-project-detail-gtm-section-6-3.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 3" loading="lazy">
-        <img class="gtm-sixth-slide gtm-sixth-slide--four" src="{{ "fd-project-detail-gtm-section-6-4.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 4" loading="lazy">
-      </div>
-    {%- else -%}
-      <div class="m-img" aria-hidden="true"></div>
-      <div class="m-org-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+  {%- unless is_integrated_case -%}
+    <section class="m-media m-media--square m-org-overview">
+      {%- if is_gtm_case -%}
+        <div class="gtm-sixth-carousel gtm-sixth-carousel--mobile" aria-label="第六板块移动端图片轮播">
+          <img class="gtm-sixth-slide gtm-sixth-slide--one" src="{{ "fd-project-detail-gtm-section-6-1.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 1" loading="lazy">
+          <img class="gtm-sixth-slide gtm-sixth-slide--two" src="{{ "fd-project-detail-gtm-section-6-2.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 2" loading="lazy">
+          <img class="gtm-sixth-slide gtm-sixth-slide--three" src="{{ "fd-project-detail-gtm-section-6-3.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 3" loading="lazy">
+          <img class="gtm-sixth-slide gtm-sixth-slide--four" src="{{ "fd-project-detail-gtm-section-6-4.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 4" loading="lazy">
+        </div>
+      {%- else -%}
+        <div class="m-img" aria-hidden="true"></div>
+        <div class="m-org-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
 国际与北美产品经理双擎驱动本地化定制，
 设计代表统筹全渠道视觉与UX体验。
 在落地端，新增内部设计团队(UI及助理)保障视觉交付，
 并深度洽谈引入外部开发经理严控代码质量。</div>
-      <div class="m-org-nodes">
-        <span class="m-org-node">设计代表</span>
-        <span class="m-org-node">国际产品经理</span>
-        <span class="m-org-node">北美产品经理</span>
-        <span class="m-org-node">开发经理</span>
-      </div>
-      <div class="m-overlay m-org-legend">- 设计团队架构 -</div>
-    {%- endif -%}
-  </section>
-  {%- unless is_gtm_case -%}
-    <section class="m-media m-media--dark m-ratio-tall m-org-goals">
-      <div class="m-img" aria-hidden="true"></div>
-      <div class="m-overlay m-card-label m-card-label--light">
-        <div class="m-card-label__title">{{ org_title }}</div>
-        <div class="m-card-label__sub">{{ org_sub }}</div>
-      </div>
+        <div class="m-org-nodes">
+          <span class="m-org-node">设计代表</span>
+          <span class="m-org-node">国际产品经理</span>
+          <span class="m-org-node">北美产品经理</span>
+          <span class="m-org-node">开发经理</span>
+        </div>
+        <div class="m-overlay m-org-legend">- 设计团队架构 -</div>
+      {%- endif -%}
     </section>
-    <section class="m-media m-media--soft m-ratio-tall m-org-workflow">
-      <div class="m-img" aria-hidden="true"></div>
-      <div class="m-overlay m-workflow-value"></div>
-      <div class="m-overlay m-workflow-title">{{ workflow_title }}</div>
-      <div class="m-overlay m-workflow-list">{{ workflow_list }}</div>
+    {%- unless is_gtm_case -%}
+      <section class="m-media m-media--dark m-ratio-tall m-org-goals">
+        <div class="m-img" aria-hidden="true"></div>
+        <div class="m-overlay m-card-label m-card-label--light">
+          <div class="m-card-label__title">{{ org_title }}</div>
+          <div class="m-card-label__sub">{{ org_sub }}</div>
+        </div>
+      </section>
+      <section class="m-media m-media--soft m-ratio-tall m-org-workflow">
+        <div class="m-img" aria-hidden="true"></div>
+        <div class="m-overlay m-workflow-value"></div>
+        <div class="m-overlay m-workflow-title">{{ workflow_title }}</div>
+        <div class="m-overlay m-workflow-list">{{ workflow_list }}</div>
+      </section>
+    {%- endunless -%}
+  {%- endunless -%}
+
+  {%- unless is_integrated_case -%}
+    <section class="m-media m-media--dark m-ratio-tall m-user-research" id="m-mobile-research">
+      {%- if is_gtm_case -%}
+        <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-7-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第七板块移动端视频"></video>
+      {%- else -%}
+        <div class="m-img" aria-hidden="true"></div>
+        <div class="m-overlay m-user-title">用户研究</div>
+        <div class="m-overlay m-user-stats">
+          <div>
+            <div class="m-user-stat__label">{{ user_stat_label_1 }}</div>
+            <div class="m-user-stat__value">{{ user_stat_value_1 }}</div>
+          </div>
+          <div>
+            <div class="m-user-stat__label">{{ user_stat_label_2 }}</div>
+            <div class="m-user-stat__value">{{ user_stat_value_2 }}</div>
+          </div>
+          <div>
+            <div class="m-user-stat__label">{{ user_stat_label_3 }}</div>
+            <div class="m-user-stat__value">{{ user_stat_value_3 }}</div>
+          </div>
+          <div>
+            <div class="m-user-stat__label">{{ user_stat_label_4 }}</div>
+            <div class="m-user-stat__value">{{ user_stat_value_4 }}</div>
+          </div>
+        </div>
+      {%- endif -%}
     </section>
   {%- endunless -%}
 
-  <section class="m-media m-media--dark m-ratio-tall m-user-research" id="m-mobile-research">
-    {%- if is_gtm_case -%}
-      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-7-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第七板块移动端视频"></video>
-    {%- else -%}
-      <div class="m-img" aria-hidden="true"></div>
-      <div class="m-overlay m-user-title">用户研究</div>
-      <div class="m-overlay m-user-stats">
-        <div>
-          <div class="m-user-stat__label">{{ user_stat_label_1 }}</div>
-          <div class="m-user-stat__value">{{ user_stat_value_1 }}</div>
+  {%- unless is_integrated_case -%}
+    <section class="m-media m-ratio-medium m-structure-image m-structure-decision" data-mobile-persona data-bg-count="3" data-bg-index="0">
+      {%- if is_gtm_case -%}
+        <div class="gtm-eighth-carousel gtm-eighth-carousel--mobile" aria-label="第八板块移动端图片轮播">
+          <img class="gtm-eighth-slide gtm-eighth-slide--one" src="{{ "fd-project-detail-gtm-section-8-1.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 1" loading="lazy">
+          <img class="gtm-eighth-slide gtm-eighth-slide--two" src="{{ "fd-project-detail-gtm-section-8-2.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 2" loading="lazy">
+          <img class="gtm-eighth-slide gtm-eighth-slide--three" src="{{ "fd-project-detail-gtm-section-8-3.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 3" loading="lazy">
+          <img class="gtm-eighth-slide gtm-eighth-slide--four" src="{{ "fd-project-detail-gtm-section-8-4.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 4" loading="lazy">
+          <img class="gtm-eighth-slide gtm-eighth-slide--five" src="{{ "fd-project-detail-gtm-section-8-5.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 5" loading="lazy">
+          <img class="gtm-eighth-slide gtm-eighth-slide--six" src="{{ "fd-project-detail-gtm-section-8-6.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 6" loading="lazy">
+          <img class="gtm-eighth-slide gtm-eighth-slide--seven" src="{{ "fd-project-detail-gtm-section-8-7.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 7" loading="lazy">
+          <img class="gtm-eighth-slide gtm-eighth-slide--eight" src="{{ "fd-project-detail-gtm-section-8-8.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 8" loading="lazy">
+          <img class="gtm-eighth-slide gtm-eighth-slide--nine" src="{{ "fd-project-detail-gtm-section-8-9.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 9" loading="lazy">
+          <img class="gtm-eighth-slide gtm-eighth-slide--ten" src="{{ "fd-project-detail-gtm-section-8-10.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第八板块图片 10" loading="lazy">
         </div>
-        <div>
-          <div class="m-user-stat__label">{{ user_stat_label_2 }}</div>
-          <div class="m-user-stat__value">{{ user_stat_value_2 }}</div>
+      {%- else -%}
+        <div class="m-img" aria-hidden="true"></div>
+        <div class="m-overlay m-arrow-row">
+          <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+          <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+          <span class="m-switch-count" aria-live="polite">01 / 03</span>
         </div>
-        <div>
-          <div class="m-user-stat__label">{{ user_stat_label_3 }}</div>
-          <div class="m-user-stat__value">{{ user_stat_value_3 }}</div>
-        </div>
-        <div>
-          <div class="m-user-stat__label">{{ user_stat_label_4 }}</div>
-          <div class="m-user-stat__value">{{ user_stat_value_4 }}</div>
-        </div>
-      </div>
-    {%- endif -%}
-  </section>
-
-  <section class="m-media m-ratio-medium m-structure-image m-structure-decision" data-mobile-persona data-bg-count="3" data-bg-index="0">
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-overlay m-arrow-row">
-      <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
-      <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
-      <span class="m-switch-count" aria-live="polite">01 / 03</span>
-    </div>
-    <div class="m-overlay m-persona-title">{{ persona_title }}</div>
-    <div class="m-overlay m-persona-lede">{{ persona_lede }}</div>
-    <div class="m-overlay m-persona-info">
-      <div class="m-persona-name">{{ persona_name }}</div>
-      <div class="m-chip-row">
-        <span class="m-chip">{{ persona_chip_1 }}</span>
-        <span class="m-chip">{{ persona_chip_2 }}</span>
-      </div>
-      <div class="m-quote-stack">
+        <div class="m-overlay m-persona-title">{{ persona_title }}</div>
+        <div class="m-overlay m-persona-lede">{{ persona_lede }}</div>
+        <div class="m-overlay m-persona-info">
+          <div class="m-persona-name">{{ persona_name }}</div>
+          <div class="m-chip-row">
+            <span class="m-chip">{{ persona_chip_1 }}</span>
+            <span class="m-chip">{{ persona_chip_2 }}</span>
+          </div>
+          <div class="m-quote-stack">
 <div>在 3 次点击内找到特定型号 - 反感拥挤的移动端导航</div>
 <div>顺畅调用 Klarna 或信用卡完成无缝支付 - 对支付网关报错极度缺乏耐心。</div>
-      </div>
-    </div>
-  </section>
+          </div>
+        </div>
+      {%- endif -%}
+    </section>
+  {%- endunless -%}
 
-  <section class="m-media m-ratio-tall m-structure-image m-structure-browse" id="m-mobile-journey" data-mobile-journey data-bg-count="4" data-bg-index="0">
-    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-journey-shot" aria-hidden="true"></div>
-    <div class="m-overlay m-arrow-row">
-      <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
-      <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
-      <span class="m-switch-count" aria-live="polite">01 / 04</span>
-    </div>
-    <div class="m-overlay m-journey-tabs" role="group" aria-label="用户旅程阶段">
-      <button class="m-journey-tab is-active" type="button" aria-pressed="true" data-mobile-journey-index="0">{{ journey_tabs | split: "|" | first }}</button>
-      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="1">{{ journey_tabs | split: "|" | slice: 1, 1 | first }}</button>
-      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="2">{{ journey_tabs | split: "|" | slice: 2, 1 | first }}</button>
-      <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="3">{{ journey_tabs | split: "|" | slice: 3, 1 | first }}</button>
-    </div>
-    <div class="m-overlay m-journey-copy">{{ journey_copy }}
+  {%- unless is_integrated_case -%}
+    <section class="m-media m-ratio-tall m-structure-image m-structure-browse" id="m-mobile-journey" data-mobile-journey data-bg-count="4" data-bg-index="0">
+      {%- if is_gtm_case -%}
+        <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-9-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第九板块移动端视频"></video>
+      {%- else -%}
+        <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+        <div class="m-img" aria-hidden="true"></div>
+        <div class="m-journey-shot" aria-hidden="true"></div>
+        <div class="m-overlay m-arrow-row">
+          <button class="m-arrow m-arrow--light" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+          <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+          <span class="m-switch-count" aria-live="polite">01 / 04</span>
+        </div>
+        <div class="m-overlay m-journey-tabs" role="group" aria-label="用户旅程阶段">
+          <button class="m-journey-tab is-active" type="button" aria-pressed="true" data-mobile-journey-index="0">{{ journey_tabs | split: "|" | first }}</button>
+          <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="1">{{ journey_tabs | split: "|" | slice: 1, 1 | first }}</button>
+          <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="2">{{ journey_tabs | split: "|" | slice: 2, 1 | first }}</button>
+          <button class="m-journey-tab" type="button" aria-pressed="false" data-mobile-journey-index="3">{{ journey_tabs | split: "|" | slice: 3, 1 | first }}</button>
+        </div>
+        <div class="m-overlay m-journey-copy">{{ journey_copy }}
 "Technical language feel foreign." - Olfa Fdhila
 
 强化品牌背书与 DTC 利益点
@@ -1010,32 +1080,38 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
 
 方法沉淀：
 用统一内容结构承接不同项目类型，让策略、执行、成果和复盘在同一套浏览框架中被快速理解。</div>
-<div class="m-overlay m-journey-quote"></div>
-    <div class="m-overlay m-journey-pains">
-    </div>
-  </section>
+        <div class="m-overlay m-journey-quote"></div>
+        <div class="m-overlay m-journey-pains">
+        </div>
+      {%- endif -%}
+    </section>
+  {%- endunless -%}
 
   <section class="m-media m-ratio-medium m-structure-image m-structure-components" data-bg-count="3" data-bg-index="0">
-    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-component-preview" aria-hidden="true">
-      <div class="c-libs-marquee-track">
-        <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
-        <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
+    {%- if is_gtm_case -%}
+      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-10-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第十板块移动端视频"></video>
+    {%- else -%}
+      <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+      <div class="m-img" aria-hidden="true"></div>
+      <div class="m-component-preview" aria-hidden="true">
+        <div class="c-libs-marquee-track">
+          <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
+          <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
+        </div>
       </div>
-    </div>
-    <div class="m-overlay m-arrow-row">
-      <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
-      <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
-      <span class="m-switch-count" aria-live="polite">01 / 03</span>
-    </div>
-    <div class="m-overlay m-card-label">
-      <div class="m-card-label__title blend-difference"></div>
-      <div class="m-card-label__sub"></div>
-    </div>
+      <div class="m-overlay m-arrow-row">
+        <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张背景图" data-bg-step="-1"></button>
+        <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张背景图" data-bg-step="1"></button>
+        <span class="m-switch-count" aria-live="polite">01 / 03</span>
+      </div>
+      <div class="m-overlay m-card-label">
+        <div class="m-card-label__title blend-difference"></div>
+        <div class="m-card-label__sub"></div>
+      </div>
+    {%- endif -%}
   </section>
-  <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" data-mobile-final-count="{{ section.settings.mobile_final_image_count | default: 3 }}" aria-label="页面浏览预览">
-    <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+  <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" data-mobile-final-count="{% if is_integrated_case %}1{% else %}{{ section.settings.mobile_final_image_count | default: 3 }}{% endif %}" aria-label="页面浏览预览">
+    <canvas class="glacier-wave-bg{% if is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
     <div class="m-final-mobile__head">
       <div class="m-final-mobile__controls">
         <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张页面浏览图片" data-mobile-final-step="-1"></button>
@@ -1067,7 +1143,12 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
           </div>
         </div>
         <div class="next-thumb" role="link" aria-label="Next project preview">
-          <div class="thumb-placeholder" aria-hidden="true"></div>
+          <video class="next-thumb-video" src="{{ "home-bfcm-video.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+          <div class="next-thumb-carousel" aria-hidden="true">
+            <img src="{{ "home-bfcm-1.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">
+            <img src="{{ "home-bfcm-2.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">
+            <img src="{{ "home-bfcm-3.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">
+          </div>
         </div>
       </div>
     </div>

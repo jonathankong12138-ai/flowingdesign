@@ -818,13 +818,13 @@
         float getHeight(vec2 uv, float time, float progress, float seed) {
           vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
           vec2 baseUV = uv + seedOffset + vec2(progress * 0.2, 0.0);
-          float flowTime = time * 0.9 + progress * 0.5;
+          float flowTime = time * 0.5 + progress * 0.5;
           vec2 rotUV = rotate2d(-0.5) * baseUV;
           vec2 distortion = vec2(0.0);
           distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
           distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
-          float detail = snoise(rotUV * 1.125 + distortion + flowTime * 0.1) * 0.075;
-          float wave = sin(rotUV.y * 5.0 + distortion.x * 3.1 + flowTime);
+          float detail = snoise(rotUV * 0.3 + distortion + flowTime * 0.1) * 0.02;
+          float wave = sin(rotUV.y * 1.6 + distortion.x * 3.3 + flowTime);
           return pow(wave * 0.5 + 0.5, 0.8) + detail;
         }
         void main() {
@@ -1012,13 +1012,13 @@
       float getHeight(vec2 uv, float time, float progress, float seed) {
         vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
         vec2 baseUV = uv + seedOffset + vec2(progress * 0.2, 0.0);
-        float flowTime = time * 0.9 + progress * 0.5;
+        float flowTime = time * 0.5 + progress * 0.5;
         vec2 rotUV = rotate2d(-0.5) * baseUV;
         vec2 distortion = vec2(0.0);
         distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
         distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
-        float detail = snoise(rotUV * 1.125 + distortion + flowTime * 0.1) * 0.075;
-        float wave = sin(rotUV.y * 5.0 + distortion.x * 3.1 + flowTime);
+        float detail = snoise(rotUV * 0.3 + distortion + flowTime * 0.1) * 0.02;
+        float wave = sin(rotUV.y * 1.6 + distortion.x * 3.3 + flowTime);
         return pow(wave * 0.5 + 0.5, 0.8) + detail;
       }
 

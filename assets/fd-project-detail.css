@@ -3117,6 +3117,51 @@
       linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 44%),
       var(--ph-base, #d8d8d8);
   }
+  .next-thumb-video {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    background: var(--ph-base, #d8d8d8);
+  }
+  .next-thumb-carousel {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .next-thumb-carousel img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: right center;
+    opacity: 0;
+    animation: nextThumbBfcmFade 9s linear infinite;
+  }
+  .next-thumb-carousel img:nth-child(2) {
+    animation-delay: 3s;
+  }
+  .next-thumb-carousel img:nth-child(3) {
+    animation-delay: 6s;
+  }
+  @keyframes nextThumbBfcmFade {
+    0%,
+    30% {
+      opacity: 1;
+    }
+    36%,
+    100% {
+      opacity: 0;
+    }
+  }
 
   .c-friction,
   .c-pillars,
@@ -15443,12 +15488,12 @@
     @media (min-width: 768px) {
       #c1.c-hero .c-hero-caption,
       #c1.c-hero .c-hero-stats {
-        right: calc(var(--fd-space-4) / var(--scale)) !important;
+        right: var(--fd-desktop-card-pad) !important;
       }
 
       #c1.c-hero .c-hero-stats {
         top: auto !important;
-        bottom: calc(var(--fd-space-4) / var(--scale)) !important;
+        bottom: var(--fd-desktop-card-pad) !important;
       }
     }
 
@@ -15546,8 +15591,8 @@
   .fd-project-detail-section--product-launch-visual #c2 .glacier-wave-bg--gtm,
   .fd-project-detail-section--product-launch-visual #m-mobile-goals > .glacier-wave-bg {
     z-index: 0 !important;
-    opacity: .98 !important;
-    filter: saturate(1) contrast(1.03) brightness(1.03) !important;
+    opacity: 1 !important;
+    filter: saturate(1.18) contrast(1.08) brightness(1.24) !important;
   }
 
   .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch {
@@ -15575,8 +15620,8 @@
     inset: 0;
     z-index: 0;
     background:
-      radial-gradient(ellipse at 20% 18%, rgba(255,255,255,.76) 0%, rgba(255,255,255,.18) 34%, rgba(255,255,255,0) 62%),
-      linear-gradient(90deg, rgba(255,255,255,.2) 0%, rgba(255,255,255,.62) 50%, rgba(255,255,255,.2) 100%);
+      radial-gradient(ellipse at 20% 18%, rgba(255,255,255,.32) 0%, rgba(255,255,255,.08) 34%, rgba(255,255,255,0) 62%),
+      linear-gradient(90deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.18) 50%, rgba(255,255,255,.06) 100%);
   }
 
   .fd-project-detail-section--product-launch-visual #c2 .gtm-launch-carousel::after,
@@ -15586,7 +15631,7 @@
     inset: 0;
     z-index: 2;
     pointer-events: none;
-    background: rgba(255, 255, 255, .14);
+    background: rgba(255, 255, 255, .04);
     mix-blend-mode: screen;
   }
 
@@ -15601,7 +15646,8 @@
     object-position: center;
     opacity: 0;
     transform: translate3d(0, 22px, 0) scale(.985);
-    filter: brightness(1.18) contrast(.88) saturate(1.02);
+    image-rendering: auto;
+    filter: brightness(1.06) contrast(1.1) saturate(1.06);
     animation: gtmLaunchSlideFade 8s cubic-bezier(.22, 1, .36, 1) infinite;
   }
 
@@ -15643,6 +15689,13 @@
     height: 100%;
   }
 
+  .fd-project-detail-section--product-launch-visual .outro-next .next-title,
+  .fd-project-detail-section--product-launch-visual .outro-next .next-title.blend-difference {
+    overflow-wrap: anywhere;
+    word-break: normal;
+    white-space: normal;
+  }
+
   .fd-project-detail-section--product-launch-visual .gtm-section-video {
     position: absolute;
     inset: 0;
@@ -15660,22 +15713,29 @@
   .fd-project-detail-section--product-launch-visual #c5.c-research,
   .fd-project-detail-section--product-launch-visual #c6.c-org,
   .fd-project-detail-section--product-launch-visual #c7.c-userres,
+  .fd-project-detail-section--product-launch-visual #c8.c-persona,
+  .fd-project-detail-section--product-launch-visual #c9.c-journey,
+  .fd-project-detail-section--product-launch-visual #c10.c-libs,
   .fd-project-detail-section--product-launch-visual .m-timeline,
   .fd-project-detail-section--product-launch-visual .m-research-intro,
   .fd-project-detail-section--product-launch-visual .m-org-overview,
-  .fd-project-detail-section--product-launch-visual #m-mobile-research {
+  .fd-project-detail-section--product-launch-visual #m-mobile-research,
+  .fd-project-detail-section--product-launch-visual [data-mobile-persona],
+  .fd-project-detail-section--product-launch-visual #m-mobile-journey,
+  .fd-project-detail-section--product-launch-visual .m-structure-components {
     background: #f7f7f7 !important;
     isolation: isolate;
     overflow: hidden !important;
   }
 
-  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c6.c-org, #c7.c-userres, .m-timeline, .m-research-intro, .m-org-overview, #m-mobile-research)::before,
-  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c6.c-org, #c7.c-userres, .m-timeline, .m-research-intro, .m-org-overview, #m-mobile-research)::after {
+  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c6.c-org, #c7.c-userres, #c8.c-persona, #c9.c-journey, #c10.c-libs, .m-timeline, .m-research-intro, .m-org-overview, #m-mobile-research, [data-mobile-persona], #m-mobile-journey, .m-structure-components)::before,
+  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c6.c-org, #c7.c-userres, #c8.c-persona, #c9.c-journey, #c10.c-libs, .m-timeline, .m-research-intro, .m-org-overview, #m-mobile-research, [data-mobile-persona], #m-mobile-journey, .m-structure-components)::after {
     content: none !important;
     display: none !important;
   }
 
-  .fd-project-detail-section--product-launch-visual .gtm-sixth-carousel {
+  .fd-project-detail-section--product-launch-visual .gtm-sixth-carousel,
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-carousel {
     position: absolute;
     inset: 0;
     z-index: 3;
@@ -15684,7 +15744,8 @@
     pointer-events: none;
   }
 
-  .fd-project-detail-section--product-launch-visual .gtm-sixth-slide {
+  .fd-project-detail-section--product-launch-visual .gtm-sixth-slide,
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide {
     position: absolute;
     inset: 0;
     z-index: 1;
@@ -15696,6 +15757,11 @@
     opacity: 0;
     transform: scale(1.012);
     animation: gtmSixthSlideFade 16s cubic-bezier(.22, 1, .36, 1) infinite;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide {
+    animation-name: gtmEighthSlideFade;
+    animation-duration: 40s;
   }
 
   .fd-project-detail-section--product-launch-visual .gtm-sixth-slide--two {
@@ -15710,6 +15776,16 @@
     animation-delay: 12s;
   }
 
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--two { animation-delay: 4s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--three { animation-delay: 8s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--four { animation-delay: 12s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--five { animation-delay: 16s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--six { animation-delay: 20s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--seven { animation-delay: 24s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--eight { animation-delay: 28s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--nine { animation-delay: 32s; }
+  .fd-project-detail-section--product-launch-visual .gtm-eighth-slide--ten { animation-delay: 36s; }
+
   @keyframes gtmSixthSlideFade {
     0%,
     24% {
@@ -15717,6 +15793,19 @@
       transform: scale(1);
     }
     30%,
+    100% {
+      opacity: 0;
+      transform: scale(1.012);
+    }
+  }
+
+  @keyframes gtmEighthSlideFade {
+    0%,
+    9% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    12%,
     100% {
       opacity: 0;
       transform: scale(1.012);
@@ -16198,6 +16287,65 @@
     .fd-project-detail-section--integrated-marketing-design .m-research-intro .integrated-research-slide {
       object-position: center;
     }
+  }
+
+  /* Product launch final preview: contain ultra-tall page screenshots in a browsable viewport. */
+  @media (min-width: 768px) {
+    .fd-project-detail-section--product-launch-visual #c11.c-final {
+      overflow: hidden !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c11 .final-mock {
+      left: 50% !important;
+      top: var(--fd-space-10, 64px) !important;
+      width: min(1120px, calc(100% - 160px)) !important;
+      height: min(740px, calc(100% - 172px)) !important;
+      overflow: hidden !important;
+      clip-path: inset(0 round 2px);
+      transform: translateX(-50%) translateY(var(--final-mock-y, 0px)) !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c11.is-switching .final-mock {
+      transform: translateX(-50%) translateY(10px) !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c11 .final-shot {
+      width: 100% !important;
+      max-width: none !important;
+      height: auto !important;
+      object-fit: contain !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c11 .nav-arrows {
+      right: var(--fd-desktop-control-inset, 40px) !important;
+      bottom: var(--fd-space-8, 40px) !important;
+    }
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c11.c-final .nav-arrows,
+  .fd-project-detail-section--integrated-marketing-design #m-mobile-final .m-final-mobile__head,
+  .fd-project-detail-section--integrated-marketing-design #m-mobile-final .m-final-mobile__controls {
+    display: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c11.c-final,
+  .fd-project-detail-section--integrated-marketing-design #m-mobile-final {
+    background: #080000 !important;
+    overflow: hidden !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c11.c-final > .glacier-wave-bg--bf,
+  .fd-project-detail-section--integrated-marketing-design #m-mobile-final > .glacier-wave-bg--bf {
+    z-index: 0 !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c11 .final-shot--integrated {
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    object-fit: contain !important;
   }
 
   @media (prefers-reduced-motion: reduce) {
