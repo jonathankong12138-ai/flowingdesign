@@ -16602,3 +16602,13 @@
       radial-gradient(ellipse at 78% 28%, rgba(255,129,61,.42), rgba(255,129,61,0) 30%),
       linear-gradient(115deg, rgba(255,128,128,.42), rgba(255,255,255,.94) 48%, rgba(255,255,255,1) 78%) !important;
   }
+
+  .outro-next:has(> .outro-wave-canvas--integrated-default) .next-cta-arrow {
+    display: none !important;
+  }
+
+  .outro-next:has(> .outro-wave-canvas--integrated-default) .next-title,
+  .outro-next:has(> .outro-wave-canvas--integrated-default) .next-title.blend-difference {
+    font-size: 42px !important;
+    line-height: 1.18 !important;
+  }

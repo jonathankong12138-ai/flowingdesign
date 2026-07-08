@@ -795,6 +795,7 @@
         uniform float uMobileVertical;
         uniform float uHeatmapStyle;
         uniform float uHeatmapPalette;
+        uniform float uGrainStrength;
         uniform float uDarkMask;
         varying vec2 vUv;
 
@@ -930,7 +931,7 @@
             vec2 heatGrainUv = floor(vUv * uResolution * 0.55);
             float heatDither = fract(sin(dot(heatGrainUv, vec2(12.9898, 78.233)) + uTime * 0.3) * 43758.5453);
             float heatBaseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
-            color += heatBaseDither + (heatDither - 0.5) * 0.1;
+            color += (heatBaseDither + (heatDither - 0.5) * 0.1) * uGrainStrength;
             if (step(0.5, uHeatmapStyle) > 0.5) {
               gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
               return;
@@ -954,7 +955,7 @@
           vec2 grainUv = floor(vUv * uResolution);
           float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * 2.0) * 43758.5453);
           float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
-          finalColor += baseDither + (dither - 0.5) * 0.03 * coloredWave;
+          finalColor += (baseDither + (dither - 0.5) * 0.03 * coloredWave) * uGrainStrength;
           gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
         }
       `;
@@ -991,12 +992,14 @@
         mobileVertical: gl.getUniformLocation(program, 'uMobileVertical'),
         heatmapStyle: gl.getUniformLocation(program, 'uHeatmapStyle'),
         heatmapPalette: gl.getUniformLocation(program, 'uHeatmapPalette'),
+        grainStrength: gl.getUniformLocation(program, 'uGrainStrength'),
         darkMask: gl.getUniformLocation(program, 'uDarkMask')
       };
       gl.uniform1f(uniforms.seed, 42.0);
       gl.uniform1f(uniforms.mobileVertical, window.matchMedia('(max-width: 767px)').matches ? 1.0 : 0.0);
       gl.uniform1f(uniforms.heatmapStyle, isHeatmapOutro ? 1.0 : 0.0);
       gl.uniform1f(uniforms.heatmapPalette, usesHeatmapPalette ? 1.0 : 0.0);
+      gl.uniform1f(uniforms.grainStrength, isIntegratedDefaultOutro ? 0.0 : 1.0);
       gl.uniform1f(uniforms.darkMask, canvas.classList.contains('outro-wave-canvas--dark') ? 1.0 : 0.0);
 
       let targetProgress = 0;
@@ -1068,6 +1071,7 @@
       uniform float uMobileVertical;
       uniform float uHeatmapStyle;
       uniform float uHeatmapPalette;
+      uniform float uGrainStrength;
       uniform float uDarkMask;
       varying vec2 vUv;
 
@@ -1213,7 +1217,7 @@
           vec2 heatGrainUv = floor(vUv * uResolution * 0.55);
           float heatDither = fract(sin(dot(heatGrainUv, vec2(12.9898, 78.233)) + uTime * 0.3) * 43758.5453);
           float heatBaseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
-          color += heatBaseDither + (heatDither - 0.5) * 0.1;
+          color += (heatBaseDither + (heatDither - 0.5) * 0.1) * uGrainStrength;
           if (step(0.5, uHeatmapStyle) > 0.5) {
             gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
             return;
@@ -1238,7 +1242,7 @@
         vec2 grainUv = floor(vUv * uResolution);
         float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * 2.0) * 43758.5453);
         float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
-        finalColor += baseDither + (dither - 0.5) * 0.03 * coloredWave;
+        finalColor += (baseDither + (dither - 0.5) * 0.03 * coloredWave) * uGrainStrength;
         gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
       }
     `;
@@ -1256,6 +1260,7 @@
       uMobileVertical: { value: window.matchMedia('(max-width: 767px)').matches ? 1 : 0 },
       uHeatmapStyle: { value: isHeatmapOutro ? 1 : 0 },
       uHeatmapPalette: { value: usesHeatmapPalette ? 1 : 0 },
+      uGrainStrength: { value: isIntegratedDefaultOutro ? 0 : 1 },
       uDarkMask: { value: canvas.classList.contains('outro-wave-canvas--dark') ? 1 : 0 }
     };
     const material = new THREE.ShaderMaterial({
