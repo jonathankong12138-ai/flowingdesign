@@ -488,6 +488,62 @@
         return 130.0 * dot(m, g);
       }
 
+      vec3 rgb2hsl(vec3 c) {
+        float maxC = max(c.r, max(c.g, c.b));
+        float minC = min(c.r, min(c.g, c.b));
+        float h;
+        float s;
+        float l = (maxC + minC) / 2.0;
+        if (maxC == minC) {
+          h = 0.0;
+          s = 0.0;
+        } else {
+          float d = maxC - minC;
+          s = l > 0.5 ? d / (2.0 - maxC - minC) : d / (maxC + minC);
+          if (maxC == c.r) h = (c.g - c.b) / d + (c.g < c.b ? 6.0 : 0.0);
+          else if (maxC == c.g) h = (c.b - c.r) / d + 2.0;
+          else h = (c.r - c.g) / d + 4.0;
+          h /= 6.0;
+        }
+        return vec3(h, s, l);
+      }
+
+      float hue2rgb(float p, float q, float t) {
+        if (t < 0.0) t += 1.0;
+        if (t > 1.0) t -= 1.0;
+        if (t < 1.0 / 6.0) return p + (q - p) * 6.0 * t;
+        if (t < 1.0 / 2.0) return q;
+        if (t < 2.0 / 3.0) return p + (q - p) * (2.0 / 3.0 - t) * 6.0;
+        return p;
+      }
+
+      vec3 hsl2rgb(vec3 c) {
+        if (c.y == 0.0) return vec3(c.z);
+        float q = c.z < 0.5 ? c.z * (1.0 + c.y) : c.z + c.y - c.z * c.y;
+        float p = 2.0 * c.z - q;
+        return vec3(
+          hue2rgb(p, q, c.x + 1.0 / 3.0),
+          hue2rgb(p, q, c.x),
+          hue2rgb(p, q, c.x - 1.0 / 3.0)
+        );
+      }
+
+      float deepHaloMask(float lightValue, float stop1, float stop2, float rangeValue, float featherValue) {
+        float stopGap = max(stop2 - stop1, 0.001);
+        float halfWidth = stopGap * mix(0.04, 0.50, clamp(rangeValue, 0.0, 1.0));
+        float feather = max(featherValue * halfWidth * 1.4, 0.001);
+        float innerEdge = stop1 - halfWidth;
+        float outerEdge = stop1 + halfWidth;
+        float innerFade = smoothstep(innerEdge - feather, innerEdge, lightValue);
+        float outerFade = 1.0 - smoothstep(outerEdge, outerEdge + feather, lightValue);
+        return innerFade * outerFade;
+      }
+
+      float deepHaloShape(float flowValue, float featherValue) {
+        float feather = clamp(featherValue, 0.01, 0.95);
+        return smoothstep(1.0 - feather, 1.0, flowValue);
+      }
+
       float getHeight(vec2 uv, float time, float scroll, float seed) {
         float gtm = step(0.5, uGtmStyle);
         vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
@@ -524,19 +580,39 @@
         vec3 colSoft = vec3(1.0);
         vec3 colHigh = mix(vec3(1.0), vec3(0.7294, 0.6863, 0.6118), gtm);
         vec3 colSpec = vec3(1.0);
-        vec3 color = mix(colAmbient, colDeep, smoothstep(0.0, 0.591, light));
-        color = mix(color, colMid, 1.0 - smoothstep(0.06, 0.591, light));
-        color = mix(color, colSoft, smoothstep(0.06, 1.001, light));
-        color = mix(color, colHigh, smoothstep(1.0, 1.001, light));
-        color = mix(color, colSpec, smoothstep(1.0, 1.001, light));
-        float heatFlow1 = snoise((uv / mix(6.0, 3.9, gtm)) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
-        float heatFlow2 = snoise((uv / mix(1.2, 6.0, gtm)) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
-        float heatBand1 = smoothstep(0.50, 0.59, light) * (1.0 - smoothstep(0.59, 0.70, light));
-        float heatBand2 = smoothstep(0.02, 0.06, light) * (1.0 - smoothstep(0.06, 0.14, light));
-        vec3 heatHalo = mix(vec3(0.0, 0.8980, 0.6588), vec3(1.0, 0.5843, 0.0), gtm) * heatBand1 * smoothstep(0.05, 1.0, heatFlow1) * mix(0.77, 0.98, gtm);
-        heatHalo += mix(vec3(1.0, 0.5059, 0.2392), vec3(1.0, 0.6353, 0.0), gtm) * heatBand2 * smoothstep(0.71, 1.0, heatFlow2) * mix(1.5, 0.97, gtm);
-        color = 1.0 - (1.0 - color) * (1.0 - clamp(heatHalo, 0.0, 1.0));
-        color = clamp((color - 0.5) * mix(1.5, 1.25, gtm) + mix(0.35, 0.45, gtm), 0.0, 1.0);
+        float stop1 = mix(0.591, 0.0, gtm);
+        float stop2 = mix(0.06, 1.0, gtm);
+        float stop3 = mix(1.0, 0.24, gtm);
+        float stop4 = mix(1.0, 0.59, gtm);
+        vec3 color = mix(colAmbient, colDeep, smoothstep(0.0, stop1 + 0.001, light));
+        color = mix(color, colMid, smoothstep(stop1, stop2 + 0.001, light));
+        color = mix(color, colSoft, smoothstep(stop2, stop3 + 0.001, light));
+        color = mix(color, colHigh, smoothstep(stop3, stop4 + 0.001, light));
+        color = mix(color, colSpec, smoothstep(stop4, 1.001, light));
+
+        float glow1Range = mix(1.0, 0.52, gtm);
+        float glow1Size = mix(6.0, 3.9, gtm);
+        float glow1Feather = mix(0.88, 0.77, gtm);
+        float glow1Intensity = mix(0.77, 0.98, gtm);
+        float glow2Range = 1.0;
+        float glow2Size = mix(1.2, 6.0, gtm);
+        float glow2Feather = mix(0.82, 0.4, gtm);
+        float glow2Intensity = mix(1.5, 0.97, gtm);
+        float deepHaloBand1 = deepHaloMask(light, stop1, stop2, glow1Range, glow1Feather);
+        float deepHaloBand2 = deepHaloMask(light, stop1, stop2, glow2Range, glow2Feather);
+        float deepFlow1 = snoise((uv / max(glow1Size, 0.01)) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
+        float deepFlow2 = snoise((uv / max(glow2Size, 0.01)) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
+        vec3 deepGlow1 = mix(vec3(0.0, 0.8980, 0.6588), vec3(1.0, 0.5843, 0.0), gtm);
+        vec3 deepGlow2 = mix(vec3(1.0, 0.5059, 0.2392), vec3(1.0, 0.6353, 0.0), gtm);
+        vec3 deepHalo = deepGlow1 * deepHaloBand1 * deepHaloShape(deepFlow1, glow1Feather) * glow1Intensity;
+        deepHalo += deepGlow2 * deepHaloBand2 * deepHaloShape(deepFlow2, glow2Feather) * glow2Intensity;
+        color = 1.0 - (1.0 - color) * (1.0 - clamp(deepHalo, 0.0, 1.0));
+
+        color = (color - 0.5) * mix(1.5, 1.25, gtm) + mix(0.35, -0.05, gtm);
+        color = clamp(color, 0.0, 1.0);
+        vec3 hsl = rgb2hsl(color);
+        hsl.y = clamp(hsl.y * 1.0, 0.0, 1.0);
+        color = hsl2rgb(hsl);
 
         float p = clamp(uScroll, 0.0, 1.0);
         float easedScroll = 1.0 - pow(1.0 - p, 2.0);
@@ -549,6 +625,11 @@
         vec3 finalColor = mix(color, vec3(1.0), whiteMask);
         finalColor += vec3(0.98, 0.99, 1.0) * waveCrest * 0.6;
         finalColor += (light - 0.5) * 0.03 * whiteMask;
+        vec2 grainUv = floor(vUv * uResolution * mix(0.1, 1.0, gtm));
+        float grainTime = uTime * mix(0.0, 2.0, gtm);
+        float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + grainTime) * 43758.5453);
+        float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
+        finalColor += baseDither + (dither - 0.5) * mix(0.0, 0.03, gtm);
         gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
       }
     `;
@@ -575,7 +656,10 @@
         renderer,
         scene,
         camera,
-        uniforms
+        uniforms,
+        customTime: 0,
+        elapsedTime: 0,
+        lastFrameTime: null
       };
     });
 
@@ -630,7 +714,16 @@
         if (!instance._onScreen) return;
         resizeInstance(instance);
         instance.uniforms.uScroll.value = 0;
-        instance.uniforms.uTime.value = time * 0.0025;
+        if (instance.uniforms.uGtmStyle.value > 0.5) {
+          const previousTime = instance.lastFrameTime ?? time;
+          const delta = Math.min(Math.max((time - previousTime) / 1000, 0), 0.05);
+          instance.lastFrameTime = time;
+          instance.elapsedTime += delta;
+          instance.customTime += delta * (2.5 + Math.sin(instance.elapsedTime * 1.8) * 0.9);
+          instance.uniforms.uTime.value = instance.customTime;
+        } else {
+          instance.uniforms.uTime.value = time * 0.0025;
+        }
         instance.renderer.render(instance.scene, instance.camera);
       });
     }

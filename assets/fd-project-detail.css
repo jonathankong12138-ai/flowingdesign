@@ -15527,6 +15527,13 @@
     overflow: hidden !important;
   }
 
+  .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch {
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
   .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch::before,
   .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch::after {
     content: none !important;
@@ -15574,15 +15581,16 @@
 
   .fd-project-detail-section--product-launch-visual .gtm-launch-slide {
     position: absolute;
+    inset: 0;
     z-index: 1;
     display: block;
-    width: min(82%, 1180px);
-    height: min(72%, 680px);
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     object-position: center;
     opacity: 0;
     transform: translate3d(0, 22px, 0) scale(.985);
-    filter: drop-shadow(0 26px 58px rgba(42, 95, 128, .15));
+    filter: none;
     animation: gtmLaunchSlideFade 8s cubic-bezier(.22, 1, .36, 1) infinite;
   }
 
@@ -15620,8 +15628,8 @@
   }
 
   .fd-project-detail-section--product-launch-visual #m-mobile-goals .gtm-launch-slide {
-    width: 92%;
-    height: 78%;
+    width: 100%;
+    height: 100%;
   }
 
   .fd-project-detail-section--product-launch-visual #c3.c-friction,
