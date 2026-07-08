@@ -16236,6 +16236,39 @@
     }
   }
 
+  /* Product launch final preview: contain ultra-tall page screenshots in a browsable viewport. */
+  @media (min-width: 768px) {
+    .fd-project-detail-section--product-launch-visual #c11.c-final {
+      overflow: hidden !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c11 .final-mock {
+      left: 50% !important;
+      top: var(--fd-space-10, 64px) !important;
+      width: min(1120px, calc(100% - 160px)) !important;
+      height: min(740px, calc(100% - 172px)) !important;
+      overflow: hidden !important;
+      clip-path: inset(0 round 2px);
+      transform: translateX(-50%) translateY(var(--final-mock-y, 0px)) !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c11.is-switching .final-mock {
+      transform: translateX(-50%) translateY(10px) !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c11 .final-shot {
+      width: 100% !important;
+      max-width: none !important;
+      height: auto !important;
+      object-fit: contain !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c11 .nav-arrows {
+      right: var(--fd-desktop-control-inset, 40px) !important;
+      bottom: var(--fd-space-8, 40px) !important;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .fd-project-detail-section--integrated-marketing-design .integrated-launch-slide {
       animation: none !important;
