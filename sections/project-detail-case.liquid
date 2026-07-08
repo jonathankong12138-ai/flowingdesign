@@ -220,6 +220,83 @@
   .template-project-detail--case .shopify-section:has(.contact-form) {
     display: none !important;
   }
+
+  {%- if is_integrated_case -%}
+    .integrated-loading-cover-{{ section.id }} {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483000;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.70);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.72s, backdrop-filter 0.72s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: auto;
+    }
+
+    .integrated-loading-cover-{{ section.id }}.is-leaving {
+      opacity: 0;
+      visibility: hidden;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      pointer-events: none;
+    }
+
+    .integrated-loading-logo-{{ section.id }} {
+      color: #000;
+      font-family: "Urbanist", "Noto Sans SC", sans-serif;
+      font-size: 42px;
+      line-height: 1;
+      letter-spacing: 0;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .integrated-loading-word-{{ section.id }} {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .integrated-loading-char-{{ section.id }} {
+      display: inline-block;
+      font-weight: 200;
+      animation: integratedLoadingBreath-{{ section.id }} 1s ease-in-out infinite;
+      animation-delay: calc(var(--char-index, 0) * 0.018s);
+      will-change: opacity, font-weight;
+    }
+
+    @keyframes integratedLoadingBreath-{{ section.id }} {
+      0%,
+      100% {
+        opacity: 0.42;
+        font-weight: 200;
+      }
+      50% {
+        opacity: 1;
+        font-weight: var(--target-weight, 600);
+      }
+    }
+
+    body.integrated-loading-active-{{ section.id }} {
+      overflow: hidden;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .integrated-loading-cover-{{ section.id }},
+      .integrated-loading-char-{{ section.id }} {
+        transition-duration: 0.01ms;
+        animation: none;
+      }
+
+      .integrated-loading-char-{{ section.id }} {
+        opacity: 1;
+        font-weight: 400;
+      }
+    }
+  {%- endif -%}
 </style>
 
 <script>
@@ -335,6 +412,97 @@
     {%- endif -%}
   ];
 </script>
+
+{%- if is_integrated_case -%}
+  <div id="integrated-loading-cover-{{ section.id }}" class="integrated-loading-cover-{{ section.id }}" data-integrated-loading-cover aria-hidden="true">
+    <div class="integrated-loading-logo-{{ section.id }}" data-integrated-loading-logo>Flowin’ Design</div>
+  </div>
+
+  <script>
+    (function () {
+      const sectionId = {{ section.id | json }};
+      const cover = document.getElementById('integrated-loading-cover-' + sectionId);
+      const logo = cover?.querySelector('[data-integrated-loading-logo]');
+      if (!cover || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        cover?.remove();
+        return;
+      }
+
+      if (cover.parentNode !== document.body) {
+        document.body.appendChild(cover);
+      }
+
+      const wait = (ms) => new Promise(resolve => window.setTimeout(resolve, ms));
+      const splitLogo = () => {
+        if (!logo || logo.dataset.split === 'true') return;
+        const text = logo.textContent || '';
+        const visibleChars = Array.from(text).filter(char => char.trim()).length;
+        const step = visibleChars > 1 ? (600 - 200) / (visibleChars - 1) : 0;
+        let charIndex = 0;
+        logo.innerHTML = '';
+
+        text.split(/(\s+)/).forEach(part => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) {
+            logo.appendChild(document.createTextNode(part));
+            return;
+          }
+
+          const word = document.createElement('span');
+          word.className = 'integrated-loading-word-' + sectionId;
+          Array.from(part).forEach(char => {
+            const span = document.createElement('span');
+            const targetWeight = Math.round(600 - charIndex * step);
+            span.className = 'integrated-loading-char-' + sectionId;
+            span.textContent = char;
+            span.style.setProperty('--char-index', charIndex);
+            span.style.setProperty('--target-weight', targetWeight);
+            word.appendChild(span);
+            charIndex++;
+          });
+          logo.appendChild(word);
+        });
+
+        logo.dataset.split = 'true';
+      };
+
+      const waitForHeroVideo = () => new Promise(resolve => {
+        const video = document.querySelector('.fd-project-detail-section--integrated-marketing-design .c-hero-video, .fd-project-detail-section--integrated-marketing-design .mobile-hero-video');
+        if (!video || video.readyState >= 2) {
+          resolve(true);
+          return;
+        }
+
+        const done = () => {
+          video.removeEventListener('loadeddata', done);
+          video.removeEventListener('canplay', done);
+          video.removeEventListener('error', done);
+          resolve(true);
+        };
+        video.addEventListener('loadeddata', done, { once: true });
+        video.addEventListener('canplay', done, { once: true });
+        video.addEventListener('error', done, { once: true });
+        window.setTimeout(done, 2400);
+      });
+
+      const run = () => {
+        splitLogo();
+        document.body.classList.add('integrated-loading-active-' + sectionId);
+        Promise.all([wait(2200), waitForHeroVideo()]).finally(() => {
+          cover.classList.add('is-leaving');
+          document.body.classList.remove('integrated-loading-active-' + sectionId);
+          window.setTimeout(() => cover.remove(), 820);
+        });
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', run, { once: true });
+      } else {
+        run();
+      }
+    })();
+  </script>
+{%- endif -%}
 
 <div class="fd-project-detail-section fd-project-detail-section--{{ project_variant }}" data-section-id="{{ section.id }}" data-project-variant="{{ project_variant }}">
 <div class="canvas-wrap">
