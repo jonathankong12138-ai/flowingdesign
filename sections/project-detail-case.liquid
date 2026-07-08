@@ -7,7 +7,9 @@
 {% liquid
   assign project_variant = template.suffix | default: page.handle
   assign is_gtm_case = false
+  assign is_integrated_case = false
   assign hero_video_asset = 'fd-project-detail-9abdb01102-shokz-user.mp4'
+  assign hero_mobile_video_asset = hero_video_asset
 
   case project_variant
     when 'flowin-design'
@@ -75,6 +77,7 @@
     when 'product-launch-visual'
       assign is_gtm_case = true
       assign hero_video_asset = 'fd-project-detail-gtm-intro.mp4'
+      assign hero_mobile_video_asset = hero_video_asset
       assign breadcrumb_title = 'Product Launch Visual'
       assign stat_label_1 = '上市链路'
       assign stat_value_1 = 'End-to-End'
@@ -137,6 +140,9 @@
       assign libs_copy = '通过 KV、卖点模块、人物场景、产品渲染、渠道模板和本地化规范，把新品上市从一次性设计变成可管理的素材系统。'
 
     else
+      assign is_integrated_case = true
+      assign hero_video_asset = 'fd-project-detail-integrated-hero-desktop.mp4'
+      assign hero_mobile_video_asset = 'fd-project-detail-integrated-hero-mobile.mp4'
       assign breadcrumb_title = 'Integrated Marketing Design'
       assign stat_label_1 = '运营触点'
       assign stat_value_1 = 'Multi-channel'
@@ -383,7 +389,7 @@
         <article class="card c-hero" id="c1">
           <video class="c-hero-video" src="{{ hero_video_asset | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
           <div class="bg-placeholder" aria-hidden="true"></div>
-          {%- unless is_gtm_case -%}
+          {%- unless is_gtm_case or is_integrated_case -%}
             <div class="c-hero-caption">{{ hero_caption }}</div>
             <div class="c-hero-stats">
               <div class="c-hero-stats-row">
@@ -404,6 +410,15 @@
               <div class="gtm-launch-carousel" aria-label="GTM 项目素材轮播">
                 <img class="gtm-launch-slide gtm-launch-slide--one" src="{{ "fd-project-detail-gtm-2-2.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-2" loading="eager">
                 <img class="gtm-launch-slide gtm-launch-slide--two" src="{{ "fd-project-detail-gtm-2-1.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-1" loading="eager">
+              </div>
+            </div>
+          {%- elsif is_integrated_case -%}
+            <div class="pillar pillar-1 pillar-integrated-launch">
+              <canvas class="glacier-wave-bg glacier-wave-bg--bf" data-glacier-wave aria-hidden="true"></canvas>
+              <div class="integrated-launch-carousel" aria-label="Integrated Marketing Design 项目素材轮播">
+                <img class="integrated-launch-slide integrated-launch-slide--one" src="{{ "fd-project-detail-integrated-second-1.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
+                <img class="integrated-launch-slide integrated-launch-slide--two" src="{{ "fd-project-detail-integrated-second-2.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
+                <img class="integrated-launch-slide integrated-launch-slide--three" src="{{ "fd-project-detail-integrated-second-3.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
               </div>
             </div>
           {%- else -%}
@@ -451,6 +466,12 @@
               <img class="gtm-challenge-slide gtm-challenge-slide--two" src="{{ "fd-project-detail-gtm-3-2.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-2" loading="eager">
               <img class="gtm-challenge-slide gtm-challenge-slide--three" src="{{ "fd-project-detail-gtm-3-3.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-3" loading="eager">
             </div>
+          {%- elsif is_integrated_case -%}
+            <div class="integrated-challenge-carousel" aria-label="Integrated Marketing Design 第三板块素材轮播">
+              <img class="integrated-challenge-slide integrated-challenge-slide--one" src="{{ "fd-project-detail-integrated-third-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
+              <img class="integrated-challenge-slide integrated-challenge-slide--two" src="{{ "fd-project-detail-integrated-third-2.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
+              <img class="integrated-challenge-slide integrated-challenge-slide--three" src="{{ "fd-project-detail-integrated-third-3.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
+            </div>
           {%- else -%}
             <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
             <div class="c-friction-kicker">Systemic
@@ -478,6 +499,19 @@ Challenges</div>
         <article class="card c-timeline" id="c4" data-timeline-index="0" data-bg-index="0">
           {%- if is_gtm_case -%}
             <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-4-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第四板块视频"></video>
+          {%- elsif is_integrated_case -%}
+            <div class="integrated-timeline-carousel" aria-label="Integrated Marketing Design 第四板块素材轮播">
+              {%- for index in (1..10) -%}
+                <img
+                  class="integrated-timeline-slide integrated-timeline-slide--{{ index }}"
+                  src="{{ "fd-project-detail-integrated-fourth-" | append: index | append: ".webp" | asset_url }}"
+                  width="2920"
+                  height="1824"
+                  alt=""
+                  loading="{% if index == 1 %}eager{% else %}lazy{% endif %}"
+                >
+              {%- endfor -%}
+            </div>
           {%- else -%}
             <div class="bg-placeholder" aria-hidden="true"></div>
             <div class="dates">
@@ -503,6 +537,11 @@ Challenges</div>
         <article class="card c-research" id="c5">
           {%- if is_gtm_case -%}
             <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-5-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第五板块视频"></video>
+          {%- elsif is_integrated_case -%}
+            <div class="integrated-research-carousel" aria-label="Integrated Marketing Design 第五板块素材轮播">
+              <img class="integrated-research-slide integrated-research-slide--one" src="{{ "fd-project-detail-integrated-fifth-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
+              <img class="integrated-research-slide integrated-research-slide--two" src="{{ "fd-project-detail-integrated-fifth-2.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy">
+            </div>
           {%- else -%}
             <div class="bg-placeholder" aria-hidden="true"></div>
             <div class="heading">
@@ -517,56 +556,65 @@ Challenges</div>
         </article>
 
         <article class="card c-org" id="c6">
-          <div class="c-org-l">
-            <div class="bg-placeholder" aria-hidden="true"></div>
-            <div class="org-left-top">
-              <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-              <div class="org-title">{{ org_title }}</div>
-              <div class="org-sub">{{ org_sub }}</div>
+          {%- if is_gtm_case -%}
+            <div class="gtm-sixth-carousel" aria-label="第六板块图片轮播">
+              <img class="gtm-sixth-slide gtm-sixth-slide--one" src="{{ "fd-project-detail-gtm-section-6-1.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 1" loading="lazy">
+              <img class="gtm-sixth-slide gtm-sixth-slide--two" src="{{ "fd-project-detail-gtm-section-6-2.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 2" loading="lazy">
+              <img class="gtm-sixth-slide gtm-sixth-slide--three" src="{{ "fd-project-detail-gtm-section-6-3.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 3" loading="lazy">
+              <img class="gtm-sixth-slide gtm-sixth-slide--four" src="{{ "fd-project-detail-gtm-section-6-4.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 4" loading="lazy">
             </div>
-            <div class="org-left-bottom">
-              <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-              <div class="org-title">{{ workflow_title }}</div>
-              <div class="org-list">{{ workflow_list }}</div>
-            </div>
-            <div class="body-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
-国际与北美产品经理双擎驱动本地化定制，
-设计代表统筹全渠道视觉与UX体验。
-在落地端，新增内部设计团队(UI及助理)保障视觉交付，
-并深度洽谈引入外部开发经理严控代码质量。</div>
-            <div class="nodes">
-              <div class="node"></div><div class="divider"></div><div class="node"></div><div class="node"></div>
-            </div>
-            <div class="legend">- 设计团队架构 -</div>
-          </div>
-          <div class="c-org-r">
-            <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
-            <div class="bg-placeholder" aria-hidden="true"></div>
-            <div class="org-team">
-              <div class="org-team-grid">
-                <div class="org-team-chip">设计代表</div>
-                <div class="org-team-chip">国际产品经理</div>
-                <div class="org-team-chip">北美产品经理</div>
-                <div class="org-team-chip">开发经理</div>
+          {%- else -%}
+            <div class="c-org-l">
+              <div class="bg-placeholder" aria-hidden="true"></div>
+              <div class="org-left-top">
+                <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+                <div class="org-title">{{ org_title }}</div>
+                <div class="org-sub">{{ org_sub }}</div>
               </div>
-              <div class="org-team-copy">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+              <div class="org-left-bottom">
+                <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
+                <div class="org-title">{{ workflow_title }}</div>
+                <div class="org-list">{{ workflow_list }}</div>
+              </div>
+              <div class="body-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
 国际与北美产品经理双擎驱动本地化定制，
 设计代表统筹全渠道视觉与UX体验。
 在落地端，新增内部设计团队(UI及助理)保障视觉交付，
 并深度洽谈引入外部开发经理严控代码质量。</div>
+              <div class="nodes">
+                <div class="node"></div><div class="divider"></div><div class="node"></div><div class="node"></div>
+              </div>
+              <div class="legend">- 设计团队架构 -</div>
             </div>
-            <div class="top">
+            <div class="c-org-r">
+              <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
               <div class="bg-placeholder" aria-hidden="true"></div>
-              <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
-              <div class="lbl">{{ org_sub }}</div>
+              <div class="org-team">
+                <div class="org-team-grid">
+                  <div class="org-team-chip">设计代表</div>
+                  <div class="org-team-chip">国际产品经理</div>
+                  <div class="org-team-chip">北美产品经理</div>
+                  <div class="org-team-chip">开发经理</div>
+                </div>
+                <div class="org-team-copy">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+国际与北美产品经理双擎驱动本地化定制，
+设计代表统筹全渠道视觉与UX体验。
+在落地端，新增内部设计团队(UI及助理)保障视觉交付，
+并深度洽谈引入外部开发经理严控代码质量。</div>
+              </div>
+              <div class="top">
+                <div class="bg-placeholder" aria-hidden="true"></div>
+                <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+                <div class="lbl">{{ org_sub }}</div>
+              </div>
+              <div class="bot">
+                <div class="bg-placeholder" aria-hidden="true"></div>
+                <div class="v">10+</div>
+                <div class="hd">工作流沉淀，解决流程缺陷</div>
+                <div class="ls">{{ workflow_list }}</div>
+              </div>
             </div>
-            <div class="bot">
-              <div class="bg-placeholder" aria-hidden="true"></div>
-              <div class="v">10+</div>
-              <div class="hd">工作流沉淀，解决流程缺陷</div>
-              <div class="ls">{{ workflow_list }}</div>
-            </div>
-          </div>
+          {%- endif -%}
         </article>
 
         <article class="card c-userres" id="c7">
@@ -698,8 +746,8 @@ Challenges</div>
 
   <section class="m-media m-media--dark m-ratio-hero m-hero-media">
     <div class="m-img" aria-hidden="true"></div>
-    <video class="mobile-hero-video" src="{{ hero_video_asset | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
-    {%- unless is_gtm_case -%}
+    <video class="mobile-hero-video" src="{{ hero_mobile_video_asset | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    {%- unless is_gtm_case or is_integrated_case -%}
       <div class="m-overlay m-hero-caption">{{ hero_caption }}</div>
       <div class="m-overlay m-hero-stats">
         <div class="m-hero-stat">
@@ -719,11 +767,17 @@ Challenges</div>
   </section>
 
   <section class="m-media m-ratio-medium m-structure-goals" id="m-mobile-goals" data-mobile-pillar data-bg-count="3" data-bg-index="0">
-    <canvas class="glacier-wave-bg{% if is_gtm_case %} glacier-wave-bg--gtm{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
+    <canvas class="glacier-wave-bg{% if is_gtm_case %} glacier-wave-bg--gtm{% elsif is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
     {%- if is_gtm_case -%}
       <div class="gtm-launch-carousel gtm-launch-carousel--mobile" aria-label="GTM 项目素材轮播">
         <img class="gtm-launch-slide gtm-launch-slide--one" src="{{ "fd-project-detail-gtm-2-2.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-2" loading="eager">
         <img class="gtm-launch-slide gtm-launch-slide--two" src="{{ "fd-project-detail-gtm-2-1.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-1" loading="eager">
+      </div>
+    {%- elsif is_integrated_case -%}
+      <div class="integrated-launch-carousel integrated-launch-carousel--mobile" aria-label="Integrated Marketing Design 项目素材轮播">
+        <img class="integrated-launch-slide integrated-launch-slide--one" src="{{ "fd-project-detail-integrated-second-1.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
+        <img class="integrated-launch-slide integrated-launch-slide--two" src="{{ "fd-project-detail-integrated-second-2.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
+        <img class="integrated-launch-slide integrated-launch-slide--three" src="{{ "fd-project-detail-integrated-second-3.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
       </div>
     {%- else -%}
       <div class="m-mobile-pillar-visual" aria-hidden="true"></div>
@@ -746,6 +800,12 @@ Challenges</div>
         <img class="gtm-challenge-slide gtm-challenge-slide--one" src="{{ "fd-project-detail-gtm-3-1.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-1" loading="eager">
         <img class="gtm-challenge-slide gtm-challenge-slide--two" src="{{ "fd-project-detail-gtm-3-2.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-2" loading="eager">
         <img class="gtm-challenge-slide gtm-challenge-slide--three" src="{{ "fd-project-detail-gtm-3-3.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-3" loading="eager">
+      </div>
+    {%- elsif is_integrated_case -%}
+      <div class="integrated-challenge-carousel integrated-challenge-carousel--mobile" aria-label="Integrated Marketing Design 第三板块素材轮播">
+        <img class="integrated-challenge-slide integrated-challenge-slide--one" src="{{ "fd-project-detail-integrated-third-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
+        <img class="integrated-challenge-slide integrated-challenge-slide--two" src="{{ "fd-project-detail-integrated-third-2.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
+        <img class="integrated-challenge-slide integrated-challenge-slide--three" src="{{ "fd-project-detail-integrated-third-3.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
       </div>
     {%- else -%}
       <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
@@ -779,6 +839,19 @@ Challenges</div>
   <section class="m-media m-timeline m-media--square" data-mobile-timeline-index="0">
     {%- if is_gtm_case -%}
       <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-4-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第四板块移动端视频"></video>
+    {%- elsif is_integrated_case -%}
+      <div class="integrated-timeline-carousel integrated-timeline-carousel--mobile" aria-label="Integrated Marketing Design 第四板块素材轮播">
+        {%- for index in (1..10) -%}
+          <img
+            class="integrated-timeline-slide integrated-timeline-slide--{{ index }}"
+            src="{{ "fd-project-detail-integrated-fourth-" | append: index | append: ".webp" | asset_url }}"
+            width="2920"
+            height="1824"
+            alt=""
+            loading="{% if index == 1 %}eager{% else %}lazy{% endif %}"
+          >
+        {%- endfor -%}
+      </div>
     {%- else -%}
       <div class="m-img" aria-hidden="true"></div>
       <div class="m-overlay m-arrow-row m-timeline-controls">
@@ -806,6 +879,11 @@ Challenges</div>
   <section class="m-media m-media--dark m-ratio-tall m-research-intro m-research-intro--static">
     {%- if is_gtm_case -%}
       <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-5-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第五板块移动端视频"></video>
+    {%- elsif is_integrated_case -%}
+      <div class="integrated-research-carousel integrated-research-carousel--mobile" aria-label="Integrated Marketing Design 第五板块素材轮播">
+        <img class="integrated-research-slide integrated-research-slide--one" src="{{ "fd-project-detail-integrated-fifth-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
+        <img class="integrated-research-slide integrated-research-slide--two" src="{{ "fd-project-detail-integrated-fifth-2.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy">
+      </div>
     {%- else -%}
       <div class="m-img" aria-hidden="true"></div>
       <div class="m-overlay m-card-label m-card-label--light">
@@ -818,33 +896,44 @@ Challenges</div>
   </section>
 
   <section class="m-media m-media--square m-org-overview">
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-org-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
+    {%- if is_gtm_case -%}
+      <div class="gtm-sixth-carousel gtm-sixth-carousel--mobile" aria-label="第六板块移动端图片轮播">
+        <img class="gtm-sixth-slide gtm-sixth-slide--one" src="{{ "fd-project-detail-gtm-section-6-1.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 1" loading="lazy">
+        <img class="gtm-sixth-slide gtm-sixth-slide--two" src="{{ "fd-project-detail-gtm-section-6-2.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 2" loading="lazy">
+        <img class="gtm-sixth-slide gtm-sixth-slide--three" src="{{ "fd-project-detail-gtm-section-6-3.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 3" loading="lazy">
+        <img class="gtm-sixth-slide gtm-sixth-slide--four" src="{{ "fd-project-detail-gtm-section-6-4.webp" | asset_url }}" width="2190" height="1368" alt="GTM 第六板块图片 4" loading="lazy">
+      </div>
+    {%- else -%}
+      <div class="m-img" aria-hidden="true"></div>
+      <div class="m-org-text">为解资源错配、决策碎片化问题，组成跨团队项目结构：
 国际与北美产品经理双擎驱动本地化定制，
 设计代表统筹全渠道视觉与UX体验。
 在落地端，新增内部设计团队(UI及助理)保障视觉交付，
 并深度洽谈引入外部开发经理严控代码质量。</div>
-    <div class="m-org-nodes">
-      <span class="m-org-node">设计代表</span>
-      <span class="m-org-node">国际产品经理</span>
-      <span class="m-org-node">北美产品经理</span>
-      <span class="m-org-node">开发经理</span>
-    </div>
-    <div class="m-overlay m-org-legend">- 设计团队架构 -</div>
+      <div class="m-org-nodes">
+        <span class="m-org-node">设计代表</span>
+        <span class="m-org-node">国际产品经理</span>
+        <span class="m-org-node">北美产品经理</span>
+        <span class="m-org-node">开发经理</span>
+      </div>
+      <div class="m-overlay m-org-legend">- 设计团队架构 -</div>
+    {%- endif -%}
   </section>
-  <section class="m-media m-media--dark m-ratio-tall m-org-goals">
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-overlay m-card-label m-card-label--light">
-      <div class="m-card-label__title">{{ org_title }}</div>
-      <div class="m-card-label__sub">{{ org_sub }}</div>
-    </div>
-  </section>
-  <section class="m-media m-media--soft m-ratio-tall m-org-workflow">
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-overlay m-workflow-value"></div>
-    <div class="m-overlay m-workflow-title">{{ workflow_title }}</div>
-    <div class="m-overlay m-workflow-list">{{ workflow_list }}</div>
-  </section>
+  {%- unless is_gtm_case -%}
+    <section class="m-media m-media--dark m-ratio-tall m-org-goals">
+      <div class="m-img" aria-hidden="true"></div>
+      <div class="m-overlay m-card-label m-card-label--light">
+        <div class="m-card-label__title">{{ org_title }}</div>
+        <div class="m-card-label__sub">{{ org_sub }}</div>
+      </div>
+    </section>
+    <section class="m-media m-media--soft m-ratio-tall m-org-workflow">
+      <div class="m-img" aria-hidden="true"></div>
+      <div class="m-overlay m-workflow-value"></div>
+      <div class="m-overlay m-workflow-title">{{ workflow_title }}</div>
+      <div class="m-overlay m-workflow-list">{{ workflow_list }}</div>
+    </section>
+  {%- endunless -%}
 
   <section class="m-media m-media--dark m-ratio-tall m-user-research" id="m-mobile-research">
     {%- if is_gtm_case -%}

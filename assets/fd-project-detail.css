@@ -15658,19 +15658,69 @@
 
   .fd-project-detail-section--product-launch-visual #c4.c-timeline,
   .fd-project-detail-section--product-launch-visual #c5.c-research,
+  .fd-project-detail-section--product-launch-visual #c6.c-org,
   .fd-project-detail-section--product-launch-visual #c7.c-userres,
   .fd-project-detail-section--product-launch-visual .m-timeline,
   .fd-project-detail-section--product-launch-visual .m-research-intro,
+  .fd-project-detail-section--product-launch-visual .m-org-overview,
   .fd-project-detail-section--product-launch-visual #m-mobile-research {
     background: #f7f7f7 !important;
     isolation: isolate;
     overflow: hidden !important;
   }
 
-  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c7.c-userres, .m-timeline, .m-research-intro, #m-mobile-research)::before,
-  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c7.c-userres, .m-timeline, .m-research-intro, #m-mobile-research)::after {
+  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c6.c-org, #c7.c-userres, .m-timeline, .m-research-intro, .m-org-overview, #m-mobile-research)::before,
+  .fd-project-detail-section--product-launch-visual :is(#c4.c-timeline, #c5.c-research, #c6.c-org, #c7.c-userres, .m-timeline, .m-research-intro, .m-org-overview, #m-mobile-research)::after {
     content: none !important;
     display: none !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-sixth-carousel {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    overflow: hidden;
+    background: #f7f7f7;
+    pointer-events: none;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-sixth-slide {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    transform: scale(1.012);
+    animation: gtmSixthSlideFade 16s cubic-bezier(.22, 1, .36, 1) infinite;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-sixth-slide--two {
+    animation-delay: 4s;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-sixth-slide--three {
+    animation-delay: 8s;
+  }
+
+  .fd-project-detail-section--product-launch-visual .gtm-sixth-slide--four {
+    animation-delay: 12s;
+  }
+
+  @keyframes gtmSixthSlideFade {
+    0%,
+    24% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    30%,
+    100% {
+      opacity: 0;
+      transform: scale(1.012);
+    }
   }
 
   .fd-project-detail-section--product-launch-visual #c3.c-friction,
@@ -15840,5 +15890,353 @@
       animation: none !important;
       opacity: 0 !important;
       transform: none !important;
+    }
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c1.c-hero::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c1.c-hero .bg-placeholder {
+    display: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c2.c-pillars,
+  .fd-project-detail-section--integrated-marketing-design #c2 .pillar-integrated-launch {
+    background: #080000 !important;
+    overflow: hidden !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c2 .pillar-integrated-launch {
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    isolation: isolate;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c2 .pillar-integrated-launch::before,
+  .fd-project-detail-section--integrated-marketing-design #c2 .pillar-integrated-launch::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c2 .glacier-wave-bg--bf,
+  .fd-project-detail-section--integrated-marketing-design #m-mobile-goals > .glacier-wave-bg--bf {
+    z-index: 0 !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-launch-carousel {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-launch-slide {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    animation: integratedLaunchSlideFade 9s ease-in-out infinite;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-launch-slide--two {
+    animation-delay: 3s;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-launch-slide--three {
+    animation-delay: 6s;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c3.c-friction,
+  .fd-project-detail-section--integrated-marketing-design #m-mobile-challenges {
+    isolation: isolate;
+    background: #070000 !important;
+    overflow: hidden !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c3.c-friction::before,
+  .fd-project-detail-section--integrated-marketing-design #c3.c-friction::after,
+  .fd-project-detail-section--integrated-marketing-design #m-mobile-challenges::before,
+  .fd-project-detail-section--integrated-marketing-design #m-mobile-challenges::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c3.c-friction > :not(.integrated-challenge-carousel),
+  .fd-project-detail-section--integrated-marketing-design #m-mobile-challenges > :not(.integrated-challenge-carousel) {
+    display: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-challenge-carousel {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-challenge-slide {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    animation: integratedChallengeSlideFade 12s cubic-bezier(.22, 1, .36, 1) infinite;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-challenge-slide--two {
+    animation-delay: 4s;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-challenge-slide--three {
+    animation-delay: 8s;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c4.c-timeline,
+  .fd-project-detail-section--integrated-marketing-design .m-timeline {
+    isolation: isolate;
+    background: #070000 !important;
+    overflow: hidden !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c4.c-timeline::before,
+  .fd-project-detail-section--integrated-marketing-design #c4.c-timeline::after,
+  .fd-project-detail-section--integrated-marketing-design .m-timeline::before,
+  .fd-project-detail-section--integrated-marketing-design .m-timeline::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c4.c-timeline > :not(.integrated-timeline-carousel),
+  .fd-project-detail-section--integrated-marketing-design .m-timeline > :not(.integrated-timeline-carousel) {
+    display: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-timeline-carousel {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    animation: integratedTimelineSlideFade 30s cubic-bezier(.22, 1, .36, 1) infinite;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide--2 { animation-delay: 3s; }
+  .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide--3 { animation-delay: 6s; }
+  .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide--4 { animation-delay: 9s; }
+  .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide--5 { animation-delay: 12s; }
+  .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide--6 { animation-delay: 15s; }
+  .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide--7 { animation-delay: 18s; }
+  .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide--8 { animation-delay: 21s; }
+  .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide--9 { animation-delay: 24s; }
+  .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide--10 { animation-delay: 27s; }
+
+  .fd-project-detail-section--integrated-marketing-design #c5.c-research,
+  .fd-project-detail-section--integrated-marketing-design .m-research-intro {
+    isolation: isolate;
+    background: #070000 !important;
+    overflow: hidden !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c5.c-research::before,
+  .fd-project-detail-section--integrated-marketing-design #c5.c-research::after,
+  .fd-project-detail-section--integrated-marketing-design .m-research-intro::before,
+  .fd-project-detail-section--integrated-marketing-design .m-research-intro::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design #c5.c-research > :not(.integrated-research-carousel),
+  .fd-project-detail-section--integrated-marketing-design .m-research-intro > :not(.integrated-research-carousel) {
+    display: none !important;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-research-carousel {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-research-slide {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    animation: integratedResearchSlideFade 8s cubic-bezier(.22, 1, .36, 1) infinite;
+  }
+
+  .fd-project-detail-section--integrated-marketing-design .integrated-research-slide--two {
+    animation-delay: 4s;
+  }
+
+  @keyframes integratedLaunchSlideFade {
+    0%,
+    7%,
+    100% {
+      opacity: 0;
+    }
+    12%,
+    33% {
+      opacity: 1;
+    }
+    38% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes integratedChallengeSlideFade {
+    0%,
+    5% {
+      opacity: 0;
+      transform: scale(1.012);
+    }
+    11%,
+    33% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    39%,
+    100% {
+      opacity: 0;
+      transform: scale(.995);
+    }
+  }
+
+  @keyframes integratedTimelineSlideFade {
+    0%,
+    2% {
+      opacity: 0;
+      transform: scale(1.01);
+    }
+    4%,
+    10% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    12%,
+    100% {
+      opacity: 0;
+      transform: scale(.995);
+    }
+  }
+
+  @keyframes integratedResearchSlideFade {
+    0%,
+    7% {
+      opacity: 0;
+      transform: scale(1.01);
+    }
+    13%,
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    56%,
+    100% {
+      opacity: 0;
+      transform: scale(.995);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .fd-project-detail-section--integrated-marketing-design .mobile-393 .m-hero-media .m-img {
+      display: none !important;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design #m-mobile-goals {
+      background: #080000 !important;
+      overflow: hidden !important;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design #m-mobile-goals::before,
+    .fd-project-detail-section--integrated-marketing-design #m-mobile-goals::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design #m-mobile-challenges .integrated-challenge-slide {
+      object-position: center;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design .m-timeline .integrated-timeline-slide {
+      object-position: center;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design .m-research-intro .integrated-research-slide {
+      object-position: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fd-project-detail-section--integrated-marketing-design .integrated-launch-slide {
+      animation: none !important;
+      opacity: 0 !important;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design .integrated-launch-slide--one {
+      opacity: 1 !important;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design .integrated-challenge-slide {
+      animation: none !important;
+      opacity: 0 !important;
+      transform: none !important;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design .integrated-challenge-slide--one {
+      opacity: 1 !important;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide {
+      animation: none !important;
+      opacity: 0 !important;
+      transform: none !important;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design .integrated-timeline-slide--1 {
+      opacity: 1 !important;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design .integrated-research-slide {
+      animation: none !important;
+      opacity: 0 !important;
+      transform: none !important;
+    }
+
+    .fd-project-detail-section--integrated-marketing-design .integrated-research-slide--one {
+      opacity: 1 !important;
     }
   }

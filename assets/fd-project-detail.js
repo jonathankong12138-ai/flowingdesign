@@ -455,6 +455,7 @@
       uniform float uScroll;
       uniform float uRandomSeed;
       uniform float uGtmStyle;
+      uniform float uBfStyle;
       varying vec2 vUv;
 
       mat2 rotate2d(float angle) {
@@ -546,15 +547,20 @@
 
       float getHeight(vec2 uv, float time, float scroll, float seed) {
         float gtm = step(0.5, uGtmStyle);
+        float bf = step(0.5, uBfStyle);
         vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
         vec2 baseUV = uv + seedOffset + vec2(0.0, scroll * 0.2);
-        float flowTime = time * mix(0.8, 0.9, gtm) + scroll * 0.5;
+        float flowTime = time * mix(mix(0.8, 0.9, gtm), 0.5, bf) + scroll * 0.5;
         vec2 rotUV = rotate2d(-0.5) * baseUV;
         vec2 distortion = vec2(0.0);
         distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
         distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
-        float detail = snoise(rotUV * mix(0.975, 1.125, gtm) + distortion + flowTime * 0.1) * mix(0.065, 0.075, gtm);
-        float wave = sin(rotUV.y * mix(0.6, 5.0, gtm) + distortion.x * mix(1.7, 3.1, gtm) + flowTime);
+        float detailScale = mix(mix(0.975, 1.125, gtm), 0.3, bf);
+        float detailStrength = mix(mix(0.065, 0.075, gtm), 0.02, bf);
+        float waveFreq = mix(mix(0.6, 5.0, gtm), 1.6, bf);
+        float distortionStrength = mix(mix(1.7, 3.1, gtm), 3.3, bf);
+        float detail = snoise(rotUV * detailScale + distortion + flowTime * 0.1) * detailStrength;
+        float wave = sin(rotUV.y * waveFreq + distortion.x * distortionStrength + flowTime);
         return pow(wave * 0.5 + 0.5, 0.8) + detail;
       }
 
@@ -571,8 +577,30 @@
         float hy2 = getHeight(uv - vec2(0.0, eps), time, uScroll, uRandomSeed);
 
         vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
-        float light = dot(normal, normalize(vec3(-0.6, 0.5, 0.4))) * 0.5 + 0.5;
         float gtm = step(0.5, uGtmStyle);
+        float bf = step(0.5, uBfStyle);
+        vec3 lightDir = normalize(mix(vec3(-0.6, 0.5, 0.4), vec3(-0.4, 0.6, 0.4), bf));
+        float light = dot(normal, lightDir) * 0.5 + 0.5;
+
+        if (bf > 0.5) {
+          vec3 color = mix(vec3(1.0), vec3(1.0, 0.6471, 0.3608), smoothstep(0.0, 0.381, light));
+          color = mix(color, vec3(0.4392, 0.0, 0.0), smoothstep(0.38, 1.001, light));
+          color = mix(color, vec3(0.2, 0.0, 0.0), smoothstep(1.0, 1.001, light));
+          color = mix(color, vec3(0.0), smoothstep(1.0, 1.001, light));
+          color = mix(color, vec3(0.0), smoothstep(1.0, 1.001, light));
+          color = (color - 0.5) * 1.45 + 0.5 - 0.15;
+          color = clamp(color, 0.0, 1.0);
+          vec3 hsl = rgb2hsl(color);
+          hsl.y = clamp(hsl.y * 1.3, 0.0, 1.0);
+          color = hsl2rgb(hsl);
+
+          vec2 grainUv = floor(vUv * uResolution);
+          float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * 2.0) * 43758.5453);
+          float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
+          color += baseDither + (dither - 0.5) * 0.03;
+          gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+          return;
+        }
 
         vec3 colAmbient = mix(vec3(0.7922, 0.3412, 1.0), vec3(1.0), gtm);
         vec3 colDeep = mix(vec3(0.0784, 0.4627, 1.0), vec3(1.0), gtm);
@@ -645,7 +673,8 @@
         uResolution: { value: new THREE.Vector2(1, 1) },
         uScroll: { value: 0 },
         uRandomSeed: { value: Math.random() * 100 },
-        uGtmStyle: { value: canvas.classList.contains('glacier-wave-bg--gtm') ? 1 : 0 }
+        uGtmStyle: { value: canvas.classList.contains('glacier-wave-bg--gtm') ? 1 : 0 },
+        uBfStyle: { value: canvas.classList.contains('glacier-wave-bg--bf') ? 1 : 0 }
       };
       const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms });
       scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
