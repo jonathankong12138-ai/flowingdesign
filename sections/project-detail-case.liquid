@@ -476,36 +476,44 @@ Challenges</div>
         </article>
 
         <article class="card c-timeline" id="c4" data-timeline-index="0" data-bg-index="0">
-          <div class="bg-placeholder" aria-hidden="true"></div>
-          <div class="dates">
-            <div class="d">07.08</div>
-            <div class="line"></div>
-            <div class="d">10.08</div>
-            <div class="line"></div>
-            <div class="d">11.08</div>
-          </div>
-          <div class="phase">
-            <div class="phase-title">{{ timeline_title }}</div>
-            <div class="phase-date">{{ timeline_date }}</div>
-            <div class="phase-name">{{ timeline_name }}</div>
-            <div class="phase-copy">{{ timeline_copy }}</div>
-          </div>
-          <div class="nav-arrows nav-arrows--row">
-            <button class="nav-btn prev nav-btn--light" type="button" aria-label="上一个阶段" data-timeline-step="-1" onclick="window.triggerTimelineSlide && window.triggerTimelineSlide(this, -1)"><span class="ic"></span></button>
-            <button class="nav-btn next nav-btn--light" type="button" aria-label="下一个阶段" data-timeline-step="1" onclick="window.triggerTimelineSlide && window.triggerTimelineSlide(this, 1)"><span class="ic"></span></button>
-          </div>
+          {%- if is_gtm_case -%}
+            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-4-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第四板块视频"></video>
+          {%- else -%}
+            <div class="bg-placeholder" aria-hidden="true"></div>
+            <div class="dates">
+              <div class="d">07.08</div>
+              <div class="line"></div>
+              <div class="d">10.08</div>
+              <div class="line"></div>
+              <div class="d">11.08</div>
+            </div>
+            <div class="phase">
+              <div class="phase-title">{{ timeline_title }}</div>
+              <div class="phase-date">{{ timeline_date }}</div>
+              <div class="phase-name">{{ timeline_name }}</div>
+              <div class="phase-copy">{{ timeline_copy }}</div>
+            </div>
+            <div class="nav-arrows nav-arrows--row">
+              <button class="nav-btn prev nav-btn--light" type="button" aria-label="上一个阶段" data-timeline-step="-1" onclick="window.triggerTimelineSlide && window.triggerTimelineSlide(this, -1)"><span class="ic"></span></button>
+              <button class="nav-btn next nav-btn--light" type="button" aria-label="下一个阶段" data-timeline-step="1" onclick="window.triggerTimelineSlide && window.triggerTimelineSlide(this, 1)"><span class="ic"></span></button>
+            </div>
+          {%- endif -%}
         </article>
 
-        <article class="card c-research">
-          <div class="bg-placeholder" aria-hidden="true"></div>
-          <div class="heading">
-            <div class="t">{{ research_title }}</div>
-            <div class="row">
-              <span>{{ research_sub | replace: "　", "</span><span>" }}</span>
+        <article class="card c-research" id="c5">
+          {%- if is_gtm_case -%}
+            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-5-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第五板块视频"></video>
+          {%- else -%}
+            <div class="bg-placeholder" aria-hidden="true"></div>
+            <div class="heading">
+              <div class="t">{{ research_title }}</div>
+              <div class="row">
+                <span>{{ research_sub | replace: "　", "</span><span>" }}</span>
+              </div>
             </div>
-          </div>
-          <div class="quote-eyebrow">为什么需要它？</div>
-          <div class="quote" aria-live="polite">{{ research_quote }}</div>
+            <div class="quote-eyebrow">为什么需要它？</div>
+            <div class="quote" aria-live="polite">{{ research_quote }}</div>
+          {%- endif -%}
         </article>
 
         <article class="card c-org" id="c6">
@@ -562,14 +570,18 @@ Challenges</div>
         </article>
 
         <article class="card c-userres" id="c7">
-          <div class="bg-placeholder" aria-hidden="true"></div>
-          <div class="label">{{ user_title }}</div>
-          <div class="stats">
-            <div class="stat"><div class="l">{{ user_stat_label_1 }}</div><div class="v">{{ user_stat_value_1 }}</div></div>
-            <div class="stat"><div class="l">{{ user_stat_label_2 }}</div><div class="v">{{ user_stat_value_2 }}</div></div>
-            <div class="stat"><div class="l">{{ user_stat_label_3 }}</div><div class="v">{{ user_stat_value_3 }}</div></div>
-            <div class="stat"><div class="l">{{ user_stat_label_4 }}</div><div class="v">{{ user_stat_value_4 }}</div></div>
-          </div>
+          {%- if is_gtm_case -%}
+            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-7-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第七板块视频"></video>
+          {%- else -%}
+            <div class="bg-placeholder" aria-hidden="true"></div>
+            <div class="label">{{ user_title }}</div>
+            <div class="stats">
+              <div class="stat"><div class="l">{{ user_stat_label_1 }}</div><div class="v">{{ user_stat_value_1 }}</div></div>
+              <div class="stat"><div class="l">{{ user_stat_label_2 }}</div><div class="v">{{ user_stat_value_2 }}</div></div>
+              <div class="stat"><div class="l">{{ user_stat_label_3 }}</div><div class="v">{{ user_stat_value_3 }}</div></div>
+              <div class="stat"><div class="l">{{ user_stat_label_4 }}</div><div class="v">{{ user_stat_value_4 }}</div></div>
+            </div>
+          {%- endif -%}
         </article>
 
         <article class="card c-persona" id="c8" data-bg-index="0">
@@ -765,36 +777,44 @@ Challenges</div>
   </section>
 
   <section class="m-media m-timeline m-media--square" data-mobile-timeline-index="0">
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-overlay m-arrow-row m-timeline-controls">
-      <button class="m-arrow m-arrow--light" type="button" aria-label="上一个阶段" data-mobile-timeline-step="-1"></button>
-      <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一个阶段" data-mobile-timeline-step="1"></button>
-      <span class="m-switch-count" aria-live="polite">01 / 03</span>
-    </div>
-    <div class="m-overlay m-timeline__phase">
-      <div class="m-timeline__phase-title">{{ timeline_title }}</div>
-      <div class="m-timeline__phase-text">
-        <span class="m-timeline__phase-date">{{ timeline_date }}</span>
-        <span class="m-timeline__phase-name">{{ timeline_name }}</span>
-        <span class="m-timeline__phase-copy">{{ timeline_copy }}</span>
+    {%- if is_gtm_case -%}
+      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-4-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第四板块移动端视频"></video>
+    {%- else -%}
+      <div class="m-img" aria-hidden="true"></div>
+      <div class="m-overlay m-arrow-row m-timeline-controls">
+        <button class="m-arrow m-arrow--light" type="button" aria-label="上一个阶段" data-mobile-timeline-step="-1"></button>
+        <button class="m-arrow m-arrow--light m-arrow--next" type="button" aria-label="下一个阶段" data-mobile-timeline-step="1"></button>
+        <span class="m-switch-count" aria-live="polite">01 / 03</span>
       </div>
-    </div>
-    <div class="m-overlay m-timeline__dates">
-      <span class="m-timeline__date">07.08</span>
-      <span class="m-timeline__line"></span>
-      <span class="m-timeline__date">10.08</span>
-      <span class="m-timeline__line"></span>
-      <span class="m-timeline__date">11.08</span>
-    </div>
+      <div class="m-overlay m-timeline__phase">
+        <div class="m-timeline__phase-title">{{ timeline_title }}</div>
+        <div class="m-timeline__phase-text">
+          <span class="m-timeline__phase-date">{{ timeline_date }}</span>
+          <span class="m-timeline__phase-name">{{ timeline_name }}</span>
+          <span class="m-timeline__phase-copy">{{ timeline_copy }}</span>
+        </div>
+      </div>
+      <div class="m-overlay m-timeline__dates">
+        <span class="m-timeline__date">07.08</span>
+        <span class="m-timeline__line"></span>
+        <span class="m-timeline__date">10.08</span>
+        <span class="m-timeline__line"></span>
+        <span class="m-timeline__date">11.08</span>
+      </div>
+    {%- endif -%}
   </section>
   <section class="m-media m-media--dark m-ratio-tall m-research-intro m-research-intro--static">
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-overlay m-card-label m-card-label--light">
-      <div class="m-card-label__title">{{ research_title }}</div>
-      <div class="m-card-label__sub">需求分析　产品与系统设计　研发编码　数据收集　迭代优化</div>
-    </div>
-    <div class="m-overlay m-research-quote-eyebrow">为什么需要它？</div>
-    <div class="m-overlay m-research-quote" aria-live="polite">{{ research_quote }}</div>
+    {%- if is_gtm_case -%}
+      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-5-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第五板块移动端视频"></video>
+    {%- else -%}
+      <div class="m-img" aria-hidden="true"></div>
+      <div class="m-overlay m-card-label m-card-label--light">
+        <div class="m-card-label__title">{{ research_title }}</div>
+        <div class="m-card-label__sub">需求分析　产品与系统设计　研发编码　数据收集　迭代优化</div>
+      </div>
+      <div class="m-overlay m-research-quote-eyebrow">为什么需要它？</div>
+      <div class="m-overlay m-research-quote" aria-live="polite">{{ research_quote }}</div>
+    {%- endif -%}
   </section>
 
   <section class="m-media m-media--square m-org-overview">
@@ -827,26 +847,30 @@ Challenges</div>
   </section>
 
   <section class="m-media m-media--dark m-ratio-tall m-user-research" id="m-mobile-research">
-    <div class="m-img" aria-hidden="true"></div>
-    <div class="m-overlay m-user-title">用户研究</div>
-    <div class="m-overlay m-user-stats">
-      <div>
-        <div class="m-user-stat__label">{{ user_stat_label_1 }}</div>
-        <div class="m-user-stat__value">{{ user_stat_value_1 }}</div>
+    {%- if is_gtm_case -%}
+      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-7-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第七板块移动端视频"></video>
+    {%- else -%}
+      <div class="m-img" aria-hidden="true"></div>
+      <div class="m-overlay m-user-title">用户研究</div>
+      <div class="m-overlay m-user-stats">
+        <div>
+          <div class="m-user-stat__label">{{ user_stat_label_1 }}</div>
+          <div class="m-user-stat__value">{{ user_stat_value_1 }}</div>
+        </div>
+        <div>
+          <div class="m-user-stat__label">{{ user_stat_label_2 }}</div>
+          <div class="m-user-stat__value">{{ user_stat_value_2 }}</div>
+        </div>
+        <div>
+          <div class="m-user-stat__label">{{ user_stat_label_3 }}</div>
+          <div class="m-user-stat__value">{{ user_stat_value_3 }}</div>
+        </div>
+        <div>
+          <div class="m-user-stat__label">{{ user_stat_label_4 }}</div>
+          <div class="m-user-stat__value">{{ user_stat_value_4 }}</div>
+        </div>
       </div>
-      <div>
-        <div class="m-user-stat__label">{{ user_stat_label_2 }}</div>
-        <div class="m-user-stat__value">{{ user_stat_value_2 }}</div>
-      </div>
-      <div>
-        <div class="m-user-stat__label">{{ user_stat_label_3 }}</div>
-        <div class="m-user-stat__value">{{ user_stat_value_3 }}</div>
-      </div>
-      <div>
-        <div class="m-user-stat__label">{{ user_stat_label_4 }}</div>
-        <div class="m-user-stat__value">{{ user_stat_value_4 }}</div>
-      </div>
-    </div>
+    {%- endif -%}
   </section>
 
   <section class="m-media m-ratio-medium m-structure-image m-structure-decision" data-mobile-persona data-bg-count="3" data-bg-index="0">
