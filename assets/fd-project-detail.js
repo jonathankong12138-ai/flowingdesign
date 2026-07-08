@@ -770,6 +770,7 @@
     const isIntegratedDefaultOutro = canvas.classList.contains('outro-wave-canvas--integrated-default') || window.location.pathname.includes('/pages/integrated-marketing-design');
     if (isIntegratedDefaultOutro) canvas.classList.remove('outro-wave-canvas--heatmap');
     const isHeatmapOutro = !isIntegratedDefaultOutro && canvas.classList.contains('outro-wave-canvas--heatmap');
+    const usesHeatmapPalette = isHeatmapOutro || isIntegratedDefaultOutro;
     if (typeof THREE === 'undefined') {
       if (canvas.dataset.outroWaveReady) return;
       canvas.dataset.outroWaveReady = 'true';
@@ -793,6 +794,7 @@
         uniform float uRandomSeed;
         uniform float uMobileVertical;
         uniform float uHeatmapStyle;
+        uniform float uHeatmapPalette;
         uniform float uDarkMask;
         varying vec2 vUv;
 
@@ -851,7 +853,7 @@
           return vec3(hue2rgb(p, q, c.x + 1.0 / 3.0), hue2rgb(p, q, c.x), hue2rgb(p, q, c.x - 1.0 / 3.0));
         }
         float getHeight(vec2 uv, float time, float progress, float seed) {
-          float heatmap = step(0.5, uHeatmapStyle);
+          float heatmap = step(0.5, uHeatmapPalette);
           vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
           vec2 baseUV = uv + seedOffset + mix(vec2(progress * 0.2, 0.0), vec2(0.0, progress * 0.2), heatmap);
           float flowTime = time * mix(0.5, 0.8, heatmap) + progress * 0.5;
@@ -889,13 +891,15 @@
           float hy2 = getHeight(uv - vec2(0.0, eps), time, uProgress, uRandomSeed);
           vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
           float heatmap = step(0.5, uHeatmapStyle);
+          float heatmapPalette = step(0.5, uHeatmapPalette);
+          heatmap = heatmapPalette;
           float light = dot(normal, normalize(mix(vec3(-0.4, 0.6, 0.4), vec3(-0.5, 0.5, 0.4), heatmap))) * 0.5 + 0.5;
           vec3 color = mix(vec3(1.0), vec3(1.0, 0.6471, 0.3608), smoothstep(0.0, 0.381, light));
           color = mix(color, vec3(0.4392, 0.0, 0.0), smoothstep(0.38, 1.001, light));
           color = mix(color, vec3(0.2, 0.0, 0.0), smoothstep(1.0, 1.001, light));
           color = mix(color, vec3(0.0), smoothstep(1.0, 1.001, light));
 
-          if (heatmap > 0.5) {
+          if (heatmapPalette > 0.5) {
             float stop1 = 0.59;
             float stop2 = 0.06;
             float stop3 = 1.0;
@@ -922,13 +926,15 @@
           hsl.y = clamp(hsl.y * mix(1.3, 1.0, heatmap), 0.0, 1.0);
           color = hsl2rgb(hsl);
 
-          if (heatmap > 0.5) {
+          if (heatmapPalette > 0.5) {
             vec2 heatGrainUv = floor(vUv * uResolution * 0.55);
             float heatDither = fract(sin(dot(heatGrainUv, vec2(12.9898, 78.233)) + uTime * 0.3) * 43758.5453);
             float heatBaseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
             color += heatBaseDither + (heatDither - 0.5) * 0.1;
-            gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
-            return;
+            if (step(0.5, uHeatmapStyle) > 0.5) {
+              gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+              return;
+            }
           }
 
           float p = clamp(uProgress, 0.0, 1.0);
@@ -984,11 +990,13 @@
         seed: gl.getUniformLocation(program, 'uRandomSeed'),
         mobileVertical: gl.getUniformLocation(program, 'uMobileVertical'),
         heatmapStyle: gl.getUniformLocation(program, 'uHeatmapStyle'),
+        heatmapPalette: gl.getUniformLocation(program, 'uHeatmapPalette'),
         darkMask: gl.getUniformLocation(program, 'uDarkMask')
       };
       gl.uniform1f(uniforms.seed, 42.0);
       gl.uniform1f(uniforms.mobileVertical, window.matchMedia('(max-width: 767px)').matches ? 1.0 : 0.0);
       gl.uniform1f(uniforms.heatmapStyle, isHeatmapOutro ? 1.0 : 0.0);
+      gl.uniform1f(uniforms.heatmapPalette, usesHeatmapPalette ? 1.0 : 0.0);
       gl.uniform1f(uniforms.darkMask, canvas.classList.contains('outro-wave-canvas--dark') ? 1.0 : 0.0);
 
       let targetProgress = 0;
@@ -1026,7 +1034,7 @@
         requestAnimationFrame(animateRaw);
         if (document.hidden) return;
         /* outro 波浪只在过渡进行/收尾时渲染，离屏静止时跳过（外观不变） */
-        if (!isHeatmapOutro && targetProgress <= 0.0005 && currentProgress <= 0.0005) {
+        if (!isHeatmapOutro && !usesHeatmapPalette && targetProgress <= 0.0005 && currentProgress <= 0.0005) {
           currentProgress = targetProgress;
           return;
         }
@@ -1059,6 +1067,7 @@
       uniform float uRandomSeed;
       uniform float uMobileVertical;
       uniform float uHeatmapStyle;
+      uniform float uHeatmapPalette;
       uniform float uDarkMask;
       varying vec2 vUv;
 
@@ -1124,7 +1133,7 @@
       }
 
       float getHeight(vec2 uv, float time, float progress, float seed) {
-        float heatmap = step(0.5, uHeatmapStyle);
+        float heatmap = step(0.5, uHeatmapPalette);
         vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
         vec2 baseUV = uv + seedOffset + mix(vec2(progress * 0.2, 0.0), vec2(0.0, progress * 0.2), heatmap);
         float flowTime = time * mix(0.5, 0.8, heatmap) + progress * 0.5;
@@ -1164,6 +1173,8 @@
         float hy2 = getHeight(uv - vec2(0.0, eps), time, uProgress, uRandomSeed);
         vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
         float heatmap = step(0.5, uHeatmapStyle);
+        float heatmapPalette = step(0.5, uHeatmapPalette);
+        heatmap = heatmapPalette;
         float light = dot(normal, normalize(mix(vec3(-0.4, 0.6, 0.4), vec3(-0.5, 0.5, 0.4), heatmap))) * 0.5 + 0.5;
 
         vec3 color = mix(vec3(1.0), vec3(1.0, 0.6471, 0.3608), smoothstep(0.0, 0.381, light));
@@ -1171,7 +1182,7 @@
         color = mix(color, vec3(0.2, 0.0, 0.0), smoothstep(1.0, 1.001, light));
         color = mix(color, vec3(0.0), smoothstep(1.0, 1.001, light));
 
-        if (heatmap > 0.5) {
+        if (heatmapPalette > 0.5) {
           float stop1 = 0.59;
           float stop2 = 0.06;
           float stop3 = 1.0;
@@ -1198,13 +1209,15 @@
         hsl.y = clamp(hsl.y * mix(1.3, 1.0, heatmap), 0.0, 1.0);
         color = hsl2rgb(hsl);
 
-        if (heatmap > 0.5) {
+        if (heatmapPalette > 0.5) {
           vec2 heatGrainUv = floor(vUv * uResolution * 0.55);
           float heatDither = fract(sin(dot(heatGrainUv, vec2(12.9898, 78.233)) + uTime * 0.3) * 43758.5453);
           float heatBaseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
           color += heatBaseDither + (heatDither - 0.5) * 0.1;
-          gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
-          return;
+          if (step(0.5, uHeatmapStyle) > 0.5) {
+            gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+            return;
+          }
         }
 
         float p = clamp(uProgress, 0.0, 1.0);
@@ -1242,6 +1255,7 @@
       uRandomSeed: { value: 42.0 },
       uMobileVertical: { value: window.matchMedia('(max-width: 767px)').matches ? 1 : 0 },
       uHeatmapStyle: { value: isHeatmapOutro ? 1 : 0 },
+      uHeatmapPalette: { value: usesHeatmapPalette ? 1 : 0 },
       uDarkMask: { value: canvas.classList.contains('outro-wave-canvas--dark') ? 1 : 0 }
     };
     const material = new THREE.ShaderMaterial({
@@ -1283,7 +1297,7 @@
       requestAnimationFrame(animate);
       if (document.hidden) return;
       /* outro 波浪只在过渡进行/收尾时渲染，离屏静止时跳过（外观不变） */
-      if (!isHeatmapOutro && targetProgress <= 0.0005 && currentProgress <= 0.0005) {
+      if (!isHeatmapOutro && !usesHeatmapPalette && targetProgress <= 0.0005 && currentProgress <= 0.0005) {
         currentProgress = targetProgress;
         return;
       }
