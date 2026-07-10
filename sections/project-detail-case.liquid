@@ -926,7 +926,8 @@ Challenges</div>
           {%- endif -%}
         </article>
 
-        <article class="card c-final" id="c11" data-bg-count="{% if is_gtm_case or is_integrated_case %}1{% else %}3{% endif %}" data-bg-index="0">
+        {%- unless is_gtm_case -%}
+        <article class="card c-final" id="c11" data-bg-count="{% if is_integrated_case %}1{% else %}3{% endif %}" data-bg-index="0">
           <canvas class="glacier-wave-bg{% if is_gtm_case %} glacier-wave-bg--gtm{% elsif is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
           <div class="bg-placeholder" aria-hidden="true"></div>
           <div class="final-mock" aria-label="页面浏览预览">
@@ -948,6 +949,7 @@ Challenges</div>
             </div>
           {%- endunless -%}
         </article>
+        {%- endunless -%}
       </main>
     </section>
   </div>
@@ -1311,7 +1313,8 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
       </div>
     {%- endif -%}
   </section>
-  <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" data-mobile-final-count="{% if is_gtm_case or is_integrated_case %}1{% else %}{{ section.settings.mobile_final_image_count | default: 3 }}{% endif %}" aria-label="页面浏览预览">
+  {%- unless is_gtm_case -%}
+  <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" data-mobile-final-count="{% if is_integrated_case %}1{% else %}{{ section.settings.mobile_final_image_count | default: 3 }}{% endif %}" aria-label="页面浏览预览">
     <canvas class="glacier-wave-bg{% if is_gtm_case %} glacier-wave-bg--gtm{% elsif is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
     {%- unless is_gtm_case or is_integrated_case -%}
       <div class="m-final-mobile__head">
@@ -1325,6 +1328,7 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
     <div class="m-final-mobile__frame">
     </div>
   </section>
+  {%- endunless -%}
 </main>
 
 <section class="outro" data-screen-label="04 Outro">

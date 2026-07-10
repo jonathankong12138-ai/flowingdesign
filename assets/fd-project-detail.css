@@ -15760,6 +15760,17 @@
     color: #fff !important;
   }
 
+  html.fd-product-launch-outro-dark,
+  html.fd-product-launch-outro-dark body,
+  html.fd-product-launch-outro-dark #MainContent,
+  html.fd-product-launch-outro-dark .content-for-layout,
+  html.fd-product-launch-outro-dark .fd-project-detail-section--product-launch-visual,
+  html.fd-product-launch-outro-dark .canvas-wrap,
+  html.fd-product-launch-outro-dark .canvas-wrap .body {
+    background: #080808 !important;
+    background-color: #080808 !important;
+  }
+
   .fd-project-detail-section--product-launch-visual .outro-next .outro-wave-canvas--dark {
     background: #080808 !important;
   }

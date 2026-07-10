@@ -97,6 +97,15 @@
       visibility: visible;
     }
 
+    @media screen and (max-width: 767px) {
+      .glacier-bfcm-carousel-{{ section.id }},
+      .glacier-bfcm-carousel-{{ section.id }}.active {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+      }
+    }
+
     .glacier-bfcm-carousel-{{ section.id }} img {
       position: absolute;
       inset: 0;
