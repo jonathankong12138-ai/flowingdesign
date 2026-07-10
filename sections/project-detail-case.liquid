@@ -926,23 +926,27 @@ Challenges</div>
           {%- endif -%}
         </article>
 
-        <article class="card c-final" id="c11" data-bg-count="{% if is_integrated_case %}1{% else %}3{% endif %}" data-bg-index="0">
+        <article class="card c-final" id="c11" data-bg-count="{% if is_gtm_case or is_integrated_case %}1{% else %}3{% endif %}" data-bg-index="0">
           <canvas class="glacier-wave-bg{% if is_gtm_case %} glacier-wave-bg--gtm{% elsif is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
           <div class="bg-placeholder" aria-hidden="true"></div>
           <div class="final-mock" aria-label="页面浏览预览">
             {%- if is_integrated_case -%}
               <img class="final-shot final-shot--integrated" src="{{ "fd-project-detail-integrated-final.webp" | asset_url }}" width="2880" height="6495" alt="页面浏览素材" loading="lazy">
+            {%- elsif is_gtm_case -%}
+              <img class="final-shot final-shot--gtm-final" src="{{ "fd-project-detail-637d0dbaf2-3.webp" | asset_url }}" width="3350" height="16383" alt="页面浏览素材" loading="eager">
             {%- else -%}
               <img class="final-shot" src="{{ "fd-project-detail-d7103c39e2-1.webp" | asset_url }}" width="2880" height="13358" alt="页面浏览素材 1" loading="lazy">
               <img class="final-shot" src="{{ "fd-project-detail-763b111c0e-2.webp" | asset_url }}" width="2880" height="4550" alt="页面浏览素材 2" loading="lazy">
               <img class="final-shot" src="{{ "fd-project-detail-637d0dbaf2-3.webp" | asset_url }}" width="3350" height="16383" alt="页面浏览素材 3" loading="lazy">
             {%- endif -%}
           </div>
-          <div class="nav-arrows">
-            <button class="nav-btn prev" type="button" aria-label="上一张页面浏览图片" data-final-step="-1"><span class="ic"></span></button>
-            <button class="nav-btn next" type="button" aria-label="下一张页面浏览图片" data-final-step="1"><span class="ic"></span></button>
-            <span class="switch-count" aria-live="polite">01 / {% if is_integrated_case %}01{% else %}03{% endif %}</span>
-          </div>
+          {%- unless is_gtm_case or is_integrated_case -%}
+            <div class="nav-arrows">
+              <button class="nav-btn prev" type="button" aria-label="上一张页面浏览图片" data-final-step="-1"><span class="ic"></span></button>
+              <button class="nav-btn next" type="button" aria-label="下一张页面浏览图片" data-final-step="1"><span class="ic"></span></button>
+              <span class="switch-count" aria-live="polite">01 / 03</span>
+            </div>
+          {%- endunless -%}
         </article>
       </main>
     </section>
@@ -1307,15 +1311,17 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
       </div>
     {%- endif -%}
   </section>
-  <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" data-mobile-final-count="{% if is_integrated_case %}1{% else %}{{ section.settings.mobile_final_image_count | default: 3 }}{% endif %}" aria-label="页面浏览预览">
+  <section class="m-final-mobile" id="m-mobile-final" data-mobile-final-index="0" data-mobile-final-count="{% if is_gtm_case or is_integrated_case %}1{% else %}{{ section.settings.mobile_final_image_count | default: 3 }}{% endif %}" aria-label="页面浏览预览">
     <canvas class="glacier-wave-bg{% if is_gtm_case %} glacier-wave-bg--gtm{% elsif is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
-    <div class="m-final-mobile__head">
-      <div class="m-final-mobile__controls">
-        <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张页面浏览图片" data-mobile-final-step="-1"></button>
-        <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张页面浏览图片" data-mobile-final-step="1"></button>
-        <span class="m-switch-count" aria-live="polite">01 / 03</span>
+    {%- unless is_gtm_case or is_integrated_case -%}
+      <div class="m-final-mobile__head">
+        <div class="m-final-mobile__controls">
+          <button class="m-arrow m-arrow--dark" type="button" aria-label="上一张页面浏览图片" data-mobile-final-step="-1"></button>
+          <button class="m-arrow m-arrow--dark m-arrow--next" type="button" aria-label="下一张页面浏览图片" data-mobile-final-step="1"></button>
+          <span class="m-switch-count" aria-live="polite">01 / 03</span>
+        </div>
       </div>
-    </div>
+    {%- endunless -%}
     <div class="m-final-mobile__frame">
     </div>
   </section>
@@ -1345,13 +1351,17 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
             assign is_integrated_outro = true
           endif
           assign next_thumb_video_asset = 'home-bfcm-video.mp4'
-          if is_integrated_outro
+          assign next_thumb_uses_integrated_hero = false
+          if is_gtm_case
+            assign next_thumb_video_asset = 'fd-project-detail-integrated-hero-desktop.mp4'
+            assign next_thumb_uses_integrated_hero = true
+          elsif is_integrated_outro
             assign next_thumb_video_asset = 'home-user-video.mp4'
           endif
         -%}
         <div class="next-thumb" role="link" aria-label="Next project preview">
           <video class="next-thumb-video" src="{{ next_thumb_video_asset | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
-          {%- unless is_integrated_outro -%}
+          {%- unless is_integrated_outro or next_thumb_uses_integrated_hero -%}
             <div class="next-thumb-carousel" aria-hidden="true">
               <img src="{{ "home-bfcm-1.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">
               <img src="{{ "home-bfcm-2.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">

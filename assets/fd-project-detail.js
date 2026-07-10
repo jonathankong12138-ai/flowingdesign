@@ -1951,6 +1951,7 @@ Key Features 前置与 A+ 实拍
     const fill = document.getElementById('outroFill');
     const ugcWall = document.querySelector('.pillar-ugc-wall');
     const componentWall = document.querySelector('.pillar-component-wall');
+    const isProductLaunchOutro = Boolean(document.querySelector('.fd-project-detail-section--product-launch-visual'));
     
     const smoothstep = (t) => t * t * (3 - 2 * t);
 
@@ -1958,6 +1959,7 @@ Key Features 前置与 A+ 实拍
       if (!outro || !nextPane || !canvasWrap) return;
 
       if (isMobile()) {
+        document.documentElement.classList.remove('fd-product-launch-outro-dark');
         canvasWrap.style.transform = '';
         nextPane.style.transform = '';
         const rOutroMobile = outro.getBoundingClientRect();
@@ -2002,6 +2004,10 @@ Key Features 前置与 A+ 实拍
       
       const raw = Math.max(0, Math.min(1, (window.scrollY - outroTop) / total));
       const p = smoothstep(raw);
+
+      if (isProductLaunchOutro) {
+        document.documentElement.classList.toggle('fd-product-launch-outro-dark', raw > 0.0001);
+      }
 
       const vw = window.innerWidth;
       
@@ -2237,6 +2243,7 @@ Key Features 前置与 A+ 实拍
       const rect = mock.getBoundingClientRect();
       const inside = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
       if (!inside) return;
+      if (getFinalMaxOffset(mock) <= 0) return;
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
@@ -2259,6 +2266,7 @@ Key Features 前置与 A+ 实拍
         const delta = touch.clientY - lastY;
         mock._finalTouchY = touch.clientY;
         if (Math.abs(delta) < 1) return;
+        if (getFinalMaxOffset(mock) <= 0) return;
         event.preventDefault();
         scrollFinalStack(-delta);
       }, { passive: false });

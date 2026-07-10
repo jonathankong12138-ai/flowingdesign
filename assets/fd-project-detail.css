@@ -12,6 +12,10 @@
     overflow-x: clip;
     -webkit-font-smoothing: antialiased;
   }
+  html.fd-product-launch-outro-dark,
+  html.fd-product-launch-outro-dark body {
+    background: #080808 !important;
+  }
   a { color: inherit; text-decoration: none; }
   button { font: inherit; cursor: pointer; background: transparent; border: 0; color: inherit; text-align: left; }
   img { display: block; }
@@ -15772,11 +15776,12 @@
   }
 
   .fd-project-detail-section--product-launch-visual .outro-next .next-cta-arrow {
-    filter: invert(1) !important;
+    display: none !important;
   }
 
   .fd-project-detail-section--product-launch-visual .outro-next .next-title,
   .fd-project-detail-section--product-launch-visual .outro-next .next-title.blend-difference {
+    font-size: 42px !important;
     overflow-wrap: anywhere;
     word-break: normal;
     white-space: normal;
@@ -16493,6 +16498,21 @@
       width: 100% !important;
       max-width: none !important;
       height: auto !important;
+      object-fit: contain !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c11 .final-mock:has(.final-shot--gtm-final) {
+      display: grid;
+      place-items: center;
+      cursor: default;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c11 .final-shot--gtm-final {
+      position: relative;
+      width: auto !important;
+      max-width: 100% !important;
+      height: 100% !important;
+      max-height: 100% !important;
       object-fit: contain !important;
     }
 
