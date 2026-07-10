@@ -16472,7 +16472,7 @@
   /* Product launch final preview uses the same screenshot staging as the e-commerce final card. */
   @media (min-width: 768px) {
     .fd-project-detail-section--product-launch-visual #c11.c-final {
-      overflow: visible !important;
+      overflow: hidden !important;
     }
 
     .fd-project-detail-section--product-launch-visual #c11 .final-mock {
