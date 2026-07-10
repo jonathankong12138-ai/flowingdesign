@@ -1,2 +1,13 @@
 {{ 'overflow-list.css' | asset_url | preload_tag: as: 'style' }}
 {{ 'base.css' | asset_url | stylesheet_tag: preload: true }}
+
+<style>
+  @media screen and (max-width: 767px) {
+    [class^="glacier-bfcm-carousel-"],
+    [class*=" glacier-bfcm-carousel-"] {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+  }
+</style>
