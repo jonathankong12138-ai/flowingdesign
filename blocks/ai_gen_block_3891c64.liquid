@@ -548,12 +548,13 @@
 
     const activateBackgroundMedia = (trigger, restartVideo = false) => {
       if (!trigger) return;
+      const isMobileViewport = window.matchMedia('(max-width: 767px)').matches;
       window.dispatchEvent(new CustomEvent('glacier:activate-media', {
         detail: {
           wrapper,
           url: trigger.getAttribute('data-bg-url'),
           type: trigger.getAttribute('data-bg-type'),
-          galleryUrls: (trigger.getAttribute('data-bfcm-gallery') || '').split('|').filter(Boolean),
+          galleryUrls: isMobileViewport ? [] : (trigger.getAttribute('data-bfcm-gallery') || '').split('|').filter(Boolean),
           restart: restartVideo
         }
       }));
