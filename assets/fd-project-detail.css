@@ -15648,7 +15648,7 @@
   .fd-project-detail-section--product-launch-visual #m-mobile-goals > .glacier-wave-bg {
     z-index: 0 !important;
     opacity: 1 !important;
-    filter: saturate(1.18) contrast(1.08) brightness(1.24) !important;
+    filter: none !important;
   }
 
   .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch {
@@ -15703,8 +15703,7 @@
     opacity: 0;
     transform: translate3d(0, 22px, 0) scale(.985);
     image-rendering: auto;
-    /* Keep the GTM wave visible through the media instead of replacing it with a dark full-frame image. */
-    filter: brightness(1.14) contrast(1.06) saturate(1.04);
+    filter: brightness(1.06) contrast(1.1) saturate(1.06);
     animation: gtmLaunchSlideFade 8s cubic-bezier(.22, 1, .36, 1) infinite;
   }
 
@@ -15720,7 +15719,7 @@
     }
     16%,
     48% {
-      opacity: .84;
+      opacity: 1;
       transform: translate3d(0, 0, 0) scale(1);
     }
     56%,
