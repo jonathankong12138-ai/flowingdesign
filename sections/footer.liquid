@@ -279,11 +279,6 @@
     <div class="footer-top-row">
       <h2 class="footer-title animate-up delay-1">设计是持续流动的系统<br>与我们一起循流而上</h2>
       <div class="footer-actions animate-up delay-2">
-        
-        <a href="{{ section.settings.contact_link | default: '/pages/contact' }}" class="footer-btn btn-outline">
-          {{ section.settings.contact_text | default: '联系我们' }}
-        </a>
-        
         {%- assign btt_text = section.settings.back_to_top_text | default: '返回顶部' -%}
         <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="footer-btn btn-solid">
           
