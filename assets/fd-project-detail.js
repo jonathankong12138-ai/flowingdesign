@@ -582,6 +582,34 @@
         vec3 lightDir = normalize(mix(vec3(-0.6, 0.5, 0.4), vec3(-0.4, 0.6, 0.4), bf));
         float light = dot(normal, lightDir) * 0.5 + 0.5;
 
+        if (gtm > 0.5) {
+          /* The source preset uses descending color stops. Resolve them explicitly so
+             its white-gold palette remains stable in the shared page shader. */
+          vec3 color = mix(vec3(1.0), vec3(0.8667, 0.8118, 0.7333), smoothstep(0.0, 1.0, light));
+          color = mix(color, vec3(0.7294, 0.6863, 0.6118), smoothstep(0.24, 0.59, light));
+          color = mix(color, vec3(1.0), smoothstep(0.59, 1.0, light));
+          color = (color - 0.5) * 1.25 + 0.45;
+          color = clamp(color, 0.0, 1.0);
+
+          float p = clamp(uScroll, 0.0, 1.0);
+          float easedScroll = 1.0 - pow(1.0 - p, 2.0);
+          float wavePos = easedScroll * 2.8 - 0.2;
+          float waveOffset = h * 0.4 + sin(uv.x * 4.0 + time) * 0.05;
+          float dist = wavePos - (vUv.y + waveOffset);
+          float whiteMask = smoothstep(0.0, 0.15, dist);
+          float waveCrest = smoothstep(-0.05, 0.1, dist) * smoothstep(0.2, 0.05, dist);
+
+          vec3 finalColor = mix(color, vec3(1.0), whiteMask);
+          finalColor += vec3(0.98, 0.99, 1.0) * waveCrest * 0.6;
+          finalColor += (light - 0.5) * 0.03 * whiteMask;
+          vec2 grainUv = floor(vUv * uResolution);
+          float dither = fract(sin(dot(grainUv, vec2(12.9898, 78.233)) + uTime * 2.0) * 43758.5453);
+          float baseDither = (fract(sin(dot(vUv * uResolution, vec2(12.9898, 78.233)))) - 0.5) * (2.0 / 255.0);
+          finalColor += baseDither + (dither - 0.5) * 0.03;
+          gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
+          return;
+        }
+
         if (bf > 0.5) {
           vec3 color = mix(vec3(1.0), vec3(1.0, 0.6471, 0.3608), smoothstep(0.0, 0.381, light));
           color = mix(color, vec3(0.4392, 0.0, 0.0), smoothstep(0.38, 1.001, light));
