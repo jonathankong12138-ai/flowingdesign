@@ -16,6 +16,27 @@
   html.fd-product-launch-outro-dark body {
     background: #080808 !important;
   }
+  html:has(.fd-project-detail-section--integrated-marketing-design),
+  html:has(.fd-project-detail-section--integrated-marketing-design) body,
+  html:has(.fd-project-detail-section--integrated-marketing-design) #MainContent,
+  html:has(.fd-project-detail-section--integrated-marketing-design) .content-for-layout,
+  html:has(.fd-project-detail-section--integrated-marketing-design) .fd-project-detail-section--integrated-marketing-design,
+  html:has(.fd-project-detail-section--integrated-marketing-design) .canvas-wrap,
+  html:has(.fd-project-detail-section--integrated-marketing-design) .canvas-wrap .body {
+    background: #000000 !important;
+    background-color: #000000 !important;
+  }
+
+  html.fd-integrated-outro-white,
+  html.fd-integrated-outro-white body,
+  html.fd-integrated-outro-white #MainContent,
+  html.fd-integrated-outro-white .content-for-layout,
+  html.fd-integrated-outro-white .fd-project-detail-section--integrated-marketing-design,
+  html.fd-integrated-outro-white .canvas-wrap,
+  html.fd-integrated-outro-white .canvas-wrap .body {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+  }
   a { color: inherit; text-decoration: none; }
   button { font: inherit; cursor: pointer; background: transparent; border: 0; color: inherit; text-align: left; }
   img { display: block; }
@@ -15756,7 +15777,8 @@
   }
 
   .fd-project-detail-section--product-launch-visual .outro-next {
-    background: #080808 !important;
+    background: #000000 !important;
+    background-color: #000000 !important;
     color: #fff !important;
   }
 
@@ -15767,12 +15789,22 @@
   html.fd-product-launch-outro-dark .fd-project-detail-section--product-launch-visual,
   html.fd-product-launch-outro-dark .canvas-wrap,
   html.fd-product-launch-outro-dark .canvas-wrap .body {
-    background: #080808 !important;
-    background-color: #080808 !important;
+    background: #000000 !important;
+    background-color: #000000 !important;
   }
 
   .fd-project-detail-section--product-launch-visual .outro-next .outro-wave-canvas--dark {
-    background: #080808 !important;
+    background: #000000 !important;
+  }
+
+  .fd-project-detail-section--product-launch-visual .outro-next .next-thumb,
+  .fd-project-detail-section--product-launch-visual .outro-next .next-thumb-video,
+  .fd-project-detail-section--product-launch-visual .outro-next .next-thumb-carousel,
+  .fd-project-detail-section--product-launch-visual .outro-next .next-thumb::before,
+  .fd-project-detail-section--product-launch-visual .outro-next .next-thumb::after {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
   }
 
   .fd-project-detail-section--product-launch-visual .outro-next :is(.next-eyebrow, .next-title, .next-title.blend-difference, .next-footer-note-title, .next-footer-note-desc, .next-footer-back-link) {
@@ -16642,4 +16674,48 @@
   .outro-next:has(> .outro-wave-canvas--integrated-default) .next-title.blend-difference {
     font-size: 42px !important;
     line-height: 1.18 !important;
+  }
+
+  html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design .header,
+  html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design .mobile-393 .m-head {
+    background: #000000 !important;
+    background-color: #000000 !important;
+  }
+
+  html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design :is(.h-title, .h-title.blend-difference, .h-stat .value, .m-title, .m-title.blend-difference, .m-stat__value) {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    mix-blend-mode: normal !important;
+  }
+
+  html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design :is(.breadcrumb, .h-stat .label, .m-breadcrumb, .m-stat__label) {
+    color: rgba(255, 255, 255, 0.62) !important;
+  }
+
+  html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design :is(.breadcrumb-current, .m-breadcrumb [aria-current="page"]) {
+    color: #ffffff !important;
+  }
+
+  html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design .breadcrumb-sep {
+    color: rgba(255, 255, 255, 0.34) !important;
+  }
+
+  html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design .acc-item {
+    border-color: rgba(255, 255, 255, 0.16) !important;
+  }
+
+  html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design .acc-trigger {
+    color: #ffffff !important;
+  }
+
+  html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design .acc-trigger:hover {
+    color: rgba(255, 255, 255, 0.68) !important;
+  }
+
+  html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design .acc-trigger .ind {
+    color: rgba(255, 255, 255, 0.58) !important;
+  }
+
+  html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design .acc-body {
+    color: rgba(255, 255, 255, 0.62) !important;
   }
