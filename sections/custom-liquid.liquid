@@ -509,13 +509,27 @@
       margin: 0 0 10px 0 !important; line-height: var(--desc-line-height) !important;
     }
     .fd-award-list-mobile-{{ section_id }} {
-      display: flex; align-items: center; gap: 4px; padding-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding-top: 8px;
     }
-    .fd-award-item-{{ section_id }} {
-      min-width: 40px;
-      min-height: 40px;
-      padding: 5px;
+    .fd-award-list-mobile-{{ section_id }} .fd-award-item-{{ section_id }} {
+      min-width: 0;
+      min-height: 36px;
+      gap: 7px;
+      padding: 5px 9px 5px 5px;
       border-radius: 4px;
+    }
+    .fd-award-list-mobile-{{ section_id }} .fd-award-tooltip-{{ section_id }} {
+      display: none;
+    }
+    .fd-award-label-mobile-{{ section_id }} {
+      color: #111111;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.25;
     }
   }
 {%- endstyle -%}
@@ -630,6 +644,7 @@
                     <div class="fd-award-item-{{ section_id }}">
                       <img src="{{ current_image | image_url: width: 60 }}" width="30" height="30" alt="Award Logo" style="width: 30px; height: 30px; object-fit: contain; transition: transform 0.3s ease;">
                       {%- if current_text != blank -%}
+                        <span class="fd-award-label-mobile-{{ section_id }}">{{ current_text }}</span>
                         <span class="fd-award-tooltip-{{ section_id }}">{{ current_text }}</span>
                        {%- endif -%}
                     </div>

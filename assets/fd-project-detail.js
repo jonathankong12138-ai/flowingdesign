@@ -1952,6 +1952,7 @@ Key Features 前置与 A+ 实拍
     const ugcWall = document.querySelector('.pillar-ugc-wall');
     const componentWall = document.querySelector('.pillar-component-wall');
     const isProductLaunchOutro = Boolean(document.querySelector('.fd-project-detail-section--product-launch-visual'));
+    const isIntegratedOutro = Boolean(document.querySelector('.fd-project-detail-section--integrated-marketing-design'));
     
     const smoothstep = (t) => t * t * (3 - 2 * t);
 
@@ -1965,6 +1966,7 @@ Key Features 前置与 A+ 实拍
         const rOutroMobile = outro.getBoundingClientRect();
         const mobileRaw = Math.max(0, Math.min(1, (window.innerHeight - rOutroMobile.top) / Math.max(1, window.innerHeight * 0.72)));
         const mobileWaveProgress = smoothstep(mobileRaw);
+        document.documentElement.classList.toggle('fd-integrated-outro-white', isIntegratedOutro && mobileWaveProgress > 0.0001);
         if (mobilePage) {
           mobilePage.style.opacity = String(Math.max(0, 1 - mobileWaveProgress));
           mobilePage.style.pointerEvents = mobileWaveProgress > 0.92 ? 'none' : '';
@@ -2007,6 +2009,9 @@ Key Features 前置与 A+ 实拍
 
       if (isProductLaunchOutro) {
         document.documentElement.classList.toggle('fd-product-launch-outro-dark', raw > 0.0001);
+      }
+      if (isIntegratedOutro) {
+        document.documentElement.classList.toggle('fd-integrated-outro-white', raw > 0.0001);
       }
 
       const vw = window.innerWidth;
