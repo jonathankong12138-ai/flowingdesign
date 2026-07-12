@@ -40,14 +40,16 @@
     }
 
     .global-loading-cover__char {
-      font-weight: 200;
-      animation: global-loading-breath 1s ease-in-out infinite;
-      animation-delay: calc(var(--char-index, 0) * 0.018s);
+      font-weight: 400;
+      transform-origin: 50% 70%;
+      animation: global-loading-breath 1.55s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+      animation-delay: calc(var(--char-index, 0) * -0.055s);
+      will-change: opacity, transform;
     }
 
     @keyframes global-loading-breath {
-      0%, 100% { opacity: 0.42; font-weight: 200; }
-      50% { opacity: 1; font-weight: var(--target-weight, 600); }
+      0%, 100% { opacity: 0.38; transform: translate3d(0, 1.5px, 0) scale(0.985); }
+      50% { opacity: 1; transform: translate3d(0, 0, 0) scale(1.005); }
     }
 
     body.global-loading-active { overflow: hidden; }
@@ -61,6 +63,8 @@
       .global-loading-cover__char {
         transition-duration: 0.01ms;
         animation: none;
+        opacity: 1;
+        transform: none;
       }
     }
   </style>
@@ -78,8 +82,6 @@
       document.body.classList.add('global-loading-active');
 
       const text = logo.textContent || '';
-      const visibleChars = Array.from(text).filter((char) => char.trim()).length;
-      const step = visibleChars > 1 ? 400 / (visibleChars - 1) : 0;
       let charIndex = 0;
       logo.textContent = '';
 
@@ -97,7 +99,6 @@
           span.className = 'global-loading-cover__char';
           span.textContent = char;
           span.style.setProperty('--char-index', charIndex);
-          span.style.setProperty('--target-weight', Math.round(600 - charIndex * step));
           word.appendChild(span);
           charIndex += 1;
         });

@@ -258,21 +258,22 @@
 
     .integrated-loading-char-{{ section.id }} {
       display: inline-block;
-      font-weight: 200;
-      animation: integratedLoadingBreath-{{ section.id }} 1s ease-in-out infinite;
-      animation-delay: calc(var(--char-index, 0) * 0.018s);
-      will-change: opacity, font-weight;
+      font-weight: 400;
+      transform-origin: 50% 70%;
+      animation: integratedLoadingBreath-{{ section.id }} 1.55s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+      animation-delay: calc(var(--char-index, 0) * -0.055s);
+      will-change: opacity, transform;
     }
 
     @keyframes integratedLoadingBreath-{{ section.id }} {
       0%,
       100% {
-        opacity: 0.42;
-        font-weight: 200;
+        opacity: 0.38;
+        transform: translate3d(0, 1.5px, 0) scale(0.985);
       }
       50% {
         opacity: 1;
-        font-weight: var(--target-weight, 600);
+        transform: translate3d(0, 0, 0) scale(1.005);
       }
     }
 
@@ -290,6 +291,7 @@
       .integrated-loading-char-{{ section.id }} {
         opacity: 1;
         font-weight: 400;
+        transform: none;
       }
     }
   {%- endif -%}
@@ -432,8 +434,6 @@
       const splitLogo = () => {
         if (!logo || logo.dataset.split === 'true') return;
         const text = logo.textContent || '';
-        const visibleChars = Array.from(text).filter(char => char.trim()).length;
-        const step = visibleChars > 1 ? (600 - 200) / (visibleChars - 1) : 0;
         let charIndex = 0;
         logo.innerHTML = '';
 
@@ -448,11 +448,9 @@
           word.className = 'integrated-loading-word-' + sectionId;
           Array.from(part).forEach(char => {
             const span = document.createElement('span');
-            const targetWeight = Math.round(600 - charIndex * step);
             span.className = 'integrated-loading-char-' + sectionId;
             span.textContent = char;
             span.style.setProperty('--char-index', charIndex);
-            span.style.setProperty('--target-weight', targetWeight);
             word.appendChild(span);
             charIndex++;
           });
