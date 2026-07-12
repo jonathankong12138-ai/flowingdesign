@@ -16803,3 +16803,13 @@
     visibility: visible !important;
     pointer-events: auto !important;
   }
+
+  @media (min-width: 768px) {
+    html.fd-project-faq-page .flowing-faq-orb-root[data-position="left"] {
+      left: calc(60px * var(--scale)) !important;
+    }
+
+    html.fd-project-faq-page .flowing-faq-orb-button {
+      width: calc(280px * var(--scale)) !important;
+    }
+  }
