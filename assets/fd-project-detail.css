@@ -16791,3 +16791,15 @@
   html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design .acc-body {
     color: rgba(255, 255, 255, 0.62) !important;
   }
+
+  html.fd-project-faq-page .flowing-faq-orb-root {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  html.fd-project-faq-page.fd-project-faq-visible .flowing-faq-orb-root {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }

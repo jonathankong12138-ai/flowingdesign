@@ -1951,15 +1951,24 @@ Key Features 前置与 A+ 实拍
     const fill = document.getElementById('outroFill');
     const ugcWall = document.querySelector('.pillar-ugc-wall');
     const componentWall = document.querySelector('.pillar-component-wall');
+    const railSticky = document.querySelector('.rail-sticky');
+    const railLayer = document.querySelector('.rail-layer');
     const isProductLaunchOutro = Boolean(document.querySelector('.fd-project-detail-section--product-launch-visual'));
     const isIntegratedOutro = Boolean(document.querySelector('.fd-project-detail-section--integrated-marketing-design'));
+    const projectFaqRoot = document.documentElement;
+    projectFaqRoot.classList.add('fd-project-faq-page');
     
     const smoothstep = (t) => t * t * (3 - 2 * t);
+
+    function setProjectFaqVisibility(isVisible) {
+      projectFaqRoot.classList.toggle('fd-project-faq-visible', isVisible);
+    }
 
     function updateScrollEffects() {
       if (!outro || !nextPane || !canvasWrap) return;
 
       if (isMobile()) {
+        setProjectFaqVisibility(false);
         document.documentElement.classList.remove('fd-product-launch-outro-dark');
         canvasWrap.style.transform = '';
         nextPane.style.transform = '';
@@ -2006,6 +2015,15 @@ Key Features 前置与 A+ 实拍
       
       const raw = Math.max(0, Math.min(1, (window.scrollY - outroTop) / total));
       const p = smoothstep(raw);
+      const railRect = railSticky ? railSticky.getBoundingClientRect() : null;
+      const railLayerRect = railLayer ? railLayer.getBoundingClientRect() : null;
+      const railIsPinned = Boolean(
+        railRect
+        && railLayerRect
+        && railRect.top <= 61
+        && railLayerRect.bottom > 61
+      );
+      setProjectFaqVisibility(railIsPinned && raw <= 0.0001);
 
       if (isProductLaunchOutro) {
         document.documentElement.classList.toggle('fd-product-launch-outro-dark', raw > 0.0001);
