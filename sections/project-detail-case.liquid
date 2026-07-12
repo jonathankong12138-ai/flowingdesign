@@ -461,7 +461,8 @@
       };
 
       const waitForHeroVideo = () => new Promise(resolve => {
-        const video = document.querySelector('.fd-project-detail-section--integrated-marketing-design .c-hero-video, .fd-project-detail-section--integrated-marketing-design .mobile-hero-video');
+        const selector = window.matchMedia('(max-width: 768px)').matches ? '.mobile-hero-video' : '.c-hero-video';
+        const video = document.querySelector('.fd-project-detail-section--integrated-marketing-design ' + selector);
         if (!video || video.readyState >= 2) {
           resolve(true);
           return;
@@ -476,13 +477,13 @@
         video.addEventListener('loadeddata', done, { once: true });
         video.addEventListener('canplay', done, { once: true });
         video.addEventListener('error', done, { once: true });
-        window.setTimeout(done, 2400);
+        window.setTimeout(done, 1800);
       });
 
       const run = () => {
         splitLogo();
         document.body.classList.add('integrated-loading-active-' + sectionId);
-        Promise.all([wait(2200), waitForHeroVideo()]).finally(() => {
+        Promise.all([wait(1600), waitForHeroVideo()]).finally(() => {
           cover.classList.add('is-leaving');
           document.body.classList.remove('integrated-loading-active-' + sectionId);
           window.setTimeout(() => cover.remove(), 820);
@@ -562,7 +563,9 @@
       
       <main class="content" data-screen-label="03 Content">
         <article class="card c-hero" id="c1">
-          <video class="c-hero-video" src="{{ hero_video_asset | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+          <video class="c-hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+            <source src="{{ hero_video_asset | asset_url }}" media="(min-width: 769px)" type="video/mp4">
+          </video>
           <div class="bg-placeholder" aria-hidden="true"></div>
           {%- unless is_gtm_case or is_integrated_case -%}
             <div class="c-hero-caption">{{ hero_caption }}</div>
@@ -583,17 +586,17 @@
             <div class="pillar pillar-1 pillar-tint-1 pillar-gtm-launch">
               <canvas class="glacier-wave-bg glacier-wave-bg--gtm" data-glacier-wave aria-hidden="true"></canvas>
               <div class="gtm-launch-carousel" aria-label="GTM 项目素材轮播">
-                <img class="gtm-launch-slide gtm-launch-slide--one" src="{{ "fd-project-detail-gtm-2-2.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-2" loading="eager">
-                <img class="gtm-launch-slide gtm-launch-slide--two" src="{{ "fd-project-detail-gtm-2-1.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-1" loading="eager">
+                <img class="gtm-launch-slide gtm-launch-slide--one" src="{{ "fd-project-detail-gtm-2-2.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-2" loading="lazy" decoding="async">
+                <img class="gtm-launch-slide gtm-launch-slide--two" src="{{ "fd-project-detail-gtm-2-1.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-1" loading="lazy" decoding="async">
               </div>
             </div>
           {%- elsif is_integrated_case -%}
             <div class="pillar pillar-1 pillar-integrated-launch">
               <canvas class="glacier-wave-bg glacier-wave-bg--bf" data-glacier-wave aria-hidden="true"></canvas>
               <div class="integrated-launch-carousel" aria-label="Integrated Marketing Design 项目素材轮播">
-                <img class="integrated-launch-slide integrated-launch-slide--one" src="{{ "fd-project-detail-integrated-second-1.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
-                <img class="integrated-launch-slide integrated-launch-slide--two" src="{{ "fd-project-detail-integrated-second-2.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
-                <img class="integrated-launch-slide integrated-launch-slide--three" src="{{ "fd-project-detail-integrated-second-3.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
+                <img class="integrated-launch-slide integrated-launch-slide--one" src="{{ "fd-project-detail-integrated-second-1.webp" | asset_url }}" width="1600" height="900" alt="" loading="lazy" decoding="async">
+                <img class="integrated-launch-slide integrated-launch-slide--two" src="{{ "fd-project-detail-integrated-second-2.webp" | asset_url }}" width="1600" height="900" alt="" loading="lazy" decoding="async">
+                <img class="integrated-launch-slide integrated-launch-slide--three" src="{{ "fd-project-detail-integrated-second-3.webp" | asset_url }}" width="1600" height="900" alt="" loading="lazy" decoding="async">
               </div>
             </div>
           {%- else -%}
@@ -637,15 +640,15 @@
         <article class="card c-friction" id="c3" data-friction-index="0">
           {%- if is_gtm_case -%}
             <div class="gtm-challenge-carousel" aria-label="GTM 产品挑战素材轮播">
-              <img class="gtm-challenge-slide gtm-challenge-slide--one" src="{{ "fd-project-detail-gtm-3-1.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-1" loading="eager">
-              <img class="gtm-challenge-slide gtm-challenge-slide--two" src="{{ "fd-project-detail-gtm-3-2.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-2" loading="eager">
-              <img class="gtm-challenge-slide gtm-challenge-slide--three" src="{{ "fd-project-detail-gtm-3-3.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-3" loading="eager">
+              <img class="gtm-challenge-slide gtm-challenge-slide--one" src="{{ "fd-project-detail-gtm-3-1.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-1" loading="lazy" decoding="async">
+              <img class="gtm-challenge-slide gtm-challenge-slide--two" src="{{ "fd-project-detail-gtm-3-2.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-2" loading="lazy" decoding="async">
+              <img class="gtm-challenge-slide gtm-challenge-slide--three" src="{{ "fd-project-detail-gtm-3-3.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-3" loading="lazy" decoding="async">
             </div>
           {%- elsif is_integrated_case -%}
             <div class="integrated-challenge-carousel" aria-label="Integrated Marketing Design 第三板块素材轮播">
-              <img class="integrated-challenge-slide integrated-challenge-slide--one" src="{{ "fd-project-detail-integrated-third-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
-              <img class="integrated-challenge-slide integrated-challenge-slide--two" src="{{ "fd-project-detail-integrated-third-2.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
-              <img class="integrated-challenge-slide integrated-challenge-slide--three" src="{{ "fd-project-detail-integrated-third-3.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
+              <img class="integrated-challenge-slide integrated-challenge-slide--one" src="{{ "fd-project-detail-integrated-third-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy" decoding="async">
+              <img class="integrated-challenge-slide integrated-challenge-slide--two" src="{{ "fd-project-detail-integrated-third-2.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy" decoding="async">
+              <img class="integrated-challenge-slide integrated-challenge-slide--three" src="{{ "fd-project-detail-integrated-third-3.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy" decoding="async">
             </div>
           {%- else -%}
             <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
@@ -673,7 +676,7 @@ Challenges</div>
 
         <article class="card c-timeline" id="c4" data-timeline-index="0" data-bg-index="0">
           {%- if is_gtm_case -%}
-            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-4-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第四板块视频"></video>
+            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-4-desktop.mp4" | asset_url }}" data-viewport-autoplay muted loop playsinline preload="none" aria-label="第四板块视频"></video>
           {%- elsif is_integrated_case -%}
             <div class="integrated-timeline-carousel" aria-label="Integrated Marketing Design 第四板块素材轮播">
               {%- for index in (1..10) -%}
@@ -711,10 +714,10 @@ Challenges</div>
 
         <article class="card c-research" id="c5">
           {%- if is_gtm_case -%}
-            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-5-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第五板块视频"></video>
+            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-5-desktop.mp4" | asset_url }}" data-viewport-autoplay muted loop playsinline preload="none" aria-label="第五板块视频"></video>
           {%- elsif is_integrated_case -%}
             <div class="integrated-research-carousel" aria-label="Integrated Marketing Design 第五板块素材轮播">
-              <img class="integrated-research-slide integrated-research-slide--one" src="{{ "fd-project-detail-integrated-fifth-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
+              <img class="integrated-research-slide integrated-research-slide--one" src="{{ "fd-project-detail-integrated-fifth-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy" decoding="async">
               <img class="integrated-research-slide integrated-research-slide--two" src="{{ "fd-project-detail-integrated-fifth-2.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy">
             </div>
           {%- else -%}
@@ -797,7 +800,7 @@ Challenges</div>
         {%- unless is_integrated_case -%}
           <article class="card c-userres" id="c7">
             {%- if is_gtm_case -%}
-              <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-7-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第七板块视频"></video>
+              <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-7-desktop.mp4" | asset_url }}" data-viewport-autoplay muted loop playsinline preload="none" aria-label="第七板块视频"></video>
             {%- else -%}
               <div class="bg-placeholder" aria-hidden="true"></div>
               <div class="label">{{ user_title }}</div>
@@ -852,7 +855,7 @@ Challenges</div>
         {%- unless is_integrated_case -%}
           <article class="card c-journey" id="c9" data-bg-count="4" data-bg-index="0">
             {%- if is_gtm_case -%}
-              <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-9-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第九板块视频"></video>
+              <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-9-desktop.mp4" | asset_url }}" data-viewport-autoplay muted loop playsinline preload="none" aria-label="第九板块视频"></video>
             {%- else -%}
               <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
               <div class="bg-placeholder" aria-hidden="true"></div>
@@ -890,7 +893,7 @@ Challenges</div>
 
         <article class="card c-libs" id="c10" data-bg-count="3" data-bg-index="0">
           {%- if is_gtm_case -%}
-            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-10-desktop.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第十板块视频"></video>
+            <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-10-desktop.mp4" | asset_url }}" data-viewport-autoplay muted loop playsinline preload="none" aria-label="第十板块视频"></video>
           {%- elsif is_integrated_case -%}
             <canvas class="glacier-wave-bg glacier-wave-bg--bf" data-glacier-wave aria-hidden="true"></canvas>
             <div class="integrated-libs-marquee" aria-hidden="true">
@@ -928,7 +931,7 @@ Challenges</div>
             {%- if is_integrated_case -%}
               <img class="final-shot final-shot--integrated" src="{{ "fd-project-detail-integrated-final.webp" | asset_url }}" width="2880" height="6495" alt="页面浏览素材" loading="lazy">
             {%- elsif is_gtm_case -%}
-              <img class="final-shot final-shot--gtm-final" src="{{ "fd-project-detail-637d0dbaf2-3.webp" | asset_url }}" width="3350" height="16383" alt="页面浏览素材" loading="eager">
+              <img class="final-shot final-shot--gtm-final" src="{{ "fd-project-detail-637d0dbaf2-3.webp" | asset_url }}" width="3350" height="16383" alt="页面浏览素材" loading="lazy" decoding="async">
             {%- else -%}
               <img class="final-shot" src="{{ "fd-project-detail-d7103c39e2-1.webp" | asset_url }}" width="2880" height="13358" alt="页面浏览素材 1" loading="lazy">
               <img class="final-shot" src="{{ "fd-project-detail-763b111c0e-2.webp" | asset_url }}" width="2880" height="4550" alt="页面浏览素材 2" loading="lazy">
@@ -975,7 +978,9 @@ Challenges</div>
 
   <section class="m-media m-media--dark m-ratio-hero m-hero-media">
     <div class="m-img" aria-hidden="true"></div>
-    <video class="mobile-hero-video" src="{{ hero_mobile_video_asset | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+    <video class="mobile-hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+      <source src="{{ hero_mobile_video_asset | asset_url }}" media="(max-width: 768px)" type="video/mp4">
+    </video>
     {%- unless is_gtm_case or is_integrated_case -%}
       <div class="m-overlay m-hero-caption">{{ hero_caption }}</div>
       <div class="m-overlay m-hero-stats">
@@ -999,14 +1004,14 @@ Challenges</div>
     <canvas class="glacier-wave-bg{% if is_gtm_case %} glacier-wave-bg--gtm{% elsif is_integrated_case %} glacier-wave-bg--bf{% endif %}" data-glacier-wave aria-hidden="true"></canvas>
     {%- if is_gtm_case -%}
       <div class="gtm-launch-carousel gtm-launch-carousel--mobile" aria-label="GTM 项目素材轮播">
-        <img class="gtm-launch-slide gtm-launch-slide--one" src="{{ "fd-project-detail-gtm-2-2.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-2" loading="eager">
-        <img class="gtm-launch-slide gtm-launch-slide--two" src="{{ "fd-project-detail-gtm-2-1.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-1" loading="eager">
+        <img class="gtm-launch-slide gtm-launch-slide--one" src="{{ "fd-project-detail-gtm-2-2.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-2" loading="lazy" decoding="async">
+        <img class="gtm-launch-slide gtm-launch-slide--two" src="{{ "fd-project-detail-gtm-2-1.webp" | asset_url }}" width="1440" height="810" alt="GTM 项目视觉素材 2-1" loading="lazy" decoding="async">
       </div>
     {%- elsif is_integrated_case -%}
       <div class="integrated-launch-carousel integrated-launch-carousel--mobile" aria-label="Integrated Marketing Design 项目素材轮播">
-        <img class="integrated-launch-slide integrated-launch-slide--one" src="{{ "fd-project-detail-integrated-second-1.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
-        <img class="integrated-launch-slide integrated-launch-slide--two" src="{{ "fd-project-detail-integrated-second-2.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
-        <img class="integrated-launch-slide integrated-launch-slide--three" src="{{ "fd-project-detail-integrated-second-3.webp" | asset_url }}" width="1600" height="900" alt="" loading="eager">
+        <img class="integrated-launch-slide integrated-launch-slide--one" src="{{ "fd-project-detail-integrated-second-1.webp" | asset_url }}" width="1600" height="900" alt="" loading="lazy" decoding="async">
+        <img class="integrated-launch-slide integrated-launch-slide--two" src="{{ "fd-project-detail-integrated-second-2.webp" | asset_url }}" width="1600" height="900" alt="" loading="lazy" decoding="async">
+        <img class="integrated-launch-slide integrated-launch-slide--three" src="{{ "fd-project-detail-integrated-second-3.webp" | asset_url }}" width="1600" height="900" alt="" loading="lazy" decoding="async">
       </div>
     {%- else -%}
       <div class="m-mobile-pillar-visual" aria-hidden="true"></div>
@@ -1026,15 +1031,15 @@ Challenges</div>
   <section class="m-media m-media--square" id="m-mobile-challenges" data-bg-count="3" data-bg-index="0" aria-label="系统性挑战视觉概览">
     {%- if is_gtm_case -%}
       <div class="gtm-challenge-carousel gtm-challenge-carousel--mobile" aria-label="GTM 产品挑战素材轮播">
-        <img class="gtm-challenge-slide gtm-challenge-slide--one" src="{{ "fd-project-detail-gtm-3-1.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-1" loading="eager">
-        <img class="gtm-challenge-slide gtm-challenge-slide--two" src="{{ "fd-project-detail-gtm-3-2.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-2" loading="eager">
-        <img class="gtm-challenge-slide gtm-challenge-slide--three" src="{{ "fd-project-detail-gtm-3-3.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-3" loading="eager">
+        <img class="gtm-challenge-slide gtm-challenge-slide--one" src="{{ "fd-project-detail-gtm-3-1.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-1" loading="lazy" decoding="async">
+        <img class="gtm-challenge-slide gtm-challenge-slide--two" src="{{ "fd-project-detail-gtm-3-2.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-2" loading="lazy" decoding="async">
+        <img class="gtm-challenge-slide gtm-challenge-slide--three" src="{{ "fd-project-detail-gtm-3-3.webp" | asset_url }}" width="2920" height="1824" alt="GTM 项目视觉素材 3-3" loading="lazy" decoding="async">
       </div>
     {%- elsif is_integrated_case -%}
       <div class="integrated-challenge-carousel integrated-challenge-carousel--mobile" aria-label="Integrated Marketing Design 第三板块素材轮播">
-        <img class="integrated-challenge-slide integrated-challenge-slide--one" src="{{ "fd-project-detail-integrated-third-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
-        <img class="integrated-challenge-slide integrated-challenge-slide--two" src="{{ "fd-project-detail-integrated-third-2.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
-        <img class="integrated-challenge-slide integrated-challenge-slide--three" src="{{ "fd-project-detail-integrated-third-3.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
+        <img class="integrated-challenge-slide integrated-challenge-slide--one" src="{{ "fd-project-detail-integrated-third-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy" decoding="async">
+        <img class="integrated-challenge-slide integrated-challenge-slide--two" src="{{ "fd-project-detail-integrated-third-2.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy" decoding="async">
+        <img class="integrated-challenge-slide integrated-challenge-slide--three" src="{{ "fd-project-detail-integrated-third-3.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy" decoding="async">
       </div>
     {%- else -%}
       <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
@@ -1067,7 +1072,7 @@ Challenges</div>
 
   <section class="m-media m-timeline m-media--square" data-mobile-timeline-index="0">
     {%- if is_gtm_case -%}
-      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-4-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第四板块移动端视频"></video>
+      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-4-mobile.mp4" | asset_url }}" data-viewport-autoplay muted loop playsinline preload="none" aria-label="第四板块移动端视频"></video>
     {%- elsif is_integrated_case -%}
       <div class="integrated-timeline-carousel integrated-timeline-carousel--mobile" aria-label="Integrated Marketing Design 第四板块素材轮播">
         {%- for index in (1..10) -%}
@@ -1107,10 +1112,10 @@ Challenges</div>
   </section>
   <section class="m-media m-media--dark m-ratio-tall m-research-intro m-research-intro--static">
     {%- if is_gtm_case -%}
-      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-5-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第五板块移动端视频"></video>
+      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-5-mobile.mp4" | asset_url }}" data-viewport-autoplay muted loop playsinline preload="none" aria-label="第五板块移动端视频"></video>
     {%- elsif is_integrated_case -%}
       <div class="integrated-research-carousel integrated-research-carousel--mobile" aria-label="Integrated Marketing Design 第五板块素材轮播">
-        <img class="integrated-research-slide integrated-research-slide--one" src="{{ "fd-project-detail-integrated-fifth-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="eager">
+        <img class="integrated-research-slide integrated-research-slide--one" src="{{ "fd-project-detail-integrated-fifth-1.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy" decoding="async">
         <img class="integrated-research-slide integrated-research-slide--two" src="{{ "fd-project-detail-integrated-fifth-2.webp" | asset_url }}" width="2920" height="1824" alt="" loading="lazy">
       </div>
     {%- else -%}
@@ -1169,7 +1174,7 @@ Challenges</div>
   {%- unless is_integrated_case -%}
     <section class="m-media m-media--dark m-ratio-tall m-user-research" id="m-mobile-research">
       {%- if is_gtm_case -%}
-        <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-7-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第七板块移动端视频"></video>
+        <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-7-mobile.mp4" | asset_url }}" data-viewport-autoplay muted loop playsinline preload="none" aria-label="第七板块移动端视频"></video>
       {%- else -%}
         <div class="m-img" aria-hidden="true"></div>
         <div class="m-overlay m-user-title">用户研究</div>
@@ -1237,7 +1242,7 @@ Challenges</div>
   {%- unless is_integrated_case -%}
     <section class="m-media m-ratio-tall m-structure-image m-structure-browse" id="m-mobile-journey" data-mobile-journey data-bg-count="4" data-bg-index="0">
       {%- if is_gtm_case -%}
-        <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-9-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第九板块移动端视频"></video>
+        <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-9-mobile.mp4" | asset_url }}" data-viewport-autoplay muted loop playsinline preload="none" aria-label="第九板块移动端视频"></video>
       {%- else -%}
         <canvas class="glacier-wave-bg" data-glacier-wave aria-hidden="true"></canvas>
         <div class="m-img" aria-hidden="true"></div>
@@ -1273,7 +1278,7 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
 
   <section class="m-media m-ratio-medium m-structure-image m-structure-components" data-bg-count="3" data-bg-index="0">
     {%- if is_gtm_case -%}
-      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-10-mobile.mp4" | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-label="第十板块移动端视频"></video>
+      <video class="gtm-section-video" src="{{ "fd-project-detail-gtm-section-10-mobile.mp4" | asset_url }}" data-viewport-autoplay muted loop playsinline preload="none" aria-label="第十板块移动端视频"></video>
     {%- elsif is_integrated_case -%}
       <canvas class="glacier-wave-bg glacier-wave-bg--bf" data-glacier-wave aria-hidden="true"></canvas>
       <div class="integrated-libs-marquee integrated-libs-marquee--mobile" aria-hidden="true">
@@ -1281,7 +1286,7 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
           <div class="integrated-libs-row integrated-libs-row--{{ row_index }}">
             <div class="integrated-libs-track">
               {%- for copy_index in (1..4) -%}
-                <img src="{{ "fd-project-detail-integrated-libs.webp" | asset_url }}" width="9963" height="1200" alt="" loading="eager">
+                <img src="{{ "fd-project-detail-integrated-libs.webp" | asset_url }}" width="9963" height="1200" alt="" loading="lazy" decoding="async">
               {%- endfor -%}
             </div>
           </div>
@@ -1292,8 +1297,8 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
       <div class="m-img" aria-hidden="true"></div>
       <div class="m-component-preview" aria-hidden="true">
         <div class="c-libs-marquee-track">
-          <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
-          <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="eager">
+          <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy" decoding="async">
+          <img src="{{ "fd-project-detail-dc6ece9570-asset.png" | asset_url }}" width="1200" height="720" alt="" loading="lazy" decoding="async">
         </div>
       </div>
       <div class="m-overlay m-arrow-row">
@@ -1358,7 +1363,7 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
           endif
         -%}
         <div class="next-thumb" role="link" aria-label="Next project preview">
-          <video class="next-thumb-video" src="{{ next_thumb_video_asset | asset_url }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+          <video class="next-thumb-video" src="{{ next_thumb_video_asset | asset_url }}" data-viewport-autoplay muted loop playsinline preload="none" aria-hidden="true"></video>
           {%- unless is_integrated_outro or next_thumb_uses_integrated_hero -%}
             <div class="next-thumb-carousel" aria-hidden="true">
               <img src="{{ "home-bfcm-1.webp" | asset_url }}" width="1600" height="900" loading="lazy" alt="">

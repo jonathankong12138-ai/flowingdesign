@@ -68,6 +68,33 @@
     });
   }
 
+  const fdViewportVideos = Array.from(document.querySelectorAll('video[data-viewport-autoplay]'));
+  const fdSyncViewportVideo = (video, shouldPlay) => {
+    if (!(video instanceof HTMLVideoElement)) return;
+    if (!shouldPlay || document.hidden || window.fdProjectPrefersReducedMotion()) {
+      video.pause();
+      return;
+    }
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(() => {});
+  };
+
+  if ('IntersectionObserver' in window) {
+    const fdVideoObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => fdSyncViewportVideo(entry.target, entry.isIntersecting));
+    }, { rootMargin: '500px 0px', threshold: 0.01 });
+    fdViewportVideos.forEach((video) => fdVideoObserver.observe(video));
+  } else {
+    fdViewportVideos.forEach((video) => fdSyncViewportVideo(video, true));
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    fdViewportVideos.forEach((video) => {
+      const nearViewport = video.getBoundingClientRect().bottom >= -500 && video.getBoundingClientRect().top <= window.innerHeight + 500;
+      fdSyncViewportVideo(video, nearViewport);
+    });
+  });
+
   window.ugcImagePool = [
     '250427_Shokz_London_Marathon_01533 1.webp',
     '250427_Shokz_London_Marathon_01839 1.webp',

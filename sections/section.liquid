@@ -6,7 +6,6 @@
 {%- endcomment -%}
 
 {%- liquid
-  assign section_id = section.id | replace: '-', '_'
   assign mask_opacity_raw = section.settings.mask_opacity | default: 90
   assign mask_opacity = mask_opacity_raw | divided_by: 100.0
   assign default_mask_color = section.settings.mask_color | default: '#FFFFFF'
@@ -485,7 +484,8 @@
 
       const warmInteractiveVideos = () => {
         if (!wrapper) return;
-        const urls = getInteractiveVideoUrls();
+        if (navigator.connection?.saveData) return;
+        const urls = getInteractiveVideoUrls().slice(0, 1);
         let index = 0;
         const warmNext = () => {
           if (index >= urls.length) return;
@@ -502,61 +502,6 @@
         };
         const schedule = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 650));
         schedule(warmNext, { timeout: 1600 });
-      };
-
-      const waitForVideoFirstFrame = (video, timeout = 9000) => new Promise(resolve => {
-        if (!(video instanceof HTMLVideoElement)) {
-          resolve(false);
-          return;
-        }
-
-        warmVideoElement(video);
-        if (video.readyState >= 2) {
-          resolve(true);
-          return;
-        }
-
-        let settled = false;
-        let timeoutId = null;
-        const cleanup = () => {
-          video.removeEventListener('loadeddata', handleReady);
-          video.removeEventListener('canplay', handleReady);
-          video.removeEventListener('canplaythrough', handleReady);
-          video.removeEventListener('error', handleError);
-          video.removeEventListener('stalled', handleStalled);
-          video.removeEventListener('suspend', handleStalled);
-          if (timeoutId) clearTimeout(timeoutId);
-        };
-        const finish = (ready) => {
-          if (settled) return;
-          settled = true;
-          cleanup();
-          resolve(ready);
-        };
-        const handleReady = () => finish(video.readyState >= 2);
-        const handleError = () => finish(false);
-        const handleStalled = () => {
-          if (video.readyState >= 2) finish(true);
-        };
-
-        video.addEventListener('loadeddata', handleReady, { once: true });
-        video.addEventListener('canplay', handleReady, { once: true });
-        video.addEventListener('canplaythrough', handleReady, { once: true });
-        video.addEventListener('error', handleError, { once: true });
-        video.addEventListener('stalled', handleStalled);
-        video.addEventListener('suspend', handleStalled);
-
-        timeoutId = window.setTimeout(() => {
-          finish(video.readyState >= 2);
-        }, timeout);
-
-        try { video.load(); } catch (error) {}
-      });
-
-      const waitForInitialInteractiveVideos = () => {
-        const urls = getInteractiveVideoUrls();
-        if (!urls.length) return Promise.resolve(true);
-        return Promise.allSettled(urls.map(url => waitForVideoFirstFrame(createMediaElement(url, 'video'))));
       };
 
       const waitForMediaReady = (element, type, timeout = mediaReadyTimeout) => new Promise(resolve => {
@@ -663,7 +608,8 @@
         splitLoadingLogo();
         document.body.classList.add('home-loading-active-' + sectionId);
 
-        Promise.all([wait(2800), waitForInitialInteractiveVideos()]).finally(() => {
+        const fontsReady = document.fonts?.ready || Promise.resolve();
+        Promise.all([wait(1800), fontsReady]).finally(() => {
           loadingCover.classList.add('is-leaving');
           document.body.classList.remove('home-loading-active-' + sectionId);
           loadingCoverTimer = window.setTimeout(() => {

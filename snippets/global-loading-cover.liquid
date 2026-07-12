@@ -110,7 +110,7 @@
       const leave = () => {
         if (hasLeft) return;
         hasLeft = true;
-        const remaining = Math.max(0, 2200 - (performance.now() - startedAt));
+        const remaining = Math.max(0, 1400 - (performance.now() - startedAt));
         window.setTimeout(() => {
           cover.classList.add('is-leaving');
           document.body.classList.remove('global-loading-active');
@@ -118,9 +118,13 @@
         }, remaining);
       };
 
-      if (document.readyState === 'complete') leave();
-      else window.addEventListener('load', leave, { once: true });
-      window.setTimeout(leave, 5000);
+      const ready = document.fonts?.ready || Promise.resolve();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => ready.finally(leave), { once: true });
+      } else {
+        ready.finally(leave);
+      }
+      window.setTimeout(leave, 3500);
     })();
   </script>
 {%- endif -%}

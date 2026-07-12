@@ -720,7 +720,7 @@
                       {%- elsif show_first_project_first_asset_image and current_asset_image != blank -%}
                         <img src="{{ current_asset_image }}" width="1600" height="1000" loading="lazy" alt="" class="{{ media_placeholder_class }}">
                       {%- endif -%}
-	                    <video src="{{ current_video }}" autoplay loop muted playsinline preload="metadata" class="{% if current_image != blank or show_first_project_first_asset_image %}fd-media-video-overlay-{{ section_id }}{% endif %}"></video>
+	                    <video src="{{ current_video }}" loop muted playsinline preload="none" class="{% if current_image != blank or show_first_project_first_asset_image %}fd-media-video-overlay-{{ section_id }}{% endif %}"></video>
                       {%- if show_first_project_first_asset_image and current_asset_image != blank -%}
                         <img src="{{ current_asset_image }}" width="1600" height="1000" loading="lazy" alt="{{ block.settings.title | escape }}" class="fd-media-asset-overlay-{{ section_id }}">
                       {%- endif -%}
@@ -737,10 +737,10 @@
 		                    {{ current_image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
                       {%- if show_first_project_third_carousel -%}
                         <div class="fd-card-carousel-{{ section_id }}" aria-hidden="true">
-                          <img src="{{ first_project_third_carousel_1 }}" width="1600" height="900" loading="eager" alt="">
-                          <img src="{{ first_project_third_carousel_2 }}" width="1600" height="900" loading="eager" alt="">
-                          <img src="{{ first_project_third_carousel_3 }}" width="1600" height="900" loading="eager" alt="">
-                          <img src="{{ first_project_third_carousel_4 }}" width="1600" height="900" loading="eager" alt="">
+                          <img src="{{ first_project_third_carousel_1 }}" width="1600" height="900" loading="lazy" decoding="async" alt="">
+                          <img src="{{ first_project_third_carousel_2 }}" width="1600" height="900" loading="lazy" decoding="async" alt="">
+                          <img src="{{ first_project_third_carousel_3 }}" width="1600" height="900" loading="lazy" decoding="async" alt="">
+                          <img src="{{ first_project_third_carousel_4 }}" width="1600" height="900" loading="lazy" decoding="async" alt="">
                         </div>
                       {%- endif -%}
 	                  {%- endif -%}
