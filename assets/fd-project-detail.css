@@ -16754,6 +16754,13 @@
     background-color: #000000 !important;
   }
 
+  @media (min-width: 769px) {
+    .fd-project-detail-section--product-launch-visual .h-stats,
+    .fd-project-detail-section--integrated-marketing-design .h-stats {
+      top: 146px;
+    }
+  }
+
   html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .fd-project-detail-section--integrated-marketing-design :is(.h-title, .h-title.blend-difference, .h-stat .value, .m-title, .m-title.blend-difference, .m-stat__value) {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
