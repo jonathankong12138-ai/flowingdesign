@@ -16755,6 +16755,13 @@
   }
 
   @media (min-width: 769px) {
+    .template-project-detail--ecommerce-upgrade .rail-layer,
+    .fd-project-detail-section--product-launch-visual .rail-layer,
+    .fd-project-detail-section--integrated-marketing-design .rail-layer {
+      top: calc(366px * var(--scale));
+      height: calc(100% - 366px * var(--scale));
+    }
+
     .template-project-detail--ecommerce-upgrade .header,
     .fd-project-detail-section--product-launch-visual .header,
     .fd-project-detail-section--integrated-marketing-design .header {

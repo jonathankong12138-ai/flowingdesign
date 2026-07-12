@@ -1,0 +1,125 @@
+{% doc %}
+  Renders the global page loading cover styles or markup and behavior.
+
+  @param {string} mode - Use "styles" in the document head and "cover" in the body.
+{% enddoc %}
+
+{%- if mode == 'styles' -%}
+  <style>
+    .global-loading-cover {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483000;
+      display: grid;
+      place-items: center;
+      background: #ffffff;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.72s;
+      pointer-events: auto;
+    }
+
+    .global-loading-cover.is-leaving {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .global-loading-cover__logo {
+      color: #000000;
+      font-family: "Urbanist", "Noto Sans SC", sans-serif;
+      font-size: 42px;
+      line-height: 1;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .global-loading-cover__word,
+    .global-loading-cover__char {
+      display: inline-block;
+    }
+
+    .global-loading-cover__char {
+      font-weight: 200;
+      animation: global-loading-breath 1s ease-in-out infinite;
+      animation-delay: calc(var(--char-index, 0) * 0.018s);
+    }
+
+    @keyframes global-loading-breath {
+      0%, 100% { opacity: 0.42; font-weight: 200; }
+      50% { opacity: 1; font-weight: var(--target-weight, 600); }
+    }
+
+    body.global-loading-active { overflow: hidden; }
+
+    @media (max-width: 749px) {
+      .global-loading-cover__logo { font-size: 30px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .global-loading-cover,
+      .global-loading-cover__char {
+        transition-duration: 0.01ms;
+        animation: none;
+      }
+    }
+  </style>
+{%- elsif mode == 'cover' -%}
+  <div class="global-loading-cover" data-global-loading-cover aria-hidden="true">
+    <div class="global-loading-cover__logo" data-global-loading-logo>Flowin’ Design</div>
+  </div>
+
+  <script>
+    (() => {
+      const cover = document.querySelector('[data-global-loading-cover]');
+      const logo = cover?.querySelector('[data-global-loading-logo]');
+      if (!cover || !logo) return;
+
+      document.body.classList.add('global-loading-active');
+
+      const text = logo.textContent || '';
+      const visibleChars = Array.from(text).filter((char) => char.trim()).length;
+      const step = visibleChars > 1 ? 400 / (visibleChars - 1) : 0;
+      let charIndex = 0;
+      logo.textContent = '';
+
+      text.split(/(\s+)/).forEach((part) => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) {
+          logo.appendChild(document.createTextNode(part));
+          return;
+        }
+
+        const word = document.createElement('span');
+        word.className = 'global-loading-cover__word';
+        Array.from(part).forEach((char) => {
+          const span = document.createElement('span');
+          span.className = 'global-loading-cover__char';
+          span.textContent = char;
+          span.style.setProperty('--char-index', charIndex);
+          span.style.setProperty('--target-weight', Math.round(600 - charIndex * step));
+          word.appendChild(span);
+          charIndex += 1;
+        });
+        logo.appendChild(word);
+      });
+
+      const startedAt = performance.now();
+      let hasLeft = false;
+      const leave = () => {
+        if (hasLeft) return;
+        hasLeft = true;
+        const remaining = Math.max(0, 2200 - (performance.now() - startedAt));
+        window.setTimeout(() => {
+          cover.classList.add('is-leaving');
+          document.body.classList.remove('global-loading-active');
+          window.setTimeout(() => cover.remove(), 820);
+        }, remaining);
+      };
+
+      if (document.readyState === 'complete') leave();
+      else window.addEventListener('load', leave, { once: true });
+      window.setTimeout(leave, 5000);
+    })();
+  </script>
+{%- endif -%}

@@ -228,20 +228,16 @@
       z-index: 2147483000;
       display: grid;
       place-items: center;
-      background: rgba(255, 255, 255, 0.70);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: #ffffff;
       opacity: 1;
       visibility: visible;
-      transition: opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.72s, backdrop-filter 0.72s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.72s;
       pointer-events: auto;
     }
 
     .integrated-loading-cover-{{ section.id }}.is-leaving {
       opacity: 0;
       visibility: hidden;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
       pointer-events: none;
     }
 
