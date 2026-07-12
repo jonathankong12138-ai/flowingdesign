@@ -1408,7 +1408,12 @@
     items.forEach((item) => {
       const trigger = item.querySelector('.acc-trigger');
       if (!trigger) return;
-      trigger.addEventListener('click', () => openItem(item, true));
+      trigger.addEventListener('click', () => {
+        const isStaticRail = Boolean(item.closest(
+          '.fd-project-detail-section--integrated-marketing-design, .fd-project-detail-section--product-launch-visual'
+        ));
+        openItem(item, !isStaticRail);
+      });
     });
 
     const targets = new Map();

@@ -16755,6 +16755,7 @@
   }
 
   @media (min-width: 769px) {
+    .template-project-detail--ecommerce-upgrade .h-stats,
     .fd-project-detail-section--product-launch-visual .h-stats,
     .fd-project-detail-section--integrated-marketing-design .h-stats {
       top: 146px;
