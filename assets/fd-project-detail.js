@@ -2707,6 +2707,47 @@ Key Features 前置与 A+ 实拍
       applyTextProtection(mobileWorkflow);
     }
 
+    function setMobileOrgDelivery(index = 0) {
+      const root = mobileRoot.querySelector('[data-mobile-org-delivery]');
+      if (!root) return;
+      const slides = Array.from(root.querySelectorAll('.m-org-delivery-slide'));
+      if (!slides.length) return;
+      const next = ((index % slides.length) + slides.length) % slides.length;
+      root.dataset.mobileOrgDeliveryIndex = String(next);
+      slides.forEach((slide, slideIndex) => {
+        const active = slideIndex === next;
+        slide.classList.toggle('is-active', active);
+        slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
+      const counter = root.querySelector('.m-org-delivery-controls .m-switch-count');
+      if (counter) counter.textContent = counterText(next, slides.length);
+      updateMobileStatus(root, '项目目标与工作流', next, slides.length);
+      applyTextProtection(slides[next]);
+    }
+
+    const mobileOrgDelivery = mobileRoot.querySelector('[data-mobile-org-delivery]');
+    if (mobileOrgDelivery && !mobileOrgDelivery._mobileOrgDeliveryBound) {
+      mobileOrgDelivery._mobileOrgDeliveryBound = true;
+      mobileOrgDelivery.querySelectorAll('[data-mobile-org-delivery-step]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const current = parseInt(mobileOrgDelivery.dataset.mobileOrgDeliveryIndex || '0', 10) || 0;
+          const step = parseInt(button.dataset.mobileOrgDeliveryStep || '0', 10) || 0;
+          setMobileOrgDelivery(current + step);
+        });
+      });
+      mobileOrgDelivery.addEventListener('touchstart', (event) => {
+        mobileOrgDelivery._mobileOrgDeliveryTouchX = event.touches && event.touches[0] ? event.touches[0].clientX : 0;
+      }, { passive: true });
+      mobileOrgDelivery.addEventListener('touchend', (event) => {
+        const touch = event.changedTouches && event.changedTouches[0];
+        if (!touch || !Number.isFinite(mobileOrgDelivery._mobileOrgDeliveryTouchX)) return;
+        const delta = touch.clientX - mobileOrgDelivery._mobileOrgDeliveryTouchX;
+        if (Math.abs(delta) < 42) return;
+        const current = parseInt(mobileOrgDelivery.dataset.mobileOrgDeliveryIndex || '0', 10) || 0;
+        setMobileOrgDelivery(current + (delta < 0 ? 1 : -1));
+      }, { passive: true });
+    }
+
     function syncMobileUserResearch() {
       const desktopRoot = document.getElementById('c7');
       const mobileRootEl = mobileRoot.querySelector('.m-user-research');
@@ -3233,6 +3274,7 @@ Key Features 前置与 A+ 实拍
     setMobilePillar(0);
     syncMobileFriction(0);
     syncMobileOrg();
+    setMobileOrgDelivery(0);
     syncMobileUserResearch();
     syncMobileComponents();
     setMobileTimeline(0);
@@ -3249,6 +3291,7 @@ Key Features 前置与 A+ 实拍
         setMobilePillar(parseInt(mobileRoot.querySelector('[data-mobile-pillar]')?.dataset.bgIndex || '0', 10) || 0, false);
         syncMobileFriction(parseInt(mobileRoot.querySelector('#m-mobile-challenges')?.dataset.bgIndex || '0', 10) || 0);
         syncMobileOrg();
+        setMobileOrgDelivery(parseInt(mobileRoot.querySelector('[data-mobile-org-delivery]')?.dataset.mobileOrgDeliveryIndex || '0', 10) || 0);
         syncMobileUserResearch();
         syncMobileComponents();
         setMobileTimeline(parseInt(mobileRoot.querySelector('.m-timeline')?.dataset.mobileTimelineIndex || '0', 10) || 0);

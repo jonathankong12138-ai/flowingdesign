@@ -16861,6 +16861,69 @@
     .template-project-detail--ecommerce-upgrade .mobile-393 .m-node-copy + .m-media {
       margin-top: 0 !important;
     }
+
+    .template-project-detail--ecommerce-upgrade .mobile-393 .m-org-delivery-carousel {
+      position: relative !important;
+      display: block !important;
+      height: 420px !important;
+      min-height: 420px !important;
+      max-height: 420px !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      background: #f4fbfc !important;
+    }
+
+    .template-project-detail--ecommerce-upgrade .mobile-393 .m-org-delivery-slide {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      margin: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transform: translateX(18px) !important;
+      transition: opacity .28s ease, transform .32s cubic-bezier(.16, 1, .3, 1), visibility 0s linear .32s !important;
+    }
+
+    .template-project-detail--ecommerce-upgrade .mobile-393 .m-org-delivery-slide.is-active {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateX(0) !important;
+      transition-delay: 0s !important;
+    }
+
+    .template-project-detail--ecommerce-upgrade .mobile-393 .m-org-delivery-controls {
+      position: absolute !important;
+      z-index: 12 !important;
+      top: auto !important;
+      right: 24px !important;
+      bottom: 22px !important;
+      left: 24px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 22px !important;
+      width: auto !important;
+      opacity: 1 !important;
+      pointer-events: none !important;
+      transform: none !important;
+    }
+
+    .template-project-detail--ecommerce-upgrade .mobile-393 .m-org-delivery-controls .m-arrow,
+    .template-project-detail--ecommerce-upgrade .mobile-393 .m-org-delivery-controls .m-switch-count {
+      position: relative !important;
+      inset: auto !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: none !important;
+    }
   }
 
   @media (min-width: 768px) {
