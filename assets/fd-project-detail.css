@@ -15340,7 +15340,7 @@
         overflow-wrap: anywhere !important;
       }
 
-      .mobile-393 .m-hero-media + #m-mobile-goals {
+      .mobile-393 .m-node-copy + #m-mobile-goals {
         margin-top: var(--fd-space-4) !important;
       }
 
@@ -16823,6 +16823,40 @@
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
+  }
+
+  /* E-commerce mobile: mirror each desktop rail entry after its final visual node. */
+  .mobile-393 .m-node-copy {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .template-project-detail--ecommerce-upgrade .mobile-393 .m-node-copy {
+      display: block;
+      margin: 0;
+      padding: 28px 2px 12px;
+      color: #080a0d;
+      background: #fff;
+    }
+
+    .template-project-detail--ecommerce-upgrade .mobile-393 .m-node-copy__title {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 560;
+      letter-spacing: -.01em;
+      color: rgba(8, 10, 13, .92);
+    }
+
+    .template-project-detail--ecommerce-upgrade .mobile-393 .m-node-copy__body {
+      margin: 12px 0 0;
+      font-size: 14px;
+      line-height: 1.75;
+      font-weight: 400;
+      color: rgba(8, 10, 13, .62);
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
   }
 
   @media (min-width: 768px) {
