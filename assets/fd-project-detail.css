@@ -17099,6 +17099,30 @@
   }
 
   @media (max-width: 767px) {
+    /* Integrated mobile hero uses a 1080x1920 source; keep the section at the
+       same ratio so the video is not cropped by a shorter fixed-height card. */
+    html:has(.fd-project-detail-section--integrated-marketing-design) .mobile-393 .m-hero-media {
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      aspect-ratio: 9 / 16 !important;
+    }
+
+    /* Product-launch section four uses a 1080x1920 mobile video. */
+    .fd-project-detail-section--product-launch-visual .mobile-393 .m-timeline {
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      aspect-ratio: 9 / 16 !important;
+    }
+
+    html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .mobile-393 .m-breadcrumb,
+    html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .mobile-393 .m-breadcrumb a,
+    html:has(.fd-project-detail-section--integrated-marketing-design):not(.fd-integrated-outro-white) .mobile-393 .m-breadcrumb span {
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
+    }
+
     .fd-project-detail-section--product-launch-visual .mobile-393 #m-mobile-goals,
     .fd-project-detail-section--integrated-marketing-design .mobile-393 #m-mobile-goals {
       height: auto !important;
