@@ -826,6 +826,7 @@
     if (isIntegratedDefaultOutro) canvas.classList.remove('outro-wave-canvas--heatmap');
     const isHeatmapOutro = !isIntegratedDefaultOutro && canvas.classList.contains('outro-wave-canvas--heatmap');
     const usesHeatmapPalette = isHeatmapOutro || isIntegratedDefaultOutro;
+    const usesEcommerceGtmParameters = canvas.classList.contains('outro-wave-canvas--ecommerce-gtm');
     if (typeof THREE === 'undefined') {
       if (canvas.dataset.outroWaveReady) return;
       canvas.dataset.outroWaveReady = 'true';
@@ -852,6 +853,7 @@
         uniform float uHeatmapPalette;
         uniform float uGrainStrength;
         uniform float uDarkMask;
+        uniform float uEcommerceGtm;
         varying vec2 vUv;
 
         mat2 rotate2d(float angle) { return mat2(cos(angle), -sin(angle), sin(angle), cos(angle)); }
@@ -910,15 +912,16 @@
         }
         float getHeight(vec2 uv, float time, float progress, float seed) {
           float heatmap = step(0.5, uHeatmapPalette);
+          float ecommerceGtm = step(0.5, uEcommerceGtm);
           vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
           vec2 baseUV = uv + seedOffset + mix(vec2(progress * 0.2, 0.0), vec2(0.0, progress * 0.2), heatmap);
-          float flowTime = time * mix(0.5, 0.8, heatmap) + progress * 0.5;
+          float flowTime = time * mix(mix(0.5, 0.8, heatmap), 0.9, ecommerceGtm) + progress * 0.5;
           vec2 rotUV = rotate2d(-0.5) * baseUV;
           vec2 distortion = vec2(0.0);
           distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
           distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
-          float detail = snoise(rotUV * mix(0.3, 0.975, heatmap) + distortion + flowTime * 0.1) * mix(0.02, 0.065, heatmap);
-          float wave = sin(rotUV.y * mix(1.6, 0.6, heatmap) + distortion.x * mix(3.3, 1.7, heatmap) + flowTime);
+          float detail = snoise(rotUV * mix(mix(0.3, 0.975, heatmap), 1.125, ecommerceGtm) + distortion + flowTime * 0.1) * mix(mix(0.02, 0.065, heatmap), 0.075, ecommerceGtm);
+          float wave = sin(rotUV.y * mix(mix(1.6, 0.6, heatmap), 5.0, ecommerceGtm) + distortion.x * mix(mix(3.3, 1.7, heatmap), 3.1, ecommerceGtm) + flowTime);
           return pow(wave * 0.5 + 0.5, 0.8) + detail;
         }
         float deepHaloMask(float lightValue, float stop1, float stop2, float rangeValue, float featherValue) {
@@ -948,6 +951,7 @@
           vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
           float heatmap = step(0.5, uHeatmapStyle);
           float heatmapPalette = step(0.5, uHeatmapPalette);
+          float ecommerceGtm = step(0.5, uEcommerceGtm);
           heatmap = heatmapPalette;
           float light = dot(normal, normalize(mix(vec3(-0.4, 0.6, 0.4), vec3(-0.5, 0.5, 0.4), heatmap))) * 0.5 + 0.5;
           vec3 color = mix(vec3(1.0), vec3(1.0, 0.6471, 0.3608), smoothstep(0.0, 0.381, light));
@@ -976,7 +980,24 @@
             color = 1.0 - (1.0 - color) * (1.0 - clamp(deepHalo, 0.0, 1.0));
           }
 
-          color = (color - 0.5) * mix(1.45, 1.5, heatmap) + mix(0.35, 0.35, heatmap);
+          if (ecommerceGtm > 0.5) {
+            color = mix(vec3(1.0), vec3(1.0), smoothstep(0.0, 0.001, light));
+            color = mix(color, vec3(0.8667, 0.8118, 0.7333), smoothstep(0.0, 1.001, light));
+            color = mix(color, vec3(1.0), smoothstep(1.0, 0.241, light));
+            color = mix(color, vec3(0.7294, 0.6863, 0.6118), smoothstep(0.24, 0.591, light));
+            color = mix(color, vec3(1.0), smoothstep(0.59, 1.001, light));
+            float gtmGlow1Feather = 0.77;
+            float gtmGlow2Feather = 0.4;
+            float gtmHaloBand1 = deepHaloMask(light, 0.0, 1.0, 0.52, gtmGlow1Feather);
+            float gtmHaloBand2 = deepHaloMask(light, 0.0, 1.0, 1.0, gtmGlow2Feather);
+            float gtmFlow1 = snoise((uv / 3.9) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
+            float gtmFlow2 = snoise((uv / 6.0) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
+            vec3 gtmHalo = vec3(1.0, 0.5843, 0.0) * gtmHaloBand1 * deepHaloShape(gtmFlow1, gtmGlow1Feather) * 0.98;
+            gtmHalo += vec3(1.0, 0.6353, 0.0) * gtmHaloBand2 * deepHaloShape(gtmFlow2, gtmGlow2Feather) * 0.97;
+            color = 1.0 - (1.0 - color) * (1.0 - clamp(gtmHalo, 0.0, 1.0));
+          }
+
+          color = (color - 0.5) * mix(mix(1.45, 1.5, heatmap), 1.25, ecommerceGtm) + mix(0.35, 0.45, ecommerceGtm);
           color = clamp(color, 0.0, 1.0);
           vec3 hsl = rgb2hsl(color);
           hsl.y = clamp(hsl.y * mix(1.3, 1.0, heatmap), 0.0, 1.0);
@@ -1048,7 +1069,8 @@
         heatmapStyle: gl.getUniformLocation(program, 'uHeatmapStyle'),
         heatmapPalette: gl.getUniformLocation(program, 'uHeatmapPalette'),
         grainStrength: gl.getUniformLocation(program, 'uGrainStrength'),
-        darkMask: gl.getUniformLocation(program, 'uDarkMask')
+        darkMask: gl.getUniformLocation(program, 'uDarkMask'),
+        ecommerceGtm: gl.getUniformLocation(program, 'uEcommerceGtm')
       };
       gl.uniform1f(uniforms.seed, 42.0);
       gl.uniform1f(uniforms.mobileVertical, window.matchMedia('(max-width: 767px)').matches ? 1.0 : 0.0);
@@ -1056,6 +1078,7 @@
       gl.uniform1f(uniforms.heatmapPalette, usesHeatmapPalette ? 1.0 : 0.0);
       gl.uniform1f(uniforms.grainStrength, isIntegratedDefaultOutro ? 0.0 : 1.0);
       gl.uniform1f(uniforms.darkMask, canvas.classList.contains('outro-wave-canvas--dark') ? 1.0 : 0.0);
+      gl.uniform1f(uniforms.ecommerceGtm, usesEcommerceGtmParameters ? 1.0 : 0.0);
 
       let targetProgress = 0;
       let currentProgress = 0;
@@ -1128,6 +1151,7 @@
       uniform float uHeatmapPalette;
       uniform float uGrainStrength;
       uniform float uDarkMask;
+      uniform float uEcommerceGtm;
       varying vec2 vUv;
 
       mat2 rotate2d(float angle) {
@@ -1193,15 +1217,16 @@
 
       float getHeight(vec2 uv, float time, float progress, float seed) {
         float heatmap = step(0.5, uHeatmapPalette);
+        float ecommerceGtm = step(0.5, uEcommerceGtm);
         vec2 seedOffset = vec2(seed * 10.3, seed * 4.2);
         vec2 baseUV = uv + seedOffset + mix(vec2(progress * 0.2, 0.0), vec2(0.0, progress * 0.2), heatmap);
-        float flowTime = time * mix(0.5, 0.8, heatmap) + progress * 0.5;
+        float flowTime = time * mix(mix(0.5, 0.8, heatmap), 0.9, ecommerceGtm) + progress * 0.5;
         vec2 rotUV = rotate2d(-0.5) * baseUV;
         vec2 distortion = vec2(0.0);
         distortion.x = snoise(rotUV * 0.5 + vec2(flowTime * 0.15, flowTime * 0.1));
         distortion.y = snoise(rotUV * 0.5 - vec2(flowTime * 0.1, flowTime * 0.1));
-        float detail = snoise(rotUV * mix(0.3, 0.975, heatmap) + distortion + flowTime * 0.1) * mix(0.02, 0.065, heatmap);
-        float wave = sin(rotUV.y * mix(1.6, 0.6, heatmap) + distortion.x * mix(3.3, 1.7, heatmap) + flowTime);
+        float detail = snoise(rotUV * mix(mix(0.3, 0.975, heatmap), 1.125, ecommerceGtm) + distortion + flowTime * 0.1) * mix(mix(0.02, 0.065, heatmap), 0.075, ecommerceGtm);
+        float wave = sin(rotUV.y * mix(mix(1.6, 0.6, heatmap), 5.0, ecommerceGtm) + distortion.x * mix(mix(3.3, 1.7, heatmap), 3.1, ecommerceGtm) + flowTime);
         return pow(wave * 0.5 + 0.5, 0.8) + detail;
       }
       float deepHaloMask(float lightValue, float stop1, float stop2, float rangeValue, float featherValue) {
@@ -1233,6 +1258,7 @@
         vec3 normal = normalize(vec3(hx2 - hx1, hy2 - hy1, 0.03));
         float heatmap = step(0.5, uHeatmapStyle);
         float heatmapPalette = step(0.5, uHeatmapPalette);
+        float ecommerceGtm = step(0.5, uEcommerceGtm);
         heatmap = heatmapPalette;
         float light = dot(normal, normalize(mix(vec3(-0.4, 0.6, 0.4), vec3(-0.5, 0.5, 0.4), heatmap))) * 0.5 + 0.5;
 
@@ -1262,7 +1288,24 @@
           color = 1.0 - (1.0 - color) * (1.0 - clamp(deepHalo, 0.0, 1.0));
         }
 
-        color = (color - 0.5) * mix(1.45, 1.5, heatmap) + 0.35;
+        if (ecommerceGtm > 0.5) {
+          color = mix(vec3(1.0), vec3(1.0), smoothstep(0.0, 0.001, light));
+          color = mix(color, vec3(0.8667, 0.8118, 0.7333), smoothstep(0.0, 1.001, light));
+          color = mix(color, vec3(1.0), smoothstep(1.0, 0.241, light));
+          color = mix(color, vec3(0.7294, 0.6863, 0.6118), smoothstep(0.24, 0.591, light));
+          color = mix(color, vec3(1.0), smoothstep(0.59, 1.001, light));
+          float gtmGlow1Feather = 0.77;
+          float gtmGlow2Feather = 0.4;
+          float gtmHaloBand1 = deepHaloMask(light, 0.0, 1.0, 0.52, gtmGlow1Feather);
+          float gtmHaloBand2 = deepHaloMask(light, 0.0, 1.0, 1.0, gtmGlow2Feather);
+          float gtmFlow1 = snoise((uv / 3.9) * 3.0 + vec2(time * 0.08, -time * 0.03)) * 0.5 + 0.5;
+          float gtmFlow2 = snoise((uv / 6.0) * 3.0 - vec2(time * 0.05, time * 0.06) + vec2(12.47)) * 0.5 + 0.5;
+          vec3 gtmHalo = vec3(1.0, 0.5843, 0.0) * gtmHaloBand1 * deepHaloShape(gtmFlow1, gtmGlow1Feather) * 0.98;
+          gtmHalo += vec3(1.0, 0.6353, 0.0) * gtmHaloBand2 * deepHaloShape(gtmFlow2, gtmGlow2Feather) * 0.97;
+          color = 1.0 - (1.0 - color) * (1.0 - clamp(gtmHalo, 0.0, 1.0));
+        }
+
+        color = (color - 0.5) * mix(mix(1.45, 1.5, heatmap), 1.25, ecommerceGtm) + mix(0.35, 0.45, ecommerceGtm);
         color = clamp(color, 0.0, 1.0);
         vec3 hsl = rgb2hsl(color);
         hsl.y = clamp(hsl.y * mix(1.3, 1.0, heatmap), 0.0, 1.0);
@@ -1316,7 +1359,8 @@
       uHeatmapStyle: { value: isHeatmapOutro ? 1 : 0 },
       uHeatmapPalette: { value: usesHeatmapPalette ? 1 : 0 },
       uGrainStrength: { value: isIntegratedDefaultOutro ? 0 : 1 },
-      uDarkMask: { value: canvas.classList.contains('outro-wave-canvas--dark') ? 1 : 0 }
+      uDarkMask: { value: canvas.classList.contains('outro-wave-canvas--dark') ? 1 : 0 },
+      uEcommerceGtm: { value: usesEcommerceGtmParameters ? 1 : 0 }
     };
     const material = new THREE.ShaderMaterial({
       vertexShader,
