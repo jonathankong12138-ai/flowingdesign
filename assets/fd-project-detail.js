@@ -1523,31 +1523,56 @@
     function setBgIndex(target, step) {
       const count = parseInt(target.dataset.bgCount || '1', 10);
       if (!Number.isFinite(count) || count <= 1) return;
-      const current = parseInt(target.dataset.bgIndex || '0', 10) || 0;
+      const current = Number.isFinite(target._fdCarouselTargetIndex)
+        ? target._fdCarouselTargetIndex
+        : parseInt(target.dataset.bgIndex || '0', 10) || 0;
       const next = (current + step + count) % count;
-      target.dataset.bgIndex = String(next);
-      const label = `${String(next + 1).padStart(2, '0')} / ${String(count).padStart(2, '0')}`;
-      target.querySelectorAll('.switch-count, .m-switch-count').forEach((node) => {
-        node.textContent = label;
-      });
-      if (target.id === 'c8' && window.setPersonaSlide) {
-        window.setPersonaSlide(target, next);
-      }
-      if (target.id === 'c9' && window.setJourneySlide) {
-        window.setJourneySlide(next);
-      }
-      if (target.id === 'c11') {
-        const mock = target.querySelector('.final-mock');
-        if (mock) {
-          target.classList.add('is-switching');
-          mock._finalPanY = 0;
-          mock.style.setProperty('--final-pan-y', '0px');
-          mock.classList.remove('is-panned');
-          window.clearTimeout(target._finalSwitchTimer);
-          target._finalSwitchTimer = window.setTimeout(() => {
-            target.classList.remove('is-switching');
-          }, 260);
+      const isEcommerceMobile = Boolean(
+        target.closest('.mobile-393') &&
+        document.body.classList.contains('template-project-detail--ecommerce-upgrade')
+      );
+      const isManagedMobileCarousel = isEcommerceMobile && target.matches(
+        '#m-mobile-challenges, [data-mobile-persona], [data-mobile-journey]'
+      );
+      if (isManagedMobileCarousel) return;
+      target._fdCarouselTargetIndex = next;
+
+      const applyIndex = () => {
+        target.dataset.bgIndex = String(next);
+        const label = `${String(next + 1).padStart(2, '0')} / ${String(count).padStart(2, '0')}`;
+        target.querySelectorAll('.switch-count, .m-switch-count').forEach((node) => {
+          node.textContent = label;
+        });
+        if (target.id === 'c8' && window.setPersonaSlide) {
+          window.setPersonaSlide(target, next);
         }
+        if (target.id === 'c9' && window.setJourneySlide) {
+          window.setJourneySlide(next);
+        }
+        if (target.id === 'c11') {
+          const mock = target.querySelector('.final-mock');
+          if (mock) {
+            target.classList.add('is-switching');
+            mock._finalPanY = 0;
+            mock.style.setProperty('--final-pan-y', '0px');
+            mock.classList.remove('is-panned');
+            window.clearTimeout(target._finalSwitchTimer);
+            target._finalSwitchTimer = window.setTimeout(() => {
+              target.classList.remove('is-switching');
+            }, 260);
+          }
+        }
+      };
+
+      if (isEcommerceMobile && step && window.fdProjectRunMobileCarouselTransition) {
+        window.fdProjectRunMobileCarouselTransition(
+          target,
+          step,
+          applyIndex,
+          '.m-img, .m-component-preview, .m-card-label'
+        );
+      } else {
+        applyIndex();
       }
     }
 
@@ -2388,6 +2413,46 @@ Key Features 前置与 A+ 实拍
       const text = `${label}，第 ${index + 1} 项，共 ${count} 项`;
       if (window.fdProjectSetStatusText) window.fdProjectSetStatusText(root, text);
     };
+    const isEcommerceMobileExperience = document.body.classList.contains(
+      'template-project-detail--ecommerce-upgrade'
+    );
+
+    function runMobileCarouselTransition(root, direction, applySlide, surfaceSelector) {
+      if (!root || typeof applySlide !== 'function') return;
+      const surfaces = surfaceSelector ? Array.from(root.querySelectorAll(surfaceSelector)) : [];
+      surfaces.forEach((surface) => surface.classList.add('fd-carousel-surface'));
+
+      window.clearTimeout(root._fdCarouselLeaveTimer);
+      window.clearTimeout(root._fdCarouselDoneTimer);
+      if (root._fdCarouselPendingApply) {
+        const pendingApply = root._fdCarouselPendingApply;
+        root._fdCarouselPendingApply = null;
+        pendingApply();
+      }
+      root.classList.remove('is-fd-carousel-leaving', 'is-fd-carousel-entering');
+
+      const reduceMotion = window.fdProjectPrefersReducedMotion && window.fdProjectPrefersReducedMotion();
+      if (!isEcommerceMobileExperience || !direction || reduceMotion) {
+        applySlide();
+        return;
+      }
+
+      root.dataset.fdCarouselDirection = direction > 0 ? 'next' : 'prev';
+      root._fdCarouselPendingApply = applySlide;
+      root.classList.add('is-fd-carousel-leaving');
+      root._fdCarouselLeaveTimer = window.setTimeout(() => {
+        const commit = root._fdCarouselPendingApply;
+        root._fdCarouselPendingApply = null;
+        if (commit) commit();
+        root.classList.remove('is-fd-carousel-leaving');
+        root.classList.add('is-fd-carousel-entering');
+        root._fdCarouselDoneTimer = window.setTimeout(() => {
+          root.classList.remove('is-fd-carousel-entering');
+        }, 260);
+      }, 105);
+    }
+
+    window.fdProjectRunMobileCarouselTransition = runMobileCarouselTransition;
 
     function syncMobileProjectHeader() {
       const desktopHeader = document.querySelector('.canvas-wrap .header') || document.querySelector('.header');
@@ -2437,7 +2502,7 @@ Key Features 前置与 A+ 实拍
       });
     }
 
-    function syncMobileFriction(index = 0) {
+    function syncMobileFriction(index = 0, direction = 0) {
       const desktopRoot = document.getElementById('c3');
       const mobileRootEl = mobileRoot.querySelector('#m-mobile-challenges');
       if (!desktopRoot || !mobileRootEl) return;
@@ -2448,38 +2513,34 @@ Key Features 前置与 A+ 实拍
       const mobileIntro = mobileRootEl.querySelector('.m-friction-intro');
       const mobileList = mobileRootEl.querySelector('.m-friction-list');
       const count = mobileRootEl.querySelector('.m-switch-count');
-      mobileRootEl.dataset.bgIndex = String(next);
+      mobileRootEl._fdCarouselTargetIndex = next;
       mobileRootEl.dataset.bgCount = String(items.length);
-      if (mobileIntro && intro) mobileIntro.textContent = intro.textContent.trim();
-      if (mobileList) {
-        window.clearTimeout(mobileList._frictionSwitchTimer);
-        mobileList.classList.remove('is-switching');
-        void mobileList.offsetWidth;
-        mobileList.classList.add('is-switching');
-        mobileList.textContent = '';
-        mobileList.setAttribute('aria-live', 'polite');
-        items.forEach((item, itemIndex) => {
-          const title = item.querySelector('.friction-title');
-          const copy = item.querySelector('.friction-copy');
-          const mobileItem = document.createElement('div');
-          mobileItem.className = 'm-friction-item';
-          mobileItem.classList.toggle('is-active', itemIndex === next);
-          const mobileTitle = document.createElement('div');
-          mobileTitle.className = 'm-friction-title blend-difference';
-          mobileTitle.textContent = title ? title.textContent.trim() : '';
-          const mobileCopy = document.createElement('div');
-          mobileCopy.className = 'm-friction-copy';
-          mobileCopy.textContent = copy ? copy.textContent.trim() : '';
-          mobileItem.append(mobileTitle, mobileCopy);
-          mobileList.appendChild(mobileItem);
-        });
-        mobileList._frictionSwitchTimer = window.setTimeout(() => {
-          mobileList.classList.remove('is-switching');
-        }, 360);
-      }
-      if (count) count.textContent = counterText(next, items.length);
-      updateMobileStatus(mobileRootEl, '系统性挑战', next, items.length);
-      applyTextProtection(mobileRootEl);
+      runMobileCarouselTransition(mobileRootEl, direction, () => {
+        mobileRootEl.dataset.bgIndex = String(next);
+        if (mobileIntro && intro) mobileIntro.textContent = intro.textContent.trim();
+        if (mobileList) {
+          mobileList.textContent = '';
+          mobileList.setAttribute('aria-live', 'polite');
+          items.forEach((item, itemIndex) => {
+            const title = item.querySelector('.friction-title');
+            const copy = item.querySelector('.friction-copy');
+            const mobileItem = document.createElement('div');
+            mobileItem.className = 'm-friction-item';
+            mobileItem.classList.toggle('is-active', itemIndex === next);
+            const mobileTitle = document.createElement('div');
+            mobileTitle.className = 'm-friction-title blend-difference';
+            mobileTitle.textContent = title ? title.textContent.trim() : '';
+            const mobileCopy = document.createElement('div');
+            mobileCopy.className = 'm-friction-copy';
+            mobileCopy.textContent = copy ? copy.textContent.trim() : '';
+            mobileItem.append(mobileTitle, mobileCopy);
+            mobileList.appendChild(mobileItem);
+          });
+        }
+        if (count) count.textContent = counterText(next, items.length);
+        updateMobileStatus(mobileRootEl, '系统性挑战', next, items.length);
+        applyTextProtection(mobileRootEl);
+      }, '.m-friction-list');
     }
 
     function getMobilePillarData() {
@@ -2503,7 +2564,7 @@ Key Features 前置与 A+ 实拍
       const source = document.querySelector((visualSources[index] || visualSources[0]).selector);
       const variant = (visualSources[index] || visualSources[0]).variant;
       visual.textContent = '';
-      visual.className = `m-mobile-pillar-visual m-mobile-pillar-visual--${variant}`;
+      visual.className = `m-mobile-pillar-visual m-mobile-pillar-visual--${variant} fd-carousel-surface`;
       if (!source) return;
       const clone = source.cloneNode(true);
       clone.classList.add('is-mobile-clone');
@@ -2556,38 +2617,49 @@ Key Features 前置与 A+ 实拍
         button.textContent = item.title;
         const active = index === activeIndex;
         button.classList.toggle('is-active', active);
-        button.addEventListener('click', () => setMobilePillar(index));
+        button.addEventListener('click', () => {
+          const root = mobileRoot.querySelector('[data-mobile-pillar]');
+          const current = root && Number.isFinite(root._fdCarouselTargetIndex)
+            ? root._fdCarouselTargetIndex
+            : parseInt(root && root.dataset.bgIndex || '0', 10) || 0;
+          const direction = index === current ? 0 : index > current ? 1 : -1;
+          setMobilePillar(index, true, direction);
+        });
         tabsHost.appendChild(button);
       });
     }
 
-    function setMobilePillar(index = 0, syncDesktop = true) {
+    function setMobilePillar(index = 0, syncDesktop = true, direction = 0) {
       const root = mobileRoot.querySelector('[data-mobile-pillar]');
       const data = getMobilePillarData();
       if (!root || !data.length) return;
       const next = ((index % data.length) + data.length) % data.length;
       const item = data[next];
-      root.dataset.bgIndex = String(next);
+      root._fdCarouselTargetIndex = next;
       root.dataset.bgCount = String(data.length);
-      if (syncDesktop && item.tab && window.setPillarTab) window.setPillarTab(item.tab);
-      renderMobilePillarTabs(root, data, next);
-      const title = root.querySelector('.m-card-label__title');
-      const copy = root.querySelector('.m-card-label__sub');
-      if (copy) copy.textContent = item.copy;
-      root.querySelectorAll('.m-switch-count').forEach((node) => {
-        node.textContent = counterText(next, data.length);
-      });
-      updateMobileStatus(root, `整体目标：${item.title}`, next, data.length);
-      renderMobilePillarVisual(root, next);
-      applyTextProtection(root);
+      runMobileCarouselTransition(root, direction, () => {
+        root.dataset.bgIndex = String(next);
+        if (syncDesktop && item.tab && window.setPillarTab) window.setPillarTab(item.tab);
+        renderMobilePillarTabs(root, data, next);
+        const copy = root.querySelector('.m-card-label__sub');
+        if (copy) copy.textContent = item.copy;
+        root.querySelectorAll('.m-switch-count').forEach((node) => {
+          node.textContent = counterText(next, data.length);
+        });
+        updateMobileStatus(root, `整体目标：${item.title}`, next, data.length);
+        renderMobilePillarVisual(root, next);
+        applyTextProtection(root);
+      }, '.m-mobile-pillar-visual, .m-card-label');
     }
 
     mobileRoot.querySelectorAll('[data-mobile-pillar-step]').forEach((button) => {
       button.addEventListener('click', () => {
         const root = button.closest('[data-mobile-pillar]');
-        const current = parseInt(root && root.dataset.bgIndex || '0', 10) || 0;
+        const current = root && Number.isFinite(root._fdCarouselTargetIndex)
+          ? root._fdCarouselTargetIndex
+          : parseInt(root && root.dataset.bgIndex || '0', 10) || 0;
         const step = parseInt(button.dataset.mobilePillarStep || '0', 10) || 0;
-        setMobilePillar(current + step);
+        setMobilePillar(current + step, true, step);
       });
     });
 
@@ -2620,36 +2692,15 @@ Key Features 前置与 A+ 实拍
           copy: bodyText ? bodyText.textContent.trim() : ''
         }
       ];
-      function renderMobileOrgSlide(index = 0) {
+      function renderMobileOrgSlide(index = 0, direction = 0) {
         if (!mobileOverview || !orgSlides.length) return;
         const next = ((index % orgSlides.length) + orgSlides.length) % orgSlides.length;
         const slide = orgSlides[next];
         const text = mobileOverview.querySelector('.m-org-text');
         const nodes = mobileOverview.querySelector('.m-org-nodes');
         if (!text || !nodes) return;
-        mobileOverview.dataset.mobileOrgIndex = String(next);
+        mobileOverview._fdCarouselTargetIndex = next;
         mobileOverview.dataset.mobileOrgCount = String(orgSlides.length);
-        nodes.textContent = '';
-        text.textContent = '';
-        text.className = 'm-org-text';
-        text.classList.add(`m-org-text--${slide.type}`);
-        if (slide.type === 'team') {
-          slide.nodes.forEach((label) => {
-            const node = document.createElement('span');
-            node.className = 'm-org-node';
-            node.textContent = label;
-            nodes.appendChild(node);
-          });
-          text.textContent = slide.copy;
-        } else {
-          const title = document.createElement('div');
-          title.className = 'm-org-slide-title';
-          title.textContent = slide.title;
-          const copy = document.createElement('div');
-          copy.className = 'm-org-slide-copy';
-          copy.textContent = slide.copy;
-          text.append(title, copy);
-        }
         let controls = mobileOverview.querySelector('.m-org-carousel-controls');
         if (!controls) {
           controls = document.createElement('div');
@@ -2662,15 +2713,41 @@ Key Features 前置与 A+ 实拍
           mobileOverview.appendChild(controls);
           controls.querySelectorAll('[data-mobile-org-step]').forEach((button) => {
             button.addEventListener('click', () => {
-              const current = parseInt(mobileOverview.dataset.mobileOrgIndex || '0', 10) || 0;
+              const current = Number.isFinite(mobileOverview._fdCarouselTargetIndex)
+                ? mobileOverview._fdCarouselTargetIndex
+                : parseInt(mobileOverview.dataset.mobileOrgIndex || '0', 10) || 0;
               const step = parseInt(button.dataset.mobileOrgStep || '0', 10) || 0;
-              renderMobileOrgSlide(current + step);
+              renderMobileOrgSlide(current + step, step);
             });
           });
         }
-        const status = mobileOverview.querySelector('.m-org-carousel-controls .m-state-text');
-        if (status) status.textContent = `团队与流程，第 ${next + 1} 项，共 ${orgSlides.length} 项`;
-        applyTextProtection(mobileOverview);
+        runMobileCarouselTransition(mobileOverview, direction, () => {
+          mobileOverview.dataset.mobileOrgIndex = String(next);
+          nodes.textContent = '';
+          text.textContent = '';
+          text.className = 'm-org-text fd-carousel-surface';
+          text.classList.add(`m-org-text--${slide.type}`);
+          if (slide.type === 'team') {
+            slide.nodes.forEach((label) => {
+              const node = document.createElement('span');
+              node.className = 'm-org-node';
+              node.textContent = label;
+              nodes.appendChild(node);
+            });
+            text.textContent = slide.copy;
+          } else {
+            const title = document.createElement('div');
+            title.className = 'm-org-slide-title';
+            title.textContent = slide.title;
+            const copy = document.createElement('div');
+            copy.className = 'm-org-slide-copy';
+            copy.textContent = slide.copy;
+            text.append(title, copy);
+          }
+          const status = mobileOverview.querySelector('.m-org-carousel-controls .m-state-text');
+          if (status) status.textContent = `团队与流程，第 ${next + 1} 项，共 ${orgSlides.length} 项`;
+          applyTextProtection(mobileOverview);
+        }, '.m-org-text, .m-org-nodes');
       }
       if (mobileOverview) {
         renderMobileOrgSlide(parseInt(mobileOverview.dataset.mobileOrgIndex || '0', 10) || 0);
@@ -2684,8 +2761,11 @@ Key Features 前置与 A+ 实拍
             if (!touch || !Number.isFinite(mobileOverview._mobileOrgTouchX)) return;
             const delta = touch.clientX - mobileOverview._mobileOrgTouchX;
             if (Math.abs(delta) < 42) return;
-            const current = parseInt(mobileOverview.dataset.mobileOrgIndex || '0', 10) || 0;
-            renderMobileOrgSlide(current + (delta < 0 ? 1 : -1));
+            const current = Number.isFinite(mobileOverview._fdCarouselTargetIndex)
+              ? mobileOverview._fdCarouselTargetIndex
+              : parseInt(mobileOverview.dataset.mobileOrgIndex || '0', 10) || 0;
+            const direction = delta < 0 ? 1 : -1;
+            renderMobileOrgSlide(current + direction, direction);
           }, { passive: true });
         }
       }
@@ -2766,8 +2846,11 @@ Key Features 前置与 A+ 实拍
       const text = root.querySelector('.m-timeline__phase-text');
       const img = root.querySelector('.m-img');
       const count = root.querySelector('.m-switch-count');
-      const current = parseInt(root.dataset.mobileTimelineIndex || '0', 10) || 0;
-      const shouldAnimate = direction && next !== current && !window.fdProjectPrefersReducedMotion();
+      const current = Number.isFinite(root._fdCarouselTargetIndex)
+        ? root._fdCarouselTargetIndex
+        : parseInt(root.dataset.mobileTimelineIndex || '0', 10) || 0;
+      const transitionDirection = next === current ? 0 : direction;
+      root._fdCarouselTargetIndex = next;
 
       const applySlide = () => {
         root.dataset.mobileTimelineIndex = String(next);
@@ -2791,39 +2874,20 @@ Key Features 前置与 A+ 实拍
         updateMobileStatus(root, `项目阶段：${slide.name}`, next, slides.length);
         applyTextProtection(root);
       };
-
-      window.clearTimeout(root._mobileTimelineLeaveTimer);
-      window.clearTimeout(root._mobileTimelineEnterTimer);
-      window.clearTimeout(root._mobileTimelineDoneTimer);
-
-      if (!shouldAnimate) {
-        root.classList.remove('is-mobile-timeline-leaving', 'is-mobile-timeline-entering');
-        root._mobileTimelineAnimating = false;
-        applySlide();
-        return;
-      }
-
-      if (root._mobileTimelineAnimating) return;
-      root._mobileTimelineAnimating = true;
-      root.dataset.mobileTimelineDirection = direction > 0 ? 'next' : 'prev';
-      root.classList.remove('is-mobile-timeline-entering');
-      root.classList.add('is-mobile-timeline-leaving');
-
-      root._mobileTimelineLeaveTimer = window.setTimeout(() => {
-        applySlide();
-        root.classList.remove('is-mobile-timeline-leaving');
-        root.classList.add('is-mobile-timeline-entering');
-        root._mobileTimelineDoneTimer = window.setTimeout(() => {
-          root.classList.remove('is-mobile-timeline-entering');
-          root._mobileTimelineAnimating = false;
-        }, 430);
-      }, 150);
+      runMobileCarouselTransition(
+        root,
+        transitionDirection,
+        applySlide,
+        '.m-img, .m-timeline__phase'
+      );
     }
 
     mobileRoot.querySelectorAll('[data-mobile-timeline-step]').forEach((button) => {
       button.addEventListener('click', () => {
         const root = button.closest('.m-timeline');
-        const current = parseInt(root && root.dataset.mobileTimelineIndex || '0', 10) || 0;
+        const current = root && Number.isFinite(root._fdCarouselTargetIndex)
+          ? root._fdCarouselTargetIndex
+          : parseInt(root && root.dataset.mobileTimelineIndex || '0', 10) || 0;
         const step = parseInt(button.dataset.mobileTimelineStep || '0', 10) || 0;
         setMobileTimeline(current + step, step);
       });
@@ -2851,7 +2915,11 @@ Key Features 前置与 A+ 实拍
       const chipRow = root.querySelector('.m-chip-row');
       const quotes = root.querySelector('.m-quote-stack');
       const count = root.querySelector('.m-switch-count');
-      const shouldAnimate = direction && !window.fdProjectPrefersReducedMotion();
+      const current = Number.isFinite(root._fdCarouselTargetIndex)
+        ? root._fdCarouselTargetIndex
+        : parseInt(root.dataset.bgIndex || '0', 10) || 0;
+      const transitionDirection = next === current ? 0 : direction;
+      root._fdCarouselTargetIndex = next;
       const getMobilePersonaName = (value) => String(value || '')
         .replace(/\s*·\s*占盘\s*\d+(?:\.\d+)?%/g, '')
         .replace(/\s*·\s*不可忽视的长尾群体/g, '')
@@ -2892,32 +2960,12 @@ Key Features 前置与 A+ 实拍
         const arrowBottom = Math.max(30, Math.round(rootHeight - infoBottom - targetGap - arrowHeight));
         root.style.setProperty('--mobile-persona-arrow-bottom', `${arrowBottom}px`);
       };
-
-      window.clearTimeout(root._mobilePersonaLeaveTimer);
-      window.clearTimeout(root._mobilePersonaDoneTimer);
-
-      if (!shouldAnimate) {
-        root.classList.remove('is-mobile-persona-leaving', 'is-mobile-persona-entering');
-        root._mobilePersonaAnimating = false;
-        applySlide();
-        return;
-      }
-
-      if (root._mobilePersonaAnimating) return;
-      root._mobilePersonaAnimating = true;
-      root.dataset.mobilePersonaDirection = direction > 0 ? 'next' : 'prev';
-      root.classList.remove('is-mobile-persona-entering');
-      root.classList.add('is-mobile-persona-leaving');
-
-      root._mobilePersonaLeaveTimer = window.setTimeout(() => {
-        applySlide();
-        root.classList.remove('is-mobile-persona-leaving');
-        root.classList.add('is-mobile-persona-entering');
-        root._mobilePersonaDoneTimer = window.setTimeout(() => {
-          root.classList.remove('is-mobile-persona-entering');
-          root._mobilePersonaAnimating = false;
-        }, 460);
-      }, 170);
+      runMobileCarouselTransition(
+        root,
+        transitionDirection,
+        applySlide,
+        '.m-img, .m-persona-title, .m-persona-lede, .m-persona-info'
+      );
     }
 
     function renderMobileJourneyTabs(root, slides, activeIndex) {
@@ -3018,50 +3066,63 @@ Key Features 前置与 A+ 实拍
       return `${bodyHtml}<div class="journey-copy-gap"></div><div class="journey-head blend-difference">数据成果</div>${metricsHtml}${resultCopyHtml}`;
     }
 
-    function setMobileJourney(index, syncDesktop = true) {
+    function setMobileJourney(index, syncDesktop = true, direction = 0) {
       const root = mobileRoot.querySelector('[data-mobile-journey]');
       const slides = window.journeySlides || [];
       if (!root || !slides.length) return;
+      const current = Number.isFinite(root._fdCarouselTargetIndex)
+        ? root._fdCarouselTargetIndex
+        : parseInt(root.dataset.bgIndex || '0', 10) || 0;
       const next = ((index % slides.length) + slides.length) % slides.length;
       const slide = slides[next];
-      root.dataset.bgIndex = String(next);
+      const transitionDirection = next === current ? 0 : direction;
+      root._fdCarouselTargetIndex = next;
       root.dataset.bgCount = String(slides.length);
-      if (syncDesktop && window.setJourneySlide) window.setJourneySlide(next);
-      root.querySelectorAll('.m-switch-count').forEach((node) => {
-        node.textContent = counterText(next, slides.length);
-      });
-      updateMobileStatus(root, `用户旅程：${slide.title}`, next, slides.length);
-      renderMobileJourneyTabs(root, slides, next);
-      renderMobileJourneyShot(root, slide);
       const copy = root.querySelector('.m-journey-copy');
       const quote = root.querySelector('.m-journey-quote');
       const pains = root.querySelector('.m-journey-pains');
       const desktopQuote = document.querySelector('#c9 .quote');
       const desktopPains = Array.from(document.querySelectorAll('#c9 .pains .pain'));
-      if (copy) copy.innerHTML = renderMobileJourneyCopy(slide.copy);
-      if (quote && desktopQuote) quote.textContent = desktopQuote.textContent.trim();
-      if (pains && desktopPains.length) {
-        pains.textContent = '';
-        desktopPains.forEach((pain) => {
-          const item = document.createElement('div');
-          item.className = 'm-journey-pain';
-          item.textContent = pain.textContent.trim();
-          pains.appendChild(item);
+      runMobileCarouselTransition(root, transitionDirection, () => {
+        root.dataset.bgIndex = String(next);
+        if (syncDesktop && window.setJourneySlide) window.setJourneySlide(next);
+        root.querySelectorAll('.m-switch-count').forEach((node) => {
+          node.textContent = counterText(next, slides.length);
         });
-      }
-      applyTextProtection(root);
-      if (copy) {
-        const syncJourneyCopyHeight = () => {
-          root.style.setProperty('--mobile-journey-copy-height', `${copy.scrollHeight}px`);
-        };
-        syncJourneyCopyHeight();
-        window.requestAnimationFrame(syncJourneyCopyHeight);
-      }
+        updateMobileStatus(root, `用户旅程：${slide.title}`, next, slides.length);
+        renderMobileJourneyTabs(root, slides, next);
+        renderMobileJourneyShot(root, slide);
+        if (copy) copy.innerHTML = renderMobileJourneyCopy(slide.copy);
+        if (quote && desktopQuote) quote.textContent = desktopQuote.textContent.trim();
+        if (pains && desktopPains.length) {
+          pains.textContent = '';
+          desktopPains.forEach((pain) => {
+            const item = document.createElement('div');
+            item.className = 'm-journey-pain';
+            item.textContent = pain.textContent.trim();
+            pains.appendChild(item);
+          });
+        }
+        applyTextProtection(root);
+        if (copy) {
+          const syncJourneyCopyHeight = () => {
+            root.style.setProperty('--mobile-journey-copy-height', `${copy.scrollHeight}px`);
+          };
+          syncJourneyCopyHeight();
+          window.requestAnimationFrame(syncJourneyCopyHeight);
+        }
+      }, '.m-journey-shot, .m-journey-tabs, .m-journey-copy');
     }
 
     mobileRoot.querySelectorAll('[data-mobile-journey-index]').forEach((button) => {
       button.addEventListener('click', () => {
-        setMobileJourney(parseInt(button.dataset.mobileJourneyIndex || '0', 10) || 0);
+        const root = button.closest('[data-mobile-journey]');
+        const current = root && Number.isFinite(root._fdCarouselTargetIndex)
+          ? root._fdCarouselTargetIndex
+          : parseInt(root && root.dataset.bgIndex || '0', 10) || 0;
+        const next = parseInt(button.dataset.mobileJourneyIndex || '0', 10) || 0;
+        const direction = next === current ? 0 : next > current ? 1 : -1;
+        setMobileJourney(next, true, direction);
       });
     });
 
@@ -3070,13 +3131,16 @@ Key Features 前置与 A+ 实拍
         window.requestAnimationFrame(() => {
           const target = button.closest('[data-bg-count]');
           if (!target) return;
-          const index = parseInt(target.dataset.bgIndex || '0', 10) || 0;
-          if (target.id === 'm-mobile-challenges') syncMobileFriction(index);
+          const index = Number.isFinite(target._fdCarouselTargetIndex)
+            ? target._fdCarouselTargetIndex
+            : parseInt(target.dataset.bgIndex || '0', 10) || 0;
+          const step = parseInt(button.dataset.bgStep || '0', 10) || 0;
+          const managedIndex = isEcommerceMobileExperience ? index + step : index;
+          if (target.id === 'm-mobile-challenges') syncMobileFriction(managedIndex, step);
           if (target.matches('[data-mobile-persona]')) {
-            const step = parseInt(button.dataset.bgStep || '0', 10) || 0;
-            setMobilePersona(index, step);
+            setMobilePersona(managedIndex, step);
           }
-          if (target.matches('[data-mobile-journey]')) setMobileJourney(index);
+          if (target.matches('[data-mobile-journey]')) setMobileJourney(managedIndex, true, step);
         });
       });
     });
@@ -3145,7 +3209,7 @@ Key Features 前置与 A+ 实拍
     }
 
     function scrollMobileFinalFrame(frame, targetTop) {
-      const duration = 220;
+      const duration = 300;
       const startTop = frame.scrollTop;
       const distance = targetTop - startTop;
       const startTime = window.performance.now();
