@@ -22,7 +22,8 @@
   html:has(.fd-project-detail-section--integrated-marketing-design) .content-for-layout,
   html:has(.fd-project-detail-section--integrated-marketing-design) .fd-project-detail-section--integrated-marketing-design,
   html:has(.fd-project-detail-section--integrated-marketing-design) .canvas-wrap,
-  html:has(.fd-project-detail-section--integrated-marketing-design) .canvas-wrap .body {
+  html:has(.fd-project-detail-section--integrated-marketing-design) .canvas-wrap .body,
+  html:has(.fd-project-detail-section--integrated-marketing-design) .mobile-393 {
     background: #000000 !important;
     background-color: #000000 !important;
   }
@@ -33,7 +34,8 @@
   html.fd-integrated-outro-white .content-for-layout,
   html.fd-integrated-outro-white .fd-project-detail-section--integrated-marketing-design,
   html.fd-integrated-outro-white .canvas-wrap,
-  html.fd-integrated-outro-white .canvas-wrap .body {
+  html.fd-integrated-outro-white .canvas-wrap .body,
+  html.fd-integrated-outro-white .mobile-393 {
     background: #ffffff !important;
     background-color: #ffffff !important;
   }
@@ -15788,7 +15790,8 @@
   html.fd-product-launch-outro-dark .content-for-layout,
   html.fd-product-launch-outro-dark .fd-project-detail-section--product-launch-visual,
   html.fd-product-launch-outro-dark .canvas-wrap,
-  html.fd-product-launch-outro-dark .canvas-wrap .body {
+  html.fd-product-launch-outro-dark .canvas-wrap .body,
+  html.fd-product-launch-outro-dark .fd-project-detail-section--product-launch-visual .mobile-393 {
     background: #000000 !important;
     background-color: #000000 !important;
   }
@@ -16987,6 +16990,32 @@
       margin-top: 0 !important;
     }
 
+    /* Keep the organization copy clear of the fixed carousel control dock. */
+    .template-project-detail--ecommerce-upgrade .mobile-393 .m-org-overview {
+      height: 471px !important;
+      min-height: 471px !important;
+      max-height: 471px !important;
+    }
+
+    /* E-commerce mobile persona artwork, mapped in the supplied 1-2-3 order. */
+    .template-project-detail--ecommerce-upgrade .mobile-393 [data-mobile-persona][data-bg-index="0"] .m-img {
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, .08) 0%, rgba(0, 0, 0, .2) 46%, rgba(0, 0, 0, .62) 100%),
+        url("fd-ecommerce-persona-01.webp") center / cover no-repeat !important;
+    }
+
+    .template-project-detail--ecommerce-upgrade .mobile-393 [data-mobile-persona][data-bg-index="1"] .m-img {
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, .08) 0%, rgba(0, 0, 0, .2) 46%, rgba(0, 0, 0, .62) 100%),
+        url("fd-ecommerce-persona-02.webp") center / cover no-repeat !important;
+    }
+
+    .template-project-detail--ecommerce-upgrade .mobile-393 [data-mobile-persona][data-bg-index="2"] .m-img {
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, .08) 0%, rgba(0, 0, 0, .2) 46%, rgba(0, 0, 0, .62) 100%),
+        url("fd-ecommerce-persona-03.webp") center / cover no-repeat !important;
+    }
+
     .template-project-detail--ecommerce-upgrade .mobile-393 [data-fd-carousel-direction="prev"] {
       --fd-carousel-exit-x: 10px;
       --fd-carousel-enter-x: -10px;
@@ -17038,5 +17067,61 @@
 
     html.fd-project-faq-page .flowing-faq-orb-button {
       width: calc(280px * var(--scale)) !important;
+    }
+  }
+
+  /* Pure-image carousels: match each card to the source image ratio so the
+     absolutely positioned slides do not leave empty space above or below. */
+  @media (min-width: 768px) {
+    .fd-project-detail-section--product-launch-visual #c2.c-pillars,
+    .fd-project-detail-section--integrated-marketing-design #c2.c-pillars {
+      height: auto !important;
+      min-height: 0 !important;
+      aspect-ratio: 16 / 9;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c2 .pillar-gtm-launch,
+    .fd-project-detail-section--integrated-marketing-design #c2 .pillar-integrated-launch {
+      height: 100% !important;
+      min-height: 0 !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual #c3.c-friction,
+    .fd-project-detail-section--product-launch-visual #c6.c-org,
+    .fd-project-detail-section--product-launch-visual #c8.c-persona,
+    .fd-project-detail-section--integrated-marketing-design #c3.c-friction,
+    .fd-project-detail-section--integrated-marketing-design #c4.c-timeline,
+    .fd-project-detail-section--integrated-marketing-design #c5.c-research {
+      height: auto !important;
+      min-height: 0 !important;
+      aspect-ratio: 2920 / 1824;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .fd-project-detail-section--product-launch-visual .mobile-393 #m-mobile-goals,
+    .fd-project-detail-section--integrated-marketing-design .mobile-393 #m-mobile-goals {
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      aspect-ratio: 16 / 9 !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual .mobile-393 #m-mobile-goals .pillar-gtm-launch,
+    .fd-project-detail-section--integrated-marketing-design .mobile-393 #m-mobile-goals .pillar-integrated-launch {
+      height: 100% !important;
+      min-height: 0 !important;
+    }
+
+    .fd-project-detail-section--product-launch-visual .mobile-393 #m-mobile-challenges,
+    .fd-project-detail-section--product-launch-visual .mobile-393 .m-org-overview,
+    .fd-project-detail-section--product-launch-visual .mobile-393 .m-structure-decision,
+    .fd-project-detail-section--integrated-marketing-design .mobile-393 #m-mobile-challenges,
+    .fd-project-detail-section--integrated-marketing-design .mobile-393 .m-timeline,
+    .fd-project-detail-section--integrated-marketing-design .mobile-393 .m-research-intro {
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      aspect-ratio: 2920 / 1824 !important;
     }
   }

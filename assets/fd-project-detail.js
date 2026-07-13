@@ -2070,12 +2070,12 @@ Key Features 前置与 A+ 实拍
 
       if (isMobile()) {
         setProjectFaqVisibility(false);
-        document.documentElement.classList.remove('fd-product-launch-outro-dark');
         canvasWrap.style.transform = '';
         nextPane.style.transform = '';
         const rOutroMobile = outro.getBoundingClientRect();
         const mobileRaw = Math.max(0, Math.min(1, (window.innerHeight - rOutroMobile.top) / Math.max(1, window.innerHeight * 0.72)));
         const mobileWaveProgress = smoothstep(mobileRaw);
+        document.documentElement.classList.toggle('fd-product-launch-outro-dark', isProductLaunchOutro && mobileWaveProgress > 0.0001);
         document.documentElement.classList.toggle('fd-integrated-outro-white', isIntegratedOutro && mobileWaveProgress > 0.0001);
         if (mobilePage) {
           mobilePage.style.opacity = String(Math.max(0, 1 - mobileWaveProgress));
