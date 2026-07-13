@@ -16857,6 +16857,10 @@
       text-align: left;
       overflow-wrap: anywhere;
     }
+
+    .template-project-detail--ecommerce-upgrade .mobile-393 .m-node-copy + .m-media {
+      margin-top: 0 !important;
+    }
   }
 
   @media (min-width: 768px) {
