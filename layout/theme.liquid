@@ -14,6 +14,8 @@
     assign show_home_footer = false
     if request.page_type == 'index' or template.name == 'index'
       assign show_home_footer = true
+    elsif template.suffix == 'flowin-design' or page.handle == 'flowin-design'
+      assign show_home_footer = true
     endif
   %}
 
