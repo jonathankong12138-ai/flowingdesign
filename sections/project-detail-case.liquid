@@ -513,6 +513,7 @@
               </button>
               <div class="acc-panel"><div class="acc-body">{{ rail_1_body }}</div></div>
             </div>
+            {%- unless project_variant == 'flowin-design' -%}
             <div class="acc-item" data-target="c2">
               <button class="acc-trigger" type="button" aria-expanded="false">
                 <span>{{ rail_2_title }}</span><span class="ind" aria-hidden="true"></span>
@@ -537,6 +538,7 @@
               </button>
               <div class="acc-panel"><div class="acc-body">{{ rail_5_body }}</div></div>
             </div>
+            {%- endunless -%}
           </aside>
         </div>
       </div>
@@ -551,11 +553,13 @@
         <span class="breadcrumb-current" aria-current="page">{{ breadcrumb_title }}</span>
       </nav>
       <h1 class="h-title blend-difference">{{ project_hero_title }}</h1>
+      {%- unless project_variant == 'flowin-design' -%}
       <div class="h-stats">
         <div class="h-stat"><div class="label">{{ stat_label_1 }}</div><div class="value">{{ stat_value_1 }}</div></div>
         <div class="h-stat"><div class="label">{{ stat_label_2 }}</div><div class="value">{{ stat_value_2 }}</div></div>
         <div class="h-stat"><div class="label">{{ stat_label_3 }}</div><div class="value">{{ stat_value_3 }}</div></div>
       </div>
+      {%- endunless -%}
     </header>
 
     <section class="body">
