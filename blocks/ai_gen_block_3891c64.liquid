@@ -230,9 +230,10 @@
     transform: translateY(8px);
     transition: opacity 0.24s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  /* Flowin' Design is the visual entry state; keep its temporary detail UI hidden. */
   .ai-info-panel-{{ block_id }}[data-target-index="1"] .ai-info-text-{{ block_id }} {
-    display: none !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    mix-blend-mode: normal !important;
   }
   .ai-info-panel-{{ block_id }}.is-active .ai-info-text-{{ block_id }} {
     opacity: 1;
@@ -266,9 +267,8 @@
     transition-delay: 0s, 0s, 0s, 0.12s;
   }
   .ai-info-btn-{{ block_id }}[data-active-index="1"] {
-    visibility: hidden;
-    opacity: 0;
-    pointer-events: none;
+    background-color: #000000;
+    color: #ffffff;
   }
   .ai-info-btn-{{ block_id }}[data-active-index="2"],
   .ai-info-btn-{{ block_id }}[data-active-index="3"],
@@ -542,7 +542,7 @@
     const syncStableInfoButton = (panel) => {
       if (!stableInfoButton || !panel) return;
       const activeIndex = panel.getAttribute('data-target-index') || '';
-      const shouldShow = activeIndex !== '1' && panel.getAttribute('data-button-visible') === 'true';
+      const shouldShow = panel.getAttribute('data-button-visible') === 'true';
       const buttonText = panel.getAttribute('data-button-text') || '';
       const buttonLink = panel.getAttribute('data-button-link') || '#';
       stableInfoButton.textContent = buttonText;
