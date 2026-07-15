@@ -24,7 +24,7 @@
       assign stat_label_3 = '作品沉淀'
       assign stat_value_3 = 'Portfolio'
       assign next_project_title = 'Product Launch Visual'
-      assign project_hero_title = "Flowin' Design 作品集与方法系统"
+      assign project_hero_title = "Flowin' Design方法系统"
       assign hero_caption = '从视觉表达走向可复用的设计系统'
       assign rail_1_title = 'GTM 设计工作流'
       assign rail_1_body = '从产品价值包装、营销协同到上市交付，梳理设计代表在 GTM 团队中的角色、六阶段流程与关键难点。'
@@ -220,6 +220,34 @@
   .template-project-detail--case .shopify-section:has(.contact-form) {
     display: none !important;
   }
+
+  {%- if is_gtm_case -%}
+    .fd-project-detail-section--product-launch-visual .rail-method-link {
+      width: 100%;
+      min-height: 48px;
+      margin-top: 20px;
+      padding: 13px 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #000000;
+      color: #ffffff;
+      font-size: 14px;
+      line-height: 1.4;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+
+    .fd-project-detail-section--product-launch-visual .rail-method-link:hover {
+      background: #222222;
+    }
+
+    .fd-project-detail-section--product-launch-visual .rail-method-link:focus-visible {
+      outline: 2px solid #000000;
+      outline-offset: 3px;
+    }
+  {%- endif -%}
 
   {%- if is_integrated_case -%}
     .integrated-loading-cover-{{ section.id }} {
@@ -543,6 +571,9 @@
               <div class="acc-panel"><div class="acc-body">{{ rail_5_body }}</div></div>
             </div>
             {%- endunless -%}
+            {%- if is_gtm_case -%}
+              <a class="rail-method-link" href="{{ routes.root_url }}pages/flowin-design">查看方法系统</a>
+            {%- endif -%}
           </aside>
         </div>
       </div>
