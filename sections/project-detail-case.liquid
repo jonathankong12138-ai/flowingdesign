@@ -1378,6 +1378,141 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
 </section>
 </div>
 
+{%- if project_variant == 'flowin-design' -%}
+  <style>
+    @media (min-width: 768px) {
+      .fd-project-detail-section--flowin-design .content {
+        min-height: 912.5px;
+      }
+
+      .fd-project-detail-section--flowin-design .content > .card[hidden] {
+        display: none !important;
+      }
+
+      .fd-project-detail-section--flowin-design .content > .card.is-methodology-active {
+        display: block !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .fd-project-detail-section--flowin-design .acc-trigger[aria-pressed='false'] {
+        color: rgba(0, 0, 0, 0.52);
+      }
+
+      .fd-project-detail-section--flowin-design .acc-trigger[aria-pressed='true'] {
+        color: #000000;
+      }
+    }
+  </style>
+
+  <script>
+    (function () {
+      const initFlowinMethodologyTabs = () => {
+        const root = document.querySelector('.fd-project-detail-section--flowin-design');
+        if (!root || root.dataset.methodologyTabsReady === 'true') return;
+
+        const rail = root.querySelector('.rail');
+        const canvas = root.querySelector('.canvas');
+        const wrap = root.querySelector('.canvas-wrap');
+        const items = Array.from(root.querySelectorAll('.rail .acc-item[data-target]'));
+        const cards = Array.from(root.querySelectorAll('.canvas .content > .card'));
+        if (!rail || !items.length || !cards.length) return;
+
+        root.dataset.methodologyTabsReady = 'true';
+        rail.setAttribute('aria-label', '方法论文章目录');
+
+        const syncCanvasHeight = (scrollPosition) => {
+          requestAnimationFrame(() => {
+            if (canvas && wrap) wrap.style.height = `${canvas.getBoundingClientRect().height}px`;
+            if (typeof scrollPosition === 'number') {
+              window.scrollTo({ top: scrollPosition, left: window.scrollX, behavior: 'auto' });
+            }
+          });
+        };
+
+        const activateItem = (item, preserveScroll) => {
+          const targetId = item.dataset.target;
+          const target = targetId ? document.getElementById(targetId) : null;
+          if (!target || !root.contains(target)) return;
+
+          const scrollPosition = preserveScroll ? window.scrollY : null;
+          items.forEach((currentItem, index) => {
+            const active = currentItem === item;
+            const trigger = currentItem.querySelector('.acc-trigger');
+            currentItem.classList.toggle('is-open', active);
+            if (trigger) {
+              trigger.id = `flowin-methodology-tab-${index + 1}`;
+              trigger.setAttribute('aria-expanded', active ? 'true' : 'false');
+              trigger.setAttribute('aria-pressed', active ? 'true' : 'false');
+              trigger.setAttribute('aria-controls', currentItem.dataset.target || '');
+            }
+          });
+
+          cards.forEach((card) => {
+            const active = card === target;
+            card.hidden = !active;
+            card.classList.toggle('is-methodology-active', active);
+            card.setAttribute('aria-hidden', active ? 'false' : 'true');
+            card.querySelectorAll('video').forEach((video) => {
+              if (!active) {
+                video.pause();
+              } else if (video.hasAttribute('autoplay')) {
+                const playPromise = video.play();
+                if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(() => {});
+              }
+            });
+          });
+
+          target.setAttribute('aria-live', 'polite');
+          syncCanvasHeight(scrollPosition);
+        };
+
+        rail.addEventListener('click', (event) => {
+          const trigger = event.target.closest('.acc-trigger');
+          if (!trigger || !rail.contains(trigger)) return;
+          const item = trigger.closest('.acc-item[data-target]');
+          if (!item) return;
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          activateItem(item, true);
+        }, true);
+
+        rail.addEventListener('keydown', (event) => {
+          const trigger = event.target.closest('.acc-trigger');
+          if (!trigger) return;
+          const currentIndex = items.findIndex((item) => item.contains(trigger));
+          if (currentIndex < 0) return;
+
+          let nextIndex = currentIndex;
+          if (event.key === 'ArrowDown' || event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % items.length;
+          if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + items.length) % items.length;
+          if (event.key === 'Home') nextIndex = 0;
+          if (event.key === 'End') nextIndex = items.length - 1;
+          if (nextIndex === currentIndex) return;
+
+          event.preventDefault();
+          const nextTrigger = items[nextIndex].querySelector('.acc-trigger');
+          nextTrigger?.focus();
+          activateItem(items[nextIndex], true);
+        });
+
+        const initialItem = items.find((item) => item.classList.contains('is-open')) || items[0];
+        activateItem(initialItem, false);
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFlowinMethodologyTabs, { once: true });
+      } else {
+        initFlowinMethodologyTabs();
+      }
+
+      if (window.Shopify && Shopify.designMode) {
+        document.addEventListener('shopify:section:load', initFlowinMethodologyTabs);
+      }
+    })();
+  </script>
+{%- endif -%}
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
 <script src="{{ "fd-project-detail.js" | asset_url }}" defer></script>
 
