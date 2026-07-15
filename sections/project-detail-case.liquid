@@ -499,7 +499,7 @@
   </script>
 {%- endif -%}
 
-<div class="fd-project-detail-section fd-project-detail-section--{{ project_variant }}" data-section-id="{{ section.id }}" data-project-variant="{{ project_variant }}">
+<div{% if project_variant == 'flowin-design' %} id="fd-flowin-design-{{ section.id }}"{% endif %} class="fd-project-detail-section fd-project-detail-section--{{ project_variant }}" data-section-id="{{ section.id }}" data-project-variant="{{ project_variant }}">
 <div class="canvas-wrap">
 
   <div class="rail-layer">
@@ -1416,7 +1416,7 @@ Hero区展示品牌力，新增通俗易懂的 2年质保、免邮等竞争力�
         border: 0 !important;
         border-radius: 0 !important;
         box-shadow: none !important;
-        background: #f3f1eb !important;
+        background: #f8f8f8 !important;
       }
 
       .fd-project-detail-section--flowin-design .flowin-method-card--gtm::after {
