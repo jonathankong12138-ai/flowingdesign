@@ -1948,7 +1948,9 @@ Key Features 前置与 A+ 实拍
     function renderJourneyShot(root, slide) {
       const shot = root.querySelector('.journey-shot');
       if (!shot) return;
-      const images = Array.isArray(slide.images) ? slide.images : [];
+      const images = Array.isArray(slide.images)
+        ? slide.images.map((path) => window.projectDetailAssetUrl(path))
+        : [];
       window.clearInterval(root._journeyShotTimer);
       root._journeyShotTimer = null;
       window.clearTimeout(shot._journeyShotSwapTimer);
@@ -1957,7 +1959,7 @@ Key Features 前置与 A+ 实拍
         shot.innerHTML = '';
         return;
       }
-      const imageHtml = `<img class="journey-shot-img is-active" src="${escapeHtml(window.projectDetailAssetUrl(images[0]))}" alt="" loading="lazy">`;
+      const imageHtml = `<img class="journey-shot-img is-active" src="${escapeHtml(images[0])}" alt="" loading="lazy">`;
       shot.dataset.imageIndex = '0';
       shot.dataset.images = JSON.stringify(images);
       shot.innerHTML = imageHtml;
